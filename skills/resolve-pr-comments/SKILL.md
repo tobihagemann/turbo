@@ -7,9 +7,7 @@ description: Evaluate, fix, and reply to GitHub pull request review comments. Us
 
 Fetch unresolved review comments from a GitHub PR, critically evaluate each one, fix or skip based on confidence, and reply to each thread.
 
-## Process
-
-### Step 1: Fetch Unresolved Threads
+## Step 1: Fetch Unresolved Threads
 
 Fetch all review threads from the PR:
 
@@ -34,26 +32,26 @@ query($owner: String!, $repo: String!, $pr: Int!) {
 
 Auto-detect owner, repo, and PR number from current branch if not provided. Filter to unresolved threads only.
 
-### Step 2: Evaluate and Fix
+## Step 2: Evaluate and Fix
 
 Run the `/evaluate-findings` skill on the unresolved threads to assess each comment. Proceed with the evaluation results — apply high/medium confidence fixes and skip low confidence suggestions.
 
-### Step 3: Distill Session
+## Step 3: Distill Session
 
 Run the `/distill-session` skill.
 
-### Step 4: Stage and Commit
+## Step 4: Stage and Commit
 
 If any fixes were applied, use `AskUserQuestion` to ask if the user wants to stage and commit the changes now.
 
 - **Yes** — run the `/stage-commit` skill
 - **No** — leave changes unstaged, proceed to replies
 
-### Step 5: Wait for Push
+## Step 5: Wait for Push
 
 Use `AskUserQuestion` to ask if the user has already pushed. Wait for confirmation before proceeding to replies.
 
-### Step 6: Reply to Each Thread
+## Step 6: Reply to Each Thread
 
 Reply to every processed thread using:
 
@@ -77,7 +75,7 @@ Only add a brief description after the SHA if the fix meaningfully diverges from
 
 Keep replies to one or two sentences. Do not over-explain. Do not use em dashes. Write in a natural, human tone. Avoid stiff/formal phrasing, bullet-point reasoning, or bolded labels.
 
-### Step 7: Summary
+## Step 7: Summary
 
 After processing all threads, present a summary table:
 

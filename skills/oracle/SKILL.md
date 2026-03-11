@@ -25,9 +25,7 @@ The oracle reads from `~/.turbo/config.json`:
 | `chatgptUrl` | ChatGPT URL (e.g., a custom GPT project URL) | `https://chatgpt.com/` |
 | `chromeProfile` | Chrome profile directory name | `Default` |
 
-## Steps
-
-### 1. Refresh cookies
+## Step 1: Refresh Cookies
 
 Before running the oracle, refresh ChatGPT cookies from Chrome. Requires timeout of 60000ms. A macOS Keychain password prompt will appear for the user.
 
@@ -37,15 +35,15 @@ python3 scripts/refresh_cookies.py
 
 If the script reports session validation failure, the user needs to log into ChatGPT in Chrome first.
 
-### 2. Identify key files
+## Step 2: Identify Key Files
 
 Find the 2-5 files most relevant to the problem.
 
-### 3. Formulate the question
+## Step 3: Formulate the Question
 
 Write a clear, specific problem description. Include what has already been tried and why it failed. Open with a short project briefing (stack, services, build steps). The more context, the better the response.
 
-### 4. Run the oracle
+## Step 4: Run the Oracle
 
 Use a generous timeout (60 minutes / 3600000ms). The script loads `chatgptUrl` from `~/.turbo/config.json` automatically.
 
@@ -53,6 +51,6 @@ Use a generous timeout (60 minutes / 3600000ms). The script loads `chatgptUrl` f
 python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...>
 ```
 
-### 5. Evaluate the response
+## Step 5: Evaluate the Response
 
 Run the `/evaluate-findings` skill on the oracle's response. Apply only findings that survive evaluation. Oracle suggestions are starting points — cross-reference with official docs and peer open-source implementations before accepting.

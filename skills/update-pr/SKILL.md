@@ -7,9 +7,7 @@ description: Update an existing GitHub pull request's title and description to r
 
 Read the current PR title and body, analyze what changed in the session, and draft an updated title and description that preserves the original writing style.
 
-## Process
-
-### Step 1: Fetch Current PR
+## Step 1: Fetch Current PR
 
 Fetch the current PR details:
 
@@ -19,7 +17,7 @@ gh pr view [PR_NUMBER] --json number,title,body,baseRefName,headRefName,updatedA
 
 Omit PR_NUMBER to auto-detect from current branch.
 
-### Step 2: Analyze the Existing Style
+## Step 2: Analyze the Existing Style
 
 Before drafting, study the current title and body to identify:
 
@@ -29,7 +27,7 @@ Before drafting, study the current title and body to identify:
 - **Content patterns** — does it explain the "why", list changes, include test plans?
 - **Diagrams** — does the body contain Mermaid code blocks (sequence, state, or other)?
 
-### Step 3: Evaluate Whether an Update Is Needed
+## Step 3: Evaluate Whether an Update Is Needed
 
 Use the PR's `updatedAt` field and commit timestamps to determine whether new commits were added since the body was last edited.
 
@@ -43,7 +41,7 @@ git diff origin/<base>...HEAD --diff-filter=d --stat -- $(git diff --name-only -
 
 Skip the update if the incremental changes are trivial (formatting, typos, config-only). Proceed if they add, remove, or modify meaningful behavior.
 
-### Step 4: Analyze the Full Diff
+## Step 4: Analyze the Full Diff
 
 Derive the PR description from the full diff, not from individual commits. The description should reflect the net change — what the code looks like now vs. the base — not the development journey. Intermediate bug fixes, reverted approaches, and implementation pivots that happened during development are not relevant to the reader.
 
@@ -51,7 +49,7 @@ Derive the PR description from the full diff, not from individual commits. The d
 2. Use the incremental diff (since last body edit) to understand what's new, but frame everything in the context of the whole PR
 3. Check if the changes introduce runtime flows or state transitions that warrant diagrams (see Diagrams section below)
 
-### Step 5: Draft Updated Title and Description
+## Step 5: Draft Updated Title and Description
 
 Write an updated title and body that:
 
@@ -62,11 +60,11 @@ Write an updated title and body that:
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
 - **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
 
-### Step 6: Confirm with User
+## Step 6: Confirm with User
 
 Use `AskUserQuestion` to present the drafted title and description side-by-side with the original. Show what changed.
 
-### Step 7: Apply the Update
+## Step 7: Apply the Update
 
 After confirmation, update the PR:
 

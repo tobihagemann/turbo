@@ -7,9 +7,7 @@ description: Fetch and summarize unresolved GitHub PR review comments without ma
 
 Fetch unresolved review comments from a GitHub PR and present them in a readable summary. This is a read-only skill -- it does not evaluate, fix, or reply to any comments.
 
-## Process
-
-### Step 1: Fetch Unresolved Threads
+## Step 1: Fetch Unresolved Threads
 
 Fetch all review threads from the PR:
 
@@ -34,7 +32,7 @@ query($owner: String!, $repo: String!, $pr: Int!) {
 
 Auto-detect owner, repo, and PR number from current branch if not provided. Filter to unresolved threads only.
 
-### Step 2: Present Results
+## Step 2: Present Results
 
 Display a summary header followed by comments grouped by file.
 

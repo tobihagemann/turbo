@@ -399,7 +399,38 @@ Claude can then read the complete file or jump to specific sections as needed.
 
 ### Use workflows for complex tasks
 
-Break complex operations into clear, sequential steps. For particularly complex workflows, provide a checklist that Claude can copy into its response and check off as it progresses.
+Break complex operations into clear, sequential steps. Use `## Step N:` headings for the steps. For particularly complex workflows with distinct phases, nest steps under phases using `## Phase N` with `### Step N:` subheadings.
+
+**Simple workflow:**
+```markdown
+## Step 1: Analyze Input
+...
+## Step 2: Transform Data
+...
+## Step 3: Validate Output
+...
+```
+
+**Complex multi-phase workflow:**
+```markdown
+## Phase 1: Planning
+
+### Step 1: Gather Requirements
+...
+### Step 2: Design Solution
+...
+
+## Phase 2: Execution
+
+### Step 1: Implement Changes
+...
+### Step 2: Run Tests
+...
+```
+
+**Avoid** wrapper sections like `## Process` with `### 1.` numbered subsections. Steps should be top-level, not nested under a generic heading.
+
+For particularly complex workflows, provide a checklist that Claude can copy into its response and check off as it progresses.
 
 **Example 1: Research synthesis workflow** (for Skills without code):
 

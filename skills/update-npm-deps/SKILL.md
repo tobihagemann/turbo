@@ -67,13 +67,13 @@ Use AskUserQuestion to ask upgrade strategy:
 
 For **each package with a major version update**:
 
-### Step 4.1: Calculate Version Gap
+### Step 1: Calculate Version Gap
 
 Identify all major versions between current and target. For example:
 - `react: 17.0.2 → 19.0.0` → research v18 AND v19 breaking changes
 - `jest: 27.5.1 → 29.7.0` → research v28 AND v29 breaking changes
 
-### Step 4.2: Research Each Major Version
+### Step 2: Research Each Major Version
 
 For each major version in the gap, search for migration documentation:
 
@@ -87,7 +87,7 @@ Common sources:
 - Official docs migration guides
 - Changelog files
 
-### Step 4.3: Extract Key Breaking Changes
+### Step 3: Extract Key Breaking Changes
 
 From the migration docs, identify:
 - API changes (renamed/removed functions)
@@ -96,7 +96,7 @@ From the migration docs, identify:
 - Behavioral changes
 - Deprecated features now removed
 
-### Step 4.4: Search Codebase for Affected Code
+### Step 4: Search Codebase for Affected Code
 
 Use Grep to find usage of deprecated or changed APIs:
 
@@ -162,21 +162,21 @@ npm install
 
 For each major update with identified code changes:
 
-### Step 7.1: Run Codemods (if available)
+### Step 1: Run Codemods (if Available)
 
 Some packages provide automated migration tools:
 - React: `npx react-codemod [transform-name]`
 - Jest: `npx jest-codemods`
 - Next.js: `npx @next/codemod [transform-name]`
 
-### Step 7.2: Manual Code Changes
+### Step 2: Manual Code Changes
 
 For changes requiring manual intervention:
 1. Read the affected file
 2. Apply the necessary transformation using Edit
 3. Show the user what changed
 
-### Step 7.3: Update Configuration Files
+### Step 3: Update Configuration Files
 
 If configuration format changed:
 1. Read current config

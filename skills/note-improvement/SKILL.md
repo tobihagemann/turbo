@@ -8,13 +8,11 @@ argument-hint: [improvement description]
 
 Capture improvement opportunities discovered during work so they don't get silently dropped. Appends to a project-level `.turbo/improvements.md` file that serves as a backlog of actionable ideas.
 
-## Process
-
-### Step 1: Determine Project Root
+## Step 1: Determine Project Root
 
 Find the nearest `.git` directory or project root. The improvements file lives at `.turbo/improvements.md` relative to the project root.
 
-### Step 2: Identify the Improvement
+## Step 2: Identify the Improvement
 
 Gather from context or `$ARGUMENTS`:
 
@@ -23,7 +21,7 @@ Gather from context or `$ARGUMENTS`:
 - **Why**: Brief rationale — what's the benefit?
 - **Category**: One of `refactor`, `performance`, `reliability`, `readability`, `testing`, `docs`, `dx` (developer experience), or `feature`
 
-### Step 3: Append to File
+## Step 3: Append to File
 
 Read `.turbo/improvements.md` if it exists. Create it with the header below if it doesn't.
 
@@ -48,7 +46,7 @@ Out-of-scope improvement opportunities captured during work sessions. Review per
 
 Append the new entry at the end of the file.
 
-### Step 4: Confirm
+## Step 4: Confirm
 
 Tell the user the improvement was noted and where the file is.
 
