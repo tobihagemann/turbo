@@ -188,3 +188,4 @@ Present the user with a summary of how to get started:
 3. **The planning pipeline:** For larger projects, see [The Planning Pipeline](README.md#the-planning-pipeline-optional).
 4. **Self-improvement:** Run `/distill-session` before context runs out to capture lessons for future sessions.
 5. **Track improvements:** When noticing something out of scope, run `/note-improvement` so it doesn't get lost.
+6. **Updating:** Run `/update-turbo` to update all skills with conflict detection and exclusion support.

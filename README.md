@@ -150,11 +150,7 @@ Claude will install the skills, configure your environment, and walk you through
 
 ### Updating
 
-```bash
-npx skills update
-```
-
-As long as there are no breaking changes (skills being added or removed), updates are safe to apply anytime. Otherwise, re-run the [install skills](#1-install-skills) command below.
+Run `/update-turbo` in Claude Code to update all skills. It handles conflict detection, exclusion of custom skills, and cleanup of removed skills.
 
 ### Manual Setup
 
