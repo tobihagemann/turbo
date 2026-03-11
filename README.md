@@ -22,6 +22,16 @@ It works best when your project has the right infrastructure in place:
 
 The target audience is experienced developers who want to move faster without sacrificing quality. That said, beginners are welcome too. Turbo is a great way to learn how a professional dev workflow looks. Just don't blindly trust outputs. Review what Claude produces, understand *why* it made those choices, and build your own judgment alongside it.
 
+## The Puzzle Piece Philosophy
+
+Every skill is a self-contained piece. Orchestrator skills like `/finalize` compose them into workflows, but each piece works independently too.
+
+Want to swap a piece? For example:
+- Replace `/oracle` with your own setup (it's macOS-only and has a cookies workaround)
+- Replace `/commit-staged` or `/stage-commit` with your team's commit convention. The pipeline adapts.
+
+The skills communicate through standard interfaces (git staging area, PR state, file conventions), not tight coupling.
+
 ## Sponsorship
 
 If Turbo has helped you ship faster and you're so inclined, I'd greatly appreciate it if you'd consider [sponsoring my open source work](https://github.com/sponsors/tobihagemann).
@@ -305,16 +315,6 @@ Each session handles one prompt. This keeps context focused and avoids running o
 | `/note-improvement` | Capture out-of-scope improvement ideas for later |
 | `/create-skill` | Create or update a skill with proper structure |
 | `/update-npm-deps` | Smart npm dependency upgrades with breaking change research |
-
-## The Puzzle Piece Philosophy
-
-Every skill is a self-contained piece. The orchestrator skills (`/finalize`, `/review-feature-branch`) compose them into workflows, but each piece works independently too.
-
-Want to swap a piece? For example:
-- Replace `/oracle` with your own setup (it's macOS-only and has a cookies workaround)
-- Replace `/commit-staged` or `/stage-commit` with your team's commit convention. The pipeline adapts.
-
-The skills communicate through standard interfaces (git staging area, PR state, file conventions), not tight coupling.
 
 ## License
 
