@@ -328,6 +328,7 @@ Each session handles one prompt. This keeps context focused and avoids running o
 | `/note-improvement` | Capture out-of-scope improvement ideas for later |
 | `/create-skill` | Create or update a skill with proper structure |
 | `/update-npm-deps` | Smart npm dependency upgrades with breaking change research |
+| `/update-turbo` | Update Turbo skills with conflict detection and cleanup |
 
 ## License
 

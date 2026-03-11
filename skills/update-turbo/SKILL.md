@@ -53,19 +53,31 @@ npx skills add tobihagemann/turbo --skill '*' --agent claude-code -y -g
 
 ## Step 4: Clean Up Removed Skills
 
-Compare installed skills against the current repo skill list. A skill is a Turbo skill if `~/.claude/skills/<name>` is a symlink (non-symlinked directories are user-owned and should be skipped). Check without trailing slash so `-L` works:
+After installing, detect skills that were previously installed from Turbo but are no longer in the current release. Use two data sources to identify Turbo-owned skills:
+
+1. **`skills-lock.json`** (primary) — check `~/.claude/skills/skills-lock.json` for entries with `"source": "tobihagemann/turbo"`. Extract the skill names.
+2. **Symlink check** (fallback) — if no lock file, check `~/.claude/skills/*` for symlinks pointing to `../../.agents/skills/`. These are CLI-managed globals.
+
+Compare against the just-installed skill list. The install output lists all skills it installed — use that list. Alternatively, fetch from the repo:
 
 ```bash
-remote_skills=$(gh api repos/tobihagemann/turbo/contents/skills --jq '.[].name')
+gh api repos/tobihagemann/turbo/contents/skills --jq '.[].name'
+```
+
+If `gh api` fails (TLS errors, rate limits), fall back to checking which symlinks in `~/.claude/skills/` are now broken:
+
+```bash
 for skill in ~/.claude/skills/*; do
   [ -L "$skill" ] || continue
-  name=$(basename "$skill")
-  echo "$remote_skills" | grep -qx "$name" || echo "REMOVED: $name"
+  [ -e "$skill" ] && continue  # symlink target exists, skip
+  echo "STALE: $(basename "$skill")"
 done
 ```
 
-If any removed skills are found, inform the user and remove each one:
+For each stale skill found, inform the user via `AskUserQuestion` and remove:
 
 ```bash
 npx skills remove <skill-name> -g -y
 ```
+
+Also remove the stale entry from `~/.claude/skills/skills-lock.json` if present (delete the key from the `skills` object).
