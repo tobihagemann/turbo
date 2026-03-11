@@ -142,7 +142,9 @@ graph TD
 
 Open Claude Code and prompt:
 
-> Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and guide me through each step.
+```
+Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and guide me through each step.
+```
 
 Claude will install the skills, configure your environment, and walk you through each step interactively.
 
