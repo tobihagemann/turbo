@@ -96,7 +96,7 @@ Use `AskUserQuestion` to let the user approve, reject, or redirect individual le
 
 Apply approved changes in order:
 
-1. **Updates to existing files** — Read the target, find the right section, append or update in place. Match the tone and format already present.
+1. **Updates to existing files** — Read the target, find the right section, append or update in place. Match the tone and format already present. For auto memory, follow the memory system conventions from the system prompt.
 2. **Improvements** — For items routed to project improvements, run `/note-improvement` with the summary, location, and rationale for each.
 3. **New skills** — Enter plan mode, then run `/create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
 
