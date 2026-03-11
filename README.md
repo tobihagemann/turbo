@@ -63,7 +63,7 @@ graph TD
         end
 
         subgraph p3 ["Phase 3 — Code Review"]
-            peer-review([/peer-review]):::review --> evaluate-findings([/evaluate-findings]):::review
+            code-review([/code-review]):::review
         end
 
         subgraph p4 ["Phase 4 — Self-Improve"]
@@ -79,15 +79,15 @@ graph TD
         end
 
         stage --> simplify-plus
-        simplify-plus --> peer-review
-        evaluate-findings --> self-improve
+        simplify-plus --> code-review
+        code-review --> self-improve
         self-improve --> commit-staged
         commit-staged --> create-pr
     end
 
     %% Code review (reusable core)
-    code-review([/code-review]):::review --> peer-review
-    code-review --> evaluate-findings
+    code-review --> peer-review([/peer-review]):::review
+    code-review --> evaluate-findings([/evaluate-findings]):::review
 
     %% Review orchestrators
     review-feature-branch([/review-feature-branch]):::review --> code-review

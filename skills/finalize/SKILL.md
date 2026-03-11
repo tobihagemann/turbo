@@ -52,20 +52,15 @@ Run the `/simplify-plus` skill. The diff command for this phase is `git diff --c
 
 ## Phase 3: Code Review
 
-### Step 1: Run codex review
+### Step 1: Run code review
 
-Run `/peer-review` skill to review uncommitted changes. Capture its output.
+Run the `/code-review` skill to review uncommitted changes. Apply any actionable findings — launch a single opus agent with the full diff to apply each fix.
 
-### Step 2: Evaluate and fix findings
-
-1. Do not blindly trust the review output. Run the `/evaluate-findings` skill on the peer review output.
-2. Proceed with the evaluation results — launch a single opus agent with the full diff to apply each fix.
-
-### Step 3: Simplify review fixes
+### Step 2: Simplify review fixes
 
 Run the `/simplify-plus` skill. The diff command for this phase is `git diff` (NOT `git diff --cached` — the fix agent's changes are unstaged).
 
-### Step 4: Test and lint
+### Step 3: Test and lint
 
 1. Run the test suite to confirm nothing broke
 2. If tests fail, run the `/investigate` skill to diagnose the root cause, apply the suggested fix, and re-run tests. If investigation cannot identify a root cause, stop and report with investigation findings.
