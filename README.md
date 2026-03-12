@@ -203,9 +203,11 @@ Install all skills. Many depend on each other (e.g., `/finalize` orchestrates `/
 Some skills store project-level files in a `.turbo/` directory (specs, prompt plans, improvements). Add it to your global gitignore to keep project repos clean:
 
 ```bash
-echo '.turbo/' >> ~/.gitignore
-git config --global core.excludesfile ~/.gitignore
+mkdir -p ~/.config/git
+echo '.turbo/' >> ~/.config/git/ignore
 ```
+
+This uses Git's standard XDG path (`$XDG_CONFIG_HOME/git/ignore`), which Git reads automatically without needing `core.excludesfile`. If `core.excludesfile` is already set, add `.turbo/` to that file instead.
 
 #### 3. Allow All Skills
 

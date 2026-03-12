@@ -71,10 +71,21 @@ Update by re-running the same command to pick up new, changed, or removed skills
 
 Some skills store project-level files in a `.turbo/` directory (specs, prompt plans, improvements). Add it to the user's global gitignore to keep project repos clean:
 
+First, check if the user has `core.excludesfile` configured:
+
 ```bash
-echo '.turbo/' >> ~/.gitignore
-git config --global core.excludesfile ~/.gitignore
+git config --global core.excludesfile
 ```
+
+- If set, append `.turbo/` to that file.
+- If not set, use Git's standard XDG path:
+
+```bash
+mkdir -p ~/.config/git
+echo '.turbo/' >> ~/.config/git/ignore
+```
+
+Do not set `core.excludesfile` — the XDG path works automatically without it.
 
 ## Step 3: Allow All Skills
 
