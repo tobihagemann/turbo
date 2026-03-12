@@ -28,7 +28,7 @@ Every skill is a self-contained piece. Orchestrator skills like `/finalize` comp
 
 Want to swap a piece? For example:
 - Replace `/oracle` with your own setup (it's macOS-only and has a cookies workaround)
-- Replace `/commit-staged` or `/stage-commit` with your team's commit convention. The pipeline adapts.
+- Replace `/commit-rules` with your team's commit convention. The pipeline adapts.
 
 The skills communicate through standard interfaces (git staging area, PR state, file conventions), not tight coupling.
 
@@ -338,6 +338,7 @@ Each session handles one prompt. This keeps context focused and avoids running o
 
 | Skill | What it does |
 |---|---|
+| [`/commit-rules`](skills/commit-rules/SKILL.md) | Shared commit message rules and technical constraints |
 | [`/stage-commit`](skills/stage-commit/SKILL.md) | Stage files and commit in one step |
 | [`/commit-staged`](skills/commit-staged/SKILL.md) | Commit already-staged files with good message |
 | [`/create-pr`](skills/create-pr/SKILL.md) | Draft and create a GitHub PR |

@@ -5,20 +5,11 @@ description: Stage files and create a commit in one step with a message matching
 
 # Stage and Commit Changes
 
-Stage and commit changes with a message matching existing commit style.
+## Step 1: Commit Rules
 
-## Commit Message Rules
+Run `/commit-rules` to load commit message rules and technical constraints.
 
-- Match the style from `git log -n 10 --oneline`
-- Concise and descriptive
-- Imperative mood, present tense
-- No commit description—summarize everything in the message
-
-## Staging Rules
+## Step 2: Stage and Commit
 
 - Stage only the changes to commit
 - Leave other unstaged changes alone
-
-## Technical Note
-
-- Use `git commit -m "message"` directly—do not use heredoc syntax (sandbox blocks temp file creation)

@@ -371,6 +371,20 @@ When SKILL.md links to sub-files, each layer must own exactly one concern:
 - Do not add quick-reference summaries of sub-file commands in SKILL.md — the router links, it does not summarize
 - When other skills reference a sub-file, they should point to the skill and name the sub-file: "Run `/skill-name` skill and consult sub-file.md to ..."
 
+### Cross-skill dependencies
+
+When a skill depends on another skill, make it an explicit numbered step. Use plain descriptive text in the heading and "Run `/skill-name`" in the step body.
+
+```markdown
+## Step 1: Commit Rules
+
+Run `/commit-rules` to load commit message rules and technical constraints.
+
+## Step 2: Stage and Commit
+
+- Stage only the changes to commit
+```
+
 ### Structure longer reference files with table of contents
 
 For reference files longer than 100 lines, include a table of contents at the top. This ensures Claude can see the full scope of available information even when previewing with partial reads.
