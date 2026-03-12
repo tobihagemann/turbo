@@ -12,7 +12,7 @@ Update installed Turbo skills with a dynamic changelog and interactive conflict 
 Read two data sources:
 
 1. **Config** — `~/.turbo/config.json` for `excludeSkills` (default: `[]`) and `lastCommit` (the commit hash from the last update)
-2. **Lock file** — `~/.claude/skills/skills-lock.json` for installed Turbo skills (entries with `"source": "tobihagemann/turbo"`). Extract skill names.
+2. **Lock file** — `~/.agents/.skill-lock.json` for installed Turbo skills (entries with `"source": "tobihagemann/turbo"`). Extract skill names.
 
 Fetch upstream state:
 
@@ -111,13 +111,11 @@ Before proceeding to the next step, save the content of any customized skill whe
 
 ### Handle removals and renames
 
-For each removed or renamed-away skill, try removing via the CLI:
+For each removed or renamed-away skill:
 
 ```bash
 npx skills remove <name> -g -y
 ```
-
-If the skill is already gone from disk but still in the lock file, the CLI won't find it. In that case, read `~/.claude/skills/skills-lock.json`, delete the stale key from the `skills` object, and write the file back.
 
 ### Install
 
