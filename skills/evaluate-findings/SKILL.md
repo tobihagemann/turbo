@@ -95,6 +95,7 @@ For disputed findings, add a callout below the table showing both perspectives.
 
 ## Rules
 
+- Never auto-dismiss findings about security defaults, permission escalation, or fail-open vs fail-closed behavior just because a plan or implementation intent specifies different behavior. Plans can have incorrect assumptions about what the safe default should be. Always surface these findings to the user even if you believe the behavior was intentional.
 - If a finding references code that no longer exists or has since changed, skip it and note that the code has diverged.
 - If two findings conflict with each other, skip both and document the conflict.
 - For each finding, clarify whether the issue was introduced by the PR/changeset or is pre-existing. Present this distinction explicitly so the user can decide whether it belongs in this PR's scope.
