@@ -406,7 +406,7 @@ Each session handles one prompt. This keeps context focused and avoids running o
 | [`/self-improve`](skills/self-improve/SKILL.md) | Extract session learnings to CLAUDE.md, memory, or skills |
 | [`/note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas for later |
 | [`/create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure |
-| [`/update-npm-deps`](skills/update-npm-deps/SKILL.md) | Smart npm dependency upgrades with breaking change research |
+| [`/update-deps`](skills/update-deps/SKILL.md) | Smart dependency upgrades with breaking change research |
 | [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills from local repo with changelog and conflict detection |
 | [`/contribute-turbo`](skills/contribute-turbo/SKILL.md) | Submit turbo skill improvements back to upstream |
 

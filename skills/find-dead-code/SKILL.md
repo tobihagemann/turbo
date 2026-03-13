@@ -11,8 +11,8 @@ Identify dead code in a codebase. **Core rule: code only used in tests is still 
 
 Determine the project structure:
 
-1. Check for config files: `package.json`, `tsconfig.json`, `pyproject.toml`, `setup.py`, `Package.swift`, `.xcodeproj`, `pom.xml`, `build.gradle`
-2. Glob for source files: `**/*.ts`, `**/*.py`, `**/*.swift`, `**/*.java`
+1. Check for config files: `package.json`, `tsconfig.json`, `pyproject.toml`, `setup.py`, `Package.swift`, `.xcodeproj`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`
+2. Glob for source files: `**/*.ts`, `**/*.py`, `**/*.swift`, `**/*.go`, `**/*.rs`, `**/*.java`
 3. Identify source roots — where production code lives (e.g., `src/`, `lib/`, `Sources/`)
 4. **Partition the codebase** into analysis units by top-level source directories (e.g., `src/auth/`, `src/api/`, `src/utils/`, `lib/models/`). Each directory becomes one subagent's scope in Step 3.
 
@@ -27,6 +27,8 @@ Establish which files are test files. Code referenced ONLY from these locations 
 | TS/JS | `*.test.{ts,tsx,js,jsx}`, `*.spec.{ts,tsx,js,jsx}`, `__tests__/**`, `__mocks__/**`, `*.stories.{ts,tsx,js,jsx}` |
 | Python | `test_*.py`, `*_test.py`, `tests/**`, `test/**`, `conftest.py` |
 | Swift | `*Tests.swift`, `*Test.swift`, `Tests/**`, `*UITests.swift`, `XCTestCase` subclasses |
+| Go | `*_test.go`, `testdata/**` |
+| Rust | `tests/**`, `benches/**`, `#[cfg(test)]` modules (inline test modules within source files) |
 | Java/Kotlin | `src/test/**`, `*Test.java`, `*Tests.java`, `*Spec.java`, `*Test.kt` |
 | General | `fixtures/**`, `__fixtures__/**`, `mocks/**`, `testutils/**`, `testhelpers/**`, `spec/**` |
 
@@ -41,6 +43,8 @@ If a CLI tool is installed, run it as a fast first pass for **zero-reference** d
 | TS/JS | `knip` | `npx knip --version` | `npx knip --no-exit-code` |
 | Python | `vulture` | `vulture --version` | `vulture <src_dirs> --min-confidence 80` |
 | Swift | `periphery` | `which periphery` | `periphery scan --skip-build` |
+| Go | `deadcode` | `which deadcode` | `deadcode ./...` |
+| Rust | compiler warnings | — | `cargo build 2>&1 \| grep "dead_code"` |
 
 **Important limitation:** CLI tools count test imports as real usage. They **cannot** detect code that is only used in tests. They only find symbols with literally zero references anywhere. Step 3 is required for test-only detection.
 
@@ -69,11 +73,13 @@ Each subagent performs these steps on its assigned directory:
 | TS/JS | `export function`, `export const`, `export let`, `export var`, `export class`, `export interface`, `export type`, `export enum`, `export default`, `module.exports` |
 | Python | Top-level `def` and `class` in non-`_`-prefixed modules, module-level constants (`FOO = ...`), symbols in `__all__`, public functions (no `_` prefix) |
 | Swift | `public func`, `public var`, `public let`, `public class`, `public struct`, `public enum`, `public protocol`, `open class`, `open func`, `open var` |
+| Go | Capitalized identifiers: `func FooBar`, `type FooBar struct`, `var FooBar`, `const FooBar` (Go uses capitalization for public visibility) |
+| Rust | `pub fn`, `pub struct`, `pub enum`, `pub trait`, `pub const`, `pub static`, `pub type`, `pub mod` |
 | Java/Kotlin | `public class`, `public static`, `public void`, `public` fields, `val`/`var` properties, `fun ` (top-level), `@Bean`, `@Component`, `@Service` annotated classes |
 
 **b) For each symbol, grep across the entire codebase** for references, excluding:
 - The definition file itself
-- Generated/vendored directories (`node_modules/`, `dist/`, `build/`, `vendor/`, `__pycache__/`, `.tox/`, `.build/`, `DerivedData/`)
+- Generated/vendored directories (`node_modules/`, `dist/`, `build/`, `vendor/`, `__pycache__/`, `.tox/`, `.build/`, `DerivedData/`, `target/`)
 
 **c) Classify each reference** as test or production based on the test file patterns.
 
@@ -93,9 +99,9 @@ After all subagents complete, collect and merge their results. Deduplicate any s
 
 Apply these filters to the merged results from Steps 2 and 3:
 
-1. **Framework entry points**: Skip symbols used by convention — React components in barrel files, Django views in URL configs, CLI handlers registered in main, magic/lifecycle methods (`__init__`, `__repr__`), serialization methods (`to_json`, `from_dict`), interface/protocol implementations
+1. **Framework entry points**: Skip symbols used by convention — React components in barrel files, Django views in URL configs, Go `init()` and `main()` functions, Go interface implementations, Rust `main()`, Rust trait implementations, `#[derive(...)]` generated code, CLI handlers registered in main, magic/lifecycle methods (`__init__`, `__repr__`), serialization methods (`to_json`, `from_dict`), interface/protocol implementations
 2. **Re-export chains**: Trace barrel files (`index.ts`, `__init__.py`) before declaring a symbol dead. A symbol re-exported through a barrel may have indirect consumers.
-3. **Dynamic usage**: Flag symbols that might be used via reflection, `getattr`, `importlib`, string-based lookups, or decorator registration as "likely dead" rather than "definite"
+3. **Dynamic usage**: Flag symbols that might be used via reflection (`getattr`, `importlib`, `reflect` package in Go, `proc_macro` in Rust), string-based lookups, or decorator/attribute registration as "likely dead" rather than "definite"
 4. **Cross-package references**: In monorepos, verify a symbol isn't imported by a sibling package before declaring it dead
 5. **Design docs / specs / roadmaps**: If the project has spec files, roadmaps, or TODO files (e.g., `.turbo/spec.md`, `ROADMAP.md`, `TODO.md`), cross-reference test-only findings against them. Test-only APIs may be planned features awaiting integration — flag as **investigate** rather than **delete**
 
