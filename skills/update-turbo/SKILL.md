@@ -156,7 +156,7 @@ For each skill in `~/.turbo/repo/skills/` that is not excluded:
 - **New skills**: `cp -r ~/.turbo/repo/skills/<name> ~/.claude/skills/<name>`
 - **Removed skills**: `rm -rf ~/.claude/skills/<name>`, warn the user
 - **Renamed skills**: Remove old directory, copy new
-- **Modified (no customization)**: `cp -r ~/.turbo/repo/skills/<name> ~/.claude/skills/<name>` to overwrite
+- **Modified (no customization)**: Remove old directory, then `cp -r ~/.turbo/repo/skills/<name> ~/.claude/skills/<name>`
 
 ### Merge customized skills
 
