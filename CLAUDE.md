@@ -20,10 +20,9 @@ Each skill is self-contained. Orchestrators compose skills by invoking them via 
 - Skills should not reference which orchestrators call them (stay self-contained)
 - Orchestrator skills use `TaskCreate` for phase tracking
 - Skills communicate through standard interfaces: git staging area, PR state, file conventions at `.turbo/`
-- Read `skills/create-skill/references/best-practices.md` before writing or editing skills
+- Run `/create-skill` when creating or editing skills
 
 ## Key Files
 
-- `skills/create-skill/references/best-practices.md` — Authoritative guide for skill authoring
-- `skills/create-skill/references/skill-reviewer.md` — Review checklist for skills
-- `~/.turbo/config.json` — User-level configuration (e.g., oracle skill settings)
+- `~/.turbo/config.json` — User-level configuration (repoMode, excludeSkills, lastUpdateHead, oracle settings)
+- `~/.turbo/repo/` — Local clone or fork of the turbo repo (skill source for install/update)

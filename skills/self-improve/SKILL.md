@@ -17,7 +17,29 @@ Available destinations:
 
 Read the project CLAUDE.md/AGENTS.md and MEMORY.md. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
 
-## Step 2: Scan Session for Lessons
+### Turbo Skill Detection
+
+If `~/.turbo/repo/` exists, identify which installed skills are turbo skills:
+
+- List directories in `~/.turbo/repo/skills/`
+- Any skill in `~/.claude/skills/` that has a matching directory in `~/.turbo/repo/skills/` is a turbo skill
+- Skills only in `~/.claude/skills/` (no match in the repo) are user/project skills
+
+Read `~/.turbo/config.json` for `repoMode`. If `repoMode` is `"fork"` or `"source"`, turbo skill improvements can be contributed upstream.
+
+**Exception:** If the current project IS the turbo repo (i.e., the working directory contains this skill collection), route turbo skill changes directly to `skills/` in the project directory. Skip the installed-copy indirection and the contribution flow.
+
+## Step 2: Identify Session Skills and Scan for Lessons
+
+### Identify Session Skills
+
+Before scanning for lessons, identify which skills were loaded during this session:
+
+- Scan the conversation for Skill tool invocations and SKILL.md reads from `~/.claude/skills/`
+- Build a list of session skills, marking each as turbo or user/project skill (using the detection from Step 1)
+- This list informs routing in Step 4: when a lesson clearly arose from a specific skill's workflow, that skill is the natural routing target
+
+### Scan for Lessons
 
 Scan the full conversation with this priority:
 
@@ -49,7 +71,8 @@ Assign each surviving lesson to exactly one destination:
 
 | Destination | Criteria |
 |---|---|
-| **Existing skill** | Lesson would improve a skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any skill whose *domain* covers the lesson — not just the skill worked on in this session. Prefer this over CLAUDE.md and auto memory when a relevant skill exists. |
+| **Existing turbo skill** | Lesson would improve a turbo skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any turbo skill whose *domain* covers the lesson — not just the skill worked on in this session. Changes go to the installed copy at `~/.claude/skills/`. If `repoMode` is `"fork"` or `"source"`, also apply to `~/.turbo/repo/` and flag for contribution (see Step 6). |
+| **Existing user/project skill** | Same criteria as above, but for non-turbo skills. Changes go to the skill file directly. No contribution flow. |
 | **New skill** | A cohesive body of knowledge emerged that deserves its own on-demand context. The test: would this knowledge be too large for a CLAUDE.md section, and should it only be loaded when relevant? See the skill categories table below. |
 | **Project CLAUDE.md / AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. |
 | **Auto memory** | Discovered knowledge: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, past mistakes, user preferences. |
@@ -70,6 +93,7 @@ Assign each surviving lesson to exactly one destination:
 **Splitting heuristic:** When a session creates scripts or multi-step procedures, split the lesson: a brief pointer goes to CLAUDE.md (script names, purpose), and the full workflow goes to a skill. Don't collapse them into a single CLAUDE.md entry.
 
 **Tiebreakers:**
+- Turbo skill vs. CLAUDE.md — prefer the turbo skill. Broader impact (benefits all turbo users), better scoped, loaded only when relevant.
 - Skill vs. CLAUDE.md — prefer the skill. Skills are more discoverable, better scoped, and loaded only when relevant.
 - Skill vs. auto memory — if a lesson falls within the domain of an existing skill, prefer the skill over auto memory.
 - CLAUDE.md vs. auto memory — intentional decisions go to CLAUDE.md. Discovered knowledge (gotchas, workarounds, quirks) goes to auto memory.
@@ -97,8 +121,11 @@ Use `AskUserQuestion` to let the user approve, reject, or redirect individual le
 Apply approved changes in order:
 
 1. **Updates to existing files** — Read the target, find the right section, append or update in place. Match the tone and format already present. For auto memory, follow the memory system conventions from the system prompt.
-2. **Improvements** — For items routed to project improvements, run `/note-improvement` with the summary, location, and rationale for each.
-3. **New skills** — Enter plan mode, then run `/create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
+2. **Updates to turbo skills** — For each lesson routed to a turbo skill:
+   1. Edit the installed copy at `~/.claude/skills/<name>/SKILL.md` (immediate effect for the user).
+   2. If `repoMode` is `"fork"` or `"source"`: use `AskUserQuestion` to ask "These turbo skill improvements could benefit other users. Run `/contribute-turbo` to submit them?" If yes, apply the same changes to `~/.turbo/repo/skills/<name>/SKILL.md`, stage them (`git -C ~/.turbo/repo add skills/<name>/`), and run `/contribute-turbo`.
+3. **Improvements** — For items routed to project improvements, run `/note-improvement` with the summary, location, and rationale for each.
+4. **New skills** — Enter plan mode, then run `/create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
 
 ## Writing Guidelines
 

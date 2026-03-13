@@ -136,6 +136,7 @@ graph TD
 6. Execute"]:::know
         si-steps -. "skill-shaped lesson" .-> create-skill([/create-skill]):::know
         si-steps -. "out-of-scope fix" .-> note-improvement([/note-improvement]):::know
+        si-steps -. "turbo skill change" .-> contribute-turbo([/contribute-turbo]):::know
     end
 
     self-improve -. "has learnings" .-> si-steps
@@ -180,25 +181,61 @@ Open Claude Code and prompt:
 Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and guide me through each step.
 ```
 
-Claude will install the skills, configure your environment, and walk you through each step interactively.
+Claude will clone the repo, copy the skills, configure your environment, and walk you through each step interactively.
 
 ### Updating
 
-Run `/update-turbo` in Claude Code to update all skills. It handles conflict detection, exclusion of custom skills, and cleanup of removed skills.
+Run `/update-turbo` in Claude Code to update all skills from the local repo. It builds a changelog from local git history, handles conflict detection for customized skills, and manages exclusions.
 
 ### Manual Setup
 
 See [SETUP.md](SETUP.md) for the full guide, or follow the steps below.
 
-#### 1. Install Skills
+#### 1. Clone the Repo
+
+Clone (or fork) the Turbo repo to `~/.turbo/repo/`:
 
 ```bash
-npx skills add tobihagemann/turbo --skill '*' --agent claude-code -g
+git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
 ```
 
-Install all skills. Many depend on each other (e.g., `/finalize` orchestrates `/simplify-code`, `/peer-review`, `/evaluate-findings`, and more), so installing them individually will leave gaps in the workflows. See [skills.sh/docs](https://skills.sh/docs) for more on the skills CLI.
+To contribute improvements back, fork the repo on GitHub first, then clone your fork and add the upstream remote:
 
-#### 2. Add `.turbo` to Global Gitignore
+```bash
+git clone https://github.com/<your-username>/turbo.git ~/.turbo/repo
+cd ~/.turbo/repo && git remote add upstream https://github.com/tobihagemann/turbo.git
+```
+
+#### 2. Copy Skills
+
+Copy all skill directories to your global skills location:
+
+```bash
+for skill in $(ls ~/.turbo/repo/skills/); do
+  cp -r ~/.turbo/repo/skills/$skill ~/.claude/skills/$skill
+done
+```
+
+Many skills depend on each other (e.g., `/finalize` orchestrates `/simplify-code`, `/peer-review`, `/evaluate-findings`, and more), so installing only a subset will leave gaps in the workflows.
+
+#### 3. Initialize Config
+
+Create `~/.turbo/config.json`:
+
+```bash
+mkdir -p ~/.turbo
+cat > ~/.turbo/config.json << EOF
+{
+  "repoMode": "clone",
+  "excludeSkills": [],
+  "lastUpdateHead": "$(git -C ~/.turbo/repo rev-parse HEAD)"
+}
+EOF
+```
+
+Set `repoMode` to `"clone"` (consumer), `"fork"` (contributor), or `"source"` (maintainer).
+
+#### 4. Add `.turbo` to Global Gitignore
 
 Some skills store project-level files in a `.turbo/` directory (specs, prompt plans, improvements). Add it to your global gitignore to keep project repos clean:
 
@@ -209,19 +246,19 @@ echo '.turbo/' >> ~/.config/git/ignore
 
 This uses Git's standard XDG path (`$XDG_CONFIG_HOME/git/ignore`), which Git reads automatically without needing `core.excludesfile`. If `core.excludesfile` is already set, add `.turbo/` to that file instead.
 
-#### 3. Allow All Skills
+#### 5. Allow All Skills
 
 Orchestrator workflows like `/finalize` invoke many skills in sequence. Without allowlisting them, you'll get prompted for each one, breaking the flow.
 
-Add all Turbo skills to the `permissions.allow` array in `~/.claude/settings.json`. Generate the entries from the Turbo repo:
+Add all Turbo skills to the `permissions.allow` array in `~/.claude/settings.json`. Generate the entries from the local repo:
 
 ```bash
-gh api repos/tobihagemann/turbo/contents/skills --jq '.[].name' | sed 's/.*/"Skill(&)"/'
+ls ~/.turbo/repo/skills/ | sed 's/.*/"Skill(&)"/'
 ```
 
 Merge the output into your existing `permissions.allow` array.
 
-#### 4. Configure Context Tracking
+#### 6. Configure Context Tracking
 
 Turbo workflows like `/finalize` consume significant context. Knowing how much context you have left prevents unexpected compaction mid-workflow.
 
@@ -236,7 +273,7 @@ Add this to `~/.claude/settings.json`:
 }
 ```
 
-#### 5. Add Pre-Implementation Prep
+#### 7. Add Pre-Implementation Prep
 
 Add this to your `~/.claude/CLAUDE.md` (create the file if it doesn't exist):
 
@@ -250,11 +287,11 @@ After plan approval (ExitPlanMode) and before making edits:
 4. Read similar files in the project to mirror their style
 ```
 
-#### 6. Disable Auto-Compact
+#### 8. Disable Auto-Compact
 
 Turbo's orchestrator workflows work best when you control compaction timing. Disable auto-compact in Claude Code via `/config`.
 
-#### 7. Oracle Setup (Optional)
+#### 9. Oracle Setup (Optional)
 
 The `/oracle` skill requires additional setup (Chrome, Python, ChatGPT access). See the [oracle skill](skills/oracle/SKILL.md) for configuration via `~/.turbo/config.json`. If not set up, everything still works.
 
@@ -362,7 +399,8 @@ Each session handles one prompt. This keeps context focused and avoids running o
 | [`/note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas for later |
 | [`/create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure |
 | [`/update-npm-deps`](skills/update-npm-deps/SKILL.md) | Smart npm dependency upgrades with breaking change research |
-| [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills with conflict detection and cleanup |
+| [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills from local repo with changelog and conflict detection |
+| [`/contribute-turbo`](skills/contribute-turbo/SKILL.md) | Submit turbo skill improvements back to upstream |
 
 ## License
 

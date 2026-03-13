@@ -18,7 +18,36 @@ At the start, use `TaskCreate` to create a task for each step:
 
 ## Step 1: Install Turbo Skills
 
-Before installing, check for two things:
+### Clone, Fork, or Source
+
+Ask the user their relationship to Turbo:
+
+1. **Consume only** (clone) — read-only, pull updates
+2. **Contribute** (fork) — submit improvements back via PRs
+3. **Maintain** (source) — push directly to the upstream repo
+
+#### Clone
+
+```bash
+git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+```
+
+#### Fork
+
+The user forks [tobihagemann/turbo](https://github.com/tobihagemann/turbo) on GitHub first, then:
+
+```bash
+git clone https://github.com/<user>/turbo.git ~/.turbo/repo
+cd ~/.turbo/repo && git remote add upstream https://github.com/tobihagemann/turbo.git
+```
+
+#### Source
+
+```bash
+git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+```
+
+Same as clone, but the user has push access to origin.
 
 ### Excluded Skills
 
@@ -30,42 +59,52 @@ Read `~/.turbo/config.json` and check for an `excludeSkills` array. If it exists
 }
 ```
 
-### Conflict Detection
+For clone mode, add `contribute-turbo` to `excludeSkills` since it requires a fork or source access.
 
-Check if the user has existing non-symlinked skills in `~/.claude/skills/` that share names with Turbo skills. The install command overwrites existing skills with the same name.
+### Copy Skills
+
+Copy each skill directory from the local repo to the global skills directory:
 
 ```bash
-for skill in $(gh api repos/tobihagemann/turbo/contents/skills --jq '.[].name'); do
-  target="$HOME/.claude/skills/$skill"
-  if [ -e "$target" ] && [ ! -L "$target" ]; then
-    echo "WARNING: $target exists and is not a symlink (will be overwritten)"
-  fi
+mkdir -p ~/.claude/skills
+for skill in $(ls ~/.turbo/repo/skills/); do
+  cp -r ~/.turbo/repo/skills/$skill ~/.claude/skills/$skill
 done
 ```
 
-If any warnings appear, use `AskUserQuestion` to alert the user. For each conflicting skill, offer three options:
-1. **Overwrite** — proceed with installation
-2. **Exclude** — add the skill to `excludeSkills` in `~/.turbo/config.json` and skip it
-
-### Install
-
-If there are excluded skills (from config or user choice), build a specific skill list and pass it to `--skill`:
-
-```bash
-npx skills add tobihagemann/turbo --skill 'skill1' --skill 'skill2' ... --agent claude-code -y -g
-```
-
-If no exclusions, install all:
-
-```bash
-npx skills add tobihagemann/turbo --skill '*' --agent claude-code -y -g
-```
+Skip any skills in `excludeSkills`.
 
 Many skills depend on each other, so installing only a subset will leave gaps in orchestrator workflows like `/finalize`.
 
 Verify skills are available by trying a command like `/finalize`. It should be recognized (don't run it yet, just check it's there).
 
-Update by re-running the same command to pick up new, changed, or removed skills.
+### Initialize Config
+
+Create or update `~/.turbo/config.json`:
+
+```bash
+mkdir -p ~/.turbo
+```
+
+Set:
+- `repoMode` to `"clone"`, `"fork"`, or `"source"` based on the user's choice
+- `excludeSkills` to the exclusion list
+- `lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
+
+Preserve any existing config values (e.g., `oracle` settings).
+
+### Migration from `npx skills`
+
+If the user has an existing installation via `npx skills` (symlinks in `~/.claude/skills/` pointing into `~/.agents/skills/`), migrate:
+
+1. Clone the repo as above
+2. For each Turbo skill (where `~/.claude/skills/<name>` is a symlink into `~/.agents/skills/`):
+   - Read the installed file (resolve the symlink)
+   - Compare against `~/.turbo/repo/skills/<name>/SKILL.md`
+   - Note whether the user has customized this skill (contents differ)
+3. Remove old installations: `npx skills remove <name>` for each Turbo skill
+4. Copy skills from the repo. For customized skills, copy the user's version instead
+5. Initialize `~/.turbo/config.json` as above
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
@@ -91,10 +130,10 @@ Do not set `core.excludesfile` — the XDG path works automatically without it.
 
 Orchestrator workflows like `/finalize` invoke many skills in sequence. Without allowlisting them, the user gets prompted for each one, breaking the flow.
 
-Add all Turbo skills to the `permissions.allow` array in `~/.claude/settings.json`. Generate the entries from the Turbo repo:
+Add all Turbo skills to the `permissions.allow` array in `~/.claude/settings.json`. Generate the entries from the local repo:
 
 ```bash
-gh api repos/tobihagemann/turbo/contents/skills --jq '.[].name' | sed 's/.*/"Skill(&)"/'
+ls ~/.turbo/repo/skills/ | sed 's/.*/"Skill(&)"/'
 ```
 
 Merge the output into the existing `permissions.allow` array.
@@ -173,22 +212,18 @@ It requires:
 
 - **Chrome** with an active ChatGPT session
 - **Python 3** with the `cryptography` package (`pip3 install cryptography`)
-- A `~/.turbo/config.json` file:
+- A `~/.turbo/config.json` file with oracle settings:
 
-```bash
-mkdir -p ~/.turbo
-cat > ~/.turbo/config.json << 'EOF'
+```json
 {
   "oracle": {
     "chatgptUrl": "https://chatgpt.com/",
     "chromeProfile": "Default"
   }
 }
-EOF
-# Edit ~/.turbo/config.json with your ChatGPT URL and Chrome profile name
 ```
 
-See the [oracle skill](skills/oracle/SKILL.md) for details.
+Merge these values into the existing `~/.turbo/config.json`. See the [oracle skill](skills/oracle/SKILL.md) for details.
 
 ## Step 9: Quick Onboarding
 
@@ -199,4 +234,4 @@ Present the user with a summary of how to get started:
 3. **The planning pipeline:** For larger projects, see [The Planning Pipeline](README.md#the-planning-pipeline-optional).
 4. **Self-improvement:** Run `/self-improve` before context runs out to capture lessons for future sessions.
 5. **Track improvements:** When noticing something out of scope, run `/note-improvement` so it doesn't get lost.
-6. **Updating:** Run `/update-turbo` to update all skills with conflict detection and exclusion support.
+6. **Updating:** Run `/update-turbo` to update all skills from the local repo with conflict detection and changelog.
