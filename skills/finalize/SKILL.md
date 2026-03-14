@@ -33,13 +33,13 @@ Stage any new test files created in Step 2.
 
 ## Phase 2: Simplify Code
 
-Run the `/simplify-code` skill. The diff command for this phase is `git diff --cached`.
+Run the `/simplify-code` skill to review code style and structure. The diff command for this phase is `git diff --cached`.
 
 Stage any changes made by the simplifier.
 
 ## Phase 3: Code Review
 
-Run the `/review-code` skill to review uncommitted changes.
+Run the `/review-code` skill to review uncommitted changes for correctness and logic bugs.
 
 Stage any changes made by the reviewer.
 
