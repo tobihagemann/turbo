@@ -5,11 +5,10 @@ description: Stage files and create a commit in one step with a message matching
 
 # Stage and Commit Changes
 
-## Step 1: Commit Rules
+## Step 1: Stage Changes
 
-Run `/commit-rules` to load commit message rules and technical constraints.
+Run the `/stage` skill.
 
-## Step 2: Stage and Commit
+## Step 2: Commit
 
-- Stage only the changes to commit
-- Leave other unstaged changes alone
+Run the `/commit-staged` skill.

@@ -55,15 +55,14 @@ graph TD
         create-prompt-plan --> pick-next-prompt([/pick-next-prompt]):::plan
     end
 
-    pick-next-prompt -- "implement, then..." --> stage
+    pick-next-prompt -- "implement, then..." --> p1-stage
 
     %% Finalize phases
     subgraph finalize ["/finalize — QA Orchestrator"]
         direction TB
 
         subgraph p1 ["Phase 1 — Stage & Test"]
-            stage["1. Stage changes
-2. Write missing tests"]:::git
+            p1-stage([/stage]):::git --> p1-write-tests([/write-tests]):::git
         end
 
         subgraph p2 ["Phase 2 — Simplify Code"]
@@ -71,9 +70,7 @@ graph TD
         end
 
         subgraph p3 ["Phase 3 — Code Review"]
-            cr["1. Run /review-code
-2. Simplify review fixes
-3. Test and lint"]:::review
+            p3-review-code([/review-code]):::review
         end
 
         subgraph p4 ["Phase 4 — Self-Improve"]
@@ -87,9 +84,9 @@ graph TD
 4. /resolve-pr-comments"]:::git
         end
 
-        stage --> simplify-code
-        simplify-code --> cr
-        cr --> self-improve
+        p1-write-tests --> simplify-code
+        simplify-code --> p3-review-code
+        p3-review-code --> self-improve
         self-improve --> cp
     end
 
@@ -102,12 +99,14 @@ graph TD
 
     simplify-code -. "runs review" .-> sp-steps
 
-    %% Code review (reusable core)
-    subgraph reviewcode ["/review-code — AI Review + Evaluation"]
-        cr-peer([/peer-review]):::review -. "runs review" .-> codex([/codex]):::review --> cr-eval([/evaluate-findings]):::review
+    %% Code review (review, apply, verify)
+    subgraph reviewcode ["/review-code — AI Review, Fix & Verify"]
+        cr-peer([/peer-review]):::review -. "runs review" .-> codex([/codex]):::review --> cr-eval([/evaluate-findings]):::review --> cr-fix["Apply fixes
+/simplify-code
+Test & lint"]:::review
     end
 
-    cr -. "runs review" .-> cr-peer
+    p3-review-code -. "runs review" .-> cr-peer
 
     %% Evaluate findings (confidence-based triage)
     subgraph evalfindings ["/evaluate-findings — Confidence-Based Triage"]
@@ -128,7 +127,8 @@ graph TD
         inv-steps -. "stuck after 2 cycles" .-> oracle([/oracle]):::debug
     end
 
-    stage -. "test failures" .-> inv-steps
+    p1-write-tests -. "test failures" .-> inv-steps
+    cr-fix -. "test failures" .-> inv-steps
 
     %% Knowledge
     subgraph knowledge ["/self-improve — Self-Improvement"]
@@ -367,7 +367,8 @@ Each session handles one prompt to keep context focused.
 |---|---|
 | [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles |
 | [`/simplify-code`](skills/simplify-code/SKILL.md) | Multi-agent review for reuse, quality, efficiency, clarity |
-| [`/review-code`](skills/review-code/SKILL.md) | AI code review + findings evaluation |
+| [`/review-code`](skills/review-code/SKILL.md) | AI code review, apply fixes, simplify, and verify |
+| [`/write-tests`](skills/write-tests/SKILL.md) | Write missing tests for changed code |
 | [`/peer-review`](skills/peer-review/SKILL.md) | AI code review interface that delegates to `/codex` by default |
 | [`/codex`](skills/codex/SKILL.md) | AI code review and task execution via codex CLI |
 | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Confidence-based triage of review feedback |
@@ -377,6 +378,7 @@ Each session handles one prompt to keep context focused.
 
 | Skill | What it does |
 |---|---|
+| [`/stage`](skills/stage/SKILL.md) | Stage implementation changes with precise file selection |
 | [`/commit-rules`](skills/commit-rules/SKILL.md) | Shared commit message rules and technical constraints |
 | [`/stage-commit`](skills/stage-commit/SKILL.md) | Stage files and commit in one step |
 | [`/commit-staged`](skills/commit-staged/SKILL.md) | Commit already-staged files with good message |

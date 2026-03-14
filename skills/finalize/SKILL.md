@@ -19,31 +19,17 @@ At the start, use `TaskCreate` to create a task for each phase:
 
 ## Phase 1: Stage and Test
 
-### Step 1: Stage implementation changes
+### Step 1: Stage Implementation Changes
 
-Stage only the files changed during this implementation:
+Run the `/stage` skill.
 
-```bash
-git add <file1> <file2> ...
-```
+### Step 2: Write Missing Tests
 
-Do not use `git add -A` or `git add .`. If a file contains both implementation changes and unrelated changes, use `git add -p <file>` to stage only the relevant hunks. Use `git status` and `git diff --cached` to verify the staging area contains exactly the intended changes.
+Run the `/write-tests` skill for staged changes (`git diff --cached`).
 
-### Step 2: Write missing tests
+### Step 3: Stage Test Files
 
-Determine whether new tests are needed:
-
-1. Run `git diff --cached --name-only` to identify staged files
-2. Skip this step if changes are non-testable (config, documentation, CI files, SKILL.md files, markdown) or adequate tests already cover the modified code
-3. Search for existing test files covering the modified code using Glob and Grep
-
-If tests are needed:
-
-1. Identify the project's test framework and conventions by reading existing test files
-2. Write focused unit or integration tests for the new or changed behavior
-3. Run the test suite to confirm all tests pass
-4. If tests fail, run the `/investigate` skill to diagnose the root cause, then apply the suggested fix and re-run tests. If investigation cannot identify a root cause after its full cycle, stop and report with investigation findings.
-5. Stage the new test files
+Stage any new test files created in Step 2.
 
 ## Phase 2: Simplify Code
 
@@ -51,22 +37,7 @@ Run the `/simplify-code` skill. The diff command for this phase is `git diff --c
 
 ## Phase 3: Code Review
 
-### Step 1: Run code review
-
-Run the `/review-code` skill to review uncommitted changes. After findings evaluation, proceed based on the results:
-
-- **Zero actionable findings** — skip Steps 2 and 3 and proceed to Phase 4.
-- **Actionable findings** — apply all findings. Launch a single opus agent with the full diff to apply each fix, then continue with Steps 2 and 3.
-
-### Step 2: Simplify review fixes
-
-Run the `/simplify-code` skill. The diff command for this phase is `git diff` (NOT `git diff --cached` — the fix agent's changes are unstaged).
-
-### Step 3: Test and lint
-
-1. Run the test suite to confirm nothing broke
-2. If tests fail, run the `/investigate` skill to diagnose the root cause, apply the suggested fix, and re-run tests. If investigation cannot identify a root cause, stop and report with investigation findings.
-3. Run the project's linter/formatter to ensure clean output
+Run the `/review-code` skill to review uncommitted changes.
 
 ## Phase 4: Self-Improve
 
@@ -74,7 +45,7 @@ Run the `/self-improve` skill.
 
 ## Phase 5: Commit and PR
 
-### Step 1: Determine intent
+### Step 1: Determine Intent
 
 Detect the repository's default branch via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`. Check the current branch name and whether a PR already exists for it using `gh pr view`.
 
@@ -85,7 +56,7 @@ Use `AskUserQuestion` to ask the user how to proceed. Present the options based 
 - **On the default branch** — commit only, or create a feature branch + commit + create a PR
 - **Abort** — leave changes staged, do not commit
 
-### Step 2: Branch (if needed)
+### Step 2: Branch (if Needed)
 
 If the user wants a PR and the current branch is the default branch:
 
@@ -96,13 +67,13 @@ If the user wants a PR and the current branch is the default branch:
 
 Run the `/commit-staged` skill.
 
-### Step 4: Push and create or update PR (if requested)
+### Step 4: Push and Create or Update PR (if Requested)
 
 - **PR exists** — push and run the `/update-pr` skill
 - **New PR** — push with `-u` and run the `/create-pr` skill
 - **Commit only** — end the workflow (do not push unless the user asks)
 
-### Step 5: Resolve PR comments
+### Step 5: Resolve PR Comments
 
 Use `AskUserQuestion` to ask if the user wants to wait for automated reviewers to finish and resolve comments.
 

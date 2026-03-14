@@ -20,6 +20,8 @@ Each skill is self-contained. Orchestrators compose skills by invoking them via 
 - Skills should not reference which orchestrators call them (stay self-contained)
 - Orchestrator skills use `TaskCreate` for phase tracking
 - Skills communicate through standard interfaces: git staging area, PR state, file conventions at `.turbo/`
+- Skills should be context-agnostic: accept caller-specified context but determine their own when called standalone (from conversation context or git state). See `/simplify-code` as the model.
+- Skills should avoid side effects outside their domain. Let the caller or a dedicated skill handle cross-cutting concerns (e.g., staging files).
 - Run `/create-skill` when creating or editing skills
 
 ## Key Files
