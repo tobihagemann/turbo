@@ -55,9 +55,9 @@ Detect the repository's default branch via `gh repo view --json defaultBranchRef
 
 Use `AskUserQuestion` to ask the user how to proceed. Present the options based on the current state:
 
-- **On a feature branch with an existing PR** — commit, push, and update the PR
-- **On a feature branch without a PR** — commit only, or commit + create a PR
-- **On the default branch** — commit only, or create a feature branch + commit + create a PR
+- **On a feature branch with an existing PR** — commit and push; or commit, push, and update the PR; or commit only
+- **On a feature branch without a PR** — commit and push; or commit, push, and create a PR; or commit only
+- **On the default branch** — commit and push; or create a feature branch, commit, push, and create a PR; or commit only
 - **Abort** — leave changes staged, do not commit
 
 ### Step 2: Branch (if Needed)
@@ -73,9 +73,10 @@ Run the `/commit-staged` skill.
 
 ### Step 4: Push and Create or Update PR (if Requested)
 
-- **PR exists** — push and run the `/update-pr` skill
-- **New PR** — push with `-u` and run the `/create-pr` skill
-- **Commit only** — end the workflow (do not push unless the user asks)
+- **Push only** — push (do not create or update a PR)
+- **Create PR** — push with `-u` and run the `/create-pr` skill
+- **Update PR** — push and run the `/update-pr` skill
+- **Skip** — end the workflow (do not push)
 
 ### Step 5: Resolve PR Comments
 
