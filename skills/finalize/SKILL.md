@@ -35,9 +35,13 @@ Stage any new test files created in Step 2.
 
 Run the `/simplify-code` skill. The diff command for this phase is `git diff --cached`.
 
+Stage any changes made by the simplifier.
+
 ## Phase 3: Code Review
 
 Run the `/review-code` skill to review uncommitted changes.
+
+Stage any changes made by the reviewer.
 
 ## Phase 4: Self-Improve
 

@@ -29,11 +29,11 @@ If zero actionable findings survive evaluation, report that the code looks clean
 
 ## Step 3: Apply Fixes
 
-Launch a single opus agent with the full diff to apply each actionable finding.
+Get the full diff and apply each actionable finding directly.
 
 ## Step 4: Simplify Fixes
 
-Run the `/simplify-code` skill. The diff command is `git diff` (the fix agent's changes are unstaged).
+Run the `/simplify-code` skill. The diff command is `git diff` (the fixes are unstaged).
 
 ## Step 5: Test and Lint
 

@@ -59,8 +59,6 @@ Review the same changes for clarity, standards, and balance:
 
 ## Step 3: Fix Issues
 
-Wait for all four agents to complete. Aggregate their findings, then launch a single agent (with `model: "opus"`) with ALL aggregated findings from all four agents. That agent runs the diff command itself to get the diff, then applies each fix directly, skipping false positives. The fix agent must only edit files — do not stage, build, or test.
-
-After the fix agent completes, verify its edits with `git status`, then stage them.
+Wait for all four agents to complete. Aggregate their findings, run the diff command to get the current diff, then apply each fix directly, skipping false positives. Only edit files — do not stage, build, or test.
 
 When done, briefly summarize what was fixed (or confirm the code was already clean).
