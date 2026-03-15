@@ -381,6 +381,7 @@ Each session handles one prompt to keep context focused.
 | [`/create-prompt-plan`](skills/create-prompt-plan/SKILL.md) | Break a spec into context-sized implementation prompts |
 | [`/pick-next-prompt`](skills/pick-next-prompt/SKILL.md) | Pick the next prompt from `.turbo/prompts.md` and plan it |
 | [`/pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it |
+| [`/create-threat-model`](skills/create-threat-model/SKILL.md) | Analyze a codebase and produce a structured threat model |
 | [`/enhance-plan`](skills/enhance-plan/SKILL.md) | Add task tracking, a skills line, and a finalize step to a plan |
 | [`/capture-context`](skills/capture-context/SKILL.md) | Capture session knowledge into the plan file before clearing context |
 
