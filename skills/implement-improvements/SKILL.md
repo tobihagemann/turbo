@@ -67,7 +67,7 @@ Enter plan mode. Design an implementation plan that addresses all confirmed impr
 - **Dependencies** — Order improvements so that foundational changes come first
 - **Conflicts** — Flag if two improvements contradict each other
 
-After writing the plan, before presenting it to the user, run the `/enhance-plan` skill to add task tracking, a skills line, and a finalize step. Add a final instruction: "Remove implemented improvements from `.turbo/improvements.md`."
+Run `/enhance-plan` first to add task tracking, a skills line, and a finalize step to the plan. Add a final instruction: "Remove implemented improvements from `.turbo/improvements.md`."
 
 ## Step 5: Clean Up the Backlog
 

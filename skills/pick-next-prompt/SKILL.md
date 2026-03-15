@@ -47,12 +47,11 @@ Identify currently available skills from the skill list in the system prompt. De
 
 ## Step 5: Plan and Enhance
 
-This is the core of the skill. Using the selected prompt as the requirements, explore the codebase, design the implementation, and write a detailed plan (exact file paths, function signatures, data flow, test cases).
+Run `/enhance-plan` first to add task tracking, a skills line, and a finalize step to the plan.
 
-After writing the plan, before presenting it to the user:
+Then, using the selected prompt as the requirements, explore the codebase, design the implementation, and write a detailed plan (exact file paths, function signatures, data flow, test cases).
 
-1. Run the `/enhance-plan` skill to add task tracking, a skills line, and a finalize step.
-2. The plan's final step must instruct: "Mark prompt N as `done` in `.turbo/prompts.md`."
+The plan's final step must instruct: "Mark prompt N as `done` in `.turbo/prompts.md`."
 
 ## Rules
 
