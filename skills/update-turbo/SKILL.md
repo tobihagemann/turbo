@@ -167,13 +167,15 @@ For each skill where the user chose "Merge":
 
 ### Update permissions
 
-If skills were added or renamed, use `AskUserQuestion` to offer updating `permissions.allow` in `~/.claude/settings.json`. Generate the entries from the local repo:
+Reconcile `permissions.allow` in `~/.claude/settings.json` against the full set of installed turbo skills — not just newly added or renamed ones. Previously installed skills may be missing from permissions if an earlier update or manual install skipped this step.
+
+Generate the expected entries from the local repo:
 
 ```bash
 ls ~/.turbo/repo/skills/ | sed 's/.*/"Skill(&)"/'
 ```
 
-Show the entries to add or remove. If the user confirms, read the settings file, update the array, and write it back.
+Compare against existing `Skill(...)` entries in the settings file. If there are entries to add or remove, use `AskUserQuestion` to show the diff and confirm. If the user confirms, read the settings file, update the array, keep it sorted alphabetically, and write it back. Apply the same permission changes to `settings.backup.json`.
 
 ## Step 6: Save State
 
