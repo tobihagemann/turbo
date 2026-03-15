@@ -17,22 +17,22 @@ Determine what to review based on context:
 
 Default to reviewing against the repository's default branch (detect via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`). If the caller specifies a different target, use that.
 
-## Step 2: Launch Two Reviews in Parallel
+## Step 2: Run Two Reviews in Parallel
 
-Use the Agent tool to launch both reviews concurrently in a single message. Every Agent tool call must set `model: "opus"`. The diff target from Step 1 determines what each reviewer analyzes.
+The diff target from Step 1 determines what each reviewer analyzes.
 
 ### Review A: Review Subagent
 
-Instruct the agent to:
+Launch a **background** agent (`run_in_background: true`, `model: "opus"`) that:
 
-1. Run the appropriate diff command itself to obtain the changes
-2. Read [references/review-prompt.md](references/review-prompt.md) for review guidelines
-3. For each changed file, read enough surrounding context to understand the change
-4. Return findings following the format in the review prompt
+1. Runs the appropriate diff command itself to obtain the changes
+2. Reads [references/review-prompt.md](references/review-prompt.md) for review guidelines
+3. For each changed file, reads enough surrounding context to understand the change
+4. Returns findings following the format in the review prompt
 
 ### Review B: Peer Review
 
-Launch an agent that runs the `/peer-review` skill with the same diff target and captures the full review output.
+Run the `/peer-review` skill directly (via the Skill tool) with the same diff target. This runs in the main thread while Review A works in the background.
 
 ## Step 3: Evaluate Findings
 
