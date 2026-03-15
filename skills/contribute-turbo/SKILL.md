@@ -1,6 +1,6 @@
 ---
 name: contribute-turbo
-description: Submit turbo skill improvements back to the upstream repo. Adapts to repo mode: fork mode creates a PR, source mode pushes directly. Use when the user asks to "contribute to turbo", "submit turbo changes", "PR my skill changes", "contribute back", or "upstream my changes".
+description: "Submit turbo skill improvements back to the upstream repo. Adapts to repo mode: fork mode creates a PR, source mode pushes directly. Use when the user asks to \"contribute to turbo\", \"submit turbo changes\", \"PR my skill changes\", \"contribute back\", or \"upstream my changes\"."
 ---
 
 # Contribute Turbo

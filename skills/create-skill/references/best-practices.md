@@ -146,6 +146,20 @@ What works perfectly for Opus might need more detail for Haiku. If you plan to u
 > - Maximum 1024 characters
 > - Cannot contain XML tags
 > - Should describe what the Skill does and when to use it
+>
+> **Quoting values**: Quote frontmatter values that contain YAML special characters. Unquoted `: ` (colon-space) breaks parsing, and unquoted `[text]` is parsed as a list. When in doubt, wrap the value in double quotes and escape inner quotes with `\"`.
+>
+> ```yaml
+> # Bad — colon-space breaks YAML parsing
+> description: Adapts to repo mode: fork creates a PR
+>
+> # Bad — brackets parsed as a YAML list
+> argument-hint: [package-filter]
+>
+> # Good — quoted values
+> description: "Adapts to repo mode: fork creates a PR"
+> argument-hint: "[package-filter]"
+> ```
 
 ### Naming conventions
 

@@ -1,7 +1,7 @@
 ---
 name: update-deps
 description: Upgrade project dependencies with breaking change research for major version updates. Use when the user asks to "update dependencies", "upgrade packages", "check for updates", "update deps", "upgrade deps", "update npm deps", "update Swift packages", "cargo update", "go get updates", "bundle update", or "pip upgrade".
-argument-hint: [package-filter]
+argument-hint: "[package-filter]"
 ---
 
 # Update Dependencies
