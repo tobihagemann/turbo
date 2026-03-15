@@ -19,14 +19,14 @@ Review and improve skills for maximum effectiveness and reliability.
 ### 3. Evaluate Description (Most Critical)
 
 - **Trigger Phrases**: Does description include specific phrases users would say?
-- **Third Person**: Uses "This skill should be used when..." not "Load this skill when..."
+- **Third Person**: Avoids first/second person ("I can help you", "You can use this"). Imperative form ("Use when...") is fine.
 - **Specificity**: Concrete scenarios, not vague
-- **Length**: Appropriate (not too short <50 chars, not too long >500 chars for description)
+- **Length**: Appropriate (not too short <50 chars, not too long >1024 chars for description)
 - **Example Triggers**: Lists specific user queries that should trigger skill
 
 ### 4. Assess Content Quality
 
-- **Word Count**: SKILL.md body should be 1,000-3,000 words (lean, focused)
+- **Line Count**: SKILL.md body should be under 500 lines (lean, focused)
 - **Writing Style**: Imperative/infinitive form ("To do X, do Y" not "You should do X")
 - **Organization**: Clear sections, logical flow
 - **Specificity**: Concrete guidance, not vague advice
@@ -52,14 +52,14 @@ Categorize by severity (critical/major/minor).
 Anti-patterns to watch for:
 - Vague trigger descriptions
 - Too much content in SKILL.md (should be in references/)
-- Second person in description
+- First/second person in description ("I can help you", "You can use this")
 - Missing key triggers
 - No references when they'd be valuable
 
 ## Quality Standards
 
 - Description must have strong, specific trigger phrases
-- SKILL.md should be lean (under 3,000 words ideally)
+- SKILL.md should be lean (under 500 lines)
 - Writing style must be imperative/infinitive form
 - Progressive disclosure properly implemented
 - All file references work correctly
@@ -77,7 +77,7 @@ Overall assessment and word counts.
 - Recommended improvements (with suggested text)
 
 ### Content Quality
-- Word count assessment
+- Line count assessment
 - Writing style assessment
 - Organization assessment
 

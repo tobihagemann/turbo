@@ -1,6 +1,6 @@
 ---
 name: review-code
-description: "Run AI code review, evaluate findings, apply fixes, and verify. Launches `/code-review`, `/security-review`, and `/peer-review` in parallel, then evaluates and applies actionable findings. Use when the user asks to \"review code\", \"code review\", \"review my changes\", \"find bugs in my changes\", or wants a reviewed and evaluated set of findings."
+description: "Full code review pipeline: launches `/code-review`, `/security-review`, and `/peer-review` in parallel, evaluates findings, applies fixes, simplifies, and verifies with tests. Use when the user asks to \"review and fix my code\", \"full code review\", \"review my changes\", or wants an end-to-end review with fixes applied."
 ---
 
 # Review Code

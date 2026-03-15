@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Runs AI code review of changes and returns structured findings. Analyzes a diff for bugs, security issues, and correctness problems using strict determination criteria. Use when the user asks to \"review my code for bugs\", \"find issues in my changes\", \"check my code for security issues\", \"analyze my diff\", or \"run a code review analysis\"."
+description: "Analyzes a diff for bugs, security issues, and correctness problems using strict determination criteria. Returns structured findings without applying fixes. Use when the user asks to \"scan my code for bugs\", \"find issues in my changes\", \"analyze my diff\", \"check for security issues\", or \"run a code review analysis\"."
 ---
 
 # Code Review

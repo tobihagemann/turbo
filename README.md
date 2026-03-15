@@ -37,6 +37,9 @@ Every skill is a self-contained piece. Orchestrator skills like `/finalize` comp
 Want to swap a piece? For example:
 - Replace `/oracle` with your own setup (it's macOS-only and has a cookies workaround)
 - Replace `/commit-rules` with your team's commit convention. The pipeline adapts.
+- Replace `/code-style` with your team's style guide. The built-in one teaches general principles rather than opinionated rules, so it's a natural swap point.
+
+This is also why similar-sounding skills like `/code-review` and `/review-code` both exist. `/code-review` analyzes a diff and returns structured findings. `/review-code` is an orchestrator that composes `/code-review`, `/security-review`, and `/peer-review` into a full pipeline with evaluation, fixes, and verification. Run the piece when you want a scan. Run the orchestrator when you want the whole workflow.
 
 The skills communicate through standard interfaces (git staging area, PR state, file conventions), not tight coupling.
 
