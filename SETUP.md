@@ -90,21 +90,9 @@ Set:
 - `repoMode` to `"clone"`, `"fork"`, or `"source"` based on the user's choice
 - `excludeSkills` to the exclusion list
 - `lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
+- `configVersion` to the highest version number in `~/.turbo/repo/MIGRATION.md`
 
 Preserve any existing config values (e.g., `oracle` settings).
-
-### Migration from `npx skills`
-
-If the user has an existing installation via `npx skills` (symlinks in `~/.claude/skills/` pointing into `~/.agents/skills/`), migrate:
-
-1. Clone the repo as above
-2. For each Turbo skill (where `~/.claude/skills/<name>` is a symlink into `~/.agents/skills/`):
-   - Read the installed file (resolve the symlink)
-   - Compare against `~/.turbo/repo/skills/<name>/SKILL.md`
-   - Note whether the user has customized this skill (contents differ)
-3. Remove old installations: `npx skills remove -g -y <name>` for each Turbo skill
-4. Copy skills from the repo. For customized skills, copy the user's version instead
-5. Initialize `~/.turbo/config.json` as above
 
 ## Step 2: Add `.turbo` to Global Gitignore
 

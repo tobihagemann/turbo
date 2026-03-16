@@ -28,5 +28,5 @@ Each skill is self-contained. Orchestrators compose skills by invoking them via 
 
 ## Key Files
 
-- `~/.turbo/config.json` — User-level configuration (repoMode, excludeSkills, lastUpdateHead, oracle settings)
+- `~/.turbo/config.json` — User-level configuration (repoMode, excludeSkills, lastUpdateHead, configVersion, oracle settings)
 - `~/.turbo/repo/` — Local clone or fork of the turbo repo (skill source for install/update)

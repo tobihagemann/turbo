@@ -9,28 +9,7 @@ Read `~/.turbo/config.json` for:
 - `repoMode` — `"clone"`, `"fork"`, or `"source"`
 - `excludeSkills` (default: `[]`)
 - `lastUpdateHead` — the commit hash from the last update
-
-### Migration Check
-
-If `~/.turbo/config.json` does not exist or has no `lastUpdateHead`, check whether the user has an old `npx skills` installation:
-
-```bash
-# Old system used symlinks into ~/.agents/skills/
-ls -la ~/.claude/skills/finalize 2>/dev/null
-```
-
-If the symlink points into `~/.agents/skills/`, offer to migrate:
-
-1. Ask the user: consume only (clone), contribute (fork), or maintain (source)?
-2. Clone the repo to `~/.turbo/repo/` (see SETUP.md Step 1a for the exact commands per mode)
-3. For each Turbo skill (where `~/.claude/skills/<name>` is a symlink into `~/.agents/skills/` and has a matching directory in `~/.turbo/repo/skills/`):
-   - Read the installed file at `~/.claude/skills/<name>/SKILL.md` (resolve symlink first)
-   - Read the upstream version at `~/.turbo/repo/skills/<name>/SKILL.md`
-   - Note whether the user has customized this skill (contents differ)
-4. Remove old installations: `npx skills remove -g -y <name>` for each Turbo skill
-5. Copy skills from the repo. For customized skills, copy the user's version instead
-6. Initialize `~/.turbo/config.json` with `repoMode`, `excludeSkills: []`, and `lastUpdateHead` set to `git -C ~/.turbo/repo rev-parse HEAD`
-7. Report migration complete and stop
+- `configVersion` (default: `0` if missing)
 
 ### Fetch Updates
 
@@ -51,7 +30,29 @@ git -C ~/.turbo/repo rev-parse <remote>/main
 
 If they match, report that Turbo is already up to date and stop.
 
-## Step 2: Build Changelog
+## Step 2: Run Migrations
+
+**Current version: 1**
+
+If `configVersion` equals the current version, skip to Step 3.
+
+Otherwise, read `MIGRATION.md` from the fetched remote:
+
+```bash
+git -C ~/.turbo/repo show <remote>/main:MIGRATION.md
+```
+
+For each migration where the version number is greater than `configVersion`, in ascending order:
+
+1. Check the migration's **Condition**. If the condition is not met and a **Skip if** clause applies, skip it.
+2. Otherwise, follow the migration's **Steps**.
+3. After completing (or skipping) the migration, continue to the next one.
+
+After all migrations are processed, set `configVersion` to the current version in `~/.turbo/config.json`.
+
+If any migration initialized config and reported completion (e.g., a first-time migration that sets up the repo), stop here. The user can run `/update-turbo` again to continue with the normal update flow.
+
+## Step 3: Build Changelog
 
 Use local git commands to detect changes since `lastUpdateHead`. Use the upstream remote determined in Step 1.
 
@@ -79,7 +80,7 @@ Read both versions and write a concise, plain-language summary of what changed. 
 
 For added skills, read their new SKILL.md and summarize what they do.
 
-## Step 3: Present Changelog
+## Step 4: Present Changelog
 
 Use `AskUserQuestion` to present a formatted changelog. Example format:
 
@@ -106,13 +107,13 @@ Proceed with update?
 
 If the user declines, stop.
 
-## Step 4: Resolve Conflicts
+## Step 5: Resolve Conflicts
 
 For each **modified** or **renamed** skill, check for local customizations using a three-way comparison:
 
 1. Read the installed copy at `~/.claude/skills/<name>/SKILL.md`
 2. Read the old upstream version: `git -C ~/.turbo/repo show <lastUpdateHead>:skills/<name>/SKILL.md`
-3. If the installed copy matches the old upstream: no customization, auto-update in Step 5
+3. If the installed copy matches the old upstream: no customization, auto-update in Step 6
 4. If they differ: the user has customized this skill
 
 For each customized skill with upstream changes, use `AskUserQuestion`:
@@ -133,7 +134,7 @@ Options:
 
 Before proceeding to the next step, save the content of any customized skill where the user chose "Merge" (read the file now, before the copy step overwrites it).
 
-## Step 5: Execute Update
+## Step 6: Execute Update
 
 ### Pull
 
@@ -172,8 +173,8 @@ ls ~/.turbo/repo/skills/ | sed 's/.*/"Skill(&)"/'
 
 Compare against existing `Skill(...)` entries in the settings file. If there are entries to add or remove, use `AskUserQuestion` to show the diff and confirm. If the user confirms, read the settings file, update the array, keep it sorted alphabetically, and write it back.
 
-## Step 6: Save State
+## Step 7: Save State
 
-Read `~/.turbo/config.json`, set `lastUpdateHead` to the new HEAD (`git -C ~/.turbo/repo rev-parse HEAD`), merge any new exclusions into `excludeSkills`, and write it back.
+Read `~/.turbo/config.json`, set `lastUpdateHead` to the new HEAD (`git -C ~/.turbo/repo rev-parse HEAD`), set `configVersion` to the current version from Step 2, merge any new exclusions into `excludeSkills`, and write it back.
 
 Report a summary of what was updated.

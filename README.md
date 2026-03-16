@@ -249,7 +249,8 @@ cat > ~/.turbo/config.json << EOF
 {
   "repoMode": "clone",
   "excludeSkills": [],
-  "lastUpdateHead": "$(git -C ~/.turbo/repo rev-parse HEAD)"
+  "lastUpdateHead": "$(git -C ~/.turbo/repo rev-parse HEAD)",
+  "configVersion": 1
 }
 EOF
 ```
