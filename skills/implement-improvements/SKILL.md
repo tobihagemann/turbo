@@ -52,14 +52,14 @@ Present a summary to the user:
 - [summary] — [what's ambiguous]
 ```
 
+If there are more than 10 active improvements, suggest splitting into multiple sessions.
+
 Use `AskUserQuestion` to confirm:
-1. Which active improvements to implement (default: all)
+1. Which active improvements to implement (default: all; suggest a subset if splitting)
 2. Whether to remove stale entries from the backlog
 3. Resolution for any unclear items
 
 ## Step 4: Plan and Enhance
-
-If there are more than 10 active improvements, suggest splitting into multiple sessions and use `AskUserQuestion` to determine which subset to tackle first.
 
 Run the `/enhance-plan` skill first to add task tracking, a skills line, and a finalize step to the plan.
 
@@ -80,4 +80,3 @@ After implementation is complete (post-finalize), update `.turbo/improvements.md
 - Keep entries the user chose to skip or defer
 
 If all entries are removed, delete the file.
-
