@@ -125,7 +125,7 @@ Apply approved changes in order:
    1. Edit the installed copy at `~/.claude/skills/<name>/SKILL.md` (immediate effect for the user).
    2. If `repoMode` is `"fork"` or `"source"`: use `AskUserQuestion` to ask "These turbo skill improvements could benefit other users. Run `/contribute-turbo` to submit them?" If yes, apply the same changes to `~/.turbo/repo/skills/<name>/SKILL.md`, stage them (`git -C ~/.turbo/repo add skills/<name>/`), and run `/contribute-turbo`.
 3. **Improvements** — For items routed to project improvements, run `/note-improvement` with the summary, location, and rationale for each.
-4. **New skills** — Enter plan mode, then run `/create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
+4. **New skills** — Run `/create-skill` for each new skill. Provide the trigger conditions and relevant context from the session.
 
 ## Writing Guidelines
 

@@ -5,7 +5,7 @@ description: "Planning conventions for task tracking, skill loading, and finaliz
 
 # Plan Style
 
-Enter plan mode if not already in it. When writing an implementation plan, include these three elements:
+Use `EnterPlanMode` to enter plan mode if not already in it. When writing an implementation plan, include these three elements:
 
 1. **Task tracking** — A section at the top so the implementation session can track progress via `TaskCreate`
 2. **Skills line** — An instruction to load relevant skills before making edits
