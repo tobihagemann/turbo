@@ -141,3 +141,15 @@ git -C ~/.turbo/repo push origin main
 ```
 
 Report the pushed commit hash.
+
+## Step 7: Update Config
+
+In source mode, update `~/.turbo/config.json` so the next `/update-turbo` does not re-surface the just-pushed changes:
+
+1. Read `~/.turbo/config.json`
+2. Set `lastUpdateHead` (add the key if it does not exist) to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
+3. Write the updated config back
+
+Report that the contribution is complete.
+
+Skip this step in fork mode (the upstream has not changed until the PR is merged).
