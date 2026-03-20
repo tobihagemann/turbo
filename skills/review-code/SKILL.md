@@ -35,9 +35,7 @@ Launch an agent (`model: "opus"`, do not set `run_in_background`) that runs the 
 
 ## Step 3: Evaluate Findings
 
-Combine findings from all three reviewers and run the `/evaluate-findings` skill on the merged set.
-
-If there are additional findings to include (e.g., PR comments passed in by the caller), combine them before evaluation.
+Run the `/evaluate-findings` skill on the combined findings from all three reviewers. If there are additional findings to include (e.g., PR comments passed in by the caller), combine them before evaluation.
 
 If zero actionable findings survive evaluation, report that the code looks clean and stop.
 
