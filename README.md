@@ -6,7 +6,7 @@ A composable dev process for [Claude Code](https://docs.anthropic.com/en/docs/cl
 
 1. **Plan** — Enter plan mode and describe what you want to build
 2. **Implement** — Build it with Claude
-3. **Run `/finalize`** — Tests, code simplification, AI review, commit, and PR. One command.
+3. **Run `/finalize`** — Tests, iterative code polishing, commit, and PR. One command.
 
 Everything else in Turbo builds on this loop: planning pipelines for large projects, debugging tools for when things break, and self-improvement that makes each session teach the next. There are 40+ skills beyond `/finalize`. Read on for the full picture.
 
@@ -17,7 +17,7 @@ Turbo covers the full dev lifecycle: reviewing code, creating PRs, investigating
 Five ideas shape the design:
 
 1. **Standardized process.** Skills capture dev workflows so you can run them directly instead of prompting from scratch. [`/finalize`](#the-main-workflow) runs your entire post-implementation QA in one command. `/investigate` follows a structured root cause analysis cycle. The skill is the prompt.
-2. **Layered design.** Skills range from focused tools (`/code-review` analyzes a diff) to orchestrators that compose them (`/review-code` chains code review, security review, peer review, evaluation, and fixes). They [work together](#how-skills-connect) with a natural, predictable interface.
+2. **Layered design.** Skills range from focused tools (`/code-review` analyzes a diff) to orchestrators that compose them (`/review-code` chains code review, security review, peer review, and evaluation; `/polish-code` loops simplify → review → test → lint until stable). They [work together](#how-skills-connect) with a natural, predictable interface.
 3. **Swappable by design.** Every skill owns one concern and communicates through standard interfaces. Replace any piece with your own and the pipeline adapts. See [The Puzzle Piece Philosophy](#the-puzzle-piece-philosophy) for details.
 4. **Works out of the box.** Install the skills and the full workflow is ready. Dependencies are standard dev tooling (GitHub CLI, Codex) that most teams already have.
 5. **Just skills.** No framework, no custom runtime, no new memory system. Skills are plain markdown that use Claude Code's native primitives (git, filesystem, built-in tools). Remove an independent skill and the rest still work.
@@ -37,40 +37,48 @@ graph TD
         create-prompt-plan --> pick-next-prompt([/pick-next-prompt]):::plan
     end
 
-    pick-next-prompt -- "implement, then..." --> p1-stage
+    pick-next-prompt -- "implement, then..." --> p1-write-tests
 
     %% Finalize phases
     subgraph finalize ["/finalize — QA Orchestrator"]
         direction TB
 
-        subgraph p1 ["Phase 1 — Stage & Test"]
-            p1-stage([/stage]):::git --> p1-write-tests([/write-tests]):::git
+        subgraph p1 ["Phase 1 — Write Missing Tests"]
+            p1-write-tests([/write-tests]):::git
         end
 
-        subgraph p2 ["Phase 2 — Simplify Code"]
-            simplify-code([/simplify-code]):::review
+        subgraph p2 ["Phase 2 — Polish Code"]
+            polish-code([/polish-code]):::review
         end
 
-        subgraph p3 ["Phase 3 — Review Code"]
-            p3-review-code([/review-code]):::review
-        end
-
-        subgraph p4 ["Phase 4 — Self-Improve"]
+        subgraph p3 ["Phase 3 — Self-Improve"]
             self-improve([/self-improve]):::know
         end
 
-        subgraph p5 ["Phase 5 — Commit and PR"]
+        subgraph p4 ["Phase 4 — Commit and PR"]
             cp["1. Branch if needed
 2. /commit-staged
 3. /create-pr or /update-pr
 4. /resolve-pr-comments"]:::git
         end
 
-        p1-write-tests --> simplify-code
-        simplify-code --> p3-review-code
-        p3-review-code --> self-improve
+        p1-write-tests --> polish-code
+        polish-code --> self-improve
         self-improve --> cp
     end
+
+    %% Polish code (iterative loop)
+    subgraph polishcode ["/polish-code — Iterative Quality Loop"]
+        direction TB
+        pc-stage([/stage]):::git --> pc-simplify([/simplify-code]):::review
+        pc-simplify --> pc-review([/review-code]):::review
+        pc-review --> pc-fix["Apply fixes"]:::review
+        pc-fix --> pc-test["Test"]:::debug
+        pc-test --> pc-lint["Lint"]:::review
+        pc-lint -. "changes? re-run" .-> pc-simplify
+    end
+
+    polish-code -. "runs loop" .-> pc-stage
 
     %% Simplify (multi-agent review)
     subgraph simplifycode ["/simplify-code — Multi-Agent Review"]
@@ -79,22 +87,19 @@ graph TD
 3. Fix issues"]:::review
     end
 
-    simplify-code -. "runs review" .-> sp-steps
+    pc-simplify -. "runs review" .-> sp-steps
 
-    %% Code review (review, apply, verify)
-    subgraph reviewcode ["/review-code — AI Review, Fix & Verify"]
+    %% Code review (review-only)
+    subgraph reviewcode ["/review-code — AI Review & Evaluate"]
         cr-code([/code-review]):::review
         cr-sec([/security-review]):::review
         cr-peer([/peer-review]):::review -. "runs review" .-> codex([/codex]):::review
         cr-code --> cr-eval([/evaluate-findings]):::review
         cr-sec --> cr-eval
         codex --> cr-eval
-        cr-eval --> cr-fix["Apply fixes
-/simplify-code
-Test & lint"]:::review
     end
 
-    p3-review-code -. "runs review" .-> cr-code
+    pc-review -. "runs review" .-> cr-code
 
     %% Evaluate findings (confidence-based triage)
     subgraph evalfindings ["/evaluate-findings — Confidence-Based Triage"]
@@ -116,7 +121,7 @@ Test & lint"]:::review
     end
 
     p1-write-tests -. "test failures" .-> inv-steps
-    cr-fix -. "test failures" .-> inv-steps
+    pc-test -. "test failures" .-> inv-steps
 
     %% Knowledge
     subgraph knowledge ["/self-improve — Self-Improvement"]
@@ -141,6 +146,7 @@ Test & lint"]:::review
 
     style planning fill:#f0fdf4,stroke:#22c55e,color:#14532d
     style finalize fill:#f8fafc,stroke:#3b82f6,color:#1e3a5f
+    style polishcode fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
     style simplifycode fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
     style reviewcode fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
     style evalfindings fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
@@ -148,9 +154,8 @@ Test & lint"]:::review
     style knowledge fill:#faf5ff,stroke:#a855f7,color:#581c87
     style p1 fill:#fefce8,stroke:#eab308,color:#713f12
     style p2 fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
-    style p3 fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
-    style p4 fill:#faf5ff,stroke:#a855f7,color:#581c87
-    style p5 fill:#fefce8,stroke:#eab308,color:#713f12
+    style p3 fill:#faf5ff,stroke:#a855f7,color:#581c87
+    style p4 fill:#fefce8,stroke:#eab308,color:#713f12
 ```
 
 ## Works Best With
@@ -177,7 +182,7 @@ Want to swap a piece? For example:
 - Replace `/commit-rules` with your team's commit convention. The pipeline adapts.
 - Replace `/code-style` with your team's style guide. The built-in one teaches general principles rather than opinionated rules, so it's a natural swap point.
 
-This is also why similar-sounding skills like `/code-review` and `/review-code` both exist. `/code-review` analyzes a diff and returns structured findings. `/review-code` is an orchestrator that composes `/code-review`, `/security-review`, and `/peer-review` into a full pipeline with evaluation, fixes, and verification. Run the piece when you want a scan. Run the orchestrator when you want the whole workflow.
+This is also why similar-sounding skills like `/code-review` and `/review-code` both exist. `/code-review` analyzes a diff and returns structured findings. `/review-code` is an orchestrator that composes `/code-review`, `/security-review`, and `/peer-review` into a full pipeline with evaluation. Run the piece when you want a scan. Run the orchestrator when you want the whole review.
 
 Skills communicate through standard interfaces: git staging area, PR state, and file conventions.
 
@@ -353,11 +358,10 @@ The recommended way to use Turbo:
 
 `/finalize` runs through these phases automatically:
 
-1. **Stage & Test** — Stage changed files, write missing tests, run test suite
-2. **Simplify Code** — Multi-agent review for reuse, quality, efficiency, clarity
-3. **Review Code** — AI peer review, evaluate findings, apply fixes, re-test
-4. **Self-Improve** — Extract learnings, route to CLAUDE.md / memory / skills
-5. **Commit and PR** — Branch if needed, commit, push, create or update PR
+1. **Write Missing Tests** — Analyze changes and write tests matching project conventions
+2. **Polish Code** — Iterative loop: stage → simplify → review + fix → test → lint → re-run until stable
+3. **Self-Improve** — Extract learnings, route to CLAUDE.md / memory / skills
+4. **Commit and PR** — Branch if needed, commit, push, create or update PR
 
 ### Context Management Tips
 
@@ -392,9 +396,9 @@ Each session handles one prompt to keep context focused.
 
 | Skill | What it does | Uses |
 |---|---|---|
-| [`/finalize`](skills/finalize/SKILL.md) | Post-implementation QA: test, simplify, review, commit, PR | `/stage`, `/write-tests`, `/simplify-code`, `/review-code`, `/self-improve`, `/commit-staged`, `/create-pr`, `/update-pr`, `/resolve-pr-comments` |
-| [`/review-feature-branch`](skills/review-feature-branch/SKILL.md) | Full branch review: code review + evaluation + optional finalization | `/review-code`, `/investigate`, `/finalize` |
-| [`/review-pr`](skills/review-pr/SKILL.md) | Full PR review: code review + PR comments + evaluation + optional finalization | `/review-code`, `/fetch-pr-comments`, `/investigate`, `/finalize` |
+| [`/finalize`](skills/finalize/SKILL.md) | Post-implementation QA: test, polish, commit, PR | `/write-tests`, `/polish-code`, `/self-improve`, `/commit-staged`, `/create-pr`, `/update-pr`, `/resolve-pr-comments` |
+| [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → simplify → review + fix → test → lint → re-run until stable | `/stage`, `/simplify-code`, `/review-code`, `/investigate` |
+| [`/review-pr`](skills/review-pr/SKILL.md) | PR review: fetch comments, detect base branch, run code review | `/fetch-pr-comments`, `/review-code` |
 
 ### Planning
 
@@ -415,7 +419,7 @@ Each session handles one prompt to keep context focused.
 | [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | |
 | [`/write-tests`](skills/write-tests/SKILL.md) | Write missing tests matching project conventions | `/investigate` |
 | [`/simplify-code`](skills/simplify-code/SKILL.md) | Multi-agent review for reuse, quality, efficiency, clarity | |
-| [`/review-code`](skills/review-code/SKILL.md) | AI code review, apply fixes, simplify, and verify | `/code-review`, `/security-review`, `/peer-review`, `/evaluate-findings`, `/simplify-code`, `/investigate` |
+| [`/review-code`](skills/review-code/SKILL.md) | AI code review: 3 parallel reviewers + evaluation | `/code-review`, `/security-review`, `/peer-review`, `/evaluate-findings` |
 | [`/code-review`](skills/code-review/SKILL.md) | AI code review analysis with structured findings | |
 | [`/security-review`](skills/security-review/SKILL.md) | Security-focused code review with threat model integration | |
 | [`/peer-review`](skills/peer-review/SKILL.md) | AI code review interface that delegates to `/codex` by default | `/codex` |
