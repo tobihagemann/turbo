@@ -68,7 +68,7 @@ graph TD
     end
 
     %% Polish code (iterative loop)
-    subgraph polishcode ["/polish-code — Iterative Quality Loop"]
+    subgraph polishcode ["/polish-code"]
         direction TB
         pc-stage([/stage]):::git --> pc-simplify([/simplify-code]):::review
         pc-simplify --> pc-review([/review-code]):::review
@@ -81,7 +81,7 @@ graph TD
     polish-code -. "runs loop" .-> polishcode
 
     %% Simplify (multi-agent review)
-    subgraph simplifycode ["/simplify-code — Multi-Agent Review"]
+    subgraph simplifycode ["/simplify-code"]
         sp-steps["1. Determine diff command
 2. Launch 4 review agents
 3. Fix issues"]:::review
@@ -90,7 +90,7 @@ graph TD
     pc-simplify -. "runs review" .-> simplifycode
 
     %% Code review (review-only)
-    subgraph reviewcode ["/review-code — AI Review & Evaluate"]
+    subgraph reviewcode ["/review-code"]
         cr-code([/code-review]):::review
         cr-sec([/security-review]):::review
         cr-peer([/peer-review]):::review -. "runs review" .-> codex([/codex]):::review
@@ -102,7 +102,7 @@ graph TD
     pc-review -. "runs review" .-> reviewcode
 
     %% Evaluate findings (confidence-based triage)
-    subgraph evalfindings ["/evaluate-findings — Confidence-Based Triage"]
+    subgraph evalfindings ["/evaluate-findings"]
         ef-steps["1. Assess each finding
 2. Devil's Advocate
 3. Reconciliation
@@ -112,7 +112,7 @@ graph TD
     cr-eval -. "triages findings" .-> evalfindings
 
     %% Debugging
-    subgraph debugging ["/investigate — Root Cause Analysis"]
+    subgraph debugging ["/investigate"]
         inv-steps["1. Characterize
 2. Isolate
 3. Hypothesize
@@ -124,7 +124,7 @@ graph TD
     pc-test -. "test failures" .-> debugging
 
     %% Knowledge
-    subgraph knowledge ["/self-improve — Self-Improvement"]
+    subgraph knowledge ["/self-improve"]
         si-steps["1. Detect Context
 2. Scan Session
 3. Filter
