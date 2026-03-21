@@ -17,7 +17,7 @@ Turbo covers the full dev lifecycle: reviewing code, creating PRs, investigating
 Five ideas shape the design:
 
 1. **Standardized process.** Skills capture dev workflows so you can run them directly instead of prompting from scratch. [`/finalize`](#the-main-workflow) runs your entire post-implementation QA in one command. `/investigate` follows a structured root cause analysis cycle. The skill is the prompt.
-2. **Layered design.** Skills range from focused tools (`/code-review` analyzes a diff) to orchestrators that compose them (`/review-code` chains code review, security review, peer review, and evaluation; `/polish-code` loops simplify → review → test → lint until stable). They [work together](#how-skills-connect) with a natural, predictable interface.
+2. **Layered design.** Skills range from focused tools (`/code-review` analyzes a diff) to orchestrators that compose them (`/review-code` chains code review, peer review, security review, API usage review, and evaluation; `/polish-code` loops simplify → review → test → lint until stable). They [work together](#how-skills-connect) with a natural, predictable interface.
 3. **Swappable by design.** Every skill owns one concern and communicates through standard interfaces. Replace any piece with your own and the pipeline adapts. See [The Puzzle Piece Philosophy](#the-puzzle-piece-philosophy) for details.
 4. **Works out of the box.** Install the skills and the full workflow is ready. Dependencies are standard dev tooling (GitHub CLI, Codex) that most teams already have.
 5. **Just skills.** No framework, no custom runtime, no new memory system. Skills are plain markdown that use Claude Code's native primitives (git, filesystem, built-in tools). Remove an independent skill and the rest still work.
@@ -28,7 +28,135 @@ The other core piece is [`/self-improve`](#self-improvement), which makes the wh
 
 This diagram shows how `/finalize` orchestrates its pipeline and how the key sub-skills compose. It covers the core workflow, not every skill in Turbo. See [All Skills](#all-skills) for the full list.
 
-![How Skills Connect](assets/how-skills-connect.svg)
+```mermaid
+graph TD
+    %% Planning pipeline (optional)
+    subgraph planning ["Planning Pipeline (Optional)"]
+        direction TB
+        create-spec([/create-spec]):::plan --> create-prompt-plan([/create-prompt-plan]):::plan
+        create-prompt-plan --> pick-next-prompt([/pick-next-prompt]):::plan
+    end
+
+    planning -- "implement, then..." --> finalize
+
+    %% Finalize phases
+    subgraph finalize ["/finalize — QA Orchestrator"]
+        direction TB
+
+        subgraph p1 ["Phase 1 — Write Missing Tests"]
+            p1-write-tests([/write-tests]):::git
+        end
+
+        subgraph p2 ["Phase 2 — Polish Code"]
+            polish-code([/polish-code]):::review
+        end
+
+        subgraph p3 ["Phase 3 — Self-Improve"]
+            self-improve([/self-improve]):::know
+        end
+
+        subgraph p4 ["Phase 4 — Commit and PR"]
+            cp["1. Branch if needed
+2. /commit-staged
+3. /create-pr or /update-pr
+4. /resolve-pr-comments"]:::git
+        end
+
+        p1 --> p2
+        p2 --> p3
+        p3 --> p4
+    end
+
+    %% Polish code (iterative loop)
+    subgraph polishcode ["/polish-code"]
+        direction TB
+        pc-stage([/stage]):::git --> pc-simplify([/simplify-code]):::review
+        pc-simplify --> pc-review([/review-code]):::review
+        pc-review --> pc-fix["Apply fixes"]:::review
+        pc-fix --> pc-test["Test"]:::debug
+        pc-test --> pc-lint["Lint"]:::review
+        pc-lint -. "changes? re-run" .-> pc-simplify
+    end
+
+    p2 -. "runs loop" .-> polishcode
+
+    %% Simplify (multi-agent review)
+    subgraph simplifycode ["/simplify-code"]
+        sp-steps["1. Determine diff command
+2. Launch 4 review agents
+3. Fix issues"]:::review
+    end
+
+    pc-simplify -. "runs review" .-> simplifycode
+
+    %% Code review (review-only)
+    subgraph reviewcode ["/review-code"]
+        cr-code([/code-review]):::review
+        cr-sec([/security-review]):::review
+        cr-peer([/peer-review]):::review -. "runs review" .-> codex([/codex]):::review
+        cr-code --> cr-eval([/evaluate-findings]):::review
+        cr-sec --> cr-eval
+        codex --> cr-eval
+    end
+
+    pc-review -. "runs review" .-> reviewcode
+
+    %% Evaluate findings (confidence-based triage)
+    subgraph evalfindings ["/evaluate-findings"]
+        ef-steps["1. Assess each finding
+2. Devil's Advocate
+3. Reconciliation
+4. Present results"]:::review
+    end
+
+    cr-eval -. "triages findings" .-> evalfindings
+
+    %% Debugging
+    subgraph debugging ["/investigate"]
+        inv-steps["1. Characterize
+2. Isolate
+3. Hypothesize
+4. Test"]:::debug
+        inv-steps -. "stuck after 2 cycles" .-> oracle([/oracle]):::debug
+    end
+
+    p1 -. "test failures" .-> debugging
+    pc-test -. "test failures" .-> debugging
+
+    %% Knowledge
+    subgraph knowledge ["/self-improve"]
+        si-steps["1. Detect Context
+2. Scan Session
+3. Filter
+4. Route
+5. Present
+6. Execute"]:::know
+        si-steps -. "skill-shaped lesson" .-> create-skill([/create-skill]):::know
+        si-steps -. "out-of-scope fix" .-> note-improvement([/note-improvement]):::know
+        si-steps -. "turbo skill change" .-> contribute-turbo([/contribute-turbo]):::know
+    end
+
+    p3 -. "has learnings" .-> knowledge
+
+    classDef plan fill:#dcfce7,stroke:#22c55e,color:#14532d
+    classDef review fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef debug fill:#ffedd5,stroke:#f97316,color:#7c2d12
+    classDef know fill:#f3e8ff,stroke:#a855f7,color:#581c87
+    classDef git fill:#fef9c3,stroke:#eab308,color:#713f12
+
+    style planning fill:#f0fdf4,stroke:#22c55e,color:#14532d
+    style finalize fill:#f8fafc,stroke:#3b82f6,color:#1e3a5f
+    style polishcode fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
+    style simplifycode fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
+    style reviewcode fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
+    style evalfindings fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
+    style debugging fill:#fff7ed,stroke:#f97316,color:#7c2d12
+    style knowledge fill:#faf5ff,stroke:#a855f7,color:#581c87
+    style p1 fill:#fefce8,stroke:#eab308,color:#713f12
+    style p2 fill:#eff6ff,stroke:#3b82f6,color:#1e3a5f
+    style p3 fill:#faf5ff,stroke:#a855f7,color:#581c87
+    style p4 fill:#fefce8,stroke:#eab308,color:#713f12
+```
 
 ## Works Best With
 
@@ -54,7 +182,7 @@ Want to swap a piece? For example:
 - Replace `/commit-rules` with your team's commit convention. The pipeline adapts.
 - Replace `/code-style` with your team's style guide. The built-in one teaches general principles rather than opinionated rules, so it's a natural swap point.
 
-This is also why similar-sounding skills like `/code-review` and `/review-code` both exist. `/code-review` analyzes a diff and returns structured findings. `/review-code` is an orchestrator that composes `/code-review`, `/security-review`, and `/peer-review` into a full pipeline with evaluation. Run the piece when you want a scan. Run the orchestrator when you want the whole review.
+This is also why similar-sounding skills like `/code-review` and `/review-code` both exist. `/code-review` analyzes a diff and returns structured findings. `/review-code` is an orchestrator that composes `/code-review`, `/peer-review`, `/security-review`, and `/api-usage-review` into a full pipeline with evaluation. Run the piece when you want a scan. Run the orchestrator when you want the whole review.
 
 Skills communicate through standard interfaces: git staging area, PR state, and file conventions.
 
@@ -289,10 +417,11 @@ Each session handles one prompt to keep context focused.
 | [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | |
 | [`/write-tests`](skills/write-tests/SKILL.md) | Write missing tests matching project conventions | `/investigate` |
 | [`/simplify-code`](skills/simplify-code/SKILL.md) | Multi-agent review for reuse, quality, efficiency, clarity | |
-| [`/review-code`](skills/review-code/SKILL.md) | AI code review: 3 parallel reviewers + evaluation | `/code-review`, `/security-review`, `/peer-review`, `/evaluate-findings` |
+| [`/review-code`](skills/review-code/SKILL.md) | AI code review: 4 parallel reviewers + evaluation | `/code-review`, `/peer-review`, `/security-review`, `/api-usage-review`, `/evaluate-findings` |
 | [`/code-review`](skills/code-review/SKILL.md) | AI code review analysis with structured findings | |
 | [`/security-review`](skills/security-review/SKILL.md) | Security-focused code review with threat model integration | |
 | [`/peer-review`](skills/peer-review/SKILL.md) | AI code review interface that delegates to `/codex` by default | `/codex` |
+| [`/api-usage-review`](skills/api-usage-review/SKILL.md) | Check API/library usage against official documentation | |
 | [`/codex`](skills/codex/SKILL.md) | AI code review and task execution via codex CLI | |
 | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Confidence-based triage of review feedback | |
 | [`/find-dead-code`](skills/find-dead-code/SKILL.md) | Identify unused code via parallel analysis | `/evaluate-findings`, `/investigate` |
