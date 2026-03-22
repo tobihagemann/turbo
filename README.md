@@ -205,7 +205,6 @@ Each session handles one prompt to keep context focused.
 | [`/note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/improvements.md` | |
 | [`/implement-improvements`](skills/implement-improvements/SKILL.md) | Validate and implement improvements from the backlog | [`/plan-style`](skills/plan-style/SKILL.md) |
 | [`/create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure | |
-| [`/tidy-memory`](skills/tidy-memory/SKILL.md) | Audit and clean up auto-memory when it grows too large | |
 | [`/update-deps`](skills/update-deps/SKILL.md) | Smart dependency upgrades with breaking change research | |
 | [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills with always-latest instructions fetched from GitHub | |
 | [`/contribute-turbo`](skills/contribute-turbo/SKILL.md) | Submit turbo skill improvements back to upstream | [`/commit-rules`](skills/commit-rules/SKILL.md), [`/github-voice`](skills/github-voice/SKILL.md) |
