@@ -1,6 +1,6 @@
 ---
 name: code-style
-description: "Enforce mirror, reuse, and symmetry principles to keep new code consistent with surrounding code. Use when writing new code in an existing codebase, adding new features, refactoring, or making any code changes."
+description: "Enforce mirror, reuse, and symmetry principles: match brace style, naming conventions, and spacing of surrounding code; reuse existing patterns and helpers instead of introducing new ones; maintain structural symmetry across parallel functions. Use when writing new code, adding features, refactoring, reviewing code style, or ensuring consistency with existing codebase patterns."
 ---
 
 # Code Style: Mirror, Reuse, Symmetry

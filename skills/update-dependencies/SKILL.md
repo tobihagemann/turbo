@@ -1,7 +1,8 @@
 ---
 name: update-dependencies
-description: "Upgrade project dependencies with breaking change research for major version updates. Use when the user asks to \"update dependencies\", \"upgrade packages\", \"upgrade dependencies\", \"update deps\", \"upgrade deps\", \"update npm deps\", \"update Swift packages\", \"cargo update\", \"go get updates\", \"bundle update\", or \"pip upgrade\"."
-argument-hint: "[package-filter]"
+description: "Upgrade project dependencies with breaking change research for major version updates: detect outdated packages, research migration guides, apply codemods, and verify with tests. Use when the user asks to \"update dependencies\", \"upgrade packages\", \"upgrade dependencies\", \"update deps\", \"upgrade deps\", \"update npm deps\", \"update Swift packages\", \"cargo update\", \"go get updates\", \"bundle update\", or \"pip upgrade\"."
+metadata:
+  argument-hint: "[package-filter]"
 ---
 
 # Update Dependencies
@@ -42,14 +43,15 @@ Identify all major versions between current and target. For example:
 
 ### Step 2: Research Each Major Version
 
-Search for migration documentation:
+Search for migration documentation using WebSearch:
 
-```
-WebSearch: "[package-name] v[X] migration guide"
-WebSearch: "[package-name] v[X] breaking changes"
+```bash
+# Example: researching React 17 → 19 upgrade
+WebSearch: "react v18 migration guide"
+WebSearch: "react v19 breaking changes"
 ```
 
-Common sources: GitHub releases page, official docs, changelog files.
+Check GitHub releases pages, official docs, and changelog files.
 
 ### Step 3: Extract Key Breaking Changes
 
@@ -91,16 +93,7 @@ Update the manifest file (version constraint) and run the install/resolve comman
 
 ### Step 1: Run Codemods (if Available)
 
-Some ecosystems provide automated migration tools:
-
-| Ecosystem | Migration tools |
-|---|---|
-| React | `npx react-codemod [transform]` |
-| Next.js | `npx @next/codemod [transform]` |
-| Jest | `npx jest-codemods` |
-| Angular | `npx ng update` |
-| Rust | `cargo fix` for edition migrations |
-| Python | `pyupgrade`, `python-modernize` |
+Check if the ecosystem provides automated migration tools (e.g., `npx react-codemod rename-unsafe-lifecycles`, `npx @next/codemod new-link`, `cargo fix`). Run them before manual changes.
 
 ### Step 2: Manual Code Changes
 

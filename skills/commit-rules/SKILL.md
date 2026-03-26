@@ -1,6 +1,6 @@
 ---
 name: commit-rules
-description: "Shared commit message rules and technical constraints referenced by /stage-commit and /commit-staged. Not typically invoked directly."
+description: "Shared commit message rules and technical constraints: imperative mood, concise single-line messages matching existing style, no heredoc syntax, never bypass commit signing. Referenced by /stage-commit and /commit-staged. Use when the user asks about \"commit message format\", \"commit conventions\", \"how to write commit messages\", or \"commit style\"."
 ---
 
 # Commit Rules

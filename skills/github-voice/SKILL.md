@@ -1,6 +1,6 @@
 ---
 name: github-voice
-description: "Shared writing style rules for GitHub-facing output (PR comments, PR descriptions, PR titles). Differentiates insider vs outsider voice based on author association. Not typically invoked directly — loaded by other skills before composing GitHub text."
+description: "Shared writing style rules for GitHub-facing output: natural tone, no em dashes, insider vs outsider voice based on author association. Loaded by other skills before composing PR comments, PR descriptions, or PR titles. Use when writing GitHub text, composing PR descriptions, drafting issue comments, or adjusting tone for GitHub output."
 ---
 
 # GitHub Voice
