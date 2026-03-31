@@ -89,6 +89,23 @@ Claude will clone the repo, copy the skills, configure your environment, and wal
 
 Run [`/update-turbo`](skills/update-turbo/SKILL.md) in Claude Code to update all skills. It fetches the latest update instructions from GitHub, builds a changelog, handles conflict detection for customized skills, and manages exclusions.
 
+### Install via MCS
+
+If you use [MCS](https://github.com/mcs-cli/mcs), Turbo is available as a tech pack:
+
+```bash
+mcs pack add tobihagemann/turbo
+mcs sync
+```
+
+This installs all 60+ skills, prerequisites (GitHub CLI, Node.js, Codex CLI), and the `.turbo/` gitignore entry. To pick which skills to install:
+
+```bash
+mcs sync --customize
+```
+
+Check pack health anytime with `mcs doctor`.
+
 ### Manual Setup
 
 See the [manual setup guide](docs/manual-setup.md) for step-by-step instructions.

@@ -1,0 +1,523 @@
+schemaVersion: 1
+identifier: turbo-skills
+displayName: "Turbo Skills"
+description: "A composable dev process for Claude Code — 60+ modular skills covering the full dev lifecycle"
+author: "Tobias Hagemann"
+
+components:
+  # ──────────────────────────────────────────────
+  # Prerequisites
+  # ──────────────────────────────────────────────
+
+  - id: gh
+    displayName: "GitHub CLI"
+    description: "GitHub CLI — required by PR, issue, and review skills"
+    brew: gh
+
+  - id: node
+    displayName: "Node.js"
+    description: "JavaScript runtime — required for Codex CLI"
+    brew: node
+
+  - id: codex
+    displayName: "Codex CLI"
+    description: "OpenAI Codex CLI — powers peer review and consultation skills"
+    type: configuration
+    dependencies: [node]
+    shell: "npm install -g @openai/codex"
+    doctorChecks:
+      - type: commandExists
+        name: "Codex CLI"
+        section: "Prerequisites"
+        command: codex
+        fixCommand: "npm install -g @openai/codex"
+
+  # ──────────────────────────────────────────────
+  # Pipeline Skills
+  # ──────────────────────────────────────────────
+
+  - id: finalize
+    displayName: "/finalize"
+    description: "Post-implementation QA: polish, changelog, self-improve, commit, and PR"
+    skill:
+      source: skills/finalize
+      destination: finalize
+
+  - id: audit
+    displayName: "/audit"
+    description: "Project-wide health audit — fans out to all analysis skills in parallel"
+    skill:
+      source: skills/audit
+      destination: audit
+
+  # ──────────────────────────────────────────────
+  # Workflow Skills
+  # ──────────────────────────────────────────────
+
+  - id: polish-code
+    displayName: "/polish-code"
+    description: "Iterative quality loop: stage, format, lint, test, simplify, review, smoke test"
+    skill:
+      source: skills/polish-code
+      destination: polish-code
+
+  - id: review-code
+    displayName: "/review-code"
+    description: "Full code review — six parallel reviewers"
+    skill:
+      source: skills/review-code
+      destination: review-code
+
+  - id: review-plan
+    displayName: "/review-plan"
+    description: "AI plan review — internal review and peer review in parallel"
+    skill:
+      source: skills/review-plan
+      destination: review-plan
+
+  - id: review-spec
+    displayName: "/review-spec"
+    description: "AI spec review — internal review and peer review in parallel"
+    skill:
+      source: skills/review-spec
+      destination: review-spec
+
+  - id: review-prompt-plan
+    displayName: "/review-prompt-plan"
+    description: "AI prompt plan review — internal review and peer review in parallel"
+    skill:
+      source: skills/review-prompt-plan
+      destination: review-prompt-plan
+
+  - id: review-pr
+    displayName: "/review-pr"
+    description: "PR review — fetch comments, detect base branch, run code review, evaluate findings"
+    dependencies: [gh]
+    skill:
+      source: skills/review-pr
+      destination: review-pr
+
+  - id: simplify-code
+    displayName: "/simplify-code"
+    description: "Multi-agent review of changed files for reuse, quality, efficiency, and clarity"
+    skill:
+      source: skills/simplify-code
+      destination: simplify-code
+
+  - id: apply-findings
+    displayName: "/apply-findings"
+    description: "Apply findings by making the suggested code changes"
+    skill:
+      source: skills/apply-findings
+      destination: apply-findings
+
+  - id: update-dependencies
+    displayName: "/update-dependencies"
+    description: "Smart dependency upgrades with breaking change research"
+    skill:
+      source: skills/update-dependencies
+      destination: update-dependencies
+
+  # ──────────────────────────────────────────────
+  # Analysis Skills
+  # ──────────────────────────────────────────────
+
+  - id: review-correctness
+    displayName: "/review-correctness"
+    description: "Analyze code for bugs, logic errors, and correctness problems"
+    skill:
+      source: skills/review-correctness
+      destination: review-correctness
+
+  - id: review-security
+    displayName: "/review-security"
+    description: "Security-focused code review with threat model integration"
+    skill:
+      source: skills/review-security
+      destination: review-security
+
+  - id: review-api-usage
+    displayName: "/review-api-usage"
+    description: "Check API and library usage against official documentation"
+    skill:
+      source: skills/review-api-usage
+      destination: review-api-usage
+
+  - id: review-quality
+    displayName: "/review-quality"
+    description: "Cross-file quality analysis — duplication, architectural consistency, abstraction"
+    skill:
+      source: skills/review-quality
+      destination: review-quality
+
+  - id: review-test-coverage
+    displayName: "/review-test-coverage"
+    description: "Analyze code for test coverage gaps and missing edge cases"
+    skill:
+      source: skills/review-test-coverage
+      destination: review-test-coverage
+
+  - id: review-dependencies
+    displayName: "/review-dependencies"
+    description: "Detect outdated or vulnerable dependencies"
+    skill:
+      source: skills/review-dependencies
+      destination: review-dependencies
+
+  - id: review-tooling
+    displayName: "/review-tooling"
+    description: "Detect dev tooling gaps across linters, formatters, hooks, test runners, and CI/CD"
+    skill:
+      source: skills/review-tooling
+      destination: review-tooling
+
+  - id: peer-review-code
+    displayName: "/peer-review-code"
+    description: "Independent code peer review — returns structured findings without applying fixes"
+    skill:
+      source: skills/peer-review-code
+      destination: peer-review-code
+
+  - id: peer-review-plan
+    displayName: "/peer-review-plan"
+    description: "Independent plan peer review — returns structured findings without applying fixes"
+    skill:
+      source: skills/peer-review-plan
+      destination: peer-review-plan
+
+  - id: peer-review-prompt-plan
+    displayName: "/peer-review-prompt-plan"
+    description: "Independent prompt plan peer review — returns structured findings without applying fixes"
+    skill:
+      source: skills/peer-review-prompt-plan
+      destination: peer-review-prompt-plan
+
+  - id: peer-review-spec
+    displayName: "/peer-review-spec"
+    description: "Independent spec peer review — returns structured findings without applying fixes"
+    skill:
+      source: skills/peer-review-spec
+      destination: peer-review-spec
+
+  - id: evaluate-findings
+    displayName: "/evaluate-findings"
+    description: "Confidence-based triage of review feedback"
+    skill:
+      source: skills/evaluate-findings
+      destination: evaluate-findings
+
+  - id: find-dead-code
+    displayName: "/find-dead-code"
+    description: "Identify unused code via parallel analysis"
+    skill:
+      source: skills/find-dead-code
+      destination: find-dead-code
+
+  - id: investigate
+    displayName: "/investigate"
+    description: "Systematic root cause analysis for bugs and failures"
+    skill:
+      source: skills/investigate
+      destination: investigate
+
+  - id: smoke-test
+    displayName: "/smoke-test"
+    description: "Launch the app and verify changes manually"
+    skill:
+      source: skills/smoke-test
+      destination: smoke-test
+
+  - id: comprehensive-test
+    displayName: "/comprehensive-test"
+    description: "Multi-level testing — basic, complex, adversarial, and cross-cutting scenarios"
+    skill:
+      source: skills/comprehensive-test
+      destination: comprehensive-test
+
+  - id: codex-review
+    displayName: "/codex-review"
+    description: "AI code review via Codex CLI"
+    dependencies: [codex]
+    skill:
+      source: skills/codex-review
+      destination: codex-review
+
+  - id: codex-exec
+    displayName: "/codex-exec"
+    description: "Autonomous task execution via Codex CLI"
+    dependencies: [codex]
+    skill:
+      source: skills/codex-exec
+      destination: codex-exec
+
+  - id: consult-codex
+    displayName: "/consult-codex"
+    description: "Multi-turn consultation with Codex CLI"
+    dependencies: [codex]
+    skill:
+      source: skills/consult-codex
+      destination: consult-codex
+
+  - id: consult-oracle
+    displayName: "/consult-oracle"
+    description: "Consult ChatGPT Pro via browser automation when completely stuck"
+    skill:
+      source: skills/consult-oracle
+      destination: consult-oracle
+
+  # ──────────────────────────────────────────────
+  # Planning Skills
+  # ──────────────────────────────────────────────
+
+  - id: create-spec
+    displayName: "/create-spec"
+    description: "Guided discussion that produces a spec at .turbo/spec.md"
+    skill:
+      source: skills/create-spec
+      destination: create-spec
+
+  - id: create-test-plan
+    displayName: "/create-test-plan"
+    description: "Generate a structured test plan with four escalating levels"
+    skill:
+      source: skills/create-test-plan
+      destination: create-test-plan
+
+  - id: create-prompt-plan
+    displayName: "/create-prompt-plan"
+    description: "Break a spec into context-sized implementation prompts"
+    skill:
+      source: skills/create-prompt-plan
+      destination: create-prompt-plan
+
+  - id: pick-next-prompt
+    displayName: "/pick-next-prompt"
+    description: "Pick the next prompt from .turbo/prompts.md and plan it"
+    skill:
+      source: skills/pick-next-prompt
+      destination: pick-next-prompt
+
+  - id: pick-next-issue
+    displayName: "/pick-next-issue"
+    description: "Fetch and rank open GitHub issues, plan the top pick"
+    dependencies: [gh]
+    skill:
+      source: skills/pick-next-issue
+      destination: pick-next-issue
+
+  - id: plan-style
+    displayName: "/plan-style"
+    description: "Planning conventions for task tracking, skill loading, and finalization"
+    skill:
+      source: skills/plan-style
+      destination: plan-style
+
+  - id: capture-context
+    displayName: "/capture-context"
+    description: "Capture session knowledge into the plan file before clearing context"
+    skill:
+      source: skills/capture-context
+      destination: capture-context
+
+  - id: code-style
+    displayName: "/code-style"
+    description: "Enforce mirror, reuse, and symmetry principles for consistent code"
+    skill:
+      source: skills/code-style
+      destination: code-style
+
+  - id: frontend-design
+    displayName: "/frontend-design"
+    description: "Design guidelines for distinctive, production-grade frontend interfaces"
+    skill:
+      source: skills/frontend-design
+      destination: frontend-design
+
+  # ──────────────────────────────────────────────
+  # Git & GitHub Skills
+  # ──────────────────────────────────────────────
+
+  - id: stage
+    displayName: "/stage"
+    description: "Stage implementation changes with precise file selection"
+    skill:
+      source: skills/stage
+      destination: stage
+
+  - id: stage-commit
+    displayName: "/stage-commit"
+    description: "Stage files and commit in one step"
+    skill:
+      source: skills/stage-commit
+      destination: stage-commit
+
+  - id: stage-commit-push
+    displayName: "/stage-commit-push"
+    description: "Stage, commit, and push in one step"
+    skill:
+      source: skills/stage-commit-push
+      destination: stage-commit-push
+
+  - id: commit-staged
+    displayName: "/commit-staged"
+    description: "Commit already-staged changes with good message"
+    skill:
+      source: skills/commit-staged
+      destination: commit-staged
+
+  - id: commit-staged-push
+    displayName: "/commit-staged-push"
+    description: "Commit already-staged changes and push"
+    skill:
+      source: skills/commit-staged-push
+      destination: commit-staged-push
+
+  - id: commit-rules
+    displayName: "/commit-rules"
+    description: "Shared commit message rules and technical constraints"
+    skill:
+      source: skills/commit-rules
+      destination: commit-rules
+
+  - id: create-pr
+    displayName: "/create-pr"
+    description: "Draft and create a GitHub pull request"
+    dependencies: [gh]
+    skill:
+      source: skills/create-pr
+      destination: create-pr
+
+  - id: update-pr
+    displayName: "/update-pr"
+    description: "Update an existing PR title and description"
+    dependencies: [gh]
+    skill:
+      source: skills/update-pr
+      destination: update-pr
+
+  - id: fetch-pr-comments
+    displayName: "/fetch-pr-comments"
+    description: "Read-only summary of unresolved PR comments"
+    dependencies: [gh]
+    skill:
+      source: skills/fetch-pr-comments
+      destination: fetch-pr-comments
+
+  - id: resolve-pr-comments
+    displayName: "/resolve-pr-comments"
+    description: "Evaluate, fix, and reply to PR comments"
+    dependencies: [gh]
+    skill:
+      source: skills/resolve-pr-comments
+      destination: resolve-pr-comments
+
+  - id: github-voice
+    displayName: "/github-voice"
+    description: "Shared writing style rules for GitHub-facing output"
+    skill:
+      source: skills/github-voice
+      destination: github-voice
+
+  # ──────────────────────────────────────────────
+  # Knowledge & Maintenance Skills
+  # ──────────────────────────────────────────────
+
+  - id: create-threat-model
+    displayName: "/create-threat-model"
+    description: "Analyze a codebase and produce a structured threat model"
+    skill:
+      source: skills/create-threat-model
+      destination: create-threat-model
+
+  - id: self-improve
+    displayName: "/self-improve"
+    description: "Extract session learnings to CLAUDE.md, memory, or skills"
+    skill:
+      source: skills/self-improve
+      destination: self-improve
+
+  - id: note-improvement
+    displayName: "/note-improvement"
+    description: "Capture out-of-scope improvement ideas to .turbo/improvements.md"
+    skill:
+      source: skills/note-improvement
+      destination: note-improvement
+
+  - id: implement-improvements
+    displayName: "/implement-improvements"
+    description: "Validate and implement improvements from the backlog"
+    skill:
+      source: skills/implement-improvements
+      destination: implement-improvements
+
+  - id: create-skill
+    displayName: "/create-skill"
+    description: "Create or update a skill with proper structure"
+    skill:
+      source: skills/create-skill
+      destination: create-skill
+
+  - id: create-changelog
+    displayName: "/create-changelog"
+    description: "Create a CHANGELOG.md with version history backfilled from releases or tags"
+    skill:
+      source: skills/create-changelog
+      destination: create-changelog
+
+  - id: update-changelog
+    displayName: "/update-changelog"
+    description: "Update the Unreleased section of CHANGELOG.md"
+    skill:
+      source: skills/update-changelog
+      destination: update-changelog
+
+  - id: changelog-rules
+    displayName: "/changelog-rules"
+    description: "Shared changelog conventions and formatting rules"
+    skill:
+      source: skills/changelog-rules
+      destination: changelog-rules
+
+  - id: update-turbo
+    displayName: "/update-turbo"
+    description: "Update Turbo skills from the local repo with conflict resolution"
+    skill:
+      source: skills/update-turbo
+      destination: update-turbo
+
+  - id: contribute-turbo
+    displayName: "/contribute-turbo"
+    description: "Submit turbo skill improvements back to upstream"
+    dependencies: [gh]
+    skill:
+      source: skills/contribute-turbo
+      destination: contribute-turbo
+
+  # ──────────────────────────────────────────────
+  # Configuration
+  # ──────────────────────────────────────────────
+
+  - id: gitignore
+    displayName: "Global gitignore"
+    description: "Ignore .turbo/ working directory in all projects"
+    isRequired: true
+    gitignore:
+      - .turbo/
+
+templates:
+  - sectionIdentifier: claude-additions
+    contentFile: CLAUDE-ADDITIONS.md
+
+supplementaryDoctorChecks:
+  - type: commandExists
+    name: "Homebrew"
+    section: "Prerequisites"
+    command: brew
+    fixCommand: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+
+  - type: commandExists
+    name: "GitHub CLI authenticated"
+    section: "Prerequisites"
+    command: gh
+    args: ["auth", "status"]
+    fixCommand: "gh auth login"
