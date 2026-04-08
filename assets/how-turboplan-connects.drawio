@@ -69,56 +69,15 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="200" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdf4;strokeColor=#22c55e;fontColor=#14532d;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/draft-plan" vertex="1">
-          <mxGeometry height="310" width="380" x="40" y="-240" as="geometry" />
+          <mxGeometry height="170" width="210" x="40" y="-240" as="geometry" />
         </mxCell>
         <mxCell id="201" parent="200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/survey-patterns" vertex="1">
-          <mxGeometry height="40" width="150" x="115" y="50" as="geometry" />
+          <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="202" parent="200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Internal draft" vertex="1">
-          <mxGeometry height="40" width="150" x="30" y="130" as="geometry" />
-        </mxCell>
-        <mxCell id="203" parent="200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/peer-draft-plan" vertex="1">
-          <mxGeometry height="40" width="150" x="200" y="130" as="geometry" />
-        </mxCell>
-        <mxCell id="209" parent="200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/codex-exec" vertex="1">
-          <mxGeometry height="40" width="150" x="200" y="190" as="geometry" />
-        </mxCell>
-        <mxCell id="204" parent="200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Reconcile" vertex="1">
-          <mxGeometry height="40" width="150" x="115" y="250" as="geometry" />
+        <mxCell id="202" parent="200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Draft plan" vertex="1">
+          <mxGeometry height="40" width="150" x="30" y="110" as="geometry" />
         </mxCell>
         <mxCell id="205" edge="1" parent="200" source="201" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="202">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="170" y="110" />
-              <mxPoint x="105" y="110" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="206" edge="1" parent="200" source="201" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="203">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="210" y="110" />
-              <mxPoint x="275" y="110" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="207" edge="1" parent="200" source="202" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="204">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="105" y="210" />
-              <mxPoint x="170" y="210" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="208" edge="1" parent="200" source="203" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="204">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="275" y="210" />
-              <mxPoint x="210" y="210" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="210" edge="1" parent="200" source="203" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="209">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="300" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#eff6ff;strokeColor=#3b82f6;fontColor=#1e3a5f;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/refine-plan" vertex="1">

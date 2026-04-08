@@ -1,6 +1,6 @@
 # Draft Plan: Full Mode
 
-Capture the task, survey patterns, escalate decisions, discuss, and draft the plan in parallel (internal + peer).
+Capture the task, survey patterns, escalate decisions, discuss, and draft the plan.
 
 ## Task Tracking
 
@@ -10,8 +10,7 @@ Use `TaskCreate` to create a task for each step:
 2. Run `/survey-patterns` skill
 3. Escalate product decisions
 4. Deep-dive discussion
-5. Run two drafts in parallel
-6. Reconcile and write the plan file
+5. Draft and write the plan file
 
 ## Step 1: Capture the Task and Pick a Slug
 
@@ -72,50 +71,11 @@ Work through the implementation shape with the user via `AskUserQuestion`, one o
 - Probe short answers before moving on.
 - When the shape is clear or the user signals readiness, confirm before drafting.
 
-## Step 5: Run Two Drafts in Parallel
+## Step 5: Draft and Write the Plan File
 
-After the interactive steps (1-4) are complete, draft the plan twice in parallel: once internally and once via `/peer-draft-plan`.
+Synthesize the task description, pattern survey findings, resolved product decisions, and deep-dive discussion outcomes into a complete plan document.
 
-Launch two Agent tool calls in a single message (`model: "opus"`, do not set `run_in_background`):
-
-### Internal Draft
-
-Spawn a subagent and pass it:
-
-- The task description and slug from Step 1
-- The pattern survey findings from Step 2
-- The product decisions resolved in Step 3
-- The deep-dive discussion outcomes from Step 4
-- The plan file template and Content Rules from Step 6 below
-
-Instruct it to synthesize the discussion into a complete plan document following the template, returning the full markdown text. The subagent does **not** write to disk; it returns the draft to the caller.
-
-### Run `/peer-draft-plan` Skill
-
-Spawn a subagent whose prompt includes the same task description, slug, pattern survey findings, product decisions, and deep-dive discussion outcomes. Instruct it to invoke `/peer-draft-plan` via the Skill tool, passing the full context as the task input. `/peer-draft-plan` produces an independent plan via codex following the same template.
-
-Wait for both agents to complete before moving to Step 6.
-
-## Step 6: Reconcile and Write the Plan File
-
-Compare the two drafts side by side along these dimensions:
-
-| Dimension | What to compare |
-|---|---|
-| **Approach** | Do they propose the same overall strategy, or meaningfully different ones? |
-| **Step coverage** | Does one draft include steps the other misses? |
-| **Concreteness** | Which draft has more `file_path:line_number` references and named symbols? |
-| **Verification** | Which draft's verification section is more specific? |
-| **Failure modes** | Does one draft handle edge cases the other ignores? |
-
-Reconcile using these rules:
-
-- **Strong agreement** — Use the better-written of the two as the base. Merge in any unique steps or verification items from the other.
-- **Different approaches** — Use `AskUserQuestion` to present both approaches as options with a one-sentence trade-off summary. Let the user pick or ask to merge.
-- **One draft is clearly stronger** — Use it as the base and discard the weaker one.
-- **One agent failed or returned malformed output** — Use the surviving draft.
-
-Create `.turbo/plans/` if it does not exist. Write the reconciled plan to `.turbo/plans/<slug>.md` using the slug picked in Step 1 (or the override path from Step 1) using this structure:
+Create `.turbo/plans/` if it does not exist. Write the plan to `.turbo/plans/<slug>.md` using the slug picked in Step 1 (or the override path from Step 1) using this structure:
 
 ````markdown
 # Plan: <Task Title>

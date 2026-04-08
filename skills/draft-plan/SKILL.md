@@ -13,7 +13,6 @@ If a **shell file path** was passed, read [references/fill-in-mode.md](reference
 
 - Never skip the pattern survey.
 - Never skip decision escalation before drafting.
-- Never skip parallel drafting. Both internal and peer drafts must run in parallel. "The task is small" or "context window concerns" are not reasons to skip the peer draft. If `/peer-draft-plan` is unavailable or fails, fall through to the surviving internal draft and note that the peer draft was unavailable.
 - The plan file is the only output. Do not write code, scaffolding, or other project files.
 - Do not run `/review-plan` or any review skills here.
 - Do not embed task tracking, skill loading, or `/finalize` invocation in the plan file.

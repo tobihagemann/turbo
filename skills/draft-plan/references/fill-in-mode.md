@@ -9,8 +9,7 @@ Use `TaskCreate` to create a task for each step:
 1. Load the shell and verify consumes
 2. Run `/survey-patterns` skill (shell-focused)
 3. Escalate the shell's open questions
-4. Run two fill-in drafts in parallel
-5. Reconcile and write back to the shell path
+4. Fill in and write back to the shell path
 
 ## Step 1: Load the Shell and Verify Consumes
 
@@ -59,55 +58,17 @@ Do **not** escalate other questions. If you identify a new question while readin
 
 If the shell's Open Questions field is empty or contains "None," skip this step entirely.
 
-## Step 4: Run Two Fill-in Drafts in Parallel
+## Step 4: Fill In and Write Back
 
-Launch two Agent tool calls in a single message (`model: "opus"`, do not set `run_in_background`):
+Expand the shell into a full plan using:
 
-### Internal Fill-in Draft
+1. The shell's Context as the plan's Context (preserve verbatim or lightly edit)
+2. The shell's high-level Implementation Steps as the skeleton, concretizing each with `file_path:line_number` references, named functions, and specific symbols from the pattern survey
+3. A Pattern Survey section with the Step 2 findings
+4. A Verification section with specific test commands and expected observable results for this shell's work
+5. A Context Files section listing the files an implementer needs to read in full
 
-Spawn a subagent and pass it:
-
-- The complete shell content (Context, Produces, Consumes, Covers, high-level Implementation Steps, Open Questions)
-- The resolved Open Questions from Step 3 (if any)
-- The pattern survey findings from Step 2
-- The shell file path (where the draft will be written)
-- The full plan template and Content Rules listed below
-
-Instruct it to:
-
-1. Use the shell's Context as the plan's Context (preserve verbatim or lightly edit)
-2. Use the shell's high-level Implementation Steps as the skeleton, concretizing each with `file_path:line_number` references, named functions, and specific symbols from the pattern survey
-3. Add a Pattern Survey section with the Step 2 findings
-4. Write a Verification section with specific test commands and expected observable results for this shell's work
-5. Write a Context Files section listing the files an implementer needs to read in full
-6. Return the full plan markdown to the caller (do NOT write to disk — Step 5 handles that)
-
-### Run `/peer-draft-plan` Skill
-
-Spawn a subagent whose prompt includes the same shell content, resolved open questions, and pattern survey findings, and instructs it to invoke `/peer-draft-plan` via the Skill tool. The peer draft produces an independent fill-in following the same template.
-
-Wait for both agents to complete before moving to Step 5.
-
-## Step 5: Reconcile and Write Back
-
-Compare the two fill-in drafts along these dimensions:
-
-| Dimension | What to compare |
-|---|---|
-| **Approach** | Do they propose the same overall strategy, or meaningfully different ones? |
-| **Step coverage** | Does one draft include steps the other misses? |
-| **Concreteness** | Which draft has more `file_path:line_number` references and named symbols? |
-| **Verification** | Which draft's verification section is more specific? |
-| **Failure modes** | Does one draft handle edge cases the other ignores? |
-
-Reconcile using these rules:
-
-- **Strong agreement** — Use the better-written of the two as the base. Merge in any unique steps or verification items from the other.
-- **Different approaches** — Use `AskUserQuestion` to present both approaches as options with a one-sentence trade-off summary. Let the user pick or ask to merge.
-- **One draft is clearly stronger** — Use it as the base and discard the weaker one.
-- **One agent failed or returned malformed output** — Use the surviving draft.
-
-Write the reconciled full plan to the shell file path (overwriting the shell content) using this structure:
+Write the full plan to the shell file path (overwriting the shell content) using this structure:
 
 ````markdown
 # Plan: <Task Title>

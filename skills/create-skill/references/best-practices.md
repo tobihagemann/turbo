@@ -981,15 +981,6 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 
 A Rules section should only contain information not already conveyed by the skill body. Before adding a rule, check whether the Process, workflow steps, or tables already encode the same behavior. If they do, the rule is wasted tokens.
 
-### Avoid creating sibling skills in isolation
-
-When creating a new skill that mirrors an existing pattern (e.g., a peer variant of an analysis skill, or a parallel sub-skill that fits an existing internal+peer pattern), update the parent skill that uses the pattern in the same edit. Creating the sibling and assuming the parent will pick it up later leaves the new skill orphaned, even though it works standalone.
-
-The check: if your new skill has a clear "this is the X version of Y" relationship to an existing skill, find every place Y is referenced or composed and decide whether the new sibling should also appear there.
-
-- ✗ **Avoid**: Creating `/peer-foo` that mirrors `/peer-bar`'s pattern, then leaving `/foo` unchanged. Future readers will find the new skill but never see it invoked.
-- ✓ **Good**: Creating `/peer-foo` AND updating `/foo` (and any pipeline that references `/foo`) to invoke the new sibling in the same edit.
-
 ### Verify code fence pairing after multi-template edits
 
 When inserting a second fenced code block alongside an existing one in the same skill section, verify that both fences pair correctly. Multi-template edits commonly produce orphan closing fences, especially when shared scaffolding (XML output contracts, output specs, dig-deeper nudges) needs to apply to both templates.

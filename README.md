@@ -95,11 +95,11 @@ Claude Code's built-in plan mode is a starting point, but it tends to produce pl
 
 [`/turboplan`](skills/turboplan/SKILL.md) has three modes, selected automatically by its complexity analysis:
 
-- **Small-task mode** — Single-session change. Runs [`/draft-plan`](skills/draft-plan/SKILL.md) (survey + escalate + discuss + parallel internal+peer drafting) → [`/refine-plan`](skills/refine-plan/SKILL.md) → confirmation → [`/implement-plan`](skills/implement-plan/SKILL.md) → [`/finalize`](skills/finalize/SKILL.md).
+- **Small-task mode** — Single-session change. Runs [`/draft-plan`](skills/draft-plan/SKILL.md) (survey + escalate + discuss + draft) → [`/refine-plan`](skills/refine-plan/SKILL.md) → confirmation → [`/implement-plan`](skills/implement-plan/SKILL.md) → [`/finalize`](skills/finalize/SKILL.md).
 - **Complex-project mode** — Multi-subsystem project with architectural decisions. Routes to [`/create-spec`](skills/create-spec/SKILL.md) for a guided spec discussion, then [`/create-prompt-plan`](skills/create-prompt-plan/SKILL.md) to decompose the spec into shell plans. Halts after the prompt plan is ready; you run [`/pick-next-prompt`](skills/pick-next-prompt/SKILL.md) in fresh sessions to implement each shell.
 - **Shell mode** — Triggered when `/pick-next-prompt` hands a shell plan to `/turboplan`. Skips the complexity analysis and routes to `/draft-plan` in fill-in mode (verifies consumes against the current codebase, refreshes the pattern survey, escalates the shell's open questions, fills in concrete file references and verification), then refine → confirm → implement → finalize.
 
-Every sub-skill works standalone too. Run [`/draft-plan`](skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session on any plan file. Run [`/peer-draft-plan`](skills/peer-draft-plan/SKILL.md) to get a second draft from an external reasoner. Run [`/create-spec`](skills/create-spec/SKILL.md) to write a spec without committing to the full pipeline.
+Every sub-skill works standalone too. Run [`/draft-plan`](skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session on any plan file. Run [`/create-spec`](skills/create-spec/SKILL.md) to write a spec without committing to the full pipeline.
 
 ### Shell plans and the prompt plan flow
 
@@ -162,7 +162,6 @@ These are prompts you can type directly into Claude Code. Skill names work as na
 # Planning a change (single entry — /turboplan routes based on complexity)
 /turboplan add a caching layer to the image pipeline  ← small task → draft → refine → implement
 /turboplan build a notification system with backend, API, and UI  ← complex → spec → prompt plan → halt
-/peer-draft-plan  ← second draft from codex to compare against the internal one
 /survey-patterns  ← pattern-ground an approach without drafting a plan
 /implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
 
@@ -226,7 +225,7 @@ the error messages in this module are inconsistent, /note-improvement
 |---|---|---|
 | [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → simplify → review → evaluate → apply → smoke test → re-run until stable | [`/stage`](skills/stage/SKILL.md), [`/simplify-code`](skills/simplify-code/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/smoke-test`](skills/smoke-test/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
 | [`/review-code`](skills/review-code/SKILL.md) | AI code review: 6 parallel reviewers | [`/review-test-coverage`](skills/review-test-coverage/SKILL.md), [`/review-correctness`](skills/review-correctness/SKILL.md), [`/review-security`](skills/review-security/SKILL.md), [`/review-quality`](skills/review-quality/SKILL.md), [`/review-api-usage`](skills/review-api-usage/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md) |
-| [`/draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`. Full mode: guided discussion + parallel internal+peer drafting. Fill-in mode: expands a shell from `/create-prompt-plan` with fresh pattern survey and concrete references | [`/survey-patterns`](skills/survey-patterns/SKILL.md), [`/peer-draft-plan`](skills/peer-draft-plan/SKILL.md) |
+| [`/draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`. Full mode: guided discussion then draft. Fill-in mode: expands a shell from `/create-prompt-plan` with fresh pattern survey and concrete references | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
 | [`/refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a plan file until stable: review → evaluate → apply → re-run | [`/review-plan`](skills/review-plan/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, execute steps, run `/finalize` | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
 | [`/review-plan`](skills/review-plan/SKILL.md) | AI plan review: internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
@@ -251,7 +250,6 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/review-tooling`](skills/review-tooling/SKILL.md) | Detect dev tooling gaps across linters, formatters, hooks, test runners, and CI/CD | |
 | [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md) | Detect agentic coding infrastructure: CLAUDE.md, AGENTS.md, skills, MCP, hooks, cross-tool compatibility | |
 | [`/peer-review`](skills/peer-review/SKILL.md) | Independent peer review via codex (code, plans, specs, prompt plans, feedback) | [`/codex-exec`](skills/codex-exec/SKILL.md) |
-| [`/peer-draft-plan`](skills/peer-draft-plan/SKILL.md) | Independent peer plan draft via codex for comparison against an internal draft | [`/codex-exec`](skills/codex-exec/SKILL.md) |
 | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md) | Parallel internal + codex interpretation of third-party feedback | [`/peer-review`](skills/peer-review/SKILL.md) |
 | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Triage review feedback with adversarial verification | |
 | [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | |
