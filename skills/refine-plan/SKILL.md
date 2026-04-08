@@ -5,40 +5,72 @@ description: "Iteratively review and revise an implementation plan until no new 
 
 # Refine Plan
 
-Loop the plan review pipeline over `.turbo/plan.md` until no new findings are accepted. Writes back to the plan file in place.
+Loop the plan review pipeline over a plan file until no new findings are accepted. Writes back to the plan file in place.
 
 ## Task Tracking
 
-At the start of every invocation (including re-runs from Step 4), use `TaskCreate` to create a task for each step:
+At the start of every invocation (including re-runs from Step 5), use `TaskCreate` to create a task for each step:
 
-1. Run `/review-plan` skill
-2. Run `/evaluate-findings` skill
-3. Run `/apply-findings` skill
-4. Re-run `/refine-plan` skill if changed
+1. Resolve the plan file
+2. Run `/review-plan` skill
+3. Run `/evaluate-findings` skill
+4. Run `/apply-findings` skill
+5. Re-run `/refine-plan` skill if changed
 
-## Step 1: Run `/review-plan` Skill
+## Step 1: Resolve the Plan File
 
-Run the `/review-plan` skill on `.turbo/plan.md` (or the override path passed in by the caller). Pass the full plan text.
+Determine which plan file to refine using these rules in order:
+
+1. **Explicit path** — If the caller or user passed an absolute or relative path, use it
+2. **Explicit slug** — If a slug was passed (e.g., `add-image-cache`), resolve to `.turbo/plans/<slug>.md`
+3. **Single file** — Glob `.turbo/plans/*.md`, excluding shell files (see shell detection below). If exactly one non-shell file exists, use it
+4. **Most recent** — If multiple non-shell files exist, use the most recently modified
+5. **Legacy fallback** — If `.turbo/plans/` does not exist but `.turbo/plan.md` exists, use it
+6. **Nothing found** — If no plan file exists, tell the user to run `/turboplan` (for a new task) or `/pick-next-prompt` (for an existing prompt plan) and stop
+
+Rules 3 and 4 (heuristic resolution) exclude shell files. Rules 1, 2, and 5 (explicit input or legacy) accept any path; the shell-detection halt below catches shells reached this way.
+
+If multiple files exist and the most-recent choice is non-obvious (e.g., several plans were modified within the same minute), use `AskUserQuestion` to let the user pick from the candidates.
+
+### Shell detection
+
+A shell plan produced by `/create-prompt-plan` is recognizable by:
+
+- `## Produces`
+- `## Consumes`
+- `## Covers Spec Requirements`
+
+AND no `## Pattern Survey` section. `/refine-plan` refuses to run on shells because `/review-plan` reviews full plan content; on a shell, it would flag intentional gaps (missing Pattern Survey, no concrete file references) as false positives.
+
+If the resolved file is a shell, halt with:
+
+> `<path>` is a shell plan from `/create-prompt-plan`. Shells are reviewed by `/review-prompt-plan` at create time, not by `/refine-plan`. To expand the shell and refine the resulting full plan, run `/pick-next-prompt` (which hands the shell to `/turboplan` in shell mode).
+
+State the resolved plan path before continuing.
+
+## Step 2: Run `/review-plan` Skill
+
+Run the `/review-plan` skill on the resolved plan file. Pass the full plan text.
 
 Always run this step even if the plan looks polished.
 
-## Step 2: Run `/evaluate-findings` Skill
+## Step 3: Run `/evaluate-findings` Skill
 
-Run the `/evaluate-findings` skill on the review findings from Step 1.
+Run the `/evaluate-findings` skill on the review findings from Step 2.
 
 If zero actionable findings survive evaluation, skip to the end and report the plan as stable.
 
-## Step 3: Run `/apply-findings` Skill
+## Step 4: Run `/apply-findings` Skill
 
-Run the `/apply-findings` skill on the evaluated results. The target file is the plan file. Apply accepted findings by editing the plan in place.
+Run the `/apply-findings` skill on the evaluated results. The target file is the plan file resolved in Step 1. Apply accepted findings by editing the plan in place.
 
-## Step 4: Re-run `/refine-plan` Skill if Changed
+## Step 5: Re-run `/refine-plan` Skill if Changed
 
-Check whether the plan file was edited during Step 3. Any edit counts.
+Check whether the plan file was edited during Step 4. Any edit counts.
 
-If the plan file was edited, run `/refine-plan` again using the Skill tool. Cap at 3 total iterations (the initial run plus up to 2 additional runs) to prevent runaway loops.
+If the plan file was edited, run `/refine-plan` again using the Skill tool, passing the resolved plan path. Cap at 3 total iterations (the initial run plus up to 2 additional runs) to prevent runaway loops.
 
-The re-invocation is a full, fresh run of this skill. Every step (1-4) executes with its own task tracking and skill invocations.
+The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 
 Do NOT:
 - Skip steps because the changes are "minor" or "mechanical"
@@ -49,7 +81,7 @@ Do NOT:
 ## Rules
 
 - Every step must run in every iteration. Each step catches different issues. Context window concerns are not a reason to skip steps. `/review-plan` and `/evaluate-findings` use different agents with non-overlapping criteria — "the prior step covered it" is always wrong.
-- Never collapse steps 1-3 into fewer steps. `/evaluate-findings` is a judgment gate that must run before `/apply-findings` touches the plan.
-- Re-invocations from Step 4 are full runs, not lighter-weight passes.
+- Never collapse steps 2-4 into fewer steps. `/evaluate-findings` is a judgment gate that must run before `/apply-findings` touches the plan.
+- Re-invocations from Step 5 are full runs, not lighter-weight passes.
 - The plan file is the only file that should change. Source code edits belong in implementation skills.
 - If `/review-plan` returns no findings on the first pass, report the plan as stable and stop. No iteration needed.
