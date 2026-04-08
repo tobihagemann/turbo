@@ -16,7 +16,7 @@
         <mxCell id="5" parent="2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/pick-next-prompt" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="290" as="geometry" />
         </mxCell>
-        <mxCell id="142" parent="2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/plan-style" vertex="1">
+        <mxCell id="142" parent="2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/turboplan" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="350" as="geometry" />
         </mxCell>
         <mxCell id="268" parent="2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/review-spec" vertex="1">

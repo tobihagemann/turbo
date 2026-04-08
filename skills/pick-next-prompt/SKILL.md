@@ -7,11 +7,7 @@ description: "Pick the next prompt from .turbo/prompts.md and plan its implement
 
 Pick the next prompt from `.turbo/prompts.md` and plan its implementation.
 
-## Step 1: Run `/plan-style` Skill
-
-Run the `/plan-style` skill to load planning conventions.
-
-## Step 2: Read the Prompt Plan
+## Step 1: Read the Prompt Plan
 
 Read `.turbo/prompts.md`. Parse all prompts extracting:
 - Prompt number and title
@@ -21,15 +17,15 @@ Read `.turbo/prompts.md`. Parse all prompts extracting:
 
 Also read `.turbo/spec.md` (or the spec path referenced in the prompt plan header) for full context.
 
-## Step 3: Pick the Next Prompt
+## Step 2: Pick the Next Prompt
 
 Find the first `pending` prompt whose dependencies are all `done`.
 
-- **If found**: proceed to Step 4
+- **If found**: proceed to Step 3
 - **If all prompts are `done`**: report completion to the user — the plan is finished
 - **If remaining prompts are blocked**: report which prompts are blocked and by what
 
-## Step 4: Adapt the Prompt
+## Step 3: Adapt the Prompt
 
 Re-read the spec and compare against the current project state. Adjust the prompt if implementation has diverged:
 
@@ -42,11 +38,9 @@ Update `.turbo/prompts.md` with adjustments to the selected prompt. For affected
 
 Mark the selected prompt `in-progress` in `.turbo/prompts.md`.
 
-## Step 5: Plan
+## Step 4: Run `/turboplan` Skill
 
-Using the selected prompt as the requirements, explore the codebase, design the implementation, and write a detailed plan (exact file paths, function signatures, data flow, test cases).
-
-The plan's final step must instruct: "Mark prompt N as `done` in `.turbo/prompts.md`."
+Run the `/turboplan` skill with the selected prompt as the task description. Tell turboplan that the plan must include a final implementation step: "Mark prompt N as `done` in `.turbo/prompts.md`."
 
 ## Rules
 
