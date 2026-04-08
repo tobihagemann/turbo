@@ -194,9 +194,9 @@ Merge these values into the existing `~/.turbo/config.json`. See the [consult-or
 
 Present the user with a summary of how to get started:
 
-1. **The main workflow:** Enter plan mode, implement changes, then run `/finalize` to test, review, commit, and create a PR.
+1. **The main workflow:** Run `/turboplan` to draft and refine a plan, implement changes, then run `/finalize` to test, review, commit, and create a PR. `/turboplan` can also chain into implementation automatically.
 2. **All available skills:** See the [README](README.md#all-skills) for the full list with descriptions.
-3. **The planning pipeline:** For larger projects, see [The Planning Pipeline](README.md#the-planning-pipeline-optional).
+3. **The turboplan pipeline:** For larger projects, `/turboplan` routes to a spec + prompt plan decomposition. See [The Turboplan Pipeline](README.md#the-turboplan-pipeline).
 4. **Self-improvement:** Run `/self-improve` before context runs out to capture lessons for future sessions.
 5. **Track improvements:** When noticing something out of scope, run `/note-improvement` so it doesn't get lost.
 6. **Updating:** Run `/update-turbo` to update all skills from the local repo with conflict detection and changelog.
