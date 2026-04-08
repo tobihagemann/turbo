@@ -28,6 +28,8 @@ Review and improve skills for maximum effectiveness and reliability.
 
 - **Line Count**: SKILL.md body should be under 500 lines (lean, focused)
 - **Writing Style**: Imperative/infinitive form ("To do X, do Y" not "You should do X")
+- **Instructions vs documentation**: Every paragraph should tell the agent what to do. Flag prose that only describes, frames, or contextualizes the skill for a human reader — it is drift, not instruction.
+- **Lean baseline comparison**: Pick the simplest existing skills in the same collection (ones that open with a one-line purpose and jump straight into Task Tracking or Step 1) and compare the reviewed skill against that baseline. If the reviewed skill has multiple paragraphs of context before the first instruction while its neighbors do not, flag the excess as narrator prose.
 - **Organization**: Clear sections, logical flow
 - **Specificity**: Concrete guidance, not vague advice
 
@@ -55,6 +57,8 @@ Anti-patterns to watch for:
 - First/second person in description ("I can help you", "You can use this")
 - Missing key triggers
 - No references when they'd be valuable
+- **Narrator prose**: meta-framing that explains the file to its own reader ("This SKILL.md is the router..."), cross-skill commentary ("This is the sibling of /other-skill"), marketing copy ("X is the structured alternative to Y"), architecture commentary that restates what the instructions already convey, historical rationale, and tautological boundary statements ("X is Y's job; this skill only does Z")
+- **"Step 0" as mode detection**: a numbered step that only inspects caller input or picks a mode. Should be folded into the opening prose, not given a step heading
 
 ## Quality Standards
 

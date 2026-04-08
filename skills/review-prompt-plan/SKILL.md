@@ -5,9 +5,7 @@ description: "Review a prompt plan against its source spec: launches an internal
 
 # Review Prompt Plan
 
-Run two AI prompt plan reviews in parallel and return combined findings. The core principle: a prompt plan is a "broken down spec." Following the full chain of shells should implement the entire spec with nothing missing and nothing disconnected.
-
-A prompt plan now consists of an **index file** at `.turbo/prompt-plans/<slug>.md` that lists shells by status and dependencies, plus **shell files** at `.turbo/plans/<slug>-NN-<title>.md` that carry the structural content (Context, Produces, Consumes, Covers Spec Requirements, high-level Implementation Steps, Open Questions). The review checks the decomposition across all of these together.
+Run two AI prompt plan reviews in parallel and return combined findings.
 
 ## Step 1: Identify the Prompt Plan
 
@@ -51,13 +49,9 @@ Ignore stylistic preferences. If no issues are found, state that the prompt plan
 
 ## Step 3: Return Combined Findings
 
-Wait for both agents to complete. Aggregate their findings with attribution (reviewer: "internal" or "peer") and return them to the caller.
-
-The caller determines what to do with the findings (evaluate, apply, or present to the user).
+Wait for both agents to complete. Aggregate their findings with attribution (reviewer: "internal" or "peer") and return them.
 
 ## Prompt Plan Review Dimensions
-
-All five checks operate on the structured shell fields (Produces, Consumes, Covers) rather than free-form prose. This makes wiring verification explicit: every invariant is a set operation across the shells.
 
 ### 1. Spec Coverage (No Gaps)
 

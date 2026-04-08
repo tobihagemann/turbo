@@ -5,9 +5,7 @@ description: "Pick the next ready shell from a prompt plan in .turbo/prompt-plan
 
 # Pick Next Prompt
 
-Pick the next ready shell from a prompt plan index and hand it to `/turboplan` in shell mode for fill-in, refinement, and implementation.
-
-The prompt plan index is a thin manifest at `.turbo/prompt-plans/<slug>.md` that lists shells by number, status (pending/in-progress/done), shell file path, and dependencies. The shell content lives in separate files at `.turbo/plans/<spec-slug>-NN-<title>.md`. This skill handles the index side: resolving, picking, and marking in-progress. `/turboplan` (in shell mode) handles the shell side: fill-in, refine, implement, finalize.
+Pick the next ready shell from a prompt plan index at `.turbo/prompt-plans/<slug>.md` and hand it to `/turboplan` in shell mode.
 
 ## Step 1: Resolve the Prompt Plan Index
 
@@ -18,7 +16,7 @@ Determine which prompt plan index to read using these rules in order:
 3. **In-progress wins** — Glob `.turbo/prompt-plans/*.md`. If exactly one index has any prompt with `Status: in-progress`, use it. This is the prompt plan currently being worked on.
 4. **Single file** — If exactly one index file exists, use it
 5. **Most recent** — If no index has an in-progress prompt and rule 3 did not resolve, use the most recently modified file
-6. **Legacy fallback** — If `.turbo/prompt-plans/` does not exist but `.turbo/prompts.md` exists, the user is on the legacy free-text format. Tell them to re-run `/create-prompt-plan` to upgrade to shells, and halt without further processing.
+6. **Legacy fallback** — If `.turbo/prompt-plans/` does not exist but `.turbo/prompts.md` exists, tell the user to re-run `/create-prompt-plan` to upgrade to shells, and halt.
 7. **Nothing found** — If no prompt plan exists, tell the user to run `/turboplan` for a complex task (which will route to `/create-spec` + `/create-prompt-plan`) and stop
 
 If multiple files have in-progress prompts (concurrent work in different feature branches), use `AskUserQuestion` to let the user pick.
@@ -48,14 +46,13 @@ Read the shell file at the path from the prompt's `Shell:` field. Verify the fil
 
 ## Step 4: Run `/turboplan` Skill
 
-Run the `/turboplan` skill, passing the shell file path as input. `/turboplan` detects shell mode, skips complexity analysis, and runs `/draft-plan` in fill-in mode (which verifies Consumes, refreshes the pattern survey, escalates the shell's Open Questions, and writes a full plan back to the shell path). Then `/turboplan` continues through `/refine-plan`, the confirmation gate, and `/implement-plan`.
+Run the `/turboplan` skill, passing the shell file path as input.
 
 Tell `/turboplan` (via its task description) that the plan's final implementation step must include: "Mark prompt N as `done` in the prompt plan index at `<index path>`."
 
 ## Rules
 
-- Never modify the spec file — only the prompt plan index is writable by this skill (shell files are writable by `/draft-plan` in fill-in mode, not by this skill directly)
-- If no prompt plan index is found, tell the user to run `/turboplan` for a complex task — the routing inside `/turboplan` handles the spec + prompt plan creation
-- Do not pre-verify Consumes or refresh surveys here — that's `/draft-plan`'s fill-in mode job
-- Do not re-draft or re-analyze the shell — `/turboplan` in shell mode handles the full expansion
-- If the index references a shell file that does not exist, halt — do not silently recover by regenerating the shell
+- Never modify the spec file.
+- Do not pre-verify Consumes or refresh surveys here.
+- Do not re-draft or re-analyze the shell.
+- If the index references a shell file that does not exist, halt. Do not silently recover by regenerating the shell.

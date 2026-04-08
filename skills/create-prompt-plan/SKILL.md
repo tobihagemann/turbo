@@ -5,9 +5,7 @@ description: "Decompose a specification file into context-sized shell plans. Eac
 
 # Create Prompt Plan
 
-Read a specification file and decompose it into a series of shell plans. Each shell represents one unit of work for a separate Claude Code session. The decomposition work — ensuring spec coverage, correct wiring between prompts, and no dead ends — happens here, at create time. Concrete file paths and pattern surveys are deferred to implementation time, when `/pick-next-prompt` hands a shell to `/turboplan` for fill-in.
-
-Shells are written to `.turbo/plans/<spec-slug>-NN-<title>.md`. An index file at `.turbo/prompt-plans/<slug>.md` lists the shells with status and dependencies, paired to the source spec by slug.
+Decompose a specification file into shell plans at `.turbo/plans/<spec-slug>-NN-<title>.md` plus an index at `.turbo/prompt-plans/<slug>.md`. Each shell represents one unit of work for a separate Claude Code session.
 
 ## Task Tracking
 
@@ -56,7 +54,7 @@ Split the spec into shells where each shell fits a single Claude Code context se
 - If a shell would touch more than ~15-20 files or span 3+ unrelated subsystems, split further
 - If the entire scope fits one session, produce a single shell
 - Each shell must leave the codebase fully integrated, with no components unreachable from the project's entry points
-- When a shell builds infrastructure that a later shell consumes, name the consumer explicitly in the Produces field so the wiring is traceable
+- When a shell builds infrastructure that a later shell consumes, name the consumer explicitly in the Produces field
 
 ### Ordering
 
@@ -73,7 +71,7 @@ Mitigate dead code risk in bottom-up ordering by bundling tightly-coupled produc
 
 ### Wiring Invariants
 
-For each shell, identify the structural contract with the rest of the decomposition. These are the fields `/review-prompt-plan` uses to verify the decomposition is tight:
+For each shell, identify the structural contract with the rest of the decomposition:
 
 - **Produces** — What this shell creates that other shells (or the final system) can use. List concrete artifacts at the conceptual level: modules, types, endpoints, data models, UI screens, migration files. No file paths — those come at fill-in time.
 - **Consumes** — What this shell depends on that must already exist. Either listed in a prior shell's Produces, or marked "from existing codebase" if it predates this prompt plan. Every Consumes entry must be traceable to a source.
@@ -140,8 +138,6 @@ The following are filled in when `/pick-next-prompt` hands this shell to `/turbo
 - Context Files section with the files to read in full before editing
 ````
 
-A shell is recognizable by the presence of `## Produces`, `## Consumes`, and `## Covers Spec Requirements` sections and the absence of `## Pattern Survey`. Fill-in is `/draft-plan`'s job; this skill only writes the shell.
-
 If a shell has no Open Questions, include the section with "None" so the structure stays consistent.
 
 ### Write the Index
@@ -173,8 +169,6 @@ Total shells: N
 **Depends on:** Prompt 1
 ````
 
-The index is a thin manifest. Status tracking lives here; shell content lives in the shell files.
-
 ## Step 4: Run `/review-prompt-plan` Skill
 
 Run the `/review-prompt-plan` skill, passing the index and shell paths. It checks the structured wiring invariants (Produces, Consumes, Covers Spec Requirements) across all shells and returns combined findings.
@@ -199,5 +193,5 @@ After writing and review, present a brief summary: number of shells, one-line de
 - If the spec is ambiguous about what belongs together, split conservatively (smaller shells are safer than oversized ones)
 - Each shell must be self-contained with enough structural context (Context, Produces, Consumes, Covers) to understand the work without reading the full spec
 - Shell files and the index are the only outputs — do not modify the spec or project files
-- Every Consumes entry must trace to a prior shell's Produces or to "from existing codebase." Orphaned consumes are wiring gaps that `/review-prompt-plan` will catch.
-- The union of all Covers fields must equal the set of spec requirements. Gaps are coverage failures that `/review-prompt-plan` will catch.
+- Every Consumes entry must trace to a prior shell's Produces or to "from existing codebase."
+- The union of all Covers fields must equal the set of spec requirements.

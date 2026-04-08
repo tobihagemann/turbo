@@ -54,6 +54,22 @@ First, you'll need to install it using pip. Then you can use the code below...
 
 The concise version assumes Claude knows what PDFs are and how libraries work.
 
+#### Skill files are instructions, not documentation
+
+A skill file tells Claude what to do. It is not a place to explain what the skill is, why it exists, how it fits into the broader collection, or what its design history is. Claude does not benefit from narrator prose — a human reader might, but skills are loaded into an agent's context, not read by humans at design time.
+
+Common drift patterns to strip on sight:
+
+- **Meta-framing** — sentences that describe the skill file to its own reader: "This SKILL.md is the router...", "This skill wraps X with Y...", "This file acts as..." If Claude is reading the file, it already knows it's reading the file.
+- **Cross-skill commentary** — "This skill is the sibling/counterpart/successor of /other-skill." Skills should be self-contained and not reference which pipelines call them or which siblings they relate to.
+- **Marketing or positioning copy** — "X is the structured alternative to Y" or "X is the preferred way to do Z." That kind of framing belongs in a README, not a skill file.
+- **Architecture commentary** — explaining the data model or file layout as standalone prose when the instructions already imply the structure. If the steps tell Claude to "write the index to `<path>`," a separate sentence saying "the index is a thin manifest" adds nothing.
+- **Historical rationale** — "X happens here because Y would cause Z." Keep only the rule; drop the backstory unless it actively prevents a rationalization the agent would otherwise make.
+- **Tautological boundary statements** — "X is Y's job; this skill only does Z." If the positive instructions are correct, boundaries are already implicit.
+- **"Caller" phrasing** — "the caller," "caller passed," "caller provides." This is narrator language about who invoked the skill rather than instruction to the agent. Prefer passive voice ("if a shell path was passed") or a named role when the distinction actually matters.
+
+When in doubt, compare a new or edited skill against the simplest existing skills in the same collection. If a lean neighbor skill opens with a one-line purpose and jumps straight into Task Tracking or Step 1, and your skill has three paragraphs of context before the first instruction, the extra paragraphs are almost certainly drift.
+
 ### Set appropriate degrees of freedom
 
 Match the level of specificity to the task's fragility and variability.
@@ -459,6 +475,8 @@ Break complex operations into clear, sequential steps. Use `## Step N:` headings
 ```
 
 **Avoid** wrapper sections like `## Process` with `### 1.` numbered subsections. Steps should be top-level, not nested under a generic heading.
+
+**Avoid** any section whose only purpose is to inspect input or detect a mode, regardless of what it is labeled. This includes numbered "Step 0" headings, unnumbered `## Mode Selection` sections, or any subheading that collapses to "if X, read file A; otherwise read file B." A step or section should do work the agent executes. Trivial input inspection and mode routing are one-line branches — fold them into the skill's opening prose rather than giving them their own heading.
 
 For particularly complex workflows, provide a checklist that Claude can copy into its response and check off as it progresses.
 

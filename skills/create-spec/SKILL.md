@@ -78,7 +78,7 @@ Synthesize the entire discussion into `.turbo/specs/<slug>.md` using the slug pi
 - Where the user deferred a decision, capture it in an Open Questions section
 - Where recommendations were accepted, state them as decisions with brief rationale
 - Adapt the structure to the project — a CLI tool spec looks different from a SaaS platform spec
-- Trace every specified component (data model, API, utility, service) to at least one consumer in the spec. If a component exists only to "support future work," either spec the future work concretely or defer the component. Unconnected components become dead code during implementation.
+- Trace every specified component (data model, API, utility, service) to at least one consumer in the spec. If a component exists only to "support future work," either spec the future work concretely or defer the component.
 
 Create the `.turbo/specs/` directory if it does not exist. Accept a different output path if the user provides one.
 

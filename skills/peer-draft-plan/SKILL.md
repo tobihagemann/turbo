@@ -1,27 +1,23 @@
 ---
 name: peer-draft-plan
-description: "Draft an implementation plan independently via codex. Designed to run in parallel with an internal draft from /draft-plan as the planning sibling of /peer-review. Use when the user asks to \"peer draft a plan\", \"get a peer plan\", \"draft a plan with codex\", \"second draft of the plan\", or \"alternative plan from codex\", or when called by /draft-plan as the peer half of its parallel internal+peer drafting step."
+description: "Draft an implementation plan independently via codex. Use when the user asks to \"peer draft a plan\", \"get a peer plan\", \"draft a plan with codex\", \"second draft of the plan\", or \"alternative plan from codex\"."
 ---
 
 # Peer Draft Plan
 
-Draft an implementation plan independently via codex. Returns the peer draft text to the caller.
-
-This skill is the planning sibling of `/peer-review`: where `/peer-review` asks codex to critique an existing artifact, `/peer-draft-plan` asks codex to produce one from scratch. It is designed to run in parallel with an internal drafter inside `/draft-plan`'s parallel-drafting step.
+Draft an implementation plan independently via codex. Returns the peer draft text.
 
 ## Step 1: Identify the Task Context
 
-Determine the mode and the context to draft from. This skill supports three invocation shapes:
+Determine the invocation shape and the context to draft from:
 
-- **Full-mode context** (from `/draft-plan` full mode): caller provides task description, slug, pattern survey findings, resolved product decisions, and deep-dive discussion outcomes
-- **Fill-in context** (from `/draft-plan` fill-in mode): caller provides a shell's structural content — Context, Produces, Consumes, Covers Spec Requirements, high-level Implementation Steps, resolved Open Questions — plus the pattern survey findings refreshed at fill-in time
-- **Standalone context** (from the user directly): caller provides only a task description. Ask the user for any decisions the prompt cannot infer, then proceed
-
-The richer the context, the more comparable the peer draft will be to an internal draft running in parallel.
+- **Full-mode context**: task description, slug, pattern survey findings, resolved product decisions, and deep-dive discussion outcomes
+- **Fill-in context**: a shell's structural content — Context, Produces, Consumes, Covers Spec Requirements, high-level Implementation Steps, resolved Open Questions — plus pattern survey findings refreshed at fill-in time
+- **Standalone context**: only a task description. Ask the user for any decisions the prompt cannot infer, then proceed
 
 ## Step 2: Build the Codex Prompt
 
-Construct a `/codex-exec` prompt with whatever context you have, asking codex to produce a plan in the exact structure `/draft-plan` writes. This makes the two drafts directly comparable.
+Construct a `/codex-exec` prompt asking codex to produce a plan in the exact structure `/draft-plan` writes.
 
 The prompt has three parts: a `<task>` block (mode-dependent), a `<structured_output_contract>` block (shared across modes), and a `<dig_deeper_nudge>` block (shared across modes). Concatenate the appropriate task block with the two shared blocks before passing to `/codex-exec`.
 
@@ -122,7 +118,7 @@ Run the `/codex-exec` skill in read-only mode with the prompt from Step 2.
 
 ## Step 4: Return the Peer Draft
 
-Return the codex output to the caller as the final assistant message. Do not write to a file. When called by `/draft-plan`, the caller's reconciliation step decides what to keep. When called standalone, the user decides.
+Return the codex output to the caller as the final assistant message. Do not write to a file.
 
 ## Rules
 

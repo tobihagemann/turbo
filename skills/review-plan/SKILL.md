@@ -47,9 +47,7 @@ Ignore stylistic preferences and minor wording. If no issues are found, state th
 
 ## Step 3: Return Combined Findings
 
-Wait for both agents to complete. Aggregate their findings with attribution (reviewer: "internal" or "peer") and return them to the caller.
-
-The caller determines what to do with the findings (evaluate, apply, or present to the user).
+Wait for both agents to complete. Aggregate their findings with attribution (reviewer: "internal" or "peer") and return them.
 
 ## Plan Determination Criteria
 

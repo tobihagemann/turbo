@@ -28,23 +28,15 @@ Determine which plan file to refine using these rules in order:
 5. **Legacy fallback** — If `.turbo/plans/` does not exist but `.turbo/plan.md` exists, use it
 6. **Nothing found** — If no plan file exists, tell the user to run `/turboplan` (for a new task) or `/pick-next-prompt` (for an existing prompt plan) and stop
 
-Rules 3 and 4 (heuristic resolution) exclude shell files. Rules 1, 2, and 5 (explicit input or legacy) accept any path; the shell-detection halt below catches shells reached this way.
-
 If multiple files exist and the most-recent choice is non-obvious (e.g., several plans were modified within the same minute), use `AskUserQuestion` to let the user pick from the candidates.
 
-### Shell detection
+### Shell Detection
 
-A shell plan produced by `/create-prompt-plan` is recognizable by:
-
-- `## Produces`
-- `## Consumes`
-- `## Covers Spec Requirements`
-
-AND no `## Pattern Survey` section. `/refine-plan` refuses to run on shells because `/review-plan` reviews full plan content; on a shell, it would flag intentional gaps (missing Pattern Survey, no concrete file references) as false positives.
+A file is a **shell** when it contains `## Produces`, `## Consumes`, and `## Covers Spec Requirements` AND does NOT contain `## Pattern Survey`.
 
 If the resolved file is a shell, halt with:
 
-> `<path>` is a shell plan from `/create-prompt-plan`. Shells are reviewed by `/review-prompt-plan` at create time, not by `/refine-plan`. To expand the shell and refine the resulting full plan, run `/pick-next-prompt` (which hands the shell to `/turboplan` in shell mode).
+> `<path>` is a shell plan from `/create-prompt-plan`. Run `/pick-next-prompt` to expand it before refining.
 
 State the resolved plan path before continuing.
 
@@ -82,6 +74,6 @@ Do NOT:
 
 - Every step must run in every iteration. Each step catches different issues. Context window concerns are not a reason to skip steps. `/review-plan` and `/evaluate-findings` use different agents with non-overlapping criteria — "the prior step covered it" is always wrong.
 - Never collapse steps 2-4 into fewer steps. `/evaluate-findings` is a judgment gate that must run before `/apply-findings` touches the plan.
-- Re-invocations from Step 5 are full runs, not lighter-weight passes.
-- The plan file is the only file that should change. Source code edits belong in implementation skills.
+- Re-invocations from Step 5 are full runs with fresh task tracking and complete skill invocations.
+- The plan file is the only file that should change.
 - If `/review-plan` returns no findings on the first pass, report the plan as stable and stop. No iteration needed.

@@ -5,7 +5,7 @@ description: "Execute an implementation plan file produced by /draft-plan or /tu
 
 # Implement Plan
 
-Execute an implementation plan file. The plan file describes what to build; this skill wraps execution with Turbo's pre-implementation prep, task-specific skill loading, step execution, and finalization.
+Execute an implementation plan file.
 
 ## Task Tracking
 
@@ -28,25 +28,15 @@ Determine which plan file to implement using these rules in order:
 5. **Legacy fallback** — If `.turbo/plans/` does not exist but `.turbo/plan.md` exists, use it
 6. **Nothing found** — If no plan file exists, tell the user to run `/turboplan` (for a new task) or `/pick-next-prompt` (for an existing prompt plan) and stop
 
-Rules 3 and 4 (heuristic resolution) exclude shell files. Rules 1, 2, and 5 (explicit input or legacy) accept any path; the shell-detection halt below catches shells reached this way.
-
 If multiple files exist and the most-recent choice is non-obvious (e.g., several plans were modified within the same minute), use `AskUserQuestion` to let the user pick from the candidates.
 
-### Shell detection
+### Shell Detection
 
-A shell plan produced by `/create-prompt-plan` lives at the same path as a full plan but has a different structure. A file is a **shell** when it contains all of:
+A file is a **shell** when it contains `## Produces`, `## Consumes`, and `## Covers Spec Requirements` AND does NOT contain `## Pattern Survey`.
 
-- `## Produces`
-- `## Consumes`
-- `## Covers Spec Requirements`
+If the resolved file is a shell, halt with:
 
-AND does NOT contain `## Pattern Survey`. Shells are intentionally incomplete and must be filled in before execution.
-
-If the resolved file is a shell, halt with a helpful message:
-
-> `<path>` is a shell plan from `/create-prompt-plan`. Shells need to be filled in before implementation. Run `/pick-next-prompt` to advance the prompt plan: it picks the next ready shell and hands it to `/turboplan` in shell mode for fill-in, refine, and implement.
-
-Do not attempt to implement a shell directly.
+> `<path>` is a shell plan from `/create-prompt-plan`. Shells need to be filled in before implementation. Run `/pick-next-prompt` to advance the prompt plan.
 
 State the resolved plan path before continuing, then read the file.
 
@@ -104,4 +94,4 @@ After all Implementation Steps and the Verification section are complete, run th
 - The plan file is read-only during execution. If revisions are needed, run `/refine-plan` or `/draft-plan` separately.
 - Never skip Step 3. Pre-implementation prep catches style-mirroring gaps and skill loading that the plan content cannot enforce on its own.
 - Never skip Step 5. `/finalize` is mandatory even for small plans. Context window, perceived task simplicity, and diff size are not reasons to skip it.
-- Do not edit the plan as part of execution. Source code edits are the output; the plan stays as the record of what was planned.
+- Do not edit the plan as part of execution.
