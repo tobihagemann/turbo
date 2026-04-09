@@ -27,10 +27,10 @@ The subagent covers all three categories (Analogous Features, Reusable Utilities
 
 ## Step 3: Return Findings
 
-Return the subagent's report to the caller as the final assistant message. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the subagent produces.
+Return the subagent's report to the caller. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the subagent produces.
 
 ## Rules
 
-- Return findings as the final assistant message. Do not write files.
+- Return findings to the caller. Do not write files.
 - Absolute file paths only.
 - Do not propose implementation steps. That is the caller's job.

@@ -59,7 +59,7 @@ If a category has no findings, write "None found" under the header rather than o
 ## Rules
 
 - Absolute file paths only. No relative paths.
-- Return findings as the final assistant message. Do not write files.
+- Return findings to the caller. Do not write files.
 - Do not propose implementation steps. The caller handles implementation decisions.
 - Do not speculate. Report only patterns that exist in the codebase right now.
 - Flag only patterns that affect architecture, data flow, or where new code should live. Report naming and file placement as structural conventions, not cosmetic preferences.
