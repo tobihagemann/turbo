@@ -17,7 +17,7 @@ Determine the spec to review using these rules in order:
 4. **Single file** — Glob `.turbo/specs/*.md`. If exactly one file exists, read it
 5. **Most recent** — If multiple files exist, read the most recently modified
 6. **Legacy fallback** — If `.turbo/specs/` does not exist but `.turbo/spec.md` exists, use it
-7. **Nothing found** — If no spec exists, tell the caller and stop
+7. **Nothing found** — If no spec exists, say so and stop
 
 If multiple files exist and the most-recent choice is non-obvious, use `AskUserQuestion` to let the user pick from the candidates.
 

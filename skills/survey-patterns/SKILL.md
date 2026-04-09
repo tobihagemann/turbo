@@ -5,7 +5,7 @@ description: "Survey the codebase for analogous features, reusable utilities, an
 
 # Survey Patterns
 
-Search the codebase for analogous features and reusable building blocks before planning a change. Returns findings to the caller. Does not write code or plans.
+Search the codebase for analogous features and reusable building blocks before planning a change. Returns structured findings. Does not write code or plans.
 
 ## Step 1: Identify the Task
 
@@ -25,12 +25,12 @@ Spawn a single subagent (`model: "opus"`, do not set `run_in_background`). The s
 
 The subagent covers all three categories (Analogous Features, Reusable Utilities, Convention Anchors) in one sweep and returns a single structured report.
 
-## Step 3: Return Findings
+## Step 3: Output Findings
 
-Return the subagent's report to the caller. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the subagent produces.
+Output the subagent's report verbatim. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the subagent produces.
 
 ## Rules
 
-- Return findings to the caller. Do not write files.
+- Do not write files.
 - Absolute file paths only.
-- Do not propose implementation steps. That is the caller's job.
+- Do not propose implementation steps.

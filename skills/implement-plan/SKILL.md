@@ -21,7 +21,7 @@ At the start, use `TaskCreate` to create a task for each step:
 
 Determine which plan file to implement using these rules in order:
 
-1. **Explicit path** — If the caller or user passed an absolute or relative path, use it
+1. **Explicit path** — If an absolute or relative path was passed, use it
 2. **Explicit slug** — If a slug was passed (e.g., `add-image-cache`), resolve to `.turbo/plans/<slug>.md`
 3. **Single file** — Glob `.turbo/plans/*.md`, excluding shell files (see shell detection below). If exactly one non-shell file exists, use it
 4. **Most recent** — If multiple non-shell files exist, use the most recently modified

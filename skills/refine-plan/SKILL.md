@@ -1,6 +1,6 @@
 ---
 name: refine-plan
-description: "Iteratively review and revise an implementation plan until no new findings survive evaluation. Runs /review-plan, /evaluate-findings, /apply-findings, then re-runs itself until stable. Use when the user asks to \"refine the plan\", \"refine this plan\", \"iterate on the plan\", \"tighten the plan\", \"improve the plan\", or when a caller needs a reviewed-and-revised plan."
+description: "Iteratively review and revise an implementation plan until no new findings survive evaluation. Runs /review-plan, /evaluate-findings, /apply-findings, then re-runs itself until stable. Use when the user asks to \"refine the plan\", \"refine this plan\", \"iterate on the plan\", \"tighten the plan\", or \"improve the plan\"."
 ---
 
 # Refine Plan
@@ -21,7 +21,7 @@ At the start of every invocation (including re-runs from Step 5), use `TaskCreat
 
 Determine which plan file to refine using these rules in order:
 
-1. **Explicit path** — If the caller or user passed an absolute or relative path, use it
+1. **Explicit path** — If an absolute or relative path was passed, use it
 2. **Explicit slug** — If a slug was passed (e.g., `add-image-cache`), resolve to `.turbo/plans/<slug>.md`
 3. **Single file** — Glob `.turbo/plans/*.md`, excluding shell files (see shell detection below). If exactly one non-shell file exists, use it
 4. **Most recent** — If multiple non-shell files exist, use the most recently modified

@@ -13,7 +13,7 @@ Use `TaskCreate` to create a task for each phase:
 
 ## Phase 1: Run `/draft-plan` Skill (Full Mode)
 
-Run the `/draft-plan` skill with the user's task description. This produces a new plan at `.turbo/plans/<slug>.md`. If the caller passed a slug, forward it. Capture the resolved plan path from `/draft-plan`'s output for the next phases.
+Run the `/draft-plan` skill with the user's task description. This produces a new plan at `.turbo/plans/<slug>.md`. If a slug was passed, forward it. Capture the resolved plan path from `/draft-plan`'s output for the next phases.
 
 ## Phase 2: Run `/refine-plan` Skill
 

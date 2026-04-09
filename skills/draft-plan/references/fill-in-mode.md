@@ -13,7 +13,7 @@ Use `TaskCreate` to create a task for each step:
 
 ## Step 1: Load the Shell and Verify Consumes
 
-Read the shell file from the path passed by the caller. Parse these fields:
+Read the shell file from the path that was passed. Parse these fields:
 
 - **Title** (from the `# Plan:` heading)
 - **Context** (the why)

@@ -6,7 +6,7 @@ Search the codebase for analogous features, reusable utilities, and convention a
 
 ### 1. Understand the Task
 
-Read the task description from the caller's prompt. Identify:
+Read the task description from the prompt. Identify:
 
 - What kind of change is being proposed (new feature, refactor, bug fix)
 - What domain or subsystem it touches
@@ -59,7 +59,7 @@ If a category has no findings, write "None found" under the header rather than o
 ## Rules
 
 - Absolute file paths only. No relative paths.
-- Return findings to the caller. Do not write files.
-- Do not propose implementation steps. The caller handles implementation decisions.
+- Do not write files.
+- Do not propose implementation steps.
 - Do not speculate. Report only patterns that exist in the codebase right now.
 - Flag only patterns that affect architecture, data flow, or where new code should live. Report naming and file placement as structural conventions, not cosmetic preferences.

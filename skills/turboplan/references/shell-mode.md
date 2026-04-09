@@ -1,6 +1,6 @@
 # Turboplan: Shell Mode
 
-Fill-in → refine → confirm → implement for a shell file path passed by the caller.
+Fill-in → refine → confirm → implement for a shell file path that was passed.
 
 ## Task Tracking
 

@@ -17,7 +17,7 @@ Determine the prompt plan index to review using these rules in order:
 4. **Single file** — Glob `.turbo/prompt-plans/*.md`. If exactly one file exists, read it
 5. **Most recent** — If multiple files exist, read the most recently modified
 6. **Legacy fallback** — If `.turbo/prompt-plans/` does not exist but `.turbo/prompts.md` exists, use it
-7. **Nothing found** — If no prompt plan exists, tell the caller and stop
+7. **Nothing found** — If no prompt plan exists, say so and stop
 
 Read the index file. For each shell listed in the index, read the corresponding shell file from the `Shell:` path. Also read the source spec (path listed in the index's `Source:` field).
 
