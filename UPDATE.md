@@ -207,6 +207,14 @@ Apply to ~/.claude/CLAUDE.md?
 
 ### Step 5: Save State
 
-Read `~/.turbo/config.json`, set `lastUpdateHead` to the new HEAD (`git -C ~/.turbo/repo rev-parse HEAD`), set `configVersion` to the current version from Phase 1 Step 2, merge any new exclusions into `excludeSkills`, and write it back.
+Write the new HEAD to `lastUpdateHead`:
+
+```bash
+head=$(git -C ~/.turbo/repo rev-parse HEAD)
+sed -i.bak 's|"lastUpdateHead": "[^"]*"|"lastUpdateHead": "'"$head"'"|' ~/.turbo/config.json
+rm ~/.turbo/config.json.bak
+```
+
+If Phase 2 added new exclusions, merge them into `excludeSkills` via Edit.
 
 Report a summary of what was updated.
