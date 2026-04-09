@@ -120,7 +120,7 @@ When you run `/pick-next-prompt`, it picks the next ready shell, marks it in-pro
 1. **Polish Code** — Iterative loop: stage → format → lint → test → simplify → review → evaluate → apply → smoke test → re-run until stable
 2. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
 3. **Self-Improve** — Extract learnings, route to CLAUDE.md / memory / skills
-4. **Commit and PR** — Branch if needed, commit, push, create or update PR
+4. **Ship It** — Branch if needed, commit, push, create or update PR
 
 ## Self-Improvement
 
