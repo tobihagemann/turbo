@@ -17,6 +17,10 @@ For large context, pipe it via stdin. The prompt stays as the argument, context 
 cat context.txt | codex exec "question about the context"
 ```
 
+## Sandbox
+
+**All `codex` Bash calls require `dangerouslyDisableSandbox: true`** (network access to OpenAI API). Without it, codex crashes with an `Operation not permitted` panic from the `system-configuration` crate before the model runs.
+
 ## Stdin Gotcha
 
 Codex reads from stdin whenever stdin is non-TTY (per `codex exec --help`: "If stdin is piped and a prompt is also provided, stdin is appended as a `<stdin>` block"). In subagent and subprocess contexts the harness leaves stdin connected to a pipe that never EOFs, so a bare `codex exec "..."` hangs forever, printing only `Reading additional input from stdin...`.
