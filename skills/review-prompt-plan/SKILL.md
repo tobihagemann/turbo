@@ -47,9 +47,9 @@ Ignore stylistic preferences. If no issues are found, state that the prompt plan
 </structured_output_contract>
 ```
 
-## Step 3: Return Combined Findings
+## Step 3: Aggregate Combined Findings
 
-Wait for both agents to complete. Aggregate their findings with attribution (reviewer: "internal" or "peer") and return them.
+Wait for both agents to complete. Aggregate their findings with attribution (reviewer: "internal" or "peer").
 
 ## Prompt Plan Review Dimensions
 
