@@ -4,20 +4,8 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="400" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;fontStyle=1;" value="/turboplan" vertex="1">
-          <mxGeometry height="50" width="180" x="860" y="760" as="geometry" />
-        </mxCell>
-        <mxCell id="401" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdfa;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;fontStyle=1;" value="/implement-plan" vertex="1">
-          <mxGeometry height="50" width="180" x="860" y="830" as="geometry" />
-        </mxCell>
         <mxCell id="402" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f8fafc;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;fontStyle=1;" value="/finalize" vertex="1">
           <mxGeometry height="50" width="180" x="860" y="900" as="geometry" />
-        </mxCell>
-        <mxCell id="403" edge="1" parent="1" source="400" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="401">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="404" edge="1" parent="1" source="401" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="402">
-          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="405" edge="1" parent="1" source="402" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="8" value="">
           <mxGeometry relative="1" as="geometry" />
