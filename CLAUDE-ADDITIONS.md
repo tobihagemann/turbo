@@ -9,4 +9,4 @@ Each `##` section below maps to a `#` section in `~/.claude/CLAUDE.md`.
 - Always use the Skill tool to invoke skills — never substitute by executing steps from memory, even if the skill was loaded earlier in this conversation, including skills invoked by other skills or by themselves
 - "Already running" only means don't call a skill *in the same turn* where its `<command-name>` tag already appeared
 - Never skip a skill invocation due to context window concerns. Context is not your problem to manage — the system handles it. Skipping a skill to "save context" removes the value the skill provides and is always the wrong trade-off.
-- After a skill invocation completes, always check your task list for remaining tasks before responding. Child skills may have their own task tracking, and completing all of a child's tasks does not mean the parent workflow is done.
+- After following a skill's instructions to completion, always check your task list for remaining tasks before responding. Child skills may have their own task tracking, and completing all of a child's tasks does not mean the parent workflow is done.
