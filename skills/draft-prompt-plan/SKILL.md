@@ -1,9 +1,9 @@
 ---
-name: create-prompt-plan
-description: "Decompose a specification file into context-sized shell plans. Each shell captures the wiring invariants (Produces, Consumes, Covers) and high-level Implementation Steps without committing to file paths. Use when the user asks to \"create a prompt plan\", \"break spec into prompts\", \"decompose spec into sessions\", \"plan prompts for spec\", \"generate prompts from spec\", or \"make prompts from spec\"."
+name: draft-prompt-plan
+description: "Decompose a specification file into context-sized shell plans. Each shell captures the wiring invariants (Produces, Consumes, Covers) and high-level Implementation Steps without committing to file paths. Use when the user asks to \"draft a prompt plan\", \"create a prompt plan\", \"break spec into prompts\", \"decompose spec into sessions\", \"plan prompts for spec\", \"generate prompts from spec\", or \"make prompts from spec\"."
 ---
 
-# Create Prompt Plan
+# Draft Prompt Plan
 
 Decompose a specification file into shell plans at `.turbo/plans/<spec-slug>-NN-<title>.md` plus an index at `.turbo/prompt-plans/<slug>.md`. Each shell represents one unit of work for a separate Claude Code session.
 
@@ -14,10 +14,7 @@ At the start, use `TaskCreate` to create a task for each step:
 1. Resolve the source spec
 2. Decompose into shells
 3. Write shell files and the index
-4. Run `/review-prompt-plan` skill
-5. Run `/evaluate-findings` skill
-6. Run `/apply-findings` skill
-7. Present summary
+4. Present summary
 
 ## Step 1: Resolve the Source Spec
 
@@ -28,7 +25,7 @@ Determine which spec to decompose using these rules in order:
 3. **Single file** — Glob `.turbo/specs/*.md`. If exactly one file exists, use it
 4. **Most recent** — If multiple files exist, use the most recently modified
 5. **Legacy fallback** — If `.turbo/specs/` does not exist but `.turbo/spec.md` exists, use it
-6. **Nothing found** — If no spec exists, tell the user to run `/create-spec` first and stop
+6. **Nothing found** — If no spec exists, tell the user to run `/draft-spec` first and stop
 
 The slug of the resolved spec becomes the slug of the prompt plan: a spec at `.turbo/specs/<slug>.md` produces a prompt plan index at `.turbo/prompt-plans/<slug>.md` and shells at `.turbo/plans/<slug>-NN-<title>.md`. For the legacy fallback, use slug `legacy`.
 
@@ -169,21 +166,9 @@ Total shells: N
 **Depends on:** Prompt 1
 ````
 
-## Step 4: Run `/review-prompt-plan` Skill
+## Step 4: Present Summary
 
-Run the `/review-prompt-plan` skill, passing the index and shell paths. It checks the structured wiring invariants (Produces, Consumes, Covers Spec Requirements) across all shells and returns combined findings.
-
-## Step 5: Run `/evaluate-findings` Skill
-
-Run the `/evaluate-findings` skill on the review findings from Step 4.
-
-## Step 6: Run `/apply-findings` Skill
-
-Run the `/apply-findings` skill on the evaluated findings to incorporate accepted changes into the shells and/or the index.
-
-## Step 7: Present Summary
-
-After writing and review, present a brief summary: number of shells, one-line description of each shell's scope, and any assumptions made about ambiguities. Tell the user the next step:
+Present a brief summary: number of shells, one-line description of each shell's scope, and any assumptions made about ambiguities. Tell the user the next step:
 
 > To start implementation, run `/pick-next-prompt`. It will pick the next ready shell, hand it to `/turboplan` for fill-in (pattern survey, concrete references, verification), then refine and implement.
 

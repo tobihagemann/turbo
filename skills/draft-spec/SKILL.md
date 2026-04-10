@@ -1,9 +1,9 @@
 ---
-name: create-spec
-description: "Guide a collaborative discussion that produces a comprehensive specification document at .turbo/specs/<slug>.md. Use when the user asks to \"create a spec\", \"write a spec\", \"discuss a project plan\", \"spec out a project\", \"design a system\", \"let's plan this project\", \"help me scope this\", \"architect a solution\", or \"let's discuss before building\"."
+name: draft-spec
+description: "Guide a collaborative discussion that produces a specification document at .turbo/specs/<slug>.md. Use when the user asks to \"draft a spec\", \"create a spec\", \"write a spec\", \"discuss a project plan\", \"spec out a project\", \"design a system\", \"let's plan this project\", \"help me scope this\", \"architect a solution\", or \"let's discuss before building\"."
 ---
 
-# Create Spec
+# Draft Spec
 
 Guide a collaborative discussion to explore a project idea, then synthesize the conversation into a comprehensive specification at `.turbo/specs/<slug>.md`.
 
@@ -14,10 +14,7 @@ At the start, use `TaskCreate` to create a task for each step:
 1. Capture the vision and pick a slug
 2. Deep-dive discussion
 3. Draft the spec
-4. Run `/review-spec` skill
-5. Run `/evaluate-findings` skill
-6. Run `/apply-findings` skill
-7. Review and finalize
+4. Present and finalize
 
 ## Step 1: Capture the Vision and Pick a Slug
 
@@ -82,19 +79,7 @@ Synthesize the entire discussion into `.turbo/specs/<slug>.md` using the slug pi
 
 Create the `.turbo/specs/` directory if it does not exist. Accept a different output path if the user provides one.
 
-## Step 4: Run `/review-spec` Skill
-
-After drafting the spec and before presenting it to the user, run the `/review-spec` skill with the full spec text.
-
-## Step 5: Run `/evaluate-findings` Skill
-
-Run the `/evaluate-findings` skill on the combined review findings from Step 4.
-
-## Step 6: Run `/apply-findings` Skill
-
-Run the `/apply-findings` skill on the evaluated findings to incorporate accepted changes into the spec.
-
-## Step 7: Review and Finalize
+## Step 4: Present and Finalize
 
 Present the draft to the user. Use `AskUserQuestion` to offer three paths:
 
@@ -104,7 +89,7 @@ Present the draft to the user. Use `AskUserQuestion` to offer three paths:
 
 After approval:
 
-> The spec is ready at the resolved spec path. To break it into implementation prompts, run `/create-prompt-plan`.
+> The spec is ready at the resolved spec path. To break it into implementation prompts, run `/draft-prompt-plan`.
 
 ## Rules
 
