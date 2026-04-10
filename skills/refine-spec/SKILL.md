@@ -52,20 +52,17 @@ Run the `/apply-findings` skill on the evaluated results. The target file is the
 
 Check whether the spec file was edited during Step 4. Any edit counts.
 
-If the spec file was edited, run `/refine-spec` again using the Skill tool, passing the resolved spec path. Cap at 3 total iterations (the initial run plus up to 2 additional runs) to prevent runaway loops.
+**If changes were made**, run `/refine-spec` again using the Skill tool, passing the resolved spec path.
+
+**If changes were made but you believe re-running is unnecessary**, use `AskUserQuestion` to ask for skip permission. Do not skip silently.
+
+**If this is iteration 3 and changes were still made**, the hard cap is reached. Use `AskUserQuestion` to tell the user that 3 iterations were not enough to stabilize, summarize what is still changing, and offer two options: continue for another iteration, or escalate to `/consult-oracle` for a different perspective on the remaining issues.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 
-Do NOT:
-- Skip steps because the changes are "minor" or "mechanical"
-- Use the Agent tool to substitute for `/review-spec`, `/evaluate-findings`, or `/apply-findings`
-- Skip task tracking because "this is just iteration 2"
-- Rationalize that review "would produce the same findings" or "has already been addressed"
-
 ## Rules
 
-- Every step must run in every iteration. Each step catches different issues. Context window concerns are not a reason to skip steps. `/review-spec` and `/evaluate-findings` use different agents with non-overlapping criteria — "the prior step covered it" is always wrong.
-- Never collapse steps 2-4 into fewer steps. `/evaluate-findings` is a judgment gate that must run before `/apply-findings` touches the spec.
+- Every step must run in every iteration. `/evaluate-findings` is a judgment gate that must run before `/apply-findings` touches the spec. Each step must invoke its designated skill via the Skill tool.
 - Re-invocations from Step 5 are full runs with fresh task tracking and complete skill invocations.
 - The spec file is the only file that should change.
-- If `/review-spec` returns no findings on the first pass, report the spec as stable and stop. No iteration needed.
+- If `/review-spec` returns no findings on the first pass, report the spec as stable and stop.
