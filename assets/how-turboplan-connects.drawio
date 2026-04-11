@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
   <diagram id="turboplan-flow" name="How Turboplan Connects">
-    <mxGraphModel dx="2983" dy="1913" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1700" math="0" shadow="0">
+    <mxGraphModel dx="2575" dy="1674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -11,7 +11,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="100" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdf4;strokeColor=#22c55e;fontColor=#14532d;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/turboplan" vertex="1">
-          <mxGeometry height="500" width="550" x="500" y="-30" as="geometry" />
+          <mxGeometry height="520" width="550" x="500" y="-30" as="geometry" />
         </mxCell>
         <mxCell id="101" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Analyze complexity" vertex="1">
           <mxGeometry height="40" width="160" x="195" y="50" as="geometry" />
@@ -29,7 +29,7 @@
           <mxGeometry height="40" width="150" x="30" y="320" as="geometry" />
         </mxCell>
         <mxCell id="133" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="/implement-plan" vertex="1">
-          <mxGeometry height="40" width="150" x="30" y="380" as="geometry" />
+          <mxGeometry height="40" width="150" x="30" y="400" as="geometry" />
         </mxCell>
         <mxCell id="103" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/draft-plan" vertex="1">
           <mxGeometry height="40" width="150" x="200" y="140" as="geometry" />
@@ -44,7 +44,7 @@
           <mxGeometry height="40" width="150" x="200" y="320" as="geometry" />
         </mxCell>
         <mxCell id="106" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="/implement-plan" vertex="1">
-          <mxGeometry height="40" width="150" x="200" y="380" as="geometry" />
+          <mxGeometry height="40" width="150" x="200" y="400" as="geometry" />
         </mxCell>
         <mxCell id="109" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/draft-spec" vertex="1">
           <mxGeometry height="40" width="150" x="370" y="140" as="geometry" />
@@ -61,8 +61,8 @@
         <mxCell id="2202" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/self-improve" vertex="1">
           <mxGeometry height="40" width="150" x="370" y="380" as="geometry" />
         </mxCell>
-        <mxCell id="111" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Halt" vertex="1">
-          <mxGeometry height="40" width="150" x="370" y="440" as="geometry" />
+        <mxCell id="111" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/pick-next-prompt" vertex="1">
+          <mxGeometry height="40" width="150" x="370" y="460" as="geometry" />
         </mxCell>
         <mxCell id="135" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="130" value="shell">
           <mxGeometry relative="1" as="geometry">
@@ -97,7 +97,7 @@
         <mxCell id="138" edge="1" parent="100" source="132" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="2200">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="2203" edge="1" parent="100" source="2200" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="133">
+        <mxCell id="2203" edge="1" parent="100" source="2200" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="133" value="halt and suggest">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="123" edge="1" parent="100" source="103" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="104">
@@ -109,7 +109,7 @@
         <mxCell id="125" edge="1" parent="100" source="105" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="2201">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="2204" edge="1" parent="100" source="2201" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="106">
+        <mxCell id="2204" edge="1" parent="100" source="2201" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="106" value="halt and suggest">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="128" edge="1" parent="100" source="109" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="112">
@@ -124,7 +124,7 @@
         <mxCell id="141" edge="1" parent="100" source="113" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="2202">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="2205" edge="1" parent="100" source="2202" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="111">
+        <mxCell id="2205" edge="1" parent="100" source="2202" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="111" value="halt and suggest">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="200" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdf4;strokeColor=#22c55e;fontColor=#14532d;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/draft-plan" vertex="1">
@@ -213,7 +213,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="400" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdfa;strokeColor=#14b8a6;fontColor=#134e4a;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/implement-plan" vertex="1">
-          <mxGeometry height="230" width="210" x="500" y="530" as="geometry" />
+          <mxGeometry height="230" width="210" x="500" y="550" as="geometry" />
         </mxCell>
         <mxCell id="401" parent="400" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/code-style" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
@@ -348,7 +348,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="1200" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdf4;strokeColor=#22c55e;fontColor=#14532d;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/pick-next-prompt" vertex="1">
-          <mxGeometry height="290" width="210" x="840" y="530" as="geometry" />
+          <mxGeometry height="290" width="210" x="840" y="550" as="geometry" />
         </mxCell>
         <mxCell id="1201" parent="1200" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Resolve index" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
@@ -402,8 +402,8 @@
         <mxCell id="2002" edge="1" parent="1" source="106" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="400" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="775" y="500" />
-              <mxPoint x="650" y="500" />
+              <mxPoint x="775" y="520" />
+              <mxPoint x="650" y="520" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -570,7 +570,7 @@
             <mxPoint x="430" y="605" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="2017" edge="1" parent="1" source="111" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="1200" value="suggest">
+        <mxCell id="2017" edge="1" parent="1" source="111" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="1200" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
