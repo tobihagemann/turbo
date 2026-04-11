@@ -1018,6 +1018,23 @@ If any prior step produced changes, run the `/this-skill` skill again, skipping 
 - Cap at 3 consecutive runs to prevent runaway loops.
 ```
 
+### Prefer AskUserQuestion gates over anti-skip prose rules
+
+Workflow skills often need to prevent the agent from skipping steps ("don't rationalize away the re-run") or stopping early at iteration caps. Verbose "Do NOT" blocks and anti-rationalization prose are unreliable: the agent reads the rule and still finds ways to rationalize around it. Convert soft rules into hard gates using `AskUserQuestion`.
+
+- **Skip gate**: When the agent might want to skip a re-run that should happen (e.g., changes were made but the agent judges re-running unnecessary), require it to use `AskUserQuestion` to request skip permission. This converts "don't skip silently" into "can't skip silently."
+- **Exhaustion gate**: When a loop reaches its iteration cap but hasn't stabilized, use `AskUserQuestion` to ask whether to continue for another iteration or escalate to a different approach (e.g., `/consult-oracle`). This replaces the hard stop with a human-in-the-loop decision.
+
+```markdown
+**If changes were made**, run `/this-skill` again using the Skill tool.
+
+**If changes were made but you believe re-running is unnecessary**, use `AskUserQuestion` to ask for skip permission. Do not skip silently.
+
+**If this is iteration 3 and changes were still made**, the hard cap is reached. Use `AskUserQuestion` to tell the user that 3 iterations were not enough to stabilize, summarize what is still changing, and offer two options: continue for another iteration, or escalate to `/consult-oracle` for a different perspective on the remaining issues.
+```
+
+Removing verbose "Do NOT" blocks and "Rules" sections that restate the anti-skip rule often wins alongside adding the gates: the prose was unreliable anyway, and the gates replace it with enforceable behavior.
+
 ## Advanced: Skills with executable code
 
 The sections below focus on Skills that include executable scripts.
