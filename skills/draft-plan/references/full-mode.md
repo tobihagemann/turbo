@@ -8,9 +8,10 @@ Use `TaskCreate` to create a task for each step:
 
 1. Capture the task and pick a slug
 2. Run `/survey-patterns` skill
-3. Escalate product decisions
-4. Deep-dive discussion
-5. Draft and write the plan file
+3. Consult task-specific skills and docs
+4. Escalate product decisions
+5. Deep-dive discussion
+6. Draft and write the plan file
 
 ## Step 1: Capture the Task and Pick a Slug
 
@@ -34,9 +35,18 @@ State the chosen slug and the resulting plan path before continuing.
 
 ## Step 2: Run `/survey-patterns` Skill
 
-Run the `/survey-patterns` skill with the confirmed task description. Keep the returned findings in conversation context for use in Steps 4 and 5.
+Run the `/survey-patterns` skill with the confirmed task description. Keep the returned findings in conversation context for use in Steps 5 and 6.
 
-## Step 3: Escalate Product Decisions
+## Step 3: Consult Task-Specific Skills and Docs
+
+Ground library and framework choices in current reality before escalating decisions.
+
+1. **Scan for matching skills.** Compare the task description against available skill trigger descriptions. For each unambiguous match, run the skill via the Skill tool. This loads decision-level guidance (idiomatic patterns, known pitfalls, version constraints) before product decisions are made. If unsure, do not load.
+2. **Look up library docs.** For libraries or frameworks the task clearly depends on, query documentation MCP tools (or WebSearch as a fallback) when the decision hinges on current library state such as whether a feature exists, which versions support it, or whether an API has been deprecated.
+
+Keep findings at the decision level: what a library can do, which approach is idiomatic, which version to target. Do not embed specific API signatures or code snippets into the plan. Those belong in `/implement-plan`, which re-loads the same skills at execution time.
+
+## Step 4: Escalate Product Decisions
 
 Identify product or design decisions the user's request did not resolve. Escalate these via `AskUserQuestion` before drafting steps.
 
@@ -51,7 +61,7 @@ Identify product or design decisions the user's request did not resolve. Escalat
 
 Present each decision as a concise trade-off with options. Draft plan steps that depend on these decisions only after the user responds.
 
-## Step 4: Deep-Dive Discussion
+## Step 5: Deep-Dive Discussion
 
 Work through the implementation shape with the user via `AskUserQuestion`, one or two questions at a time. Use the pattern survey findings to frame choices. Cover whichever of these matter for the task. Do not present a rigid checklist:
 
@@ -71,9 +81,9 @@ Work through the implementation shape with the user via `AskUserQuestion`, one o
 - Probe short answers before moving on.
 - When the shape is clear or the user signals readiness, confirm before drafting.
 
-## Step 5: Draft and Write the Plan File
+## Step 6: Draft and Write the Plan File
 
-Synthesize the task description, pattern survey findings, resolved product decisions, and deep-dive discussion outcomes into a complete plan document.
+Synthesize the task description, pattern survey findings, consulted skill and doc context, resolved product decisions, and deep-dive discussion outcomes into a complete plan document.
 
 Create `.turbo/plans/` if it does not exist. Write the plan to `.turbo/plans/<slug>.md` using the slug picked in Step 1 (or the override path from Step 1) using this structure:
 
@@ -119,4 +129,4 @@ Files to read in full before starting implementation:
 - **Implementation Steps**: Use concrete `file_path:line_number` references. Reference existing functions and utilities from the Pattern Survey instead of reinventing them. Each step describes a discrete unit of work that can be tracked independently during execution.
 - **Verification**: Describe how to know the change actually works. Prefer specific test commands, named test files, or named smoke checks over vague phrases like "run the tests." If the change has no observable behavior, say so explicitly.
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
-- **Scope**: Plan content describes what to build. Do not include task tracking, skill loading, test commands, or commit instructions — those are execution-wrapper concerns.
+- **Scope**: Plan content describes what to build. Do not embed task tracking, skill-loading steps, test commands, or commit instructions in the plan content — those are execution-wrapper concerns.
