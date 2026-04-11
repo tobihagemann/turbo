@@ -72,6 +72,8 @@ Check whether any file was edited during Steps 3-7. Any edit counts, regardless 
 
 The re-invocation is a full, fresh run of this skill. Every step (1-8) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `/simplify-code` and `/review-code`. It does not affect which steps run or whether skills are invoked.
 
+Check your task list for remaining tasks and proceed.
+
 ## Rules
 
 - Every step must run in every iteration. Each step uses distinct agents with non-overlapping review criteria. `/simplify-code` and `/review-code` have different focus areas. `/evaluate-findings` is a judgment gate that must run before `/apply-findings`.
