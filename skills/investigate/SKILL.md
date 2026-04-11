@@ -6,7 +6,7 @@ argument-hint: "[problem description or error message]"
 
 # Investigate
 
-Systematic methodology for finding the root cause of bugs, failures, and unexpected behavior. Cycle through characterize-isolate-hypothesize-test steps, with oracle escalation for hard problems. Diagnose the root cause — do not apply fixes. Return results for the main agent to act on.
+Systematic methodology for finding the root cause of bugs, failures, and unexpected behavior. Cycle through characterize-isolate-hypothesize-test steps, with oracle escalation for hard problems. Diagnose the root cause — do not apply fixes.
 
 Optional: `$ARGUMENTS` contains the problem description or error message.
 
@@ -147,6 +147,8 @@ Hypotheses tested:
 
 Escalation: [none | oracle]
 ```
+
+Check your task list for remaining tasks and proceed.
 
 ## Rules
 
