@@ -93,21 +93,20 @@ Claude Code's built-in plan mode is a starting point, but it tends to produce pl
 
 ![How Turboplan Connects](assets/how-turboplan-connects.svg)
 
-[`/turboplan`](skills/turboplan/SKILL.md) has three modes, selected automatically by its complexity analysis:
+[`/turboplan`](skills/turboplan/SKILL.md) has two modes, selected automatically by its complexity analysis:
 
-- **Small-task mode** — Single-session change. Runs [`/draft-plan`](skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](skills/refine-plan/SKILL.md) → confirmation → [`/self-improve`](skills/self-improve/SKILL.md) → [`/implement-plan`](skills/implement-plan/SKILL.md) → [`/finalize`](skills/finalize/SKILL.md).
-- **Complex-project mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-spec`](skills/refine-spec/SKILL.md) to iteratively review and revise the spec, then [`/draft-prompt-plan`](skills/draft-prompt-plan/SKILL.md) to decompose the spec into shell plans, then [`/refine-prompt-plan`](skills/refine-prompt-plan/SKILL.md) to review and revise the prompt plan, then [`/self-improve`](skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-prompt`](skills/pick-next-prompt/SKILL.md) in fresh sessions to implement each shell.
-- **Shell mode** — Triggered when `/pick-next-prompt` hands a shell plan to `/turboplan`. Skips the complexity analysis and routes to `/draft-plan` in fill-in mode (verifies consumes against the current codebase, refreshes the pattern survey, escalates the shell's open questions, fills in concrete file references and verification), then refine → confirm → self-improve → implement → finalize.
+- **Small-task mode** — Single-session change. Runs [`/draft-plan`](skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](skills/refine-plan/SKILL.md) → [`/self-improve`](skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session.
+- **Complex-project mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-spec`](skills/refine-spec/SKILL.md) to iteratively review and revise the spec, then [`/draft-plan-shells`](skills/draft-plan-shells/SKILL.md) to decompose the spec into shell plans with YAML frontmatter, then [`/refine-plan-shells`](skills/refine-plan-shells/SKILL.md) to review and revise the shells, then [`/self-improve`](skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-plan-shell`](skills/pick-next-plan-shell/SKILL.md) in fresh sessions to implement each shell.
 
 Every sub-skill works standalone too. Run [`/draft-plan`](skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session on any plan file. Run [`/draft-spec`](skills/draft-spec/SKILL.md) to write a spec without committing to the full pipeline.
 
-### Shell plans and the prompt plan flow
+### Plan Shells and the Complex-Project Flow
 
-For complex projects, `/draft-prompt-plan` produces **shell plans**: structured decomposition artifacts that capture the wiring invariants (Produces, Consumes, Covers spec requirements) and high-level Implementation Steps without committing to concrete file paths. Each shell is a file at `.turbo/plans/<spec-slug>-NN-<title>.md`. The prompt plan index at `.turbo/prompt-plans/<slug>.md` is a thin manifest that tracks status and dependencies.
+For complex projects, [`/draft-plan-shells`](skills/draft-plan-shells/SKILL.md) produces **shell plans**: structured decomposition artifacts that capture the wiring invariants (Produces, Consumes, Covers spec requirements) and high-level Implementation Steps without committing to concrete file paths. Each shell is a file at `.turbo/plans/<spec-slug>-NN-<title>.md` with YAML frontmatter that tracks type, status, spec reference, and dependencies. Status lives on each shell, so there is no separate index file.
 
-The decomposition work — ensuring spec coverage, correct wiring, no dead ends, no duplication — happens at draft time against the structured fields. [`/refine-prompt-plan`](skills/refine-prompt-plan/SKILL.md) then iteratively reviews and revises the prompt plan via [`/review-prompt-plan`](skills/review-prompt-plan/SKILL.md) until stable. The parts that depend on current codebase state (pattern survey, concrete `file_path:line_number` references, verification commands) are deferred to implementation time.
+The decomposition work — ensuring spec coverage, correct wiring, no dead ends, no duplication — happens at draft time against the structured fields. [`/refine-plan-shells`](skills/refine-plan-shells/SKILL.md) then iteratively reviews and revises the shells via [`/review-plan-shells`](skills/review-plan-shells/SKILL.md) until stable. The parts that depend on current codebase state (pattern survey, concrete `file_path:line_number` references, verification commands) are deferred to implementation time.
 
-When you run `/pick-next-prompt`, it picks the next ready shell, marks it in-progress in the index, and hands the shell file path to `/turboplan`. `/turboplan` runs in shell mode: `/draft-plan` in fill-in mode expands the shell with fresh codebase state, then the usual refine → confirm → self-improve → implement → finalize flow runs. Each implementation session gets fresh pattern surveys, so decisions from earlier sessions naturally inform later ones.
+When you run [`/pick-next-plan-shell`](skills/pick-next-plan-shell/SKILL.md), it scans shell frontmatter, picks the next draft shell whose dependencies are met, and carries it through the full pipeline: [`/expand-plan-shell`](skills/expand-plan-shell/SKILL.md) adds a fresh pattern survey, concrete file references, and verification, then refine → self-improve → halt. You run `/implement-plan` in a fresh session. Each implementation session gets fresh pattern surveys, so decisions from earlier sessions naturally inform later ones.
 
 ## The Finalize Pipeline
 
@@ -161,12 +160,12 @@ These are prompts you can type directly into Claude Code. Skill names work as na
 ```
 # Planning a change (single entry — /turboplan routes based on complexity)
 /turboplan add a caching layer to the image pipeline  ← small task → draft → refine → implement
-/turboplan build a notification system with backend, API, and UI  ← complex → spec → prompt plan → halt
+/turboplan build a notification system with backend, API, and UI  ← complex → spec → plan shells → halt
 /survey-patterns  ← pattern-ground an approach without drafting a plan
 /implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
 
 # Continuing a complex project
-/pick-next-prompt  ← pick next ready shell → /turboplan fills it in → refine → implement
+/pick-next-plan-shell  ← pick next draft shell → expand → refine → implement
 
 # Investigating bugs
 tests are failing in the auth module, can you please /investigate?
@@ -214,7 +213,7 @@ the error messages in this module are inconsistent, /note-improvement
 
 | Skill | What it does | Uses |
 |---|---|---|
-| [`/turboplan`](skills/turboplan/SKILL.md) | Universal planning entry: analyzes complexity and routes to small-task, complex-project, or shell mode | [`/draft-plan`](skills/draft-plan/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md), [`/implement-plan`](skills/implement-plan/SKILL.md), [`/draft-spec`](skills/draft-spec/SKILL.md), [`/refine-spec`](skills/refine-spec/SKILL.md), [`/draft-prompt-plan`](skills/draft-prompt-plan/SKILL.md), [`/refine-prompt-plan`](skills/refine-prompt-plan/SKILL.md) |
+| [`/turboplan`](skills/turboplan/SKILL.md) | Universal planning entry: analyzes complexity and routes to small-task or complex-project mode | [`/draft-plan`](skills/draft-plan/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md), [`/implement-plan`](skills/implement-plan/SKILL.md), [`/draft-spec`](skills/draft-spec/SKILL.md), [`/refine-spec`](skills/refine-spec/SKILL.md), [`/draft-plan-shells`](skills/draft-plan-shells/SKILL.md), [`/refine-plan-shells`](skills/refine-plan-shells/SKILL.md) |
 | [`/finalize`](skills/finalize/SKILL.md) | Post-implementation QA: polish, changelog, self-improve, commit, PR | [`/polish-code`](skills/polish-code/SKILL.md), [`/update-changelog`](skills/update-changelog/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md), [`/ship`](skills/ship/SKILL.md), [`/split-and-ship`](skills/split-and-ship/SKILL.md) |
 | [`/audit`](skills/audit/SKILL.md) | Project-wide health audit: all analysis skills, evaluation, markdown and HTML report | [`/review-correctness`](skills/review-correctness/SKILL.md), [`/review-security`](skills/review-security/SKILL.md), [`/review-api-usage`](skills/review-api-usage/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/review-quality`](skills/review-quality/SKILL.md), [`/review-test-coverage`](skills/review-test-coverage/SKILL.md), [`/review-dependencies`](skills/review-dependencies/SKILL.md), [`/review-tooling`](skills/review-tooling/SKILL.md), [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md), [`/find-dead-code`](skills/find-dead-code/SKILL.md), [`/create-threat-model`](skills/create-threat-model/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/frontend-design`](skills/frontend-design/SKILL.md) |
 | [`/onboard`](skills/onboard/SKILL.md) | Developer onboarding guide: architecture, tooling, agentic setup, prerequisites, troubleshooting, next steps | [`/map-codebase`](skills/map-codebase/SKILL.md), [`/review-tooling`](skills/review-tooling/SKILL.md), [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md), [`/frontend-design`](skills/frontend-design/SKILL.md) |
@@ -225,14 +224,15 @@ the error messages in this module are inconsistent, /note-improvement
 |---|---|---|
 | [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → simplify → review → evaluate → apply → smoke test → re-run until stable | [`/stage`](skills/stage/SKILL.md), [`/simplify-code`](skills/simplify-code/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/smoke-test`](skills/smoke-test/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
 | [`/review-code`](skills/review-code/SKILL.md) | AI code review: 6 parallel reviewers | [`/review-test-coverage`](skills/review-test-coverage/SKILL.md), [`/review-correctness`](skills/review-correctness/SKILL.md), [`/review-security`](skills/review-security/SKILL.md), [`/review-quality`](skills/review-quality/SKILL.md), [`/review-api-usage`](skills/review-api-usage/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md) |
-| [`/draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`. Full mode: guided discussion then draft. Fill-in mode: expands a shell from `/draft-prompt-plan` with fresh pattern survey and concrete references | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
+| [`/draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`: guided discussion then draft | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
+| [`/expand-plan-shell`](skills/expand-plan-shell/SKILL.md) | Expand a shell plan with fresh pattern survey, concrete references, and verification | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
 | [`/refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a plan file until stable: review → evaluate → apply → re-run | [`/review-plan`](skills/review-plan/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/refine-spec`](skills/refine-spec/SKILL.md) | Iterative review loop over a spec file until stable: review → evaluate → apply → re-run | [`/review-spec`](skills/review-spec/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
-| [`/refine-prompt-plan`](skills/refine-prompt-plan/SKILL.md) | Iterative review loop over a prompt plan until stable: review → evaluate → apply → re-run | [`/review-prompt-plan`](skills/review-prompt-plan/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
+| [`/refine-plan-shells`](skills/refine-plan-shells/SKILL.md) | Iterative review loop over plan shells until stable: review → evaluate → apply → re-run | [`/review-plan-shells`](skills/review-plan-shells/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, execute steps, run `/finalize` | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
 | [`/review-plan`](skills/review-plan/SKILL.md) | AI plan review: internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
 | [`/review-spec`](skills/review-spec/SKILL.md) | AI spec review: internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
-| [`/review-prompt-plan`](skills/review-prompt-plan/SKILL.md) | AI prompt plan review: internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
+| [`/review-plan-shells`](skills/review-plan-shells/SKILL.md) | AI plan shell review: internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
 | [`/review-pr`](skills/review-pr/SKILL.md) | PR review: fetch comments, detect base branch, run code review, evaluate findings | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) |
 | [`/simplify-code`](skills/simplify-code/SKILL.md) | Review code quality and fix issues | |
 | [`/apply-findings`](skills/apply-findings/SKILL.md) | Apply findings from evaluations or reviews | [`/note-improvement`](skills/note-improvement/SKILL.md) |
@@ -251,7 +251,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/review-dependencies`](skills/review-dependencies/SKILL.md) | Detect outdated or vulnerable dependencies | |
 | [`/review-tooling`](skills/review-tooling/SKILL.md) | Detect dev tooling gaps across linters, formatters, hooks, test runners, and CI/CD | |
 | [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md) | Detect agentic coding infrastructure: CLAUDE.md, AGENTS.md, skills, MCP, hooks, cross-tool compatibility | |
-| [`/peer-review`](skills/peer-review/SKILL.md) | Independent peer review via codex (code, plans, specs, prompt plans, feedback) | [`/codex-exec`](skills/codex-exec/SKILL.md) |
+| [`/peer-review`](skills/peer-review/SKILL.md) | Independent peer review via codex (code, plans, specs, plan shells, feedback) | [`/codex-exec`](skills/codex-exec/SKILL.md) |
 | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md) | Parallel internal + codex interpretation of third-party feedback | [`/peer-review`](skills/peer-review/SKILL.md) |
 | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Triage review feedback with adversarial verification | |
 | [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | |
@@ -270,9 +270,9 @@ the error messages in this module are inconsistent, /note-improvement
 | Skill | What it does | Uses |
 |---|---|---|
 | [`/draft-spec`](skills/draft-spec/SKILL.md) | Guided discussion that produces a spec at `.turbo/specs/<slug>.md` | |
-| [`/draft-prompt-plan`](skills/draft-prompt-plan/SKILL.md) | Decompose a spec into shell plans with structured wiring invariants (Produces, Consumes, Covers). Writes shells to `.turbo/plans/` and an index to `.turbo/prompt-plans/` | |
+| [`/draft-plan-shells`](skills/draft-plan-shells/SKILL.md) | Decompose a spec into shell plans with YAML frontmatter and structured wiring invariants (Produces, Consumes, Covers) | |
 | [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | |
-| [`/pick-next-prompt`](skills/pick-next-prompt/SKILL.md) | Pick the next ready shell from a prompt plan index, mark in-progress, hand to `/turboplan` in shell mode for fill-in | [`/turboplan`](skills/turboplan/SKILL.md) |
+| [`/pick-next-plan-shell`](skills/pick-next-plan-shell/SKILL.md) | Pick the next draft shell and carry it through planning: expand, refine, self-improve, halt | [`/expand-plan-shell`](skills/expand-plan-shell/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md) |
 | [`/pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it | [`/turboplan`](skills/turboplan/SKILL.md) |
 | [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | |
 | [`/frontend-design`](skills/frontend-design/SKILL.md) | Design guidelines for distinctive, production-grade frontend interfaces | |

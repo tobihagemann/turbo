@@ -1,49 +1,48 @@
 ---
-name: review-prompt-plan
-description: "Review a prompt plan against its source spec: launches an internal prompt plan review and `/peer-review` in parallel and returns combined findings. Use when the user asks to \"review my prompt plan\", \"review my prompts\", \"check my prompt plan\", \"critique my prompts\", or wants prompt plan feedback before implementation."
+name: review-plan-shells
+description: "Review plan shells against their source spec: launches an internal shell review and `/peer-review` in parallel and returns combined findings. Use when the user asks to \"review my plan shells\", \"review my shells\", \"check my plan shells\", \"critique my shells\", or wants shell feedback before implementation."
 ---
 
-# Review Prompt Plan
+# Review Plan Shells
 
-Run two AI prompt plan reviews in parallel and return combined findings.
+Run two AI shell reviews in parallel and return combined findings.
 
-## Step 1: Identify the Prompt Plan
+## Step 1: Identify the Plan Shells
 
-Determine the prompt plan index to review using these rules in order:
+Determine which shells to review using these rules in order:
 
-1. **Prompt plan text in conversation** — If full prompt plan text is already in context, use it
-2. **Explicit path** — If a file path was provided, read it
-3. **Explicit slug** — If a slug was provided, resolve to `.turbo/prompt-plans/<slug>.md`
-4. **Single file** — Glob `.turbo/prompt-plans/*.md`. If exactly one file exists, read it
-5. **Most recent** — If multiple files exist, read the most recently modified
-6. **Legacy fallback** — If `.turbo/prompt-plans/` does not exist but `.turbo/prompts.md` exists, use it
-7. **Nothing found** — If no prompt plan exists, say so and stop
+1. **Shell text in conversation** — If full shell text is already in context, use it
+2. **Explicit spec slug** — If a spec slug was provided, glob `.turbo/plans/<slug>-*.md` and filter to files whose YAML frontmatter has `type: shell`
+3. **Explicit spec path** — If a spec path was provided, derive the slug from the filename and glob as above
+4. **Single spec** — Glob `.turbo/specs/*.md`. If exactly one spec exists, derive its slug and glob for shells
+5. **Most recent spec** — If multiple specs exist, use the most recently modified. Derive its slug and glob for shells
+6. **Nothing found** — If no shells exist, say so and stop
 
-Read the index file. For each shell listed in the index, read the corresponding shell file from the `Shell:` path. Also read the source spec (path listed in the index's `Source:` field).
+Read each shell file and parse its YAML frontmatter (`type`, `status`, `spec`, `depends_on`). Read the source spec from the `spec` frontmatter field.
 
 ## Step 2: Run Two Reviews in Parallel
 
 Launch two Agent tool calls in a single message so they run concurrently (`model: "opus"`, do not set `run_in_background`):
 
-### Internal Prompt Plan Review
+### Internal Shell Review
 
-Spawn a subagent with the full index text, every shell's full text, and the source spec. Instruct it to:
+Spawn a subagent with every shell's full text and the source spec. Instruct it to:
 
-1. Apply the prompt plan review dimensions below
+1. Apply the shell review dimensions below
 2. Return findings in the output format below
 
 ### Run `/peer-review` Skill
 
-Spawn a subagent whose prompt includes the full index text, every shell's full text, the source spec, and the following review prompt, and instructs it to invoke `/peer-review` via the Skill tool:
+Spawn a subagent whose prompt includes every shell's full text, the source spec, and the following review prompt, and instructs it to invoke `/peer-review` via the Skill tool:
 
 ```
 <task>
-Review the following prompt plan against its source spec. The prompt plan consists of an index file listing shells, plus one shell file per entry containing Context, Produces, Consumes, Covers Spec Requirements, high-level Implementation Steps, and Open Questions. Check for: spec requirements not appearing in any shell's Covers Spec Requirements field (gaps), dead ends where a shell's Produces is never consumed by a later shell or required by the final system, missing prerequisites where a shell's Consumes does not trace to a prior shell's Produces or to "from existing codebase", implicit dependencies where a shell's Consumes traces to a prior shell that is not listed in its Depends on field, duplicated requirements across shells' Covers Spec Requirements fields, and incorrect dependency ordering.
+Review the following plan shells against their source spec. Each shell file has YAML frontmatter (type, status, spec, depends_on) and contains Context, Produces, Consumes, Covers Spec Requirements, high-level Implementation Steps, and Open Questions. Check for: spec requirements not appearing in any shell's Covers Spec Requirements field (gaps), dead ends where a shell's Produces is never consumed by a later shell or required by the final system, missing prerequisites where a shell's Consumes does not trace to a prior shell's Produces or to "from existing codebase", implicit dependencies where a shell's Consumes traces to a prior shell that is not listed in its depends_on frontmatter field, duplicated requirements across shells' Covers Spec Requirements fields, and incorrect dependency ordering.
 </task>
 
 <structured_output_contract>
 For each issue, state: the problem, which shell(s) are affected, the impact, a suggested fix, and priority: P0 (spec requirement missing or system broken), P1 (significant gap), P2 (moderate issue), P3 (minor improvement).
-Ignore stylistic preferences. If no issues are found, state that the prompt plan looks sound.
+Ignore stylistic preferences. If no issues are found, state that the shells look sound.
 </structured_output_contract>
 ```
 
@@ -53,7 +52,7 @@ Wait for both agents to complete. Aggregate their findings with attribution (rev
 
 Check your task list for remaining tasks and proceed.
 
-## Prompt Plan Review Dimensions
+## Shell Review Dimensions
 
 ### 1. Spec Coverage (No Gaps)
 
@@ -63,14 +62,14 @@ The union of every shell's `Covers Spec Requirements` field must equal the set o
 
 Every entry in a shell's `Consumes` field must trace to either:
 
-- A prior shell's `Produces` entry (check dependency ordering via the index's `Depends on` field), OR
+- A prior shell's `Produces` entry (check dependency ordering via the shell's `depends_on` frontmatter field), OR
 - An explicit "from existing codebase" annotation
 
 Flag:
 
 - **Missing prerequisites** — Consumes entries with no matching source
 - **Dead ends** — Produces entries that no later shell Consumes and that are not part of the final system's entry points (e.g., top-level APIs, main functions, UI routes)
-- **Implicit dependencies** — Shells whose Consumes trace to a prior shell that is not listed in their `Depends on` field
+- **Implicit dependencies** — Shells whose Consumes trace to a prior shell that is not listed in their `depends_on` frontmatter
 
 ### 3. Completeness (Chain Implements the Spec)
 
@@ -114,7 +113,7 @@ After all findings, add:
 <1-3 sentence assessment>
 ```
 
-If there are no qualifying findings, state that the prompt plan looks ready for implementation and explain briefly.
+If there are no qualifying findings, state that the shells look ready for implementation and explain briefly.
 
 ## Rules
 

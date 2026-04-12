@@ -49,7 +49,7 @@ Set `repoMode` to `"clone"` (consumer), `"fork"` (contributor), or `"source"` (m
 
 ## 4. Add `.turbo` to Global Gitignore
 
-Some skills store project-level files in a `.turbo/` directory (specs, prompt plans, improvements). Add it to your global gitignore to keep project repos clean:
+Some skills store project-level files in a `.turbo/` directory (specs, plans, improvements). Add it to your global gitignore to keep project repos clean:
 
 ```bash
 mkdir -p ~/.config/git

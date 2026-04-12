@@ -1,6 +1,11 @@
-# Draft Plan: Fill-In Mode
+---
+name: expand-plan-shell
+description: "Expand a shell plan into a full implementation plan. Verifies Consumes against the current codebase, runs a fresh pattern survey, escalates open questions, and fills in concrete file references and verification. Use when the user asks to \"expand a shell\", \"expand plan shell\", \"fill in the shell\", \"expand the shell\", or \"concretize the shell\"."
+---
 
-Expand a shell plan into a full plan. The shell's Context, Produces, Consumes, Covers, and high-level Implementation Steps are authoritative; fill-in adds pattern survey, concrete references, and verification.
+# Expand Plan Shell
+
+Expand a shell plan into a full implementation plan. The shell's Context, Produces, Consumes, Covers, and high-level Implementation Steps are authoritative. Expansion adds a pattern survey, concrete references, and verification.
 
 ## Task Tracking
 
@@ -13,25 +18,39 @@ Use `TaskCreate` to create a task for each step:
 
 ## Step 1: Load the Shell and Verify Consumes
 
-Read the shell file from the path that was passed. Parse these fields:
+Determine which shell to expand:
+
+1. **Explicit path** — If a file path was passed, use it
+2. **Single candidate** — Glob `.turbo/plans/*.md`, filter to files with `type: shell` and `status: draft` whose `depends_on` are all `done`. If exactly one match, use it
+3. **Multiple candidates** — If multiple matches, use `AskUserQuestion` to let the user choose
+4. **Nothing found** — If no draft shells exist, say so and stop
+
+Read the shell file. Parse the YAML frontmatter:
+
+- **type** (must be `shell`)
+- **status** (must be `draft` or `in-progress`)
+- **spec** (source spec path)
+- **depends_on** (list of shell slugs that must be `done`)
+
+Parse these body fields:
 
 - **Title** (from the `# Plan:` heading)
 - **Context** (the why)
 - **Produces** (artifacts this shell creates)
 - **Consumes** (dependencies this shell requires)
 - **Covers Spec Requirements** (the spec sections this shell implements)
-- **Implementation Steps (high-level)** (named tasks without file paths)
+- **Implementation Steps (High-Level)** (named tasks without file paths)
 - **Open Questions** (decisions deferred to now)
 
 **Verify Consumes are present in the current codebase.** For each Consumes entry:
 
 - If marked "from existing codebase," grep or read relevant files to confirm the artifact still exists at the expected conceptual location
-- If the entry references a prior shell's Produces (traceable via the prompt plan index), verify the prior shell has `Status: done` in the index AND that the artifact is actually present in the current codebase (the prior implementation may have diverged)
+- If the entry references a prior shell's Produces, verify that the prior shell has `status: done` in its frontmatter AND that the artifact is actually present in the current codebase (the prior implementation may have diverged)
 
 If any Consumes entry fails verification, escalate via `AskUserQuestion`:
 
 - **Adapt the shell** — open the shell for editing, adjust the shell's Consumes/Implementation Steps to match what actually exists, then re-verify
-- **Skip this prompt** — mark the shell's index entry back to `pending` and stop. Tell the user to run `/pick-next-prompt` again or resolve the prior work.
+- **Skip this shell** — leave the shell's frontmatter status as `draft` and stop. Tell the user to run `/pick-next-plan-shell` again or resolve the prior work.
 - **Stop and investigate** — halt without edits so the user can debug
 
 Do not proceed to Step 2 until all Consumes verify cleanly.
@@ -56,7 +75,7 @@ For each entry in the shell's `Open Questions` field, present it via `AskUserQue
 
 Do **not** escalate other questions. If you identify a new question while reading the codebase, note it as a risk in the drafted plan's Verification or Context Files sections.
 
-If the shell's Open Questions field is empty or contains "None," skip this step entirely.
+If the shell's Open Questions field is empty or contains "None," skip this step entirely and proceed to Step 4.
 
 ## Step 4: Fill In and Write Back
 
@@ -68,12 +87,19 @@ Expand the shell into a full plan using:
 4. A Verification section with specific test commands and expected observable results for this shell's work
 5. A Context Files section listing the files an implementer needs to read in full
 
-Write the full plan to the shell file path (overwriting the shell content) using this structure:
+Update the shell's YAML frontmatter to set `status: ready`, then write the full plan to the shell file path (overwriting the shell content) using this structure:
 
 ````markdown
+---
+type: shell
+status: ready
+spec: <spec path from original frontmatter>
+depends_on: <depends_on from original frontmatter>
+---
+
 # Plan: <Task Title>
 
-<!-- Decomposed from: <spec path> (prompt <N> of <prompt plan path>) -->
+<!-- Expanded from: <spec path> -->
 
 ## Context
 
@@ -110,6 +136,13 @@ Write the full plan to the shell file path (overwriting the shell content) using
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
 - **Scope**: Plan content describes what to build. Do not include task tracking, skill loading, test commands, or commit instructions — those are execution-wrapper concerns.
 
-## Fill-In Mode Rules
+Check your task list for remaining tasks and proceed.
 
+## Rules
+
+- The `type` field stays `shell` after expansion for traceability. Plans originating from shell decomposition are distinguishable from standalone `/draft-plan` output even after expansion.
 - Never proceed past Step 1 if Consumes verification fails.
+- The shell's structural contract (Produces, Consumes, Covers) is authoritative. If the pattern survey reveals conflicts, note them in the plan's Context or Verification sections rather than altering the contract.
+- The plan file is the only output. Do not write code, scaffolding, or other project files.
+- Do not run `/review-plan` or any review skills here.
+- Do not embed task tracking, skill loading, or `/finalize` invocation in the plan file.
