@@ -129,8 +129,8 @@ How to verify the change works end-to-end after implementation:
 
 Files to read in full before starting implementation:
 
-- `<absolute/path/to/file1>` — <why it matters>
-- `<absolute/path/to/file2>` — <why it matters>
+- `<path/to/file1>` — <why it matters>
+- `<path/to/file2>` — <why it matters>
 - ...
 ````
 

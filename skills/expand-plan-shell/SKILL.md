@@ -125,8 +125,8 @@ depends_on: <depends_on from original frontmatter>
 
 ## Context Files
 
-- `<absolute/path/to/file1>` — <why it matters>
-- `<absolute/path/to/file2>` — <why it matters>
+- `<path/to/file1>` — <why it matters>
+- `<path/to/file2>` — <why it matters>
 ````
 
 ### Content Rules for the Plan
