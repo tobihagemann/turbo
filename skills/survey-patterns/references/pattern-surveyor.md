@@ -39,11 +39,11 @@ Return findings as a single structured markdown block:
 ## Pattern Survey
 
 ### Analogous Features
-- `<absolute/path>:<line>` — <one-line description of how it works>
+- `<path>:<line>` — <one-line description of how it works>
 - ...
 
 ### Reusable Utilities
-- `<absolute/path>:<line>` — `<functionName>` — <what it does and why it is relevant>
+- `<path>:<line>` — `<functionName>` — <what it does and why it is relevant>
 - ...
 
 ### Convention Anchors
