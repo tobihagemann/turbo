@@ -215,55 +215,57 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/audit`](skills/audit/SKILL.md) | Project-wide health audit: all analysis skills, evaluation, markdown and HTML report | [`/review-code`](skills/review-code/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/review-dependencies`](skills/review-dependencies/SKILL.md), [`/review-tooling`](skills/review-tooling/SKILL.md), [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md), [`/find-dead-code`](skills/find-dead-code/SKILL.md), [`/create-threat-model`](skills/create-threat-model/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/frontend-design`](skills/frontend-design/SKILL.md) |
 | [`/onboard`](skills/onboard/SKILL.md) | Developer onboarding guide: architecture, tooling, agentic setup, prerequisites, troubleshooting, next steps | [`/map-codebase`](skills/map-codebase/SKILL.md), [`/review-tooling`](skills/review-tooling/SKILL.md), [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md), [`/frontend-design`](skills/frontend-design/SKILL.md) |
 
-### Workflows
-
-| Skill | What it does | Uses |
-|---|---|---|
-| [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → simplify → review → evaluate → apply → smoke test → re-run until stable | [`/stage`](skills/stage/SKILL.md), [`/simplify-code`](skills/simplify-code/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/smoke-test`](skills/smoke-test/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
-| [`/draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`: guided discussion then draft | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
-| [`/expand-shell`](skills/expand-shell/SKILL.md) | Expand a shell with fresh pattern survey, concrete references, and verification | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
-| [`/refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a planning artifact (plan, shells, or spec) until stable: review → evaluate → apply → re-run | [`/review-plan`](skills/review-plan/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
-| [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, execute steps, run `/finalize` | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
-| [`/review-pr`](skills/review-pr/SKILL.md) | PR review: fetch comments, detect base branch, run code review, evaluate findings | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) |
-| [`/simplify-code`](skills/simplify-code/SKILL.md) | Review code quality and fix issues | |
-| [`/apply-findings`](skills/apply-findings/SKILL.md) | Apply findings from evaluations or reviews | [`/note-improvement`](skills/note-improvement/SKILL.md) |
-| [`/update-dependencies`](skills/update-dependencies/SKILL.md) | Smart dependency upgrades with breaking change research | [`/review-dependencies`](skills/review-dependencies/SKILL.md) |
-| [`/map-codebase`](skills/map-codebase/SKILL.md) | Deep architecture report: parallel inspections across structure, stack, APIs, patterns, data flow, dependencies, testing | [`/frontend-design`](skills/frontend-design/SKILL.md) |
-
-### Analysis
-
-| Skill | What it does | Uses |
-|---|---|---|
-| [`/review-code`](skills/review-code/SKILL.md) | Review code for bugs, security, quality, API usage, or test coverage: single-concern or full (5 types in parallel) | |
-| [`/review-plan`](skills/review-plan/SKILL.md) | Review planning artifacts (plan, shells, or spec) against type-specific criteria | |
-| [`/review-dependencies`](skills/review-dependencies/SKILL.md) | Detect outdated or vulnerable dependencies | |
-| [`/review-tooling`](skills/review-tooling/SKILL.md) | Detect dev tooling gaps across linters, formatters, hooks, test runners, and CI/CD | |
-| [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md) | Detect agentic coding infrastructure: CLAUDE.md, AGENTS.md, skills, MCP, hooks, cross-tool compatibility | |
-| [`/peer-review`](skills/peer-review/SKILL.md) | Independent peer review via codex (code, plans, specs, shells, feedback) | [`/codex-exec`](skills/codex-exec/SKILL.md) |
-| [`/interpret-feedback`](skills/interpret-feedback/SKILL.md) | Parallel internal + codex interpretation of third-party feedback | [`/peer-review`](skills/peer-review/SKILL.md) |
-| [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Triage review feedback with adversarial verification | |
-| [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | |
-| [`/find-dead-code`](skills/find-dead-code/SKILL.md) | Identify unused code via parallel analysis | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
-| [`/investigate`](skills/investigate/SKILL.md) | Systematic root cause analysis for bugs and failures | [`/consult-codex`](skills/consult-codex/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/consult-oracle`](skills/consult-oracle/SKILL.md) |
-| [`/smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
-| [`/comprehensive-test`](skills/comprehensive-test/SKILL.md) | Multi-level testing: basic, complex, adversarial, and cross-cutting scenarios | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
-| [`/codex-review`](skills/codex-review/SKILL.md) | Code review via codex CLI | [Codex CLI](https://github.com/openai/codex) |
-| [`/codex-exec`](skills/codex-exec/SKILL.md) | Autonomous task execution via codex CLI | [Codex CLI](https://github.com/openai/codex) |
-| [`/consult-codex`](skills/consult-codex/SKILL.md) | Multi-turn consultation with codex CLI | [Codex CLI](https://github.com/openai/codex) |
-| [`/consult-oracle`](skills/consult-oracle/SKILL.md) | Consult ChatGPT Pro when completely stuck (requires setup) | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [ChatGPT Pro](https://chatgpt.com/) |
-| [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) | Recall implementation reasoning from past Claude Code transcripts for a commit or file location | |
-
 ### Planning
 
 | Skill | What it does | Uses |
 |---|---|---|
+| [`/draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`: guided discussion then draft | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
 | [`/draft-spec`](skills/draft-spec/SKILL.md) | Guided discussion that produces a spec at `.turbo/specs/<slug>.md` | |
 | [`/draft-shells`](skills/draft-shells/SKILL.md) | Decompose a spec into shells with YAML frontmatter and structured wiring invariants (Produces, Consumes, Covers) | |
-| [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | |
+| [`/expand-shell`](skills/expand-shell/SKILL.md) | Expand a shell with fresh pattern survey, concrete references, and verification | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
+| [`/refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a planning artifact (plan, shells, or spec) until stable: review → evaluate → apply → re-run | [`/review-plan`](skills/review-plan/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
+| [`/review-plan`](skills/review-plan/SKILL.md) | Review planning artifacts (plan, shells, or spec) against type-specific criteria | |
+| [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, execute steps, run `/finalize` | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
 | [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) | Pick the next shell and carry it through planning: expand, refine, self-improve, halt | [`/expand-shell`](skills/expand-shell/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md) |
 | [`/pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it | [`/turboplan`](skills/turboplan/SKILL.md) |
-| [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | |
-| [`/frontend-design`](skills/frontend-design/SKILL.md) | Design guidelines for distinctive, production-grade frontend interfaces | |
+| [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | |
+
+### Code
+
+| Skill | What it does | Uses |
+|---|---|---|
+| [`/map-codebase`](skills/map-codebase/SKILL.md) | Deep architecture report: parallel inspections across structure, stack, APIs, patterns, data flow, dependencies, testing | [`/frontend-design`](skills/frontend-design/SKILL.md) |
+| [`/create-threat-model`](skills/create-threat-model/SKILL.md) | Analyze a codebase and produce a threat model at `.turbo/threat-model.md` | |
+| [`/review-code`](skills/review-code/SKILL.md) | Review code for bugs, security, quality, API usage, or test coverage: single-concern or full (5 types in parallel) | |
+| [`/find-dead-code`](skills/find-dead-code/SKILL.md) | Identify unused code via parallel analysis | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
+| [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → simplify → review → evaluate → apply → smoke test → re-run until stable | [`/stage`](skills/stage/SKILL.md), [`/simplify-code`](skills/simplify-code/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/smoke-test`](skills/smoke-test/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
+| [`/simplify-code`](skills/simplify-code/SKILL.md) | Review code quality and fix issues | |
+| [`/investigate`](skills/investigate/SKILL.md) | Systematic root cause analysis for bugs and failures | [`/consult-codex`](skills/consult-codex/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/consult-oracle`](skills/consult-oracle/SKILL.md) |
+
+### Testing
+
+| Skill | What it does | Uses |
+|---|---|---|
+| [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | |
+| [`/smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
+| [`/comprehensive-test`](skills/comprehensive-test/SKILL.md) | Multi-level testing: basic, complex, adversarial, and cross-cutting scenarios | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
+
+### Dependencies & Tooling
+
+| Skill | What it does | Uses |
+|---|---|---|
+| [`/review-dependencies`](skills/review-dependencies/SKILL.md) | Detect outdated or vulnerable dependencies | |
+| [`/update-dependencies`](skills/update-dependencies/SKILL.md) | Smart dependency upgrades with breaking change research | [`/review-dependencies`](skills/review-dependencies/SKILL.md) |
+| [`/review-tooling`](skills/review-tooling/SKILL.md) | Detect dev tooling gaps across linters, formatters, hooks, test runners, and CI/CD | |
+| [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md) | Detect agentic coding infrastructure: CLAUDE.md, AGENTS.md, skills, MCP, hooks, cross-tool compatibility | |
+
+### Findings
+
+| Skill | What it does | Uses |
+|---|---|---|
+| [`/interpret-feedback`](skills/interpret-feedback/SKILL.md) | Parallel internal + codex interpretation of third-party feedback | [`/peer-review`](skills/peer-review/SKILL.md) |
+| [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Triage review feedback with adversarial verification | |
+| [`/apply-findings`](skills/apply-findings/SKILL.md) | Apply findings from evaluations or reviews | [`/note-improvement`](skills/note-improvement/SKILL.md) |
 
 ### Git & GitHub
 
@@ -276,11 +278,31 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/commit-staged-push`](skills/commit-staged-push/SKILL.md) | Commit already-staged files and push | [`/commit-staged`](skills/commit-staged/SKILL.md) |
 | [`/ship`](skills/ship/SKILL.md) | Commit, push, and optionally create or update a PR | [`/commit-staged-push`](skills/commit-staged-push/SKILL.md), [`/create-pr`](skills/create-pr/SKILL.md), [`/update-pr`](skills/update-pr/SKILL.md) |
 | [`/split-and-ship`](skills/split-and-ship/SKILL.md) | Ship split plan as separate branches, commits, and PRs | [`/commit-staged-push`](skills/commit-staged-push/SKILL.md), [`/create-pr`](skills/create-pr/SKILL.md), [`/update-pr`](skills/update-pr/SKILL.md) |
-| [`/commit-rules`](skills/commit-rules/SKILL.md) | Shared commit message rules and technical constraints | |
+| [`/review-pr`](skills/review-pr/SKILL.md) | PR review: fetch comments, detect base branch, run code review, evaluate findings | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) |
 | [`/create-pr`](skills/create-pr/SKILL.md) | Draft and create a GitHub PR | [`/github-voice`](skills/github-voice/SKILL.md) |
 | [`/update-pr`](skills/update-pr/SKILL.md) | Update existing PR title and description | [`/github-voice`](skills/github-voice/SKILL.md) |
 | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md) | Read-only summary of unresolved PR comments | |
 | [`/resolve-pr-comments`](skills/resolve-pr-comments/SKILL.md) | Evaluate, fix, answer, and reply to PR comments (including reviewer questions) | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/turboplan`](skills/turboplan/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/finalize`](skills/finalize/SKILL.md), [`/recall-reasoning`](skills/recall-reasoning/SKILL.md), [`/github-voice`](skills/github-voice/SKILL.md) |
+
+### External Tools
+
+| Skill | What it does | Uses |
+|---|---|---|
+| [`/peer-review`](skills/peer-review/SKILL.md) | Independent peer review via codex (code, plans, specs, shells, feedback) | [`/codex-exec`](skills/codex-exec/SKILL.md) |
+| [`/codex-review`](skills/codex-review/SKILL.md) | Code review via codex CLI | [Codex CLI](https://github.com/openai/codex) |
+| [`/consult-codex`](skills/consult-codex/SKILL.md) | Multi-turn consultation with codex CLI | [Codex CLI](https://github.com/openai/codex) |
+| [`/consult-oracle`](skills/consult-oracle/SKILL.md) | Consult ChatGPT Pro when completely stuck (requires setup) | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [ChatGPT Pro](https://chatgpt.com/) |
+| [`/codex-exec`](skills/codex-exec/SKILL.md) | Autonomous task execution via codex CLI | [Codex CLI](https://github.com/openai/codex) |
+
+### Rules & Style
+
+| Skill | What it does | Uses |
+|---|---|---|
+| [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | |
+| [`/frontend-design`](skills/frontend-design/SKILL.md) | Design guidelines for distinctive, production-grade frontend interfaces | |
+| [`/github-voice`](skills/github-voice/SKILL.md) | Shared writing style rules for GitHub-facing output (PR comments, descriptions, titles) | |
+| [`/commit-rules`](skills/commit-rules/SKILL.md) | Shared commit message rules and technical constraints | |
+| [`/changelog-rules`](skills/changelog-rules/SKILL.md) | Shared changelog conventions and formatting rules | |
 
 ### Knowledge & Maintenance
 
@@ -289,13 +311,12 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/self-improve`](skills/self-improve/SKILL.md) | Extract session learnings to CLAUDE.md, memory, or skills | |
 | [`/note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/improvements.md` | |
 | [`/implement-improvements`](skills/implement-improvements/SKILL.md) | Validate and implement improvements from the backlog | [`/turboplan`](skills/turboplan/SKILL.md) |
+| [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) | Recall implementation reasoning from past Claude Code transcripts for a commit or file location | |
 | [`/create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
-| [`/create-changelog`](skills/create-changelog/SKILL.md) | Create a CHANGELOG.md with version history backfilled from GitHub releases or git tags | [`/changelog-rules`](skills/changelog-rules/SKILL.md) |
-| [`/update-changelog`](skills/update-changelog/SKILL.md) | Update the Unreleased section of CHANGELOG.md based on current changes (no-op if no changelog) | [`/changelog-rules`](skills/changelog-rules/SKILL.md) |
-| [`/changelog-rules`](skills/changelog-rules/SKILL.md) | Shared changelog conventions and formatting rules | |
-| [`/create-threat-model`](skills/create-threat-model/SKILL.md) | Analyze a codebase and produce a threat model at `.turbo/threat-model.md` | |
 | [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills with always-latest instructions fetched from GitHub | |
 | [`/contribute-turbo`](skills/contribute-turbo/SKILL.md) | Submit turbo skill improvements back to upstream | [`/commit-rules`](skills/commit-rules/SKILL.md), [`/github-voice`](skills/github-voice/SKILL.md) |
+| [`/create-changelog`](skills/create-changelog/SKILL.md) | Create a CHANGELOG.md with version history backfilled from GitHub releases or git tags | [`/changelog-rules`](skills/changelog-rules/SKILL.md) |
+| [`/update-changelog`](skills/update-changelog/SKILL.md) | Update the Unreleased section of CHANGELOG.md based on current changes (no-op if no changelog) | [`/changelog-rules`](skills/changelog-rules/SKILL.md) |
 
 ## License
 
