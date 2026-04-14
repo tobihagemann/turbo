@@ -1,11 +1,11 @@
 ---
-name: expand-plan-shell
-description: "Expand a shell plan into a full implementation plan. Verifies Consumes against the current codebase, runs a fresh pattern survey, escalates open questions, and fills in concrete file references and verification. Use when the user asks to \"expand a shell\", \"expand plan shell\", \"fill in the shell\", \"expand the shell\", or \"concretize the shell\"."
+name: expand-shell
+description: "Expand a shell into a full implementation plan. Verifies Consumes against the current codebase, runs a fresh pattern survey, escalates open questions, and fills in concrete file references and verification. Use when the user asks to \"expand a shell\", \"expand shell\", \"fill in the shell\", \"expand the shell\", or \"concretize the shell\"."
 ---
 
-# Expand Plan Shell
+# Expand Shell
 
-Expand a shell plan into a full implementation plan. The shell's Context, Produces, Consumes, Covers, and high-level Implementation Steps are authoritative. Expansion adds a pattern survey, concrete references, and verification.
+Expand a shell into a full implementation plan. The shell's Context, Produces, Consumes, Covers, and high-level Implementation Steps are authoritative. Expansion adds a pattern survey, concrete references, and verification, writes the plan to `.turbo/plans/<shell-slug>.md`, and deletes the source shell once the plan is in place.
 
 ## Task Tracking
 
@@ -14,23 +14,23 @@ Use `TaskCreate` to create a task for each step:
 1. Load the shell and verify consumes
 2. Run `/survey-patterns` skill (shell-focused)
 3. Escalate the shell's open questions
-4. Fill in and write back to the shell path
+4. Write the plan and delete the shell
 
 ## Step 1: Load the Shell and Verify Consumes
 
 Determine which shell to expand:
 
 1. **Explicit path** — If a file path was passed, use it
-2. **Single candidate** — Glob `.turbo/plans/*.md`, filter to files with `type: shell` and `status: draft` whose `depends_on` are all `done`. If exactly one match, use it
+2. **Single candidate** — Glob `.turbo/shells/*.md` and filter to shells whose `depends_on` are all satisfied (see satisfaction check below). If exactly one match, use it
 3. **Multiple candidates** — If multiple matches, use `AskUserQuestion` to let the user choose
-4. **Nothing found** — If no draft shells exist, say so and stop
+4. **Nothing found** — If no shells exist in `.turbo/shells/`, say so and stop
+
+A `depends_on` entry is satisfied when `.turbo/plans/<dep-slug>.md` exists with `status: done` in its frontmatter.
 
 Read the shell file. Parse the YAML frontmatter:
 
-- **type** (must be `shell`)
-- **status** (must be `draft` or `in-progress`)
 - **spec** (source spec path)
-- **depends_on** (list of shell slugs that must be `done`)
+- **depends_on** (list of shell slugs that must already be implemented)
 
 Parse these body fields:
 
@@ -42,15 +42,17 @@ Parse these body fields:
 - **Implementation Steps (High-Level)** (named tasks without file paths)
 - **Open Questions** (decisions deferred to now)
 
+Compute the shell slug from the filename (basename without `.md`). The expanded plan will be written to `.turbo/plans/<shell-slug>.md`.
+
 **Verify Consumes are present in the current codebase.** For each Consumes entry:
 
 - If marked "from existing codebase," grep or read relevant files to confirm the artifact still exists at the expected conceptual location
-- If the entry references a prior shell's Produces, verify that the prior shell has `status: done` in its frontmatter AND that the artifact is actually present in the current codebase (the prior implementation may have diverged)
+- If the entry references a prior shell's Produces, verify that the corresponding plan at `.turbo/plans/<prior-slug>.md` has `status: done` AND that the artifact is actually present in the current codebase (the prior implementation may have diverged)
 
 If any Consumes entry fails verification, escalate via `AskUserQuestion`:
 
 - **Adapt the shell** — open the shell for editing, adjust the shell's Consumes/Implementation Steps to match what actually exists, then re-verify
-- **Skip this shell** — leave the shell's frontmatter status as `draft` and stop. Tell the user to run `/pick-next-plan-shell` again or resolve the prior work.
+- **Skip this shell** — leave the shell in place and stop. Tell the user to run `/pick-next-shell` again or resolve the prior work.
 - **Stop and investigate** — halt without edits so the user can debug
 
 Do not proceed to Step 2 until all Consumes verify cleanly.
@@ -77,7 +79,7 @@ Do **not** escalate other questions. If you identify a new question while readin
 
 If the shell's Open Questions field is empty or contains "None," skip this step entirely and proceed to Step 4.
 
-## Step 4: Fill In and Write Back
+## Step 4: Write the Plan and Delete the Shell
 
 Expand the shell into a full plan using:
 
@@ -87,19 +89,17 @@ Expand the shell into a full plan using:
 4. A Verification section with specific test commands and expected observable results for this shell's work
 5. A Context Files section listing the files an implementer needs to read in full
 
-Update the shell's YAML frontmatter to set `status: ready`, then write the full plan to the shell file path (overwriting the shell content) using this structure:
+Create `.turbo/plans/` if it does not exist. Write the plan to `.turbo/plans/<shell-slug>.md` using this structure:
 
 ````markdown
 ---
-type: shell
 status: ready
-spec: <spec path from original frontmatter>
-depends_on: <depends_on from original frontmatter>
+spec: <spec path from original shell frontmatter>
 ---
 
 # Plan: <Task Title>
 
-<!-- Expanded from: <spec path> -->
+<!-- Expanded from shell: <shell-slug> -->
 
 ## Context
 
@@ -129,6 +129,10 @@ depends_on: <depends_on from original frontmatter>
 - `<path/to/file2>` — <why it matters>
 ````
 
+After the plan file is written successfully, delete the source shell at `.turbo/shells/<shell-slug>.md`. The plan carries `spec` forward as provenance. `depends_on` and the structural contract (Produces, Consumes, Covers) are locked in at expansion and do not need to persist on the plan.
+
+State the plan path before proceeding.
+
 ### Content Rules for the Plan
 
 - **Implementation Steps**: Use concrete `file_path:line_number` references. Reference existing functions and utilities from the Pattern Survey instead of reinventing them. Each step describes a discrete unit of work that can be tracked independently during execution.
@@ -140,9 +144,9 @@ Check your task list for remaining tasks and proceed.
 
 ## Rules
 
-- The `type` field stays `shell` after expansion for traceability. Plans originating from shell decomposition are distinguishable from standalone `/draft-plan` output even after expansion.
 - Never proceed past Step 1 if Consumes verification fails.
 - The shell's structural contract (Produces, Consumes, Covers) is authoritative. If the pattern survey reveals conflicts, note them in the plan's Context or Verification sections rather than altering the contract.
 - The plan file is the only output. Do not write code, scaffolding, or other project files.
+- Delete the source shell only after the plan file has been written successfully. Never delete before.
 - Do not run `/review-plan` or any review skills here.
 - Do not embed task tracking, skill loading, or `/finalize` invocation in the plan file.

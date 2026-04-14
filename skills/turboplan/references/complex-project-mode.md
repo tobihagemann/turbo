@@ -1,6 +1,6 @@
 # Turboplan: Complex-Project Mode
 
-Spec out the project and decompose into shell plans, then halt for the user to drive implementation.
+Spec out the project and decompose into shells, then halt for the user to drive implementation.
 
 ## Task Tracking
 
@@ -8,10 +8,10 @@ Use `TaskCreate` to create a task for each phase:
 
 1. Run `/draft-spec` skill
 2. Run `/refine-plan` skill (spec)
-3. Run `/draft-plan-shells` skill
+3. Run `/draft-shells` skill
 4. Run `/refine-plan` skill (shells)
 5. Run `/self-improve` skill
-6. Halt and tell the user to run `/clear` then `/pick-next-plan-shell`
+6. Halt and tell the user to run `/clear` then `/pick-next-shell`
 
 ## Phase 1: Run `/draft-spec` Skill
 
@@ -21,9 +21,9 @@ Run the `/draft-spec` skill with the user's task description. `/draft-spec` guid
 
 Run the `/refine-plan` skill with `spec <path>` from Phase 1. This loops review, evaluation, and application until the spec stabilizes or the iteration cap is hit.
 
-## Phase 3: Run `/draft-plan-shells` Skill
+## Phase 3: Run `/draft-shells` Skill
 
-Run the `/draft-plan-shells` skill, passing the spec path from Phase 1. `/draft-plan-shells` decomposes the spec into shell plans at `.turbo/plans/<spec-slug>-NN-<title>.md` with YAML frontmatter.
+Run the `/draft-shells` skill, passing the spec path from Phase 1. Capture the resulting shell paths.
 
 ## Phase 4: Run `/refine-plan` Skill (Shells)
 
@@ -37,13 +37,12 @@ Run the `/self-improve` skill to compound planning learnings.
 
 Halt with this message:
 
-> Spec and plan shells ready.
+> Spec and shells ready.
 > - Spec: `<spec path>`
-> - Shells: `<N>` shell plans in `.turbo/plans/`
+> - Shells: `<N>` shells in `.turbo/shells/`
 >
-> Planning context is likely full, and the artifacts above are comprehensive enough to continue fresh. Run `/clear`, then `/pick-next-plan-shell` to pick the first draft shell and carry it through planning. After that, run `/implement-plan <slug>` to implement. It will expand the shell with a fresh pattern survey, refine, and chain into `/implement-plan` → `/finalize`.
+> Planning context is likely full, and the artifacts above are comprehensive enough to continue fresh. Run `/clear`, then `/pick-next-shell` to pick the first shell and carry it through expand → refine → self-improve → halt. After that, run `/implement-plan <slug>` in a fresh session to execute the plan and chain into `/finalize`.
 
 ## Rules
 
-- Phase 5 runs before halting so learnings are captured before the user runs `/clear`.
-- Do not attempt to auto-implement shells. The user drives implementation with `/pick-next-plan-shell`, one session per shell.
+- Do not attempt to auto-implement shells. Each shell is implemented in its own fresh session via `/implement-plan` after `/pick-next-shell` halts.

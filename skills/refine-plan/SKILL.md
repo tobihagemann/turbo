@@ -1,11 +1,11 @@
 ---
 name: refine-plan
-description: "Iteratively review and revise a planning artifact until no new findings survive evaluation. Supports plans, plan shells, and specs. Use when the user asks to \"refine the plan\", \"refine the shells\", \"refine this spec\", \"iterate on the plan\", \"iterate on the shells\", \"tighten the plan\", \"tighten the shells\", \"tighten the spec\", \"improve the plan\", \"improve the shells\", or \"improve the spec\"."
+description: "Iteratively review and revise a planning artifact until no new findings survive evaluation. Supports plans, shells, and specs. Use when the user asks to \"refine the plan\", \"refine the shells\", \"refine this spec\", \"iterate on the plan\", \"iterate on the shells\", \"tighten the plan\", \"tighten the shells\", \"tighten the spec\", \"improve the plan\", \"improve the shells\", or \"improve the spec\"."
 ---
 
 # Refine Plan
 
-Loop the review pipeline over a planning artifact until no new findings are accepted. Writes back to the artifact file(s) in place. Supports plans, plan shells, and specs.
+Loop the review pipeline over a planning artifact until no new findings are accepted. Writes back to the artifact file(s) in place. Supports plans, shells, and specs.
 
 ## Task Tracking
 
@@ -21,7 +21,7 @@ At the start of every invocation (including re-runs from Step 5), use `TaskCreat
 
 ### Determine Artifact Type
 
-1. **Explicit argument** — If the user specified a type (e.g., "refine plan", "refine plan-shells", "refine spec"), use it
+1. **Explicit argument** — If the user specified a type (e.g., "refine plan", "refine shells", "refine spec"), use it
 2. **Conversation context** — Infer from conversation (e.g., if `/draft-plan` just ran, type is plan)
 3. **Auto-detect** — Check `.turbo/` for existing artifacts. If multiple types exist, use `AskUserQuestion`
 
@@ -31,22 +31,20 @@ At the start of every invocation (including re-runs from Step 5), use `TaskCreat
 
 1. **Explicit path** — use it
 2. **Explicit slug** — resolve to `.turbo/plans/<slug>.md`
-3. **Single file** — Glob `.turbo/plans/*.md`, excluding shell files (files with `type: shell` in YAML frontmatter). If exactly one non-shell file exists, use it
-4. **Most recent** — most recently modified non-shell file
+3. **Single file** — Glob `.turbo/plans/*.md`. If exactly one file exists, use it
+4. **Most recent** — most recently modified file
 5. **Legacy fallback** — `.turbo/plan.md` if `.turbo/plans/` does not exist
-6. **Nothing found** — tell the user to run `/turboplan` (for a new task) or `/pick-next-plan-shell` (for existing shells) and stop
+6. **Nothing found** — tell the user to run `/turboplan` (for a new task) or `/pick-next-shell` (for existing shells) and stop
 
-**Shell detection:** Read the file's YAML frontmatter. If the resolved file has `type: shell` and `status: draft`, halt with: "`<path>` is a draft shell that needs expansion first. Run `/pick-next-plan-shell` to expand and implement it."
+#### Shells
 
-#### Plan Shells
-
-1. **Explicit spec slug** — Glob `.turbo/plans/<slug>-*.md`, filter to `type: shell` in YAML frontmatter
+1. **Explicit spec slug** — Glob `.turbo/shells/<slug>-*.md`
 2. **Explicit spec path** — derive slug from filename, glob as above
 3. **Single spec** — Glob `.turbo/specs/*.md`. If exactly one, derive slug and glob for shells
 4. **Most recent spec** — most recently modified spec, derive slug and glob
-5. **Nothing found** — tell the user to run `/draft-plan-shells` first and stop
+5. **Nothing found** — tell the user to run `/draft-shells` first and stop
 
-For shells, read each shell file and extract from its YAML frontmatter: `type` (must be `shell`), `status`, `spec` (source spec path), `depends_on`. Verify the source spec exists. State the spec path, number of shells, and each shell's filename and status.
+For shells, read each shell file and extract from its YAML frontmatter: `spec` (source spec path) and `depends_on`. Verify the source spec exists. State the spec path, number of shells, and each shell's filename.
 
 #### Spec
 
@@ -95,7 +93,7 @@ Check your task list for remaining tasks and proceed.
 ### Structural Edit Examples by Type
 
 - **Plan** — added or removed steps, new or removed design decisions, rewired dependencies between steps, changed testing strategy
-- **Plan Shells** — added or removed shells, changed Produces/Consumes/Covers Spec Requirements wiring, changed frontmatter `depends_on`, added or removed spec requirement coverage
+- **Shells** — added or removed shells, changed Produces/Consumes/Covers Spec Requirements wiring, changed frontmatter `depends_on`, added or removed spec requirement coverage
 - **Spec** — added or removed sections, new or removed requirements, rewired cross-references, changed acceptance criteria
 
 ## Rules

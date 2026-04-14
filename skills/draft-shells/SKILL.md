@@ -1,11 +1,11 @@
 ---
-name: draft-plan-shells
-description: "Decompose a specification file into shell plans with YAML frontmatter. Each shell captures the wiring invariants (Produces, Consumes, Covers) and high-level Implementation Steps without committing to file paths. Use when the user asks to \"draft plan shells\", \"create plan shells\", \"break spec into shells\", \"decompose spec into sessions\", \"draft shells from spec\", \"generate shells from spec\", or \"make shells from spec\"."
+name: draft-shells
+description: "Decompose a specification file into shells with YAML frontmatter. Each shell captures the wiring invariants (Produces, Consumes, Covers) and high-level Implementation Steps without committing to file paths. Use when the user asks to \"draft shells\", \"create shells\", \"break spec into shells\", \"decompose spec into sessions\", \"draft shells from spec\", \"generate shells from spec\", or \"make shells from spec\"."
 ---
 
-# Draft Plan Shells
+# Draft Shells
 
-Decompose a specification file into shell plans at `.turbo/plans/<spec-slug>-NN-<title>.md`. Each shell represents one unit of work for a separate Claude Code session.
+Decompose a specification file into shells at `.turbo/shells/<spec-slug>-NN-<title>.md`. Each shell represents one unit of work for a separate Claude Code session.
 
 ## Task Tracking
 
@@ -27,7 +27,7 @@ Determine which spec to decompose using these rules in order:
 5. **Legacy fallback** — If `.turbo/specs/` does not exist but `.turbo/spec.md` exists, use it
 6. **Nothing found** — If no spec exists, tell the user to run `/draft-spec` first and stop
 
-The slug of the resolved spec becomes the prefix for shell file names: a spec at `.turbo/specs/<slug>.md` produces shells at `.turbo/plans/<slug>-NN-<title>.md`. For the legacy fallback, use slug `legacy`.
+The slug of the resolved spec becomes the prefix for shell file names: a spec at `.turbo/specs/<slug>.md` produces shells at `.turbo/shells/<slug>-NN-<title>.md`. For the legacy fallback, use slug `legacy`.
 
 State the resolved spec path and target shell directory before continuing.
 
@@ -70,24 +70,22 @@ Mitigate dead code risk in bottom-up ordering by bundling tightly-coupled produc
 
 For each shell, identify the structural contract with the rest of the decomposition:
 
-- **Produces** — What this shell creates that other shells (or the final system) can use. List concrete artifacts at the conceptual level: modules, types, endpoints, data models, UI screens, migration files. No file paths — those come at expansion time.
+- **Produces** — What this shell creates that other shells (or the final system) can use. List concrete artifacts at the conceptual level: modules, types, endpoints, data models, UI screens, migration files. File paths are filled in at expansion time.
 - **Consumes** — What this shell depends on that must already exist. Either listed in a prior shell's Produces, or marked "from existing codebase" if it predates this decomposition. Every Consumes entry must be traceable to a source.
 - **Covers spec requirements** — Which spec sections or requirements this shell implements. The union of Covers across all shells must equal the set of spec requirements.
 
 ### Shell Slug
 
-Each shell gets a slug derived from its title using spec slug rules (lowercase, hyphenated, ≤40 chars), prefixed with the shell number: `<spec-slug>-NN-<title-slug>`. This becomes both the shell's file name and the plan file name after expansion.
+Each shell gets a slug derived from its title using spec slug rules (lowercase, hyphenated, ≤40 chars), prefixed with the shell number: `<spec-slug>-NN-<title-slug>`. The shell keeps this file name when `/expand-shell` fills it in.
 
-Example: spec slug `photo-sorter-v2`, Shell 3 titled "Build duplicate detection" → slug `photo-sorter-v2-03-build-duplicate-detection`, written to `.turbo/plans/photo-sorter-v2-03-build-duplicate-detection.md`.
+Example: spec slug `photo-sorter-v2`, Shell 3 titled "Build duplicate detection" → slug `photo-sorter-v2-03-build-duplicate-detection`, written to `.turbo/shells/photo-sorter-v2-03-build-duplicate-detection.md`.
 
 ## Step 3: Write Shell Files
 
-Create `.turbo/plans/` if it does not exist. For each shell, write a file at `.turbo/plans/<shell-slug>.md` using this template:
+Create `.turbo/shells/` if it does not exist. For each shell, write a file at `.turbo/shells/<shell-slug>.md` using this template:
 
 ````markdown
 ---
-type: shell
-status: draft
 spec: <resolved spec path from Step 1>
 depends_on: []
 ---
@@ -96,7 +94,7 @@ depends_on: []
 
 ## Context
 
-<Why this work matters, drawn from relevant spec sections. The intended outcome, not the how. One or two paragraphs.>
+<Why this work matters, drawn from relevant spec sections. Focus on the intended outcome. One or two paragraphs.>
 
 ## Produces
 
@@ -119,7 +117,7 @@ depends_on: []
 ## Implementation Steps (High-Level)
 
 1. **<Step title>**
-   - <Description of what this step accomplishes, no file_path:line_number yet>
+   - <Description of what this step accomplishes at the conceptual level>
 2. **<Step title>**
    - <Description>
 3. ...
@@ -132,7 +130,7 @@ depends_on: []
 
 ## Expansion Deferred
 
-The following are filled in when `/expand-plan-shell` runs:
+The following are filled in when `/expand-shell` runs:
 
 - Pattern survey against the codebase state at implementation time
 - Concrete `file_path:line_number` references for each Implementation Step
@@ -142,10 +140,8 @@ The following are filled in when `/expand-plan-shell` runs:
 
 ### Frontmatter Fields
 
-- **type** — Always `shell` for shell plans
-- **status** — Always `draft` when first written. Transitions: `draft` → `ready` (after `/expand-plan-shell`) → `in-progress` (when implementation starts in `/pick-next-plan-shell`) → `done` (after `/implement-plan` completes)
 - **spec** — Absolute or relative path to the source spec
-- **depends_on** — List of shell file names (without `.md`) that must reach `done` before this shell can be picked. Use `[]` for shells with no dependencies.
+- **depends_on** — List of shell file names (without `.md`) that must be expanded and implemented before this shell can be picked. Use `[]` for shells with no dependencies.
 
 Example `depends_on` for Shell 3 that depends on Shells 1 and 2:
 ```yaml
@@ -158,7 +154,7 @@ If a shell has no Open Questions, include the section with "None" so the structu
 
 Present a brief summary: number of shells, one-line description of each shell's scope, and any assumptions made about ambiguities. Tell the user the next step:
 
-> To start implementation, run `/pick-next-plan-shell`. It will pick the next shell, expand it with a fresh pattern survey and concrete references, refine, and implement.
+> To start implementation, run `/pick-next-shell`. It will pick the next shell, expand it with a fresh pattern survey and concrete references, refine, self-improve, then halt. Run `/implement-plan` in a fresh session afterward.
 
 Check your task list for remaining tasks and proceed.
 

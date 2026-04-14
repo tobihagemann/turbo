@@ -1,6 +1,6 @@
 # Turboplan: Small-Task Mode
 
-Draft → refine → self-improve → halt for a user-supplied small task.
+Draft → refine → self-improve → mark ready → halt for a user-supplied small task.
 
 ## Task Tracking
 
@@ -9,7 +9,8 @@ Use `TaskCreate` to create a task for each phase:
 1. Run `/draft-plan` skill
 2. Run `/refine-plan` skill
 3. Run `/self-improve` skill
-4. Halt with next-step instructions
+4. Mark plan ready
+5. Halt with next-step instructions
 
 ## Phase 1: Run `/draft-plan` Skill
 
@@ -23,9 +24,11 @@ Run the `/refine-plan` skill with `<path>` from Phase 1. This loops review, eval
 
 Run the `/self-improve` skill to compound planning learnings.
 
-## Phase 4: Halt with Next-Step Instructions
+## Phase 4: Mark Plan Ready
 
 Update the plan's YAML frontmatter to `status: ready`.
+
+## Phase 5: Halt with Next-Step Instructions
 
 Halt with this message:
 
@@ -35,6 +38,5 @@ Halt with this message:
 
 ## Rules
 
-- Phases 1, 2, and 3 always run.
 - Do not edit the plan file directly. Revisions go through `/refine-plan` or `/draft-plan`.
 - Do not attempt to auto-implement. The user drives implementation with `/implement-plan` in a fresh session.

@@ -1,6 +1,6 @@
 ---
 name: review-plan
-description: "Review a planning artifact (plan, plan shells, or spec) against type-specific criteria and return structured findings. Use when the user asks to \"review my plan\", \"review my shells\", \"review my plan shells\", \"review my spec\", \"check my plan\", \"check my shells\", \"check my spec\", \"critique my plan\", \"critique my shells\", \"critique my spec\", or wants feedback on a planning artifact."
+description: "Review a planning artifact (plan, shells, or spec) against type-specific criteria and return structured findings. Use when the user asks to \"review my plan\", \"review my shells\", \"review my spec\", \"check my plan\", \"check my shells\", \"check my spec\", \"critique my plan\", \"critique my shells\", \"critique my spec\", or wants feedback on a planning artifact."
 ---
 
 # Review Plan
@@ -11,7 +11,7 @@ Review a planning artifact against type-specific criteria. Return structured fin
 
 ### Determine Artifact Type
 
-1. **Explicit argument** — If the user specified a type (e.g., "review-plan shells", "review-plan spec"), use it. No argument defaults to **plan**.
+1. **Explicit argument** — If the user specified a type (e.g., "review shells", "review spec"), use it. No argument defaults to **plan**.
 2. **Conversation context** — If artifact text or a path is already in context, infer the type.
 3. **Auto-detect** — Check `.turbo/` for existing artifacts. If multiple types exist, use `AskUserQuestion`.
 
@@ -22,21 +22,21 @@ Review a planning artifact against type-specific criteria. Return structured fin
 1. **Plan text in conversation** — use it
 2. **Explicit path** — read it
 3. **Explicit slug** — resolve to `.turbo/plans/<slug>.md`
-4. **Single file** — Glob `.turbo/plans/*.md`, excluding shell files (files with `type: shell` in YAML frontmatter). If exactly one non-shell file exists, use it
-5. **Most recent** — most recently modified non-shell file
+4. **Single file** — Glob `.turbo/plans/*.md`. If exactly one file exists, use it
+5. **Most recent** — most recently modified file
 6. **Legacy fallback** — `.turbo/plan.md` if `.turbo/plans/` does not exist
 7. **Nothing found** — use `AskUserQuestion` to ask what to review
 
 #### Shells
 
 1. **Shell text in conversation** — use it
-2. **Explicit spec slug** — Glob `.turbo/plans/<slug>-*.md`, filter to `type: shell` in YAML frontmatter
+2. **Explicit spec slug** — Glob `.turbo/shells/<slug>-*.md`
 3. **Explicit spec path** — derive slug from filename, glob as above
 4. **Single spec** — Glob `.turbo/specs/*.md`. If exactly one, derive slug and glob for shells
 5. **Most recent spec** — most recently modified spec, derive slug and glob
 6. **Nothing found** — use `AskUserQuestion` to ask what to review
 
-For shells, read each shell file and parse its YAML frontmatter (`type`, `status`, `spec`, `depends_on`). Read the source spec from the `spec` field.
+For shells, read each shell file and parse its YAML frontmatter (`spec`, `depends_on`). Read the source spec from the `spec` field.
 
 #### Spec
 
