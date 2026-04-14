@@ -68,8 +68,8 @@
         <mxCell id="23" parent="21" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/simplify-code" vertex="1">
           <mxGeometry height="40" width="150" x="45" y="170" as="geometry" />
         </mxCell>
-        <mxCell id="24" parent="21" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/review-code + /peer-review" vertex="1">
-          <mxGeometry height="40" width="180" x="30" y="230" as="geometry" />
+        <mxCell id="24" parent="21" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/review-code" vertex="1">
+          <mxGeometry height="40" width="150" x="45" y="230" as="geometry" />
         </mxCell>
         <mxCell id="224" parent="21" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/evaluate-findings" vertex="1">
           <mxGeometry height="40" width="150" x="45" y="290" as="geometry" />

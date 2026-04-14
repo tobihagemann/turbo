@@ -1,13 +1,15 @@
 ---
 name: review-code
-description: "Review code for bugs, security vulnerabilities, quality issues, API misuse, or test coverage gaps. Single-concern with a type argument, or full review with no argument. Use when the user asks to \"review my code\", \"full code review\", \"review my changes\", \"check for bugs\", \"scan for bugs\", \"review correctness\", \"security audit\", \"find vulnerabilities\", \"review security\", \"check for duplication\", \"review quality\", \"check API usage\", \"verify against docs\", \"find untested code\", or \"review test coverage\"."
+description: "Review code for bugs, security vulnerabilities, quality issues, API misuse, or test coverage gaps by running internal reviews and a peer review in parallel and returning combined findings. Single-concern with a type argument, or full review with no argument. Use when the user asks to \"review my code\", \"full code review\", \"review my changes\", \"check for bugs\", \"scan for bugs\", \"review correctness\", \"security audit\", \"find vulnerabilities\", \"review security\", \"check for duplication\", \"review quality\", \"check API usage\", \"verify against docs\", \"find untested code\", or \"review test coverage\"."
 ---
 
 # Review Code
 
-Review code against type-specific criteria. With a type argument, runs a single-concern review. With no type argument, runs all five types in parallel.
+Review code against type-specific criteria. Runs internal reviews and `/peer-review` in parallel by default. Returns combined structured findings.
 
 **Types:** `correctness`, `security`, `quality`, `api-usage`, `coverage`
+
+With a type argument, runs a single-concern internal review plus the peer review. With no type argument, runs all five internal reviews plus the peer review.
 
 ## Step 1: Determine the Scope
 
@@ -17,9 +19,9 @@ Determine what to review:
 - If a **file list or directory** was provided, review those files directly (read the full files, not a diff).
 - If **neither** was provided, default to diffing against the repository's default branch (detect via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`). If there are no changes against the default branch, use `AskUserQuestion` to ask what to review.
 
-## Step 2: Review
+## Step 2: Run Reviews in Parallel
 
-Read the reference file for the specified type (or all five for full review):
+Read the reference file(s) for the active type(s):
 
 - **Correctness** — [references/correctness-review.md](references/correctness-review.md)
 - **Security** — [references/security-review.md](references/security-review.md)
@@ -27,12 +29,11 @@ Read the reference file for the specified type (or all five for full review):
 - **API usage** — [references/api-usage-review.md](references/api-usage-review.md)
 - **Coverage** — [references/coverage-review.md](references/coverage-review.md)
 
-Launch Agent tool calls (`model: "opus"`, do not set `run_in_background`). Each agent receives the scope from Step 1 and one reference file's content. For each file in scope, read enough surrounding context to understand the code.
+Full review activates all five types; a single-concern argument activates one. Skip peer review when the caller asked (e.g., "without peer review", "no peer", "internal only").
 
-- **Single-concern** (type specified) — one agent.
-- **Full review** (no type) — five agents in a single message so they run concurrently.
+Launch one Agent tool call per active type plus one for `/peer-review` (unless skipping), all in a single message (`model: "opus"`, do not set `run_in_background`). Each internal Agent receives the scope and its reference file content, applies the criteria, and returns findings in the output format below. The peer-review Agent invokes `/peer-review` via the Skill tool with a prompt embedding the "What to Review", determination criteria, priority levels, and verdict label from every active reference file, structured with `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags.
 
-Return findings in the output format below. Aggregate findings with attribution (reviewer type, file path, description).
+Aggregate findings with attribution (reviewer: "internal" or "peer"; type; file path). Present them in the output format below.
 
 Check your task list for remaining tasks and proceed.
 
@@ -44,23 +45,24 @@ Return findings as a numbered list. For each finding:
 ### [P<N>] <title (imperative, ≤80 chars)>
 
 **File:** `<file path>` (lines <start>-<end>)
+**Reviewer:** <internal | peer> (<type>)
 
 <one paragraph explaining the issue and its impact>
 ```
 
-The reference file may specify additional metadata fields (e.g., `**Category:**`, `**Library:**`, `**Docs:**`). Include them between the `**File:**` line and the paragraph.
+The reference file may specify additional metadata fields (e.g., `**Category:**`, `**Library:**`, `**Docs:**`). Include them between the `**Reviewer:**` line and the paragraph.
 
-After all findings, add a verdict using the label from the reference file:
+After all findings, add an overall verdict per active type using the label from each reference file. For single-concern, that is one verdict block; for full review, five. After the per-type verdicts, add a single combined `## Peer Review Verdict` block summarizing what codex returned.
 
 ```
-## Overall Verdict
+## Overall Verdict — <type>
 
 **<Verdict Label>:** <status>
 
 <1-3 sentence assessment>
 ```
 
-If there are no qualifying findings, state so and explain briefly.
+If there are no qualifying findings for a type, state so under that type's verdict block and explain briefly.
 
 ## Rules
 

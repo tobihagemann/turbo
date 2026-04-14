@@ -48,21 +48,21 @@ Run all analysis skills in parallel.
 
 ### Partitioned Skills
 
-For each skill below, run **one instance per partition** with the partition's file list:
+For each skill below, run **one instance per partition** with the partition's file list. Pass `(skip peer review)` annotations through to `/review-code` as an opt-out so it runs internal reviews only — `/peer-review` is scheduled as its own row to avoid duplicate codex runs.
 
 | Skill | Scope |
 |---|---|
-| `/review-code` with `correctness` | File list |
-| `/review-code` with `security` | File list |
-| `/review-code` with `api-usage` | File list |
-| `/review-code` with `quality` | File list |
+| `/review-code` with `correctness` (skip peer review) | File list |
+| `/review-code` with `security` (skip peer review) | File list |
+| `/review-code` with `api-usage` (skip peer review) | File list |
+| `/review-code` with `quality` (skip peer review) | File list |
 | `/peer-review` | File list |
 
 ### Project-Wide Skills
 
 | Skill | Notes |
 |---|---|
-| `/review-code` with `coverage` | Project-wide |
+| `/review-code` with `coverage` (skip peer review) | Project-wide |
 | `/review-dependencies` | Project-wide |
 | `/review-tooling` | Project-wide |
 | `/review-agentic-setup` | Project-wide |

@@ -131,8 +131,8 @@
         <mxCell id="300" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#eff6ff;strokeColor=#3b82f6;fontColor=#1e3a5f;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/refine-plan" vertex="1">
           <mxGeometry height="290" width="240" x="240" y="340" as="geometry" />
         </mxCell>
-        <mxCell id="301" parent="300" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/review-plan + /peer-review" vertex="1">
-          <mxGeometry height="40" width="180" x="30" y="50" as="geometry" />
+        <mxCell id="301" parent="300" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/review-plan" vertex="1">
+          <mxGeometry height="40" width="150" x="45" y="50" as="geometry" />
         </mxCell>
         <mxCell id="302" parent="300" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/evaluate-findings" vertex="1">
           <mxGeometry height="40" width="150" x="45" y="110" as="geometry" />

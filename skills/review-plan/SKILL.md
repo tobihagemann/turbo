@@ -1,11 +1,11 @@
 ---
 name: review-plan
-description: "Review a planning artifact (plan, shells, or spec) against type-specific criteria and return structured findings. Use when the user asks to \"review my plan\", \"review my shells\", \"review my spec\", \"check my plan\", \"check my shells\", \"check my spec\", \"critique my plan\", \"critique my shells\", \"critique my spec\", or wants feedback on a planning artifact."
+description: "Review a planning artifact (plan, shells, or spec) by running internal and peer reviews in parallel and returning combined findings. Use when the user asks to \"review my plan\", \"review my shells\", \"review my spec\", \"check my plan\", \"check my shells\", \"check my spec\", \"critique my plan\", \"critique my shells\", \"critique my spec\", or wants feedback on a planning artifact."
 ---
 
 # Review Plan
 
-Review a planning artifact against type-specific criteria. Return structured findings.
+Review a planning artifact against type-specific criteria. Runs internal review and `/peer-review` in parallel by default. Returns combined structured findings.
 
 ## Step 1: Determine Artifact Type and Resolve
 
@@ -50,7 +50,7 @@ For shells, read each shell file and parse its YAML frontmatter (`spec`, `depend
 
 If multiple candidates exist and the choice is non-obvious, use `AskUserQuestion`.
 
-## Step 2: Review
+## Step 2: Run Reviews in Parallel
 
 Read the reference file for the resolved type:
 
@@ -58,9 +58,11 @@ Read the reference file for the resolved type:
 - **Shells** — [references/shells-review.md](references/shells-review.md)
 - **Spec** — [references/spec-review.md](references/spec-review.md)
 
-Launch an Agent tool call (`model: "opus"`, do not set `run_in_background`) with the artifact text and one reference file's content. Read project context (CLAUDE.md, relevant codebase files) before applying criteria. Exception: shells review focuses on structural wiring, not codebase patterns.
+Skip peer review when the caller asked (e.g., "without peer review", "no peer", "internal only").
 
-Return findings in the output format below.
+Launch one internal review Agent plus one for `/peer-review` (unless skipping), both in a single message (`model: "opus"`, do not set `run_in_background`). The internal Agent receives the artifact text and the reference file's content, reads project context (CLAUDE.md, relevant codebase files) before applying criteria, and returns findings in the output format below. Exception: shells review focuses on structural wiring — skip the project context read. The peer-review Agent invokes `/peer-review` via the Skill tool with a prompt embedding the full reference file content, structured with `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags.
+
+Aggregate findings with attribution (reviewer: "internal" or "peer"). Present them in the output format below.
 
 Check your task list for remaining tasks and proceed.
 
@@ -72,6 +74,7 @@ Return findings as a numbered list. For each finding:
 ### [P<N>] <title (imperative, ≤80 chars)>
 
 **<Location>:** <plan section, shell number(s), or spec section>
+**Reviewer:** <internal | peer>
 
 <one paragraph explaining the issue and its impact>
 ```

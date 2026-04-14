@@ -973,6 +973,22 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 - ✗ **Avoid**: Launching Agent + Agent + Skill in one message expecting all three to do work concurrently.
 - ✓ **Good**: Launching three Agents in one message, each running its respective skill.
 
+### Bundle parallel fan-out inside one skill, not across siblings
+
+When a workflow needs N parallel reviewers/dimensions/perspectives (e.g., internal review + peer review, or multiple review types in one pass), put the fan-out inside one skill body rather than asking a parent to load several sibling skills "in parallel" via the Skill tool. The parent's "load A and B" pattern can't actually parallelize the sibling skills' work, and it leaks the siblings' implementation details into the parent step.
+
+The right shape is a single skill that emits N+1 Agent tool calls in one message — see `/interpret-feedback`, `/review-code`, and `/review-plan` for examples. Add an opt-out (e.g., "skip peer review") for callers who want only the internal pass.
+
+- ✗ **Avoid**: Parent skill Step says "Run `/review-x` and `/peer-review` skills concurrently" and tries to batch two Skill calls.
+- ✓ **Good**: `/review-x` internally launches both internal reviewer Agents and a peer reviewer Agent in one message; the parent just calls `/review-x`.
+
+### Hoist conditional opt-out checks above dispatch logic
+
+When a step has a conditional opt-out (e.g., "skip peer review" reduces N+1 to N Agents), put the check at the top of the step before describing the dispatch. If the opt-out subsection appears after the per-Agent subsections, a reader plans the full dispatch and only learns about the opt-out after — easy to ignore at execution time.
+
+- ✗ **Avoid**: Describe Agent A, Agent B, Agent C — then add a final "Skipping C" subsection.
+- ✓ **Good**: Open the step with "Determine whether to skip C: if the caller asked to skip, set the dispatch to A+B; otherwise A+B+C." Then describe each Agent.
+
 ### Avoid redundant Rules sections
 
 A Rules section should only contain information not already conveyed by the skill body. Before adding a rule, check whether the Process, workflow steps, or tables already encode the same behavior. If they do, the rule is wasted tokens.

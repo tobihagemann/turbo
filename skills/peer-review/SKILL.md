@@ -9,11 +9,11 @@ Independent peer review via codex. Runs `/codex-exec` in read-only mode with a r
 
 ## Step 1: Determine What to Review
 
-Determine what to review from the input material (passed in via Agent task context) or from conversation context. If neither provides reviewable material, use `AskUserQuestion` to ask what to review.
+Determine what to review from the input material (passed in via the task prompt when invoked as a sub-Agent) or from conversation context. If neither provides reviewable material, use `AskUserQuestion` to ask what to review.
 
 ## Step 2: Run `/codex-exec` Skill
 
-Launch an Agent tool call (`model: "opus"`, do not set `run_in_background`) to run the `/codex-exec` skill in read-only mode with a review prompt tailored to the material. Include the output format in a `<structured_output_contract>` tag:
+Invoke `/codex-exec` via the Skill tool in read-only mode with a review prompt tailored to the material. Include the output format in a `<structured_output_contract>` tag:
 
 ```
 <structured_output_contract>

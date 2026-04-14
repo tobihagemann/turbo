@@ -12,7 +12,7 @@ Loop the review pipeline over a planning artifact until no new findings are acce
 At the start of every invocation (including re-runs from Step 5), use `TaskCreate` to create a task for each step:
 
 1. Resolve the artifact
-2. Run `/review-plan` and `/peer-review` skills
+2. Run `/review-plan` skill
 3. Run `/evaluate-findings` skill
 4. Run `/apply-findings` skill
 5. Re-run `/refine-plan` skill if changed
@@ -59,9 +59,9 @@ If multiple candidates exist and the choice is non-obvious, use `AskUserQuestion
 
 State the resolved path(s) before continuing.
 
-## Step 2: Run `/review-plan` and `/peer-review` Skills
+## Step 2: Run `/review-plan` Skill
 
-Run the `/review-plan` and `/peer-review` skills on the resolved artifact. Read both skills' instructions, then launch all Agent tool calls in a single message so they run concurrently. Aggregate findings with attribution (reviewer: "internal" or "peer").
+Run the `/review-plan` skill on the resolved artifact.
 
 Always run this step even if the artifact looks polished.
 
@@ -103,4 +103,3 @@ Check your task list for remaining tasks and proceed.
 - Every step must run in every iteration. `/evaluate-findings` is a judgment gate that must run before `/apply-findings` touches the artifact. Each step must invoke its designated skill via the Skill tool.
 - Re-invocations from Step 5 are full runs with fresh task tracking and complete skill invocations.
 - The artifact file(s) are the only files that should change. For shells, do not modify the source spec.
-- If any reviewer is unavailable or returns malformed output, proceed with findings from the remaining reviewer.
