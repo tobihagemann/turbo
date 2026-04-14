@@ -58,9 +58,12 @@ Read the reference file for the resolved type:
 - **Shells** — [references/shells-review.md](references/shells-review.md)
 - **Spec** — [references/spec-review.md](references/spec-review.md)
 
-Skip peer review when the caller asked (e.g., "without peer review", "no peer", "internal only").
+Skip peer review when the caller asked (e.g., "without peer review", "no peer", "internal only"). For shells, the internal review focuses on structural wiring and skips the project context read.
 
-Launch one internal review Agent plus one for `/peer-review` (unless skipping), both in a single message (`model: "opus"`, do not set `run_in_background`). The internal Agent receives the artifact text and the reference file's content, reads project context (CLAUDE.md, relevant codebase files) before applying criteria, and returns findings in the output format below. Exception: shells review focuses on structural wiring — skip the project context read. The peer-review Agent invokes `/peer-review` via the Skill tool with a prompt embedding the full reference file content, structured with `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags.
+Use the Agent tool to launch all agents below in a single message (`model: "opus"`, do not set `run_in_background`) so they run concurrently:
+
+- **Internal Agent:** Pass the artifact text and the reference file's content; the subagent reads project context (CLAUDE.md, relevant codebase files) before applying criteria, then returns findings in the output format below.
+- **Peer review Agent (unless skipping):** Instruct the subagent to invoke `/peer-review` via the Skill tool with a prompt embedding the full reference file content, structured with `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags.
 
 Aggregate findings with attribution (reviewer: "internal" or "peer"). Present them in the output format below.
 

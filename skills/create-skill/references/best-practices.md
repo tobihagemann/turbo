@@ -982,6 +982,13 @@ The right shape is a single skill that emits N+1 Agent tool calls in one message
 - ✗ **Avoid**: Parent skill Step says "Run `/review-x` and `/peer-review` skills concurrently" and tries to batch two Skill calls.
 - ✓ **Good**: `/review-x` internally launches both internal reviewer Agents and a peer reviewer Agent in one message; the parent just calls `/review-x`.
 
+### Phrase multi-Agent parallel dispatch imperatively
+
+When a step launches multiple Agents concurrently, use the imperative from `/simplify-code`: "Use the Agent tool to launch all agents below in a single message (`model: "opus"`, do not set `run_in_background`) so they run concurrently:" followed by uniform bulleted Agent roles. Addendum phrasing ("one per X plus one for Y") reads as sequential — the main agent launches the N, waits, then handles Y separately. If one bullet expands to multiple calls (e.g., "one per active type"), state the expected total call count explicitly so the model doesn't collapse the fan-out into a single Agent.
+
+- ✗ **Avoid**: "Launch one Agent per active type plus one for `/peer-review`, all in a single message."
+- ✓ **Good**: "Use the Agent tool to launch all agents below in a single message. For full review that is six Agent tool calls (five internal + one peer)." Then list agents as uniform bullets.
+
 ### Hoist conditional opt-out checks above dispatch logic
 
 When a step has a conditional opt-out (e.g., "skip peer review" reduces N+1 to N Agents), put the check at the top of the step before describing the dispatch. If the opt-out subsection appears after the per-Agent subsections, a reader plans the full dispatch and only learns about the opt-out after — easy to ignore at execution time.

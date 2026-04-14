@@ -31,7 +31,10 @@ Read the reference file(s) for the active type(s):
 
 Full review activates all five types; a single-concern argument activates one. Skip peer review when the caller asked (e.g., "without peer review", "no peer", "internal only").
 
-Launch one Agent tool call per active type plus one for `/peer-review` (unless skipping), all in a single message (`model: "opus"`, do not set `run_in_background`). Each internal Agent receives the scope and its reference file content, applies the criteria, and returns findings in the output format below. The peer-review Agent invokes `/peer-review` via the Skill tool with a prompt embedding the "What to Review", determination criteria, priority levels, and verdict label from every active reference file, structured with `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags.
+Use the Agent tool to launch all agents below in a single message (`model: "opus"`, do not set `run_in_background`) so they run concurrently. For full review that is six Agent tool calls (five internal + one peer); for single-concern it is two (one internal + one peer).
+
+- **Internal Agent (one per active type):** Launch a separate Agent tool call for each active type. Pass the scope and the type's reference file content; the subagent applies the criteria and returns findings in the output format below.
+- **Peer review Agent (unless skipping):** Instruct the subagent to invoke `/peer-review` via the Skill tool with a prompt embedding the "What to Review", determination criteria, priority levels, and verdict label from every active reference file, structured with `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags.
 
 Aggregate findings with attribution (reviewer: "internal" or "peer"; type; file path). Present them in the output format below.
 
