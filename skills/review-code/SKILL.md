@@ -1,50 +1,68 @@
 ---
 name: review-code
-description: "Full code review: launches `/review-test-coverage`, `/review-correctness`, `/review-security`, `/review-quality`, `/review-api-usage`, and `/peer-review` in parallel and returns combined findings. Use when the user asks to \"review my code\", \"full code review\", \"review my changes\", or wants a comprehensive code review."
+description: "Review code for bugs, security vulnerabilities, quality issues, API misuse, or test coverage gaps. Single-concern with a type argument, or full review with no argument. Use when the user asks to \"review my code\", \"full code review\", \"review my changes\", \"check for bugs\", \"scan for bugs\", \"review correctness\", \"security audit\", \"find vulnerabilities\", \"review security\", \"check for duplication\", \"review quality\", \"check API usage\", \"verify against docs\", \"find untested code\", or \"review test coverage\"."
 ---
 
 # Review Code
 
-Run six AI code reviews in parallel and return combined findings.
+Review code against type-specific criteria. With a type argument, runs a single-concern review. With no type argument, runs all five types in parallel.
+
+**Types:** `correctness`, `security`, `quality`, `api-usage`, `coverage`
 
 ## Step 1: Determine the Scope
 
 Determine what to review:
 
-- If a specific **diff command** was provided (e.g., `git diff --cached`), use that.
-- If a **file list or directory** was provided, review those files directly.
-- If **neither** was provided, default to diffing against the repository's default branch (detect via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`).
+- If a specific **diff command** was provided (e.g., `git diff --cached`, `git diff main...HEAD`), use that.
+- If a **file list or directory** was provided, review those files directly (read the full files, not a diff).
+- If **neither** was provided, default to diffing against the repository's default branch (detect via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`). If there are no changes against the default branch, use `AskUserQuestion` to ask what to review.
 
-## Step 2: Compose the Peer-Review Prompt
+## Step 2: Review
 
-Read the SKILL.md of each review skill listed below and extract their review criteria and "what to look for" sections:
+Read the reference file for the specified type (or all five for full review):
 
-- `/review-test-coverage`
-- `/review-correctness`
-- `/review-security`
-- `/review-quality`
-- `/review-api-usage`
+- **Correctness** — [references/correctness-review.md](references/correctness-review.md)
+- **Security** — [references/security-review.md](references/security-review.md)
+- **Quality** — [references/quality-review.md](references/quality-review.md)
+- **API usage** — [references/api-usage-review.md](references/api-usage-review.md)
+- **Coverage** — [references/coverage-review.md](references/coverage-review.md)
 
-Compose a single comprehensive review prompt covering all dimensions with the diff command from Step 1. Be verbose about what to check so the peer reviewer has full context. Structure the prompt using `<task>`, `<dig_deeper_nudge>`, and `<structured_output_contract>` XML tags, consistent with the `/peer-review` interface.
+Launch Agent tool calls (`model: "opus"`, do not set `run_in_background`). Each agent receives the scope from Step 1 and one reference file's content. For each file in scope, read enough surrounding context to understand the code.
 
-## Step 3: Run Six Reviews in Parallel
+- **Single-concern** (type specified) — one agent.
+- **Full review** (no type) — five agents in a single message so they run concurrently.
 
-Launch six Agent tool calls in a single message so they run concurrently (`model: "opus"`, do not set `run_in_background`). Each agent's prompt includes the scope from Step 1 and instructs it to invoke its assigned skill via the Skill tool:
-
-- `/review-test-coverage`
-- `/review-correctness`
-- `/review-security`
-- `/review-quality`
-- `/review-api-usage`
-- `/peer-review` — pass the pre-composed prompt from Step 2
-
-## Step 4: Aggregate Combined Findings
-
-Wait for all six agents to complete. Aggregate their findings with attribution (reviewer name, file path, description).
+Return findings in the output format below. Aggregate findings with attribution (reviewer type, file path, description).
 
 Check your task list for remaining tasks and proceed.
 
+## Output Format
+
+Return findings as a numbered list. For each finding:
+
+```
+### [P<N>] <title (imperative, ≤80 chars)>
+
+**File:** `<file path>` (lines <start>-<end>)
+
+<one paragraph explaining the issue and its impact>
+```
+
+The reference file may specify additional metadata fields (e.g., `**Category:**`, `**Library:**`, `**Docs:**`). Include them between the `**File:**` line and the paragraph.
+
+After all findings, add a verdict using the label from the reference file:
+
+```
+## Overall Verdict
+
+**<Verdict Label>:** <status>
+
+<1-3 sentence assessment>
+```
+
+If there are no qualifying findings, state so and explain briefly.
+
 ## Rules
 
-- If any reviewer is unavailable or returns malformed output, proceed with findings from the remaining reviewers.
-- Present findings in file order to minimize context switching.
+- Present findings grouped by priority.
+- In full code review mode, present findings in file order to minimize context switching.

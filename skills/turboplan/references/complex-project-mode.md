@@ -7,9 +7,9 @@ Spec out the project and decompose into shell plans, then halt for the user to d
 Use `TaskCreate` to create a task for each phase:
 
 1. Run `/draft-spec` skill
-2. Run `/refine-spec` skill
+2. Run `/refine-plan` skill (spec)
 3. Run `/draft-plan-shells` skill
-4. Run `/refine-plan-shells` skill
+4. Run `/refine-plan` skill (shells)
 5. Run `/self-improve` skill
 6. Halt and tell the user to run `/clear` then `/pick-next-plan-shell`
 
@@ -17,17 +17,17 @@ Use `TaskCreate` to create a task for each phase:
 
 Run the `/draft-spec` skill with the user's task description. `/draft-spec` guides the discussion and writes `.turbo/specs/<slug>.md`. Capture the spec path.
 
-## Phase 2: Run `/refine-spec` Skill
+## Phase 2: Run `/refine-plan` Skill (Spec)
 
-Run the `/refine-spec` skill, passing the spec path from Phase 1. This loops review, evaluation, and application until the spec stabilizes or the iteration cap is hit.
+Run the `/refine-plan` skill with `spec <path>` from Phase 1. This loops review, evaluation, and application until the spec stabilizes or the iteration cap is hit.
 
 ## Phase 3: Run `/draft-plan-shells` Skill
 
 Run the `/draft-plan-shells` skill, passing the spec path from Phase 1. `/draft-plan-shells` decomposes the spec into shell plans at `.turbo/plans/<spec-slug>-NN-<title>.md` with YAML frontmatter.
 
-## Phase 4: Run `/refine-plan-shells` Skill
+## Phase 4: Run `/refine-plan` Skill (Shells)
 
-Run the `/refine-plan-shells` skill, passing the spec slug from Phase 3. This loops review, evaluation, and application until the shells stabilize or the iteration cap is hit.
+Run the `/refine-plan` skill with `shells <slug>` from Phase 3. This loops review, evaluation, and application until the shells stabilize or the iteration cap is hit.
 
 ## Phase 5: Run `/self-improve` Skill
 

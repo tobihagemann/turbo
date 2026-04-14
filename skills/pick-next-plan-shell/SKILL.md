@@ -50,7 +50,7 @@ Run the `/expand-plan-shell` skill, passing the shell file path. `/expand-plan-s
 
 ## Step 3: Run `/refine-plan` Skill
 
-Run the `/refine-plan` skill, passing the expanded plan path. Loops until the plan stabilizes.
+Run the `/refine-plan` skill with `<path>`. Loops until the plan stabilizes.
 
 ## Step 4: Run `/self-improve` Skill
 

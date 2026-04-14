@@ -24,7 +24,7 @@ The system prompt's guard rail has a narrow intended meaning: don't call a skill
 
 This breaks:
 - **Pipelines**: `/finalize` invoking `/review-code`, `/simplify-code`, etc.
-- **Parallel sub-reviews**: `/review-code` launching `/review-correctness`, `/review-security`, `/peer-review`
+- **Parallel sub-reviews**: `/review-code` launching five type-specific review agents
 - **Loops**: `/polish-code` re-invoking itself until stable
 - **Routing**: `/self-improve` routing through `/create-skill`
 - **Any second run**: Running the same top-level skill twice in one session

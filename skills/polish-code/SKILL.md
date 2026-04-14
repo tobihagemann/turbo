@@ -12,7 +12,7 @@ At the start of every invocation (including re-runs from Step 8), use `TaskCreat
 1. Run `/stage` skill
 2. Deterministic cleanup
 3. Run `/simplify-code` skill
-4. Run `/review-code` skill
+4. Run `/review-code` and `/peer-review` skills
 5. Run `/evaluate-findings` skill
 6. Run `/apply-findings` skill
 7. Run `/smoke-test` skill
@@ -36,17 +36,15 @@ Run the `/simplify-code` skill. The diff command is `git diff --cached`.
 
 Stage all changes made in this step before continuing.
 
-## Step 4: Run `/review-code` Skill
+## Step 4: Run `/review-code` and `/peer-review` Skills
 
-Run the `/review-code` skill. The diff command is `git diff --cached`.
+Run the `/review-code` and `/peer-review` skills on the staged changes. The diff command is `git diff --cached`. Read both skills' instructions, then launch all Agent tool calls in a single message so they run concurrently.
 
 Always run this step even if Step 3 made no changes.
 
 ## Step 5: Run `/evaluate-findings` Skill
 
 Run the `/evaluate-findings` skill on the results from Steps 3 and 4.
-
-If zero actionable findings survive evaluation, skip to Step 7.
 
 ## Step 6: Run `/apply-findings` Skill
 

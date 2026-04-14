@@ -17,7 +17,7 @@ Run the `/draft-plan` skill with the user's task description. This produces a ne
 
 ## Phase 2: Run `/refine-plan` Skill
 
-Run the `/refine-plan` skill, passing the plan path captured in Phase 1. This loops review, evaluation, and application until the plan stabilizes or the iteration cap is hit.
+Run the `/refine-plan` skill with `<path>` from Phase 1. This loops review, evaluation, and application until the plan stabilizes or the iteration cap is hit.
 
 ## Phase 3: Run `/self-improve` Skill
 
