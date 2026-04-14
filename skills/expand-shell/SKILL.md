@@ -99,8 +99,6 @@ spec: <spec path from original shell frontmatter>
 
 # Plan: <Task Title>
 
-<!-- Expanded from shell: <shell-slug> -->
-
 ## Context
 
 <Shell Context, preserved verbatim or lightly edited.>
