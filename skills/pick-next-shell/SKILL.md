@@ -15,7 +15,8 @@ At the start, use `TaskCreate` to create a task for each step:
 2. Run `/expand-shell` skill
 3. Run `/refine-plan` skill
 4. Run `/self-improve` skill
-5. Halt with next-step instructions
+5. Mark plan ready
+6. Halt with next-step instructions
 
 ## Step 1: Scan Shells and Pick Next
 
@@ -48,7 +49,11 @@ Run the `/refine-plan` skill with the plan path from Step 2. Loops until the pla
 
 Run the `/self-improve` skill to compound planning learnings.
 
-## Step 5: Halt with Next-Step Instructions
+## Step 5: Mark Plan Ready
+
+Update the plan's YAML frontmatter to `status: ready`.
+
+## Step 6: Halt with Next-Step Instructions
 
 Halt with this message:
 

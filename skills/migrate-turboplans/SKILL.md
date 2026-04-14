@@ -148,4 +148,4 @@ Report a summary:
 - If the source spec path in an index does not resolve, still migrate the files but note the missing spec in the report.
 - Never write `type:` into any migrated file. The directory is the type signal.
 - Never write `depends_on:` into a plan. The dependency graph lives on shells only.
-- The migration never produces `status: draft` because legacy artifacts predate the draft concept; `ready` is the baseline for expanded work.
+- The migration never produces `status: draft` because legacy artifacts predate the draft concept and cannot retroactively go through refinement; `ready` is the baseline for migrated expanded plans.

@@ -93,7 +93,7 @@ Create `.turbo/plans/` if it does not exist. Write the plan to `.turbo/plans/<sh
 
 ````markdown
 ---
-status: ready
+status: draft
 spec: <spec path from original shell frontmatter>
 ---
 
