@@ -402,13 +402,13 @@ When SKILL.md links to sub-files, each layer must own exactly one concern:
 When a skill depends on another skill, make it an explicit numbered step. Use "Run `/skill-name` Skill" as the heading and "Run the `/skill-name` skill" in the step body. Including "skill" signals to invoke via the Skill tool rather than treating it as a general reference.
 
 ```markdown
-## Step 1: Run `/commit-rules` Skill
+## Step 1: Run `/<rules-skill>` Skill
 
-Run the `/commit-rules` skill to load commit message rules and technical constraints.
+Run the `/<rules-skill>` skill to load shared rules and conventions.
 
-## Step 2: Stage and Commit
+## Step 2: Do the Work
 
-- Stage only the changes to commit
+- The actual steps of this skill
 ```
 
 **Style-guide dependencies as Step 1:** When a skill depends on a style-guide skill that loads conventions, place it as Step 1. Style guides shape all subsequent work. Burying them in a later step risks them being skipped.
@@ -731,6 +731,15 @@ Here is a sensible default format, but use your best judgment based on the analy
 Adjust sections as needed for the specific analysis type.
 ````
 
+### Align output formats across parallel producers
+
+When two or more skills produce findings that feed a shared downstream pipeline (for example, an evaluation or triage skill), align their default output formats so the consumer can concatenate findings without transforming them. Drift in finding shape (different metadata labels, missing source attribution, divergent priority scales) forces the consumer to reformat, which invites bugs and defeats composition.
+
+- **Match field names** — if one producer emits `**File:** <path> (lines <start>-<end>)`, the other's default should use the same label and slot, even if the line-range slot is optional for some inputs.
+- **Include source attribution** — when findings from multiple producers merge, each should carry a `**Reviewer:**` (or equivalent) line so the consumer can distinguish them.
+- **Share the priority scale** — use the same labels and semantics (e.g., P0–P3) across producers so the downstream can rank findings uniformly.
+- **Let callers override the default** — alignment applies to the producer's *default* format. Specific callers can still pass a tailored output format when they need extra fields.
+
 ### Examples pattern
 
 For Skills where output quality depends on seeing examples, provide input/output pairs just like in regular prompting:
@@ -977,16 +986,16 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 
 When a workflow needs N parallel reviewers/dimensions/perspectives (e.g., internal review + peer review, or multiple review types in one pass), put the fan-out inside one skill body rather than asking a parent to load several sibling skills "in parallel" via the Skill tool. The parent's "load A and B" pattern can't actually parallelize the sibling skills' work, and it leaks the siblings' implementation details into the parent step.
 
-The right shape is a single skill that emits N+1 Agent tool calls in one message — see `/interpret-feedback`, `/review-code`, and `/review-plan` for examples. Add an opt-out (e.g., "skip peer review") for callers who want only the internal pass.
+The right shape is a single skill that emits N+1 Agent tool calls in one message. Add an opt-out (e.g., "skip peer review") for callers who want only the internal pass.
 
-- ✗ **Avoid**: Parent skill Step says "Run `/review-x` and `/peer-review` skills concurrently" and tries to batch two Skill calls.
-- ✓ **Good**: `/review-x` internally launches both internal reviewer Agents and a peer reviewer Agent in one message; the parent just calls `/review-x`.
+- ✗ **Avoid**: Parent skill Step says "Run `/<review-skill>` and `/<peer-review-skill>` skills concurrently" and tries to batch two Skill calls.
+- ✓ **Good**: `/<review-skill>` internally launches both internal reviewer Agents and a peer reviewer Agent in one message; the parent just calls `/<review-skill>`.
 
 ### Phrase multi-Agent parallel dispatch imperatively
 
-When a step launches multiple Agents concurrently, use the imperative from `/simplify-code`: "Use the Agent tool to launch all agents below in a single message (`model: "opus"`, do not set `run_in_background`) so they run concurrently:" followed by uniform bulleted Agent roles. Addendum phrasing ("one per X plus one for Y") reads as sequential — the main agent launches the N, waits, then handles Y separately. If one bullet expands to multiple calls (e.g., "one per active type"), state the expected total call count explicitly so the model doesn't collapse the fan-out into a single Agent.
+When a step launches multiple Agents concurrently, use a clear imperative like "Use the Agent tool to launch all agents below in a single message (`model: "opus"`, do not set `run_in_background`) so they run concurrently:" followed by uniform bulleted Agent roles. Addendum phrasing ("one per X plus one for Y") reads as sequential — the main agent launches the N, waits, then handles Y separately. If one bullet expands to multiple calls (e.g., "one per active type"), state the expected total call count explicitly so the model doesn't collapse the fan-out into a single Agent.
 
-- ✗ **Avoid**: "Launch one Agent per active type plus one for `/peer-review`, all in a single message."
+- ✗ **Avoid**: "Launch one Agent per active type plus one for the extra reviewer, all in a single message."
 - ✓ **Good**: "Use the Agent tool to launch all agents below in a single message. For full review that is six Agent tool calls (five internal + one peer)." Then list agents as uniform bullets.
 
 ### Hoist conditional opt-out checks above dispatch logic
@@ -1042,17 +1051,25 @@ If any prior step produced changes, run the `/this-skill` skill again, skipping 
 Workflow skills often need to prevent the agent from skipping steps ("don't rationalize away the re-run") or stopping early at iteration caps. Verbose "Do NOT" blocks and anti-rationalization prose are unreliable: the agent reads the rule and still finds ways to rationalize around it. Convert soft rules into hard gates using `AskUserQuestion`.
 
 - **Skip gate**: When the agent might want to skip a re-run that should happen (e.g., changes were made but the agent judges re-running unnecessary), require it to use `AskUserQuestion` to request skip permission. This converts "don't skip silently" into "can't skip silently."
-- **Exhaustion gate**: When a loop reaches its iteration cap but hasn't stabilized, use `AskUserQuestion` to ask whether to continue for another iteration or escalate to a different approach (e.g., `/consult-oracle`). This replaces the hard stop with a human-in-the-loop decision.
+- **Exhaustion gate**: When a loop reaches its iteration cap but hasn't stabilized, use `AskUserQuestion` to ask whether to continue for another iteration or escalate to a different approach. This replaces the hard stop with a human-in-the-loop decision.
 
 ```markdown
 **If changes were made**, run `/this-skill` again using the Skill tool.
 
 **If changes were made but you believe re-running is unnecessary**, use `AskUserQuestion` to ask for skip permission. Do not skip silently.
 
-**If this is iteration 3 and changes were still made**, the hard cap is reached. Use `AskUserQuestion` to tell the user that 3 iterations were not enough to stabilize, summarize what is still changing, and offer two options: continue for another iteration, or escalate to `/consult-oracle` for a different perspective on the remaining issues.
+**If this is iteration 3 and changes were still made**, the hard cap is reached. Use `AskUserQuestion` to tell the user that 3 iterations were not enough to stabilize, summarize what is still changing, and offer two options: continue for another iteration, or escalate to a different approach for the remaining issues.
 ```
 
 Removing verbose "Do NOT" blocks and "Rules" sections that restate the anti-skip rule often wins alongside adding the gates: the prose was unreliable anyway, and the gates replace it with enforceable behavior.
+
+### AskUserQuestion doesn't work in sub-agents
+
+`AskUserQuestion` only reaches the user when the skill runs in the main conversation. When a skill runs inside an `Agent` tool call, the question cannot be surfaced — the sub-agent either errors or drops the call silently. Skills that commonly run as sub-agents (invoked by workflow skills that fan out via the Agent tool) need deterministic fallbacks instead of interactive questions.
+
+- **Missing input** — stop and state what could not be resolved. The parent agent reads the sub-agent's output and can relay or act on it.
+- **Disambiguation** — pick a deterministic default (e.g., most recently modified file) rather than asking which option to use.
+- **Main-context-only fallbacks** — a sub-agent can in principle self-detect via system-prompt phrasing and branch on whether to call `AskUserQuestion`, but the cost of that branching is usually worse than just removing the question entirely.
 
 ## Advanced: Skills with executable code
 

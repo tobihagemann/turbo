@@ -1,5 +1,7 @@
 ## Skill Conventions
 
+This file holds turbo-project-specific conventions. General Claude Code skill-authoring principles (applicable to any skill, in any project) live in `skills/create-skill/references/best-practices.md`. When adding guidance, place turbo-specific rules here and general principles there; when a rule fits both, prefer the narrower home.
+
 - SKILL.md frontmatter has `name` and `description` — description includes trigger phrases
 - Skills should not reference which pipelines call them (stay self-contained)
 - Workflow skills should not embed implementation details of delegated skills (downstream CLI commands, tool-specific flags, model coupling in reference materials). The skill interface is the abstraction boundary.
