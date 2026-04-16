@@ -92,8 +92,9 @@ Claude Code's built-in plan mode is a starting point, but it tends to produce pl
 
 ![How Turboplan Connects](assets/how-turboplan-connects.svg)
 
-[`/turboplan`](skills/turboplan/SKILL.md) has two modes, selected automatically by its complexity analysis:
+[`/turboplan`](skills/turboplan/SKILL.md) has three modes, selected automatically by its complexity analysis:
 
+- **Trivial mode** — True one-line edit (typo, single rename, single config tweak). Hands off to [`/implement`](skills/implement/SKILL.md), which loads [`/code-style`](skills/code-style/SKILL.md), applies the fix, and runs [`/finalize`](skills/finalize/SKILL.md). No plan file is written.
 - **Small-task mode** — Single-session change. Runs [`/draft-plan`](skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](skills/refine-plan/SKILL.md) → [`/self-improve`](skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session.
 - **Complex-project mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-plan`](skills/refine-plan/SKILL.md) to iteratively review and revise the spec, then [`/draft-shells`](skills/draft-shells/SKILL.md) to decompose the spec into shells with YAML frontmatter, then [`/refine-plan`](skills/refine-plan/SKILL.md) to review and revise the shells, then [`/self-improve`](skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) in fresh sessions to implement each shell.
 
@@ -122,7 +123,7 @@ You then drive implementation one shell at a time. [`/pick-next-shell`](skills/p
 
 [`/self-improve`](skills/self-improve/SKILL.md) is a core skill that makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](skills/finalize/SKILL.md) Phase 3). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project CLAUDE.md, auto memory, or existing/new skills. Over time, Turbo gets better at your specific project.
 
-[`/note-improvement`](skills/note-improvement/SKILL.md) captures improvement opportunities that come up during work but are out of scope: code review findings you chose to skip, refactoring ideas, missing tests. These get tracked in `.turbo/improvements.md` so they don't get lost. Since `.turbo/` is gitignored, it doesn't clutter the repo. When you're ready to act on them, [`/implement-improvements`](skills/implement-improvements/SKILL.md) validates each entry against the current codebase (filtering out stale items), then plans and implements the remaining ones.
+[`/note-improvement`](skills/note-improvement/SKILL.md) captures improvement opportunities that come up during work but are out of scope: code review findings you chose to skip, refactoring ideas, missing tests. These get tracked in `.turbo/improvements.md` so they don't get lost. Since `.turbo/` is gitignored, it doesn't clutter the repo. Each entry is tagged with a type — `trivial`, `investigate`, or `standard` — so it can be routed correctly later. When you're ready to act on them, [`/implement-improvements`](skills/implement-improvements/SKILL.md) validates each entry against the current codebase, filters stale items, and routes by type: trivial entries go through [`/implement`](skills/implement/SKILL.md) for a direct fix, investigate entries run [`/investigate`](skills/investigate/SKILL.md) with [`/consult-codex`](skills/consult-codex/SKILL.md) and then [`/implement`](skills/implement/SKILL.md), and standard entries go through [`/turboplan`](skills/turboplan/SKILL.md).
 
 ## Out-of-Loop Pipelines
 
@@ -210,7 +211,7 @@ the error messages in this module are inconsistent, /note-improvement
 
 | Skill | What it does | Uses |
 |---|---|---|
-| [`/turboplan`](skills/turboplan/SKILL.md) | Universal planning entry: analyzes complexity and routes to small-task or complex-project mode | [`/draft-plan`](skills/draft-plan/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md), [`/implement-plan`](skills/implement-plan/SKILL.md), [`/draft-spec`](skills/draft-spec/SKILL.md), [`/draft-shells`](skills/draft-shells/SKILL.md) |
+| [`/turboplan`](skills/turboplan/SKILL.md) | Universal planning entry: analyzes complexity and routes to trivial, small-task, or complex-project mode | [`/implement`](skills/implement/SKILL.md), [`/draft-plan`](skills/draft-plan/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md), [`/implement-plan`](skills/implement-plan/SKILL.md), [`/draft-spec`](skills/draft-spec/SKILL.md), [`/draft-shells`](skills/draft-shells/SKILL.md) |
 | [`/finalize`](skills/finalize/SKILL.md) | Post-implementation QA: polish, changelog, self-improve, commit, PR | [`/polish-code`](skills/polish-code/SKILL.md), [`/update-changelog`](skills/update-changelog/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md), [`/ship`](skills/ship/SKILL.md), [`/split-and-ship`](skills/split-and-ship/SKILL.md) |
 | [`/audit`](skills/audit/SKILL.md) | Project-wide health audit: all analysis skills, evaluation, markdown and HTML report | [`/review-code`](skills/review-code/SKILL.md), [`/peer-review`](skills/peer-review/SKILL.md), [`/review-dependencies`](skills/review-dependencies/SKILL.md), [`/review-tooling`](skills/review-tooling/SKILL.md), [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md), [`/find-dead-code`](skills/find-dead-code/SKILL.md), [`/create-threat-model`](skills/create-threat-model/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/frontend-design`](skills/frontend-design/SKILL.md) |
 | [`/onboard`](skills/onboard/SKILL.md) | Developer onboarding guide: architecture, tooling, agentic setup, prerequisites, troubleshooting, next steps | [`/map-codebase`](skills/map-codebase/SKILL.md), [`/review-tooling`](skills/review-tooling/SKILL.md), [`/review-agentic-setup`](skills/review-agentic-setup/SKILL.md), [`/frontend-design`](skills/frontend-design/SKILL.md) |
@@ -225,7 +226,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/expand-shell`](skills/expand-shell/SKILL.md) | Expand a shell with fresh pattern survey, concrete references, and verification | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
 | [`/refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a planning artifact (plan, shells, or spec) until stable: review → evaluate → apply → re-run | [`/review-plan`](skills/review-plan/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/review-plan`](skills/review-plan/SKILL.md) | Review planning artifacts (plan, shells, or spec): internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
-| [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, execute steps, run `/finalize` | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
+| [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, hand off to `/implement` | [`/implement`](skills/implement/SKILL.md) |
 | [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) | Pick the next shell and carry it through planning: expand, refine, self-improve, halt | [`/expand-shell`](skills/expand-shell/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md) |
 | [`/pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it | [`/turboplan`](skills/turboplan/SKILL.md) |
 | [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | |
@@ -240,6 +241,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/find-dead-code`](skills/find-dead-code/SKILL.md) | Identify unused code via parallel analysis | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
 | [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → simplify → review → evaluate → apply → smoke test → re-run until stable | [`/stage`](skills/stage/SKILL.md), [`/simplify-code`](skills/simplify-code/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/smoke-test`](skills/smoke-test/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
 | [`/simplify-code`](skills/simplify-code/SKILL.md) | Review code quality and fix issues | |
+| [`/implement`](skills/implement/SKILL.md) | Standard implementation flow: load code-style rules, make the change, run /finalize | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
 | [`/investigate`](skills/investigate/SKILL.md) | Systematic root cause analysis for bugs and failures | [`/consult-codex`](skills/consult-codex/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/consult-oracle`](skills/consult-oracle/SKILL.md) |
 
 ### Testing
@@ -310,7 +312,7 @@ the error messages in this module are inconsistent, /note-improvement
 |---|---|---|
 | [`/self-improve`](skills/self-improve/SKILL.md) | Extract session learnings to CLAUDE.md, memory, or skills | |
 | [`/note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/improvements.md` | |
-| [`/implement-improvements`](skills/implement-improvements/SKILL.md) | Validate and implement improvements from the backlog | [`/turboplan`](skills/turboplan/SKILL.md) |
+| [`/implement-improvements`](skills/implement-improvements/SKILL.md) | Validate and implement improvements from the backlog, routing each by type (trivial, investigate, standard) | [`/implement`](skills/implement/SKILL.md), [`/investigate`](skills/investigate/SKILL.md), [`/commit-staged`](skills/commit-staged/SKILL.md), [`/turboplan`](skills/turboplan/SKILL.md) |
 | [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) | Recall implementation reasoning from past Claude Code transcripts for a commit or file location | |
 | [`/create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills with always-latest instructions fetched from GitHub | |
