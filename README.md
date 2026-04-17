@@ -296,7 +296,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/peer-review`](skills/peer-review/SKILL.md) | Independent peer review via codex (code, plans, specs, shells, feedback) | [`/codex-exec`](skills/codex-exec/SKILL.md) |
 | [`/codex-review`](skills/codex-review/SKILL.md) | Code review via codex CLI | [Codex CLI](https://github.com/openai/codex) |
 | [`/consult-codex`](skills/consult-codex/SKILL.md) | Multi-turn consultation with codex CLI | [Codex CLI](https://github.com/openai/codex) |
-| [`/consult-oracle`](skills/consult-oracle/SKILL.md) | Consult ChatGPT Pro when completely stuck (requires setup) | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [ChatGPT Pro](https://chatgpt.com/) |
+| [`/consult-oracle`](skills/consult-oracle/SKILL.md) | Consult ChatGPT Pro when completely stuck (requires setup) | [ChatGPT Pro](https://chatgpt.com/) |
 | [`/codex-exec`](skills/codex-exec/SKILL.md) | Autonomous task execution via codex CLI | [Codex CLI](https://github.com/openai/codex) |
 
 ### Rules & Style
