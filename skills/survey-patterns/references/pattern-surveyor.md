@@ -58,7 +58,6 @@ If a category has no findings, write "None found" under the header rather than o
 
 ## Rules
 
-- Absolute file paths only. No relative paths.
 - Do not write files.
 - Do not propose implementation steps.
 - Do not speculate. Report only patterns that exist in the codebase right now.
