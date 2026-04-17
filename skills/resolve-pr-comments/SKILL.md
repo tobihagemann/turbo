@@ -18,7 +18,7 @@ At the start, use `TaskCreate` to create a task for each step:
 5. Run `/evaluate-findings` skill
 6. Resolve ambiguities
 7. Choose implementation path
-8. Implement and finalize
+8. Run the chosen path
 9. Verify fixes
 10. Run `/answer-reviewer-questions` skill
 11. Run `/reply-to-pr-threads` skill
@@ -113,24 +113,21 @@ Then use `AskUserQuestion` to ask how to handle them. Per item, the options are:
 
 Present a summary of accepted findings: count by complexity (mechanical fixes vs. architectural or design changes). Then use `AskUserQuestion` to let the user choose:
 
-- **Full** — Run `/turboplan` for drafting, refinement, approval, implementation, and finalize
-- **Lightweight** — Apply directly via `/apply-findings`, then `/finalize`
+- **Standard** — Run `/turboplan` for drafting, refinement, approval, implementation, and finalize
+- **Trivial** — Apply directly via `/apply-findings`, then `/finalize`
 
-Suggest Full when findings include complex or architectural changes. Suggest Lightweight when all findings are mechanical fixes.
+Suggest Standard when findings include complex or architectural changes. Suggest Trivial when all findings are mechanical fixes.
 
 If there are no accepted findings to implement, skip to Step 10.
 
-## Step 8: Implement and Finalize
+## Step 8: Run the Chosen Path
 
-**Full path:**
+Read the reference file for the confirmed path and follow its phases:
 
-Run the `/turboplan` skill with the accepted findings (including any items reclassified in Step 6) as the task description. Turboplan handles drafting, refinement, user confirmation, implementation, and finalize. The commit SHA from finalize is needed for reply messages.
+- **Trivial path** — [references/trivial-path.md](references/trivial-path.md)
+- **Standard path** — [references/standard-path.md](references/standard-path.md)
 
-**Lightweight path:**
-
-1. Run the `/apply-findings` skill on the evaluated results, including any items reclassified in Step 6.
-2. If changes were made, run the `/finalize` skill. The commit SHA from finalize is needed for reply messages.
-3. If no changes were made, skip to Step 10.
+State the chosen path before handing off to the reference file.
 
 ## Step 9: Verify Fixes
 
