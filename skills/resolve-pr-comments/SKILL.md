@@ -17,12 +17,11 @@ At the start, use `TaskCreate` to create a task for each step:
 4. Split questions and change requests
 5. Run `/evaluate-findings` skill
 6. Resolve ambiguities
-7. Choose implementation path
-8. Run the chosen path
-9. Verify fixes
-10. Run `/answer-reviewer-questions` skill
-11. Run `/reply-to-pr-threads` skill
-12. Summary
+7. Run `/resolve-findings` skill
+8. Verify fixes
+9. Run `/answer-reviewer-questions` skill
+10. Run `/reply-to-pr-threads` skill
+11. Summary
 
 ## Step 1: Fetch Comments
 
@@ -87,7 +86,7 @@ Classify each interpreted thread as either a **question** or a **change request*
 
 When in doubt, treat a thread as a change request. The verdict from `/evaluate-findings` in Step 5 will catch genuine non-issues.
 
-Produce two lists. Each entry retains the thread ID, file path, line (use `originalLine` when `line` is null), the reviewer's original comment text, and the reconciled intent from Step 3. Questions skip Step 5 and feed into Step 10. Change requests feed into Step 5.
+Produce two lists. Each entry retains the thread ID, file path, line (use `originalLine` when `line` is null), the reviewer's original comment text, and the reconciled intent from Step 3. Questions skip Step 5 and feed into Step 9. Change requests feed into Step 5.
 
 ## Step 5: Run `/evaluate-findings` Skill
 
@@ -106,59 +105,45 @@ Output all escalated items as a numbered list. For each item, show:
 Then use `AskUserQuestion` to ask how to handle them. Per item, the options are:
 
 - **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent, and pass it to `/apply-findings`
-- **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 11
+- **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 10
 - **Skip**: Remove from processing
 
-## Step 7: Choose Implementation Path
+## Step 7: Run `/resolve-findings` Skill
 
-Present a summary of accepted findings: count by complexity (mechanical fixes vs. architectural or design changes). Then use `AskUserQuestion` to let the user choose:
+If there are no accepted findings to implement, skip to Step 9.
 
-- **Standard** — Run `/turboplan` for drafting, refinement, approval, implementation, and finalize
-- **Trivial** — Apply directly via `/apply-findings`, then `/finalize`
+Run the `/resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. The commit SHA from `/finalize` is needed for reply messages in Step 10.
 
-Suggest Standard when findings include complex or architectural changes. Suggest Trivial when all findings are mechanical fixes.
+## Step 8: Verify Fixes
 
-If there are no accepted findings to implement, skip to Step 10.
-
-## Step 8: Run the Chosen Path
-
-Read the reference file for the confirmed path and follow its phases:
-
-- **Trivial path** — [references/trivial-path.md](references/trivial-path.md)
-- **Standard path** — [references/standard-path.md](references/standard-path.md)
-
-State the chosen path before handing off to the reference file.
-
-## Step 9: Verify Fixes
-
-For each finding that was fixed in Step 8, verify the fix actually addresses the reviewer's concern:
+For each finding that was fixed in Step 7, verify the fix actually addresses the reviewer's concern:
 
 1. Read the current code at the relevant file and location
 2. Compare against the reviewer's comment and `diffHunk` (the code the reviewer was looking at)
 3. Confirm the specific concern is resolved
 
-If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the thread to Skip. Record the reason — the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains — so Step 11 can feed it as the skip payload.
+If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the thread to Skip. Record the reason — the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains — so Step 10 can feed it as the skip payload.
 
-## Step 10: Run `/answer-reviewer-questions` Skill
+## Step 9: Run `/answer-reviewer-questions` Skill
 
 Run the `/answer-reviewer-questions` skill on the question threads from Step 4. It produces raw answer text per thread.
 
 If there are no question threads, skip this step.
 
-## Step 11: Run `/reply-to-pr-threads` Skill
+## Step 10: Run `/reply-to-pr-threads` Skill
 
 Assemble the processed-thread list from prior steps:
 
-- **fix** — threads with Apply verdicts whose fix was verified in Step 9. Payload: the commit SHA from Step 8.
-- **skip** — threads with Skip verdicts from `/evaluate-findings`, plus any threads downgraded in Step 9. Payload: the skip reasoning.
-- **answer** — question threads with answers composed in Step 10. Payload: the raw answer text.
+- **fix** — threads with Apply verdicts whose fix was verified in Step 8. Payload: the commit SHA from Step 7.
+- **skip** — threads with Skip verdicts from `/evaluate-findings`, plus any threads downgraded in Step 8. Payload: the skip reasoning.
+- **answer** — question threads with answers composed in Step 9. Payload: the raw answer text.
 - **clarify** — threads reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
 **Review body comments** (top-level review comments with non-empty body) are not threads and cannot be replied to. Exclude them from the list. Report their triage status in the summary.
 
 Run the `/reply-to-pr-threads` skill with the assembled list.
 
-## Step 12: Summary
+## Step 11: Summary
 
 After processing all threads, present a summary table:
 

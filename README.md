@@ -268,6 +268,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md) | Parallel internal + codex interpretation of third-party feedback | [`/peer-review`](skills/peer-review/SKILL.md) |
 | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) | Triage review feedback with adversarial verification | |
 | [`/apply-findings`](skills/apply-findings/SKILL.md) | Apply findings from evaluations or reviews | [`/note-improvement`](skills/note-improvement/SKILL.md) |
+| [`/resolve-findings`](skills/resolve-findings/SKILL.md) | Choose implementation path (trivial or standard) for evaluated findings and dispatch | [`/code-style`](skills/code-style/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/finalize`](skills/finalize/SKILL.md), [`/turboplan`](skills/turboplan/SKILL.md) |
 
 ### Git & GitHub
 
@@ -280,11 +281,11 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/commit-staged-push`](skills/commit-staged-push/SKILL.md) | Commit already-staged files and push | [`/commit-staged`](skills/commit-staged/SKILL.md) |
 | [`/ship`](skills/ship/SKILL.md) | Commit, push, and optionally create or update a PR | [`/commit-staged-push`](skills/commit-staged-push/SKILL.md), [`/create-pr`](skills/create-pr/SKILL.md), [`/update-pr`](skills/update-pr/SKILL.md) |
 | [`/split-and-ship`](skills/split-and-ship/SKILL.md) | Ship split plan as separate branches, commits, and PRs | [`/commit-staged-push`](skills/commit-staged-push/SKILL.md), [`/create-pr`](skills/create-pr/SKILL.md), [`/update-pr`](skills/update-pr/SKILL.md) |
-| [`/review-pr`](skills/review-pr/SKILL.md) | PR review: fetch comments, detect base branch, run code review, evaluate findings | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md) |
+| [`/review-pr`](skills/review-pr/SKILL.md) | PR review: fetch comments, detect base branch, run code review, evaluate findings, dispatch to implementation | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/resolve-findings`](skills/resolve-findings/SKILL.md) |
 | [`/create-pr`](skills/create-pr/SKILL.md) | Draft and create a GitHub PR | [`/github-voice`](skills/github-voice/SKILL.md) |
 | [`/update-pr`](skills/update-pr/SKILL.md) | Update existing PR title and description | [`/github-voice`](skills/github-voice/SKILL.md) |
 | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md) | Read-only summary of unresolved PR comments | |
-| [`/resolve-pr-comments`](skills/resolve-pr-comments/SKILL.md) | Evaluate, fix, answer, and reply to PR comments (including reviewer questions) | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/turboplan`](skills/turboplan/SKILL.md), [`/code-style`](skills/code-style/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/finalize`](skills/finalize/SKILL.md), [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md), [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md) |
+| [`/resolve-pr-comments`](skills/resolve-pr-comments/SKILL.md) | Evaluate, fix, answer, and reply to PR comments (including reviewer questions) | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/resolve-findings`](skills/resolve-findings/SKILL.md), [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md), [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md) |
 | [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md) | Recall implementation reasoning and compose raw answers to reviewer questions | [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) |
 | [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md) | Draft, confirm, and post PR thread replies; re-fetches resolution state to skip auto-resolved threads | [`/github-voice`](skills/github-voice/SKILL.md) |
 

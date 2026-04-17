@@ -1,4 +1,4 @@
-# Resolve PR Comments: Trivial Path
+# Resolve Findings: Trivial Path
 
 Apply evaluated findings directly. `/apply-findings` handles the verdict-aware routing: Escalate prompts, note-for-later captures, and conflict detection.
 
@@ -16,10 +16,10 @@ Run the `/code-style` skill to load mirror, reuse, and symmetry rules before edi
 
 ## Phase 2: Run `/apply-findings` Skill
 
-Run the `/apply-findings` skill on the evaluated results, including any items reclassified in SKILL.md Step 6.
+Run the `/apply-findings` skill on the evaluated findings.
 
 ## Phase 3: Run `/finalize` Skill
 
-If changes were made, run the `/finalize` skill. The commit SHA from finalize is needed for reply messages. If no changes were made, skip to SKILL.md Step 10.
+If changes were made, run the `/finalize` skill.
 
 Check your task list for remaining tasks and proceed.
