@@ -5,14 +5,14 @@ description: "Evaluate, fix, answer, and reply to GitHub pull request review com
 
 # Resolve PR Review Comments
 
-Fetch unresolved review comments from a GitHub PR, critically evaluate each one, fix or skip based on confidence, answer reviewer questions using recalled implementation reasoning, and reply to each thread.
+Fetch unresolved review comments from a GitHub PR (both inline threads and review-body observations), evaluate each one, fix or skip based on confidence, answer reviewer questions using recalled implementation reasoning, and reply to each thread. Review-body findings flow through the same evaluate-and-fix pipeline as inline threads; their outcomes land in the summary because they have no thread to reply to.
 
 ## Task Tracking
 
 At the start, use `TaskCreate` to create a task for each step:
 
 1. Fetch comments
-2. Triage review body comments
+2. Triage review bodies
 3. Run `/interpret-feedback` skill
 4. Split questions and change requests
 5. Run `/evaluate-findings` skill
@@ -44,36 +44,46 @@ Output shape:
 
 Filter review threads to unresolved only. Filter reviews to those with a non-empty body, excluding `PENDING` state (unsubmitted drafts).
 
-## Step 2: Triage Review Body Comments
+## Step 2: Triage Review Bodies
 
-For each review body comment (non-empty body, non-PENDING), check whether a commit in the PR already addresses it. Compare the review's `submittedAt` timestamp against each commit's `committedDate`. Only commits **after** the review was submitted can address it.
+Review bodies often pack multiple distinct concerns into one comment. Split each non-empty, non-PENDING review body into atomic observations, one per paragraph or bullet, so each can be evaluated on its own merits.
 
-To determine if a commit addresses a review body comment, start with commit messages. Only read the full diff (`git show <oid>`) when the message alone is ambiguous. A commit addresses a comment when its changes clearly resolve the specific issue described. Touching the same area is not enough.
+For every observation, check whether a subsequent commit already addresses it. Compare the review's `submittedAt` timestamp against each commit's `committedDate`; only commits after the review was submitted can address it. Start with commit messages; read `git show <oid>` only when the message is ambiguous. A commit addresses an observation when its changes clearly resolve that specific concern. Touching the same area is not enough.
 
-Classify each review body comment as:
-- **Addressed**: A subsequent commit clearly resolves the concern. Record the commit SHA.
-- **Unaddressed**: No subsequent commit resolves the concern. Requires manual attention.
+Classify each observation:
+- **Addressed**: A subsequent commit resolves it. Record the commit SHA for the Step 11 summary.
+- **Unaddressed**: No subsequent commit resolves it. Carry into Step 3 as a review-body finding, tagged with the reviewer, review state, and the observation text.
+
+Review-body findings have no `diffHunk`, file path, or line reference. The downstream pipeline handles findings without a code location.
 
 ## Step 3: Run `/interpret-feedback` Skill
 
-Run the `/interpret-feedback` skill on unresolved inline threads authored by humans. Skip threads from bot accounts (logins ending in `[bot]`, e.g., CodeRabbit, Copilot). AI reviewer feedback is structured and explicit enough for `/evaluate-findings` to handle directly.
+Run the `/interpret-feedback` skill on the union of:
+- Unresolved inline threads
+- Unaddressed review-body findings from Step 2
 
-Include each thread's `diffHunk` so the interpreters can see the code context the reviewer commented on. For outdated comments where `line` is null, use `originalLine` as the line reference.
+Skip items from bot accounts (logins ending in `[bot]`, e.g., CodeRabbit, Copilot). AI reviewer feedback is structured and explicit enough for `/evaluate-findings` to handle directly.
+
+For inline threads, include the `diffHunk` so the interpreters can see the code the reviewer was looking at. For outdated comments where `line` is null, use `originalLine`. For review-body findings, provide the observation text and the PR's changed-file list as context.
+
+Tag each item with its `source` (`inline-thread` or `review-body`) so later steps can route replies correctly.
 
 ## Step 4: Split Questions and Change Requests
 
-Classify each interpreted thread as either a **question** or a **change request** based on the reconciled intent from Step 3.
+Classify each interpreted item as either a **question** or a **change request** based on the reconciled intent from Step 3.
 
-- **Question** — the reviewer is asking for an explanation or wondering whether something is intentional. The thread does not request any code change. Examples: "Why this approach?", "Is this intentional?", "What is the benefit here?".
-- **Change request** — the reviewer suggests a code change, flags a bug, or proposes an alternative implementation. This includes soft-phrased suggestions ("could we ...", "consider ...") and rhetorical questions that imply a change ("Shouldn't this ...?", "Is there a reason this isn't ...?").
+- **Question** — the reviewer is asking for an explanation or wondering whether something is intentional. No code change requested. Examples: "Why this approach?", "Is this intentional?", "What is the benefit here?".
+- **Change request** — the reviewer suggests a code change, flags a bug, or proposes an alternative. This includes soft-phrased suggestions ("could we ...", "consider ...") and rhetorical questions that imply a change ("Shouldn't this ...?", "Is there a reason this isn't ...?").
 
-When in doubt, treat a thread as a change request. The verdict from `/evaluate-findings` in Step 5 will catch genuine non-issues.
+When in doubt, treat the item as a change request. The verdict from `/evaluate-findings` in Step 5 will catch genuine non-issues.
 
-Produce two lists. Each entry retains the thread ID, file path, line (use `originalLine` when `line` is null), the reviewer's original comment text, and the reconciled intent from Step 3. Questions skip Step 5 and feed into Step 9. Change requests feed into Step 5.
+Produce two lists. Each entry retains the `source` tag, identifier (thread id for inline threads; a generated id for review-body findings), file path and line (use `originalLine` when `line` is null; omit for review-body findings), the reviewer's original text, and the reconciled intent from Step 3. Questions skip Step 5 and feed Step 9. Change requests feed Step 5.
 
 ## Step 5: Run `/evaluate-findings` Skill
 
 Run the `/evaluate-findings` skill on the change requests from Step 4 to triage each one. Questions are not evaluated here.
+
+Review-body findings have no file or line reference. Scope their assessment to the PR's changed files as a whole, and do not treat the absent code location as a "code has diverged" early exit.
 
 ## Step 6: Resolve Ambiguities
 
@@ -87,7 +97,7 @@ Output all escalated items as a numbered list. For each item, show:
 
 Then use `AskUserQuestion` to ask how to handle them. Per item, the options are:
 
-- **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent, and pass it to `/apply-findings`
+- **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent. Step 7 picks it up as an accepted finding.
 - **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 10
 - **Skip**: Remove from processing
 
@@ -101,47 +111,55 @@ Run the `/resolve-findings` skill on the accepted findings from Step 5, includin
 
 For each finding that was fixed in Step 7, verify the fix actually addresses the reviewer's concern:
 
-1. Read the current code at the relevant file and location
-2. Compare against the reviewer's comment and `diffHunk` (the code the reviewer was looking at)
-3. Confirm the specific concern is resolved
+1. Read the current code. For inline threads, use the thread's file and line. For review-body findings, read the files touched during the fix.
+2. Compare against the reviewer's comment (and `diffHunk` when available).
+3. Confirm the specific concern is resolved.
 
-If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the thread to Skip. Record the reason — the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains — so Step 10 can feed it as the skip payload.
+If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 10 (for inline threads) and Step 11 (for review-body findings) report it correctly.
 
 ## Step 9: Run `/answer-reviewer-questions` Skill
 
-Run the `/answer-reviewer-questions` skill on the question threads from Step 4. It produces raw answer text per thread.
+Run the `/answer-reviewer-questions` skill on question items whose source is `inline-thread`. It produces raw answer text per thread.
 
-If there are no question threads, skip this step.
+Review-body questions (rare) have no thread to reply to. Carry them forward so Step 11 can list them for manual follow-up.
+
+If there are no inline-thread questions, skip the skill invocation.
 
 ## Step 10: Run `/reply-to-pr-threads` Skill
 
-Assemble the processed-thread list from prior steps:
+Assemble the processed-thread list from inline-thread items only:
 
-- **fix** — threads with Apply verdicts whose fix was verified in Step 8. Payload: the commit SHA from Step 7.
-- **skip** — threads with Skip verdicts from `/evaluate-findings`, plus any threads downgraded in Step 8. Payload: the skip reasoning.
-- **answer** — question threads with answers composed in Step 9. Payload: the raw answer text.
-- **clarify** — threads reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
+- **fix** — inline threads with Apply verdicts whose fix was verified in Step 8. Payload: the commit SHA from Step 7.
+- **skip** — inline threads with Skip verdicts from `/evaluate-findings`, plus any downgraded in Step 8. Payload: the skip reasoning.
+- **answer** — inline-thread questions with answers composed in Step 9. Payload: the raw answer text.
+- **clarify** — inline threads reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
-**Review body comments** (top-level review comments with non-empty body) are not threads and cannot be replied to. Exclude them from the list. Report their triage status in the summary.
+Review-body findings are not threads and cannot be replied to. Exclude them from this list. Their fixes are communicated by the commits from Step 7, and their triage status is reported in Step 11.
 
 Run the `/reply-to-pr-threads` skill with the assembled list.
 
 ## Step 11: Summary
 
-After processing all threads, present a summary table:
+After processing all items, present a summary grouped by source.
 
-- Total unresolved inline threads found
-- Number fixed (change requests with accepted verdicts)
-- Number skipped (false positives or disproportionate changes)
-- Number of questions answered (split into: answered from recalled transcript, answered from current code)
-- Number of clarification questions posted
-- Review body comments already addressed by commits (list author, state, one-line summary, and the addressing commit SHA)
-- Review body comments requiring manual attention (list author, state, and a one-line summary of each)
-- List of files modified
+**Inline threads:**
+- Total unresolved threads found
+- Fixed (change requests with accepted verdicts)
+- Skipped (false positives or disproportionate changes)
+- Questions answered (split into: answered from recalled transcript, answered from current code)
+- Clarification questions posted
+
+**Review-body findings:**
+- Already addressed by commits (list author, state, one-line summary, addressing commit SHA)
+- Fixed in this session (list observation, addressing commit SHA)
+- Skipped (list observation, skip reasoning)
+- Questions for manual follow-up (list observation; no thread to reply to)
+
+**Overall:** list of files modified.
 
 ## Rules
 
-- Process comments in file order to minimize context switching.
+- Process inline threads in file order to minimize context switching. Handle review-body findings after inline threads.
 - Stale references and default-to-skip policy are handled by the `/evaluate-findings` skill.
 - When a thread has multiple comments (discussion), read the full thread before deciding.
 - The first comment in each thread is the original review comment; subsequent comments are replies.
