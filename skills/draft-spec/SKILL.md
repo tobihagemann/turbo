@@ -94,14 +94,15 @@ Create the `.turbo/specs/` directory if it does not exist. Accept a different ou
 
 If the spec's Open Questions section is empty, contains "None," or does not exist, skip this step.
 
-For each open question, use `AskUserQuestion` with these options:
+For each open question:
 
-- **Resolve now** — fold the answer into the relevant spec section and remove the question from Open Questions
-- **Defer to implementation** — leave the question in Open Questions to be surfaced again when shells are expanded
+1. Analyze the question against the spec, prior discussion, and consulted-docs context from Step 2. State the trade-offs of the leading options in plain text so the user can see the reasoning.
+2. Use `AskUserQuestion` to offer 2-3 concrete resolution options with short descriptions, plus a **Defer to implementation** option (leaves the question in Open Questions to be surfaced again when shells are expanded). Mark the strongest option "(Recommended)" and place it first.
+3. Fold the chosen answer into the relevant spec section and remove the question from Open Questions.
 
-Default to resolving. Defer only when the answer genuinely needs codebase or pattern-survey context that is not yet available.
+If the user selects "Other" and provides a freeform answer, accept it and proceed.
 
-Update the spec after each resolution. If every question resolves, replace the Open Questions section with "None."
+Default to resolving. Defer only when the answer genuinely needs codebase or pattern-survey context that is not yet available. If every question resolves, replace the Open Questions section with "None."
 
 ## Step 6: Present and Finalize
 
