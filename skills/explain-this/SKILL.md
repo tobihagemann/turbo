@@ -58,7 +58,7 @@ Apply these option-specific rules:
   - Too abstract: "Cleans up the auth code."
 - If an option was labelled "(Recommended)" in the original, repeat that label verbatim. Do not add a fresh recommendation.
 - If an option would skip a safety step (tests, review, a gate), call that out.
-- End by noting the pending question is still pending and the user should reply to the original prompt directly.
+- If the pending question was posed via `AskUserQuestion`, re-invoke `AskUserQuestion` after the explanation with the same question, header, and options so the user can answer inline without losing the dialog. Preserve any "(Recommended)" label verbatim. Otherwise (plain-text prompt from the assistant), end by noting the question is still pending and the user should reply to the original prompt directly.
 
 **Free-form question** — restate the question plainly, say what the answer will be used for (which file gets written, which step consumes it), and call out what makes a good answer versus a problematic one. End by noting the question is still pending.
 
