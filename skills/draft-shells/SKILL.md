@@ -44,6 +44,15 @@ Read the spec and identify:
 
 Split the spec into shells where each shell fits a single Claude Code context session.
 
+### Shell-Worthiness
+
+Not every spec item earns its own shell. A spec item earns a shell when either:
+
+- It has distinct Produces/Consumes boundaries with other shells (other shells build on what it produces, or it requires what another shell produces), or
+- It genuinely requires a full implementation session (meaningful pattern survey, non-trivial context, multiple coupled files).
+
+Items meeting neither criterion get folded into the most related shell's Implementation Steps. If several such items have no clear home, group them into a single "minor fixes" shell at the end.
+
 ### Sizing
 
 - One shell = one logical unit of work (a feature, a subsystem, a layer)
