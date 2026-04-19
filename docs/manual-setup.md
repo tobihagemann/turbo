@@ -27,7 +27,7 @@ for skill in $(ls ~/.turbo/repo/skills/); do
 done
 ```
 
-Many skills depend on each other (e.g., `/finalize` composes `/simplify-code`, `/peer-review`, `/evaluate-findings`, and more), so installing only a subset will leave gaps in the workflows.
+Many skills depend on each other (e.g., `/finalize` composes `/polish-code`, `/update-changelog`, `/self-improve`, and more), so installing only a subset will leave gaps in the workflows.
 
 ## 3. Initialize Config
 

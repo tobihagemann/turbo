@@ -1,8 +1,8 @@
-# Quality Review Reference
+# Consistency Review Reference
 
 ## Review Instructions
 
-Identify related files in the project (shared interfaces, similar modules, files importing the same utilities) and read those to detect cross-file patterns. Cross-file issues are the primary focus. Single-file quality issues are out of scope (those belong in `/simplify-code`).
+Identify related files in the project (shared interfaces, similar modules, files importing the same utilities) and read those to detect cross-file patterns. Cross-file issues are the primary focus.
 
 ## What to Review
 
@@ -29,10 +29,9 @@ Flag an issue only when ALL of these hold:
 
 ## What to Ignore
 
-- Single-file code quality issues (those belong in `/simplify-code`)
 - Style-only differences unless they indicate a genuine pattern inconsistency
 - Intentional variation documented in project guidelines
 
 **Extra metadata:** `**File:** <path 1>, <path 2> (and others)` and `**Category:** <duplication | inconsistency | abstraction | convention-drift>`
 
-**Verdict label:** `Code Quality: <clean | issues found>`
+**Verdict label:** `Consistency: <consistent | issues found>`
