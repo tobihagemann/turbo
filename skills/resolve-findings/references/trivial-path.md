@@ -22,4 +22,4 @@ Run the `/apply-findings` skill on the evaluated findings.
 
 If changes were made, run the `/finalize` skill.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.

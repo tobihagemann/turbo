@@ -182,7 +182,7 @@ Present a brief summary: number of shells, one-line description of each shell's 
 
 > To start implementation, run `/pick-next-shell`. It will pick the next shell, expand it with a fresh pattern survey and concrete references, refine, self-improve, then halt. Run `/implement-plan` in a fresh session afterward.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 

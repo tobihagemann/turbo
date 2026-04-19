@@ -66,7 +66,7 @@ The iteration number below refers to the `/polish-code` run currently executing 
 
 The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `/review-code`. It does not affect which steps run or whether skills are invoked.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 

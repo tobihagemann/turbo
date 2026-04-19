@@ -12,7 +12,7 @@ Use `TaskCreate` to create a task for each phase:
 
 Run the `/implement` skill.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 

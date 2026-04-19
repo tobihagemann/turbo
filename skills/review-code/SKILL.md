@@ -39,7 +39,7 @@ Use the Agent tool to launch all agents below in a single message (`model: "opus
 
 Aggregate findings with attribution (reviewer: "internal" or "peer"; type; file path). Present them in the output format below.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.
 
 ## Output Format
 

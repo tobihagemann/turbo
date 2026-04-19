@@ -20,4 +20,4 @@ Run the `/turboplan` skill with the working set as the task description. Include
 
 `/turboplan` produces a plan file and halts its own flow.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.

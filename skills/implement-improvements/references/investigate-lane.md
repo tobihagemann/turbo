@@ -25,7 +25,7 @@ In the turn that invokes `/implement`, write out each investigation's concluded 
 
 Then run the `/implement` skill. `/implement` loads `/code-style`, applies the fixes, and runs `/finalize` to review, test, and commit.
 
-Check your task list for remaining tasks and proceed.
+Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
