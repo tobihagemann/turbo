@@ -105,7 +105,7 @@ Then use `AskUserQuestion` to ask how to handle them. Per item, the options are:
 
 If there are no accepted findings to implement, skip to Step 9.
 
-Run the `/resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. The commit SHA from `/finalize` is needed for reply messages in Step 10.
+Run the `/resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. `/finalize` commits and pushes as part of its normal flow; Step 10 replies reference the already-pushed commit SHA.
 
 ## Step 8: Verify Fixes
 
