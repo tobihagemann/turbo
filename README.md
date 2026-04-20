@@ -143,7 +143,7 @@ The guide covers both traditional onboarding (setup, build commands, tooling) an
 
 ## Browser and UI Testing
 
-[`/smoke-test`](skills/smoke-test/SKILL.md) and [`/comprehensive-test`](skills/comprehensive-test/SKILL.md) automate manual testing — the kind of hands-on verification you'd normally do yourself. These tools determine how Claude interacts with your app:
+[`/smoke-test`](skills/smoke-test/SKILL.md) and [`/exploratory-test`](skills/exploratory-test/SKILL.md) automate manual testing — the kind of hands-on verification you'd normally do yourself. These tools determine how Claude interacts with your app:
 
 - **[`/agent-browser`](https://github.com/vercel-labs/agent-browser) skill** — Browser automation with the most control for web app testing.
 - **`claude-in-chrome` MCP** — Built-in Claude Code browser automation using your real Chrome browser. Falls back to this when `/agent-browser` is not installed.
@@ -191,7 +191,7 @@ the error messages in this module are inconsistent, /note-improvement
 
 # Testing manually
 /smoke-test
-/comprehensive-test
+/exploratory-test
 
 # Picking the next issue to work on
 /pick-next-issue
@@ -248,7 +248,7 @@ the error messages in this module are inconsistent, /note-improvement
 |---|---|---|
 | [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | |
 | [`/smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
-| [`/comprehensive-test`](skills/comprehensive-test/SKILL.md) | Multi-level testing: basic, complex, adversarial, and cross-cutting scenarios | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
+| [`/exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) |
 
 ### Dependencies & Tooling
 

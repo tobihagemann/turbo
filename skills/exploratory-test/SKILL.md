@@ -1,11 +1,11 @@
 ---
-name: comprehensive-test
-description: "Execute comprehensive, multi-level testing of the app covering basic functionality, complex operations, adversarial testing, and cross-cutting scenarios. Deeper than /smoke-test. Use when the user asks to \"test thoroughly\", \"comprehensive test\", \"test all scenarios\", \"deep test\", \"test edge cases\", \"test everything\", \"break it\", or \"find bugs by testing\"."
+name: exploratory-test
+description: "Execute multi-level exploratory testing of the app covering basic functionality, complex operations, adversarial testing, and cross-cutting scenarios. Deeper than /smoke-test. Use when the user asks to \"exploratory test\", \"test thoroughly\", \"test all scenarios\", \"deep test\", \"test edge cases\", \"test everything\", \"break it\", or \"find bugs by testing\"."
 ---
 
-# Comprehensive Test
+# Exploratory Test
 
-Execute comprehensive, multi-level testing that goes beyond smoke testing to actively find bugs through escalating test scenarios.
+Execute multi-level exploratory testing that goes beyond smoke testing to actively find bugs through escalating test scenarios.
 
 ## Step 1: Load or Create Test Plan
 
@@ -56,7 +56,7 @@ Run commands directly.
 Present results organized by level:
 
 ```
-Comprehensive Test Results:
+Exploratory Test Results:
 
 ## Level 1: Basic Functionality (X/Y passed)
 - [PASS] Test name: description
