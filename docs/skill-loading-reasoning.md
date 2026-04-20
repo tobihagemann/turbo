@@ -14,9 +14,11 @@ Failure modes observed fall into two categories: **skip** (a step doesn't run) a
 
 4. **Child steps bypassed via arguments**: When `/resolve-pr-comments` invoked `/polish-code`, Claude passed an argument like *"Do NOT iterate into a polish loop. Just run the two gradle commands. Skip any `/simplify-code` review loop."* The invocation itself was technically compliant (Skill tool was used), but the argument instructed the child skill to abandon its own steps. The same effect as skipping, achieved through the argument channel.
 
+5. **Branch merging**: `/review-code` specifies seven parallel agents (six internal — one per review type — plus one peer). On a small diff, Claude collapsed the six internal agents into a single subagent told to apply all six criteria sequentially, reasoning that six agents each re-reading the same 25-line diff would duplicate work. All six criteria were still applied, so from the agent's view nothing was "dropped" — only merged. But context independence and parallelism were destroyed, which are the properties the skill's fan-out exists to provide. This is a budget-driven variant that looks like efficiency rather than skipping, which is why the "never skip" rule didn't fire.
+
 ### Stop problem
 
-5. **Turn ends when a child skill finishes**: Workflow skills like `/finalize` and `/turboplan` chain multiple sub-skill invocations. After a child skill completed its own steps — especially with a clean "nothing to do" result like `/evaluate-findings` returning zero findings — Claude treated that as a turn boundary and stopped, even with a non-empty parent task list still in view.
+6. **Turn ends when a child skill finishes**: Workflow skills like `/finalize` and `/turboplan` chain multiple sub-skill invocations. After a child skill completed its own steps — especially with a clean "nothing to do" result like `/evaluate-findings` returning zero findings — Claude treated that as a turn boundary and stopped, even with a non-empty parent task list still in view.
 
 This is structurally distinct from skipping. Skipping is "step didn't run"; stopping is "the workflow terminated early". Both manifest as missing work, but their root causes and fixes differ.
 
@@ -32,7 +34,7 @@ Claude over-generalizes this to mean "don't invoke a skill that was previously u
 
 Claude also sometimes substitutes by executing steps from memory rather than invoking the Skill tool — recalling what a skill did last time instead of loading it fresh. This is problematic because skills may have been updated, and a fresh invocation ensures the current version is used.
 
-The budget-driven and argument-bypass modes have a different root cause: budget-driven rationalization. The agent wants to save context, time, tokens, or iterations; knows the "never skip" rule forbids skipping the invocation outright; and looks for a compliant-seeming workaround. Passing "skip the loop" as an argument feels like a loophole — the Skill tool is still called — but the effect is identical to a direct skip.
+The budget-driven, argument-bypass, and branch-merging modes share a root cause: budget-driven rationalization. The agent wants to save context, time, tokens, or iterations; knows "never skip" forbids skipping outright; and looks for a compliant-seeming workaround. The argument-bypass variant uses the child's argument channel — the Skill tool is still called, so it doesn't feel like skipping. The branch-merging variant preserves the skill's criteria in one subagent — no criterion was dropped, so it doesn't feel like skipping either. Both are still skipping; the rationalization obscures it.
 
 ### Stop problem
 
@@ -47,7 +49,7 @@ The system prompt's guard rail has a narrow intended meaning: don't call a skill
 This breaks:
 
 - **Pipelines**: `/finalize` invoking `/review-code`, `/simplify-code`, etc.
-- **Parallel sub-reviews**: `/review-code` launching five type-specific review agents
+- **Parallel sub-reviews**: `/review-code` launching six type-specific review agents plus a peer-review agent
 - **Loops**: `/polish-code` re-invoking itself until stable
 - **Routing**: `/self-improve` routing through `/create-skill`
 - **Any second run**: Running the same top-level skill twice in one session
@@ -56,14 +58,16 @@ Separately, the stop problem breaks any workflow skill that chains multiple sub-
 
 ## Solution
 
-Rules under the Skill Loading section of CLAUDE.md cover four concerns:
+Rules under the Skill Loading section of CLAUDE.md cover six concerns:
 
 - **Invocation discipline** — every skill load goes through the Skill tool. No substitution by executing steps from memory, even if the skill was loaded earlier, including skills invoked by other skills or by themselves.
 - **Scope of "already running"** — the phrase only means don't call a skill in the same turn where its `<command-name>` tag already appeared.
-- **Closing skip loopholes** — skipping covers any path that prevents a step from running: not invoking the skill, rationalizing that context, time, tokens, or iterations need saving (including in `auto` mode or `/loop`), or passing arguments that instruct the child to shortcut its own steps. An argument is legitimate only when it matches the child skill's documented interface. The harness manages these budgets; the agent does not.
+- **No budget-driven skipping** — skipping a step, invocation, or parallel branch to save context, time, tokens, or iterations is always the wrong trade-off, including in `auto` mode or `/loop`. The harness manages these budgets; the agent does not.
+- **Legitimate arguments only** — arguments to a child skill must match its documented interface. Ad-hoc overrides that instruct the child to shortcut its own steps or loop are skipping through a different channel.
+- **No branch merging** — collapsing N parallel calls into fewer that sequentially cover the same work destroys context independence and parallelism, even when all criteria are preserved. The branch count a skill specifies is a floor, not a ceiling.
 - **Stop-problem mitigation** — after following a skill's instructions to completion, check the task list before responding. Child skills may have their own task tracking, and completing all of a child's tasks does not mean the parent workflow is done.
 
-The first three concerns address the skip problem from complementary angles. The last addresses the stop problem.
+The first five concerns address the skip problem from complementary angles. The last addresses the stop problem.
 
 ## Defense in depth
 
