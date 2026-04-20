@@ -1,6 +1,6 @@
 # Resolve Findings: Standard Path
 
-Hand off to `/turboplan` with the accepted findings as the task description.
+Run `/turboplan` with the accepted findings as the task description.
 
 ## Task Tracking
 

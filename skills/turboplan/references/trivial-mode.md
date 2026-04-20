@@ -1,6 +1,6 @@
 # Turboplan: Trivial Mode
 
-Hand off to `/implement`. No plan file is written.
+Run `/implement`. No plan file is written.
 
 ## Task Tracking
 

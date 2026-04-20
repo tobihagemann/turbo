@@ -115,4 +115,4 @@ For findings whose severity was re-assessed from the upstream level, append the 
 
 For disputed findings, add a callout below the table showing both perspectives. For each finding, indicate scope in the Issue column (e.g., "Pre-existing:" prefix).
 
-Then use the TaskList tool and proceed to any remaining task. If the follow-up skill is `/apply-findings`, hand them off unchanged (including Escalate, which `/apply-findings` surfaces to the user) — do not pre-resolve verdicts in the handoff.
+Then use the TaskList tool and proceed to any remaining task. The next pending skill — `/resolve-findings` or `/apply-findings` — reads the findings table directly, including Escalate verdicts, which `/apply-findings` surfaces to the user via AskUserQuestion.

@@ -20,6 +20,8 @@ Failure modes observed fall into two categories: **skip** (a step doesn't run) a
 
 6. **Turn ends when a child skill finishes**: Workflow skills like `/finalize` and `/turboplan` chain multiple sub-skill invocations. After a child skill completed its own steps — especially with a clean "nothing to do" result like `/evaluate-findings` returning zero findings — Claude treated that as a turn boundary and stopped, even with a non-empty parent task list still in view.
 
+7. **Stops cascade within a session**: Once Claude has ended a turn at one skill boundary — typically after composing a prose "completion" summary — it tends to repeat the pattern at subsequent skill boundaries, even when those downstream skills are well-behaved. A single unmitigated stall can trigger a chain. Continuation framing at the earliest leaf skill in a chain therefore tends to prevent stalls downstream.
+
 This is structurally distinct from skipping. Skipping is "step didn't run"; stopping is "the workflow terminated early". Both manifest as missing work, but their root causes and fixes differ.
 
 ## Root Cause
@@ -75,6 +77,6 @@ The task-list-check rule alone turned out to be insufficient. After it shipped, 
 
 - **Global rule in CLAUDE.md** — the task-list-check baseline applies to every skill completion, anywhere in the conversation.
 - **Per-skill continuation line** — child skills with explicit numbered steps end their last step with: *"Then use the TaskList tool and proceed to any remaining task."* Placing the cue at the exact moment execution ends (not buried in a trailing Rules section) puts it where the stop-decision gets made. The tool call is a concrete required action that breaks the end-of-turn pull more reliably than the earlier prose phrasing *"check your task list for remaining tasks and proceed"* — with the prose form, the stop problem still occurred even when the rule was in context and the task list was visible. See the corresponding convention in `SKILL-CONVENTIONS.md`.
-- **No handoff sentences in child skills** — sentences like *"Return findings to the caller"* or *"Return results for the main agent to act on"* read as end-of-turn signals and must not appear anywhere in the body, including intros. "Caller" and "main agent" framing is itself part of the problem: there is no caller in a function-call sense, only the same agent continuing through more prompting.
+- **Continuation framing in child skills** — child skills frame the body in second-person, agent-facing voice: the same agent continuing through more prompting. Third-party framing like *"Return findings to the caller"* or *"Return results for the main agent to act on"* reads as an end-of-turn signal — "caller" and "main agent" are themselves part of the problem, since there is no caller in a function-call sense, only the same agent continuing.
 
 Removing any one layer regresses the behavior. The global rule was briefly removed in favor of the per-skill line alone, then restored — flakiness persisted without it.

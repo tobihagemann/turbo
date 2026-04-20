@@ -1,6 +1,6 @@
 # Implement Improvements: Standard Lane
 
-Hand off to `/turboplan` with the working-set entries. The user runs `/implement-plan` in a fresh session afterward.
+Run `/turboplan` with the working-set entries. The user runs `/implement-plan` in a fresh session afterward.
 
 The working set is the active entries matching the confirmed lane and category filter, computed in SKILL.md Step 3.
 
