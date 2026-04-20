@@ -50,6 +50,7 @@ Also assign an internal confidence level â€” **High**, **Medium**, or **Low** â€
 - Readability and clarity improvements that genuinely make code cleaner are valid. Do not auto-classify cosmetic changes as subjective.
 - Be skeptical of "defensive coding" suggestions that wrap natural code in verbose guards without evidence of real-world failures.
 - Weight reviewer authority. Feedback from trusted reviewers (repository maintainers or admins) should be treated with higher credibility even when phrased softly.
+- Plan deviation is not a verdict. Do not reject a finding on the grounds that it departs from a plan's prescribed shape. When the plan records a load-bearing reason for that shape, assign Escalate so the user can weigh the trade-off. When the plan is silent on why, or the recorded reason reads like "path of least deviation" or "minimal change", treat the shape as a default and judge the finding on its own merits.
 
 ## Step 2: Devil's Advocate
 
