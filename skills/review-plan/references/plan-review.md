@@ -11,9 +11,11 @@ Read project context (CLAUDE.md and files mentioned in the plan) to understand t
 - **Scope** — Requirements addressed without creep. No missing requirements from the original ask
 - **Ordering** — Step dependency issues, missing prerequisites, circular dependencies
 - **Buildability** — Steps specific enough to execute without getting stuck. No logical gaps between steps
-- **Concreteness** — Every Implementation Step references at least one concrete anchor: a `file_path:line_number`, a named function, a named symbol, or a named file to create. Vague directives are buildability gaps. Flag any step that contains only "add validation", "handle edge cases", "as needed", "etc.", "similar to step N" without restating the anchor, "mirror the existing pattern" without naming the pattern's location, "update related files" without naming them, or placeholder language like "TBD", "TODO", "fill in later"
+- **Concreteness** — Every step references a concrete anchor (file/line, function, symbol, or file to create), and named symbols/types are verifiable in the codebase. Flag vague directives or placeholder language
+- **Consistency** — Internal contradictions between sections (e.g., Implementation Steps disagree with Verification, two steps describe the same call differently)
 - **Verification** — The plan has a verification section that describes how to confirm the change works. Flag if missing, or if it is vague ("run tests" without naming which tests or what to look for)
 - **Pattern Alignment** — Proposed approach follows existing codebase patterns where applicable. Deviations from established patterns are justified
+- **Side effects** — Other consumers, callers, or co-firing components affected by changes to shared surfaces (helpers, lifecycle hooks, globals)
 - **Design Direction** — Whether the chosen approach is the simplest safe option. Challenge assumptions the plan depends on and flag when a different approach would be safer or simpler
 - **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies
 
