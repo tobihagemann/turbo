@@ -2,7 +2,7 @@
 
 ## What to Review
 
-Bugs, logic errors, and correctness problems: incorrect control flow, off-by-one errors, null/undefined access, type mismatches, broken error handling, race conditions, and resource leaks.
+Bugs, logic errors, and correctness problems: incorrect control flow, off-by-one errors, null/undefined access, type mismatches, broken error handling, race conditions, resource leaks, and state lifecycle bugs.
 
 ## Determination Criteria
 

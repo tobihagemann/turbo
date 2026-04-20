@@ -2,7 +2,7 @@
 
 ## Review Instructions
 
-Identify related files in the project (shared interfaces, similar modules, files importing the same utilities) and read those to detect cross-file patterns. Cross-file issues are the primary focus.
+Identify related files in the project (shared interfaces, similar modules, files importing the same utilities, structurally similar code without shared imports) and read those to detect cross-file patterns. Cross-file issues are the primary focus.
 
 ## What to Review
 
