@@ -62,7 +62,7 @@ Run the `/interpret-feedback` skill on the union of:
 - Unresolved inline threads
 - Unaddressed review-body findings from Step 2
 
-Skip items from bot accounts (logins ending in `[bot]`, e.g., CodeRabbit, Copilot). AI reviewer feedback is structured and explicit enough for `/evaluate-findings` to handle directly.
+Skip AI-reviewer accounts — match by known login (e.g., `coderabbitai`, `copilot-pull-request-reviewer[bot]`), not the `[bot]` suffix alone. Their structured feedback routes directly to `/evaluate-findings`.
 
 For inline threads, include the `diffHunk` so the interpreters can see the code the reviewer was looking at. For outdated comments where `line` is null, use `originalLine`. For review-body findings, provide the observation text and the PR's changed-file list as context.
 
