@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-# Fetch all review threads, reviews, commits, and metadata for a GitHub PR.
-# Emits a single merged JSON document on stdout:
+# Fetch all review threads, reviews, issue comments, commits, and metadata for a
+# GitHub PR. Emits a single merged JSON document on stdout:
 #   {
 #     "meta":          { title, url, headRefName, baseRefName },
 #     "reviewThreads": [ ... ],
 #     "reviews":       [ ... ],   # includes submittedAt
+#     "issueComments": [ ... ],   # PR conversation comments; author, body, createdAt, url
 #     "commits":       [ ... ]    # oid, abbreviatedOid, message, committedDate
 #   }
 #
-# Paginates reviewThreads, reviews, and commits to avoid silent drops on long
-# PRs. For any thread whose inner comments exceed the initial page, walks the
-# remaining comments via node(id:) and merges them back into the thread.
+# Paginates reviewThreads, reviews, issue comments, and commits to avoid silent
+# drops on long PRs. For any thread whose inner comments exceed the initial page,
+# walks the remaining comments via node(id:) and merges them back into the thread.
 #
 # Usage: fetch-pr-data.sh <owner> <repo> <pr_number>
 
@@ -61,6 +62,20 @@ query($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
       reviews(first: 100, after: $endCursor) {
         pageInfo { hasNextPage endCursor }
         nodes { author { login } body state submittedAt }
+      }
+    }
+  }
+}
+GRAPHQL
+)
+
+issue_comments_query=$(cat <<'GRAPHQL'
+query($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) {
+      comments(first: 100, after: $endCursor) {
+        pageInfo { hasNextPage endCursor }
+        nodes { author { login } body createdAt url }
       }
     }
   }
@@ -139,6 +154,12 @@ reviews=$(gh api graphql --paginate \
   --jq '.data.repository.pullRequest.reviews.nodes[]' \
   | jq -s '.')
 
+issue_comments=$(gh api graphql --paginate \
+  -f query="$issue_comments_query" \
+  -f owner="$owner" -f repo="$repo" -F pr="$pr" \
+  --jq '.data.repository.pullRequest.comments.nodes[]' \
+  | jq -s '.')
+
 commits=$(gh api graphql --paginate \
   -f query="$commits_query" \
   -f owner="$owner" -f repo="$repo" -F pr="$pr" \
@@ -149,5 +170,6 @@ jq -n \
   --argjson meta "$meta" \
   --argjson threads "$threads" \
   --argjson reviews "$reviews" \
+  --argjson issueComments "$issue_comments" \
   --argjson commits "$commits" \
-  '{meta: $meta, reviewThreads: $threads, reviews: $reviews, commits: $commits}'
+  '{meta: $meta, reviewThreads: $threads, reviews: $reviews, issueComments: $issueComments, commits: $commits}'

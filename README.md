@@ -283,9 +283,10 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/create-pr`](skills/create-pr/SKILL.md) | Draft and create a GitHub PR | [`/github-voice`](skills/github-voice/SKILL.md) |
 | [`/update-pr`](skills/update-pr/SKILL.md) | Update existing PR title and description | [`/github-voice`](skills/github-voice/SKILL.md) |
 | [`/fetch-pr-comments`](skills/fetch-pr-comments/SKILL.md) | Read-only summary of unresolved PR comments | |
-| [`/resolve-pr-comments`](skills/resolve-pr-comments/SKILL.md) | Evaluate, fix, answer, and reply to PR comments (including reviewer questions) | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/resolve-findings`](skills/resolve-findings/SKILL.md), [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md), [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md) |
+| [`/resolve-pr-comments`](skills/resolve-pr-comments/SKILL.md) | Evaluate, fix, answer, and reply to PR comments (including reviewer questions) | [`/interpret-feedback`](skills/interpret-feedback/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/resolve-findings`](skills/resolve-findings/SKILL.md), [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md), [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md), [`/reply-to-pr-conversation`](skills/reply-to-pr-conversation/SKILL.md) |
 | [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md) | Recall implementation reasoning and compose raw answers to reviewer questions | [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) |
 | [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md) | Draft, confirm, and post PR thread replies; re-fetches resolution state to skip auto-resolved threads | [`/github-voice`](skills/github-voice/SKILL.md) |
+| [`/reply-to-pr-conversation`](skills/reply-to-pr-conversation/SKILL.md) | Draft, confirm, and post a single conversational reply to PR issue comments, addressing tracked items as natural prose | [`/github-voice`](skills/github-voice/SKILL.md) |
 
 ### External Tools
 
