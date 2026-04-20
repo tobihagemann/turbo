@@ -5,8 +5,8 @@ A composable dev process for [Claude Code](https://docs.anthropic.com/en/docs/cl
 **TL;DR** — Three steps to ship:
 
 1. **Plan** — Run [`/turboplan`](skills/turboplan/SKILL.md) (or enter raw plan mode) and describe what you want to build
-2. **Implement** — Build it with Claude
-3. **Run [`/finalize`](skills/finalize/SKILL.md)** — Tests, iterative code polishing, commit, and PR. One command.
+2. **Implement** — Run [`/implement-plan`](skills/implement-plan/SKILL.md) on the plan, or [`/implement`](skills/implement/SKILL.md) for ad-hoc changes
+3. **Finalize** — [`/finalize`](skills/finalize/SKILL.md) runs tests, code polishing, commit, and PR. It kicks in automatically after any `/implement*` skill; run it yourself if you built by hand.
 
 This loop is the core. Two more pipelines run alongside it for work that does not fit the loop: [`/audit`](skills/audit/SKILL.md) for project-wide health checks and [`/onboard`](skills/onboard/SKILL.md) for ramping up on new projects. Beyond the four pipelines, Turbo ships [60+ skills](#all-skills) for debugging, reviewing, dependency upgrades, and self-improvement that makes each session teach the next. See the [prompt examples](#prompt-examples) for how they look in practice, or read on for the full picture.
 
@@ -16,9 +16,8 @@ Turbo covers the full dev lifecycle: reviewing code, creating PRs, investigating
 
 Five ideas shape the design:
 
-1. **Standardized process.** Skills capture dev workflows so you can run them directly instead of prompting from scratch. [`/turboplan`](skills/turboplan/SKILL.md) drafts, refines, confirms, and chains into implementation. [`/finalize`](skills/finalize/SKILL.md) runs your entire post-implementation QA in one command. [`/investigate`](skills/investigate/SKILL.md) follows a structured root cause analysis cycle. The skill is the prompt.
+1. **Standardized process.** Skills capture dev workflows so you can run them directly instead of prompting from scratch. [`/turboplan`](skills/turboplan/SKILL.md) analyzes complexity and routes to the right mode. [`/finalize`](skills/finalize/SKILL.md) runs your entire post-implementation QA in one command. [`/investigate`](skills/investigate/SKILL.md) follows a structured root cause analysis cycle. The skill is the prompt.
 2. **Layered design.** Skills compose other skills to any depth. [`/review-code security`](skills/review-code/SKILL.md) runs a single-concern scan. [`/review-code`](skills/review-code/SKILL.md) with no argument runs all six types in parallel. [`/polish-code`](skills/polish-code/SKILL.md) loops format → lint → test → review → evaluate → apply → smoke test until stable. [`/finalize`](skills/finalize/SKILL.md) wraps the whole pipeline with self-improvement and commit. [`/audit`](skills/audit/SKILL.md) fans out to all analysis skills in parallel, evaluates the combined findings, and produces a health report. Each pipeline composes with a natural, predictable interface. See [The Turboplan Pipeline](#the-turboplan-pipeline) and [The Finalize Pipeline](#the-finalize-pipeline) for worked examples.
-
 3. **Swappable by design.** Every skill owns one concern and communicates through standard interfaces. Replace any piece with your own and the pipeline adapts. See [The Puzzle Piece Philosophy](#the-puzzle-piece-philosophy) for details.
 4. **Works out of the box.** Install the skills and the full workflow is ready. Dependencies are standard dev tooling (GitHub CLI, Codex) that most teams already have.
 5. **Just skills.** No framework, no custom runtime, no new memory system. Skills are plain markdown that use Claude Code's native primitives (git, filesystem, built-in tools). Remove an independent skill and the rest still work.
@@ -59,7 +58,6 @@ Skills communicate through standard interfaces: git staging area, PR state, and 
 
 If Turbo has helped you ship faster and you're so inclined, I'd greatly appreciate it if you'd consider [sponsoring my open source work](https://github.com/sponsors/tobihagemann).
 
-
 ## Quick Start
 
 ### Prerequisites
@@ -88,7 +86,7 @@ See the [manual setup guide](docs/manual-setup.md) for step-by-step instructions
 
 ## The Turboplan Pipeline
 
-Claude Code's built-in plan mode is a starting point, but it tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny. It can also feel too restrictive for iterative planning. Turbo replaces raw plan mode with [`/turboplan`](skills/turboplan/SKILL.md) as a universal entry point. You always start with `/turboplan` — whether your task is a single-session change or a multi-subsystem project. `/turboplan` analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality. `/turboplan` does not require plan mode to be active, and it can chain straight into implementation and [`/finalize`](skills/finalize/SKILL.md) so a single command covers the full loop.
+Claude Code's built-in plan mode is a starting point, but it tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny. It can also feel too restrictive for iterative planning. Turbo replaces raw plan mode with [`/turboplan`](skills/turboplan/SKILL.md) as a universal entry point. You always start with `/turboplan` — whether your task is a single-session change or a multi-subsystem project. `/turboplan` analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality. `/turboplan` does not require plan mode to be active. Trivial edits chain straight through [`/implement`](skills/implement/SKILL.md) to [`/finalize`](skills/finalize/SKILL.md); small tasks halt once for a fresh [`/implement-plan`](skills/implement-plan/SKILL.md) session, and complex tasks halt again after [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) before implementation.
 
 ![How Turboplan Connects](assets/how-turboplan-connects.svg)
 
@@ -96,7 +94,7 @@ Claude Code's built-in plan mode is a starting point, but it tends to produce pl
 
 - **Trivial mode** — True one-line edit (typo, single rename, single config tweak). Hands off to [`/implement`](skills/implement/SKILL.md), which loads [`/code-style`](skills/code-style/SKILL.md), applies the fix, and runs [`/finalize`](skills/finalize/SKILL.md). No plan file is written.
 - **Small-task mode** — Single-session change. Runs [`/draft-plan`](skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](skills/refine-plan/SKILL.md) → [`/self-improve`](skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session.
-- **Complex-project mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-plan`](skills/refine-plan/SKILL.md) to iteratively review and revise the spec, then [`/draft-shells`](skills/draft-shells/SKILL.md) to decompose the spec into shells with YAML frontmatter, then [`/refine-plan`](skills/refine-plan/SKILL.md) to review and revise the shells, then [`/self-improve`](skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) in fresh sessions to implement each shell.
+- **Complex-project mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-plan`](skills/refine-plan/SKILL.md) to iteratively review and revise the spec, then [`/draft-shells`](skills/draft-shells/SKILL.md) to decompose the spec into shells with YAML frontmatter, then [`/refine-plan`](skills/refine-plan/SKILL.md) to review and revise the shells, then [`/self-improve`](skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) in fresh sessions to plan each shell, then [`/implement-plan`](skills/implement-plan/SKILL.md) to implement it.
 
 Every sub-skill works standalone too. Run [`/draft-plan`](skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session on any plan file. Run [`/draft-spec`](skills/draft-spec/SKILL.md) to write a spec without committing to the full pipeline.
 
@@ -104,11 +102,11 @@ Every sub-skill works standalone too. Run [`/draft-plan`](skills/draft-plan/SKIL
 
 For complex projects, [`/draft-shells`](skills/draft-shells/SKILL.md) decomposes the spec into **shells**: structured decomposition artifacts that capture the wiring invariants (Produces, Consumes, Covers spec requirements) and high-level Implementation Steps. Shells lock in the decomposition — what each session builds, what it depends on, what spec requirements it covers — without committing to concrete file paths. [`/refine-plan`](skills/refine-plan/SKILL.md) reviews and tightens the shells until stable.
 
-You then drive implementation one shell at a time. [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) picks the next shell whose dependencies are satisfied and chains into [`/expand-shell`](skills/expand-shell/SKILL.md), which adds a fresh pattern survey and concrete references against the current codebase, then refine → self-improve → halt. You run `/implement-plan` in a fresh session. Each implementation session gets fresh pattern surveys, so decisions from earlier sessions naturally inform later ones.
+You then drive implementation one shell at a time. [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) picks the next shell whose dependencies are satisfied and chains into [`/expand-shell`](skills/expand-shell/SKILL.md), which adds a fresh pattern survey and concrete references against the current codebase, then refine → self-improve → halt. You run [`/implement-plan`](skills/implement-plan/SKILL.md) in a fresh session. Each implementation session gets fresh pattern surveys, so decisions from earlier sessions naturally inform later ones.
 
 ## The Finalize Pipeline
 
-[`/finalize`](skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/turboplan`](skills/turboplan/SKILL.md) chain into it automatically. One command runs tests, iterative code polishing, changelog updates, self-improvement, and commit.
+[`/finalize`](skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](skills/implement/SKILL.md) / [`/implement-plan`](skills/implement-plan/SKILL.md) chain into it automatically. One command runs tests, iterative code polishing, changelog updates, self-improvement, and commit.
 
 ![How Finalize Connects](assets/how-finalize-connects.svg)
 
@@ -147,8 +145,8 @@ The guide covers both traditional onboarding (setup, build commands, tooling) an
 
 [`/smoke-test`](skills/smoke-test/SKILL.md) and [`/comprehensive-test`](skills/comprehensive-test/SKILL.md) automate manual testing — the kind of hands-on verification you'd normally do yourself. These tools determine how Claude interacts with your app:
 
-- **[agent-browser](https://github.com/vercel-labs/agent-browser)** — Companion skill for browser automation. Provides the most control for web app testing.
-- **`claude-in-chrome` MCP** — Built-in Claude Code browser automation using your real Chrome browser. Falls back to this when agent-browser is not installed.
+- **[`/agent-browser`](https://github.com/vercel-labs/agent-browser) skill** — Browser automation with the most control for web app testing.
+- **`claude-in-chrome` MCP** — Built-in Claude Code browser automation using your real Chrome browser. Falls back to this when `/agent-browser` is not installed.
 - **`computer-use` MCP** — Built-in Claude Code screen control for native app and UI testing on macOS.
 
 ## Prompt Examples
@@ -157,7 +155,7 @@ These are prompts you can type directly into Claude Code. Skill names work as na
 
 ```
 # Planning a change (single entry — /turboplan routes based on complexity)
-/turboplan add a caching layer to the image pipeline  ← small task → draft → refine → implement
+/turboplan add a caching layer to the image pipeline  ← small task → draft → refine → halt; run /implement-plan after
 /turboplan build a notification system with backend, API, and UI  ← complex → spec → shells → halt
 /survey-patterns  ← pattern-ground an approach without drafting a plan
 /implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
@@ -226,7 +224,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/expand-shell`](skills/expand-shell/SKILL.md) | Expand a shell with fresh pattern survey, concrete references, and verification | [`/survey-patterns`](skills/survey-patterns/SKILL.md) |
 | [`/refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a planning artifact (plan, shells, or spec) until stable: review → evaluate → apply → re-run | [`/review-plan`](skills/review-plan/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/review-plan`](skills/review-plan/SKILL.md) | Review planning artifacts (plan, shells, or spec): internal review and peer review in parallel | [`/peer-review`](skills/peer-review/SKILL.md) |
-| [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-impl prep, load task-specific skills, hand off to `/implement` | [`/implement`](skills/implement/SKILL.md) |
+| [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-implementation prep, load task-specific skills, hand off to `/implement` | [`/implement`](skills/implement/SKILL.md) |
 | [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) | Pick the next shell and carry it through planning: expand, refine, self-improve, halt | [`/expand-shell`](skills/expand-shell/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md) |
 | [`/pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it | [`/turboplan`](skills/turboplan/SKILL.md) |
 | [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | |
@@ -241,7 +239,7 @@ the error messages in this module are inconsistent, /note-improvement
 | [`/find-dead-code`](skills/find-dead-code/SKILL.md) | Identify unused code via parallel analysis | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
 | [`/polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → review → evaluate → apply → smoke test → re-run until stable | [`/stage`](skills/stage/SKILL.md), [`/review-code`](skills/review-code/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md), [`/smoke-test`](skills/smoke-test/SKILL.md), [`/investigate`](skills/investigate/SKILL.md) |
 | [`/simplify-code`](skills/simplify-code/SKILL.md) | Review code quality and fix issues | |
-| [`/implement`](skills/implement/SKILL.md) | Standard implementation flow: load code-style rules, make the change, run /finalize | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
+| [`/implement`](skills/implement/SKILL.md) | Standard implementation flow: load code-style rules, make the change, run `/finalize` | [`/code-style`](skills/code-style/SKILL.md), [`/finalize`](skills/finalize/SKILL.md) |
 | [`/investigate`](skills/investigate/SKILL.md) | Systematic root cause analysis for bugs and failures | [`/consult-codex`](skills/consult-codex/SKILL.md), [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/consult-oracle`](skills/consult-oracle/SKILL.md) |
 
 ### Testing
