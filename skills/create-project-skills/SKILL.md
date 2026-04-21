@@ -16,7 +16,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 3. Evaluate patterns
 4. Propose skill list
 5. Apply updates
-6. Run `/create-skill` skill for each new skill
+6. Run `/create-skill` skill for the batch of new skills
 
 ## Step 1: Survey Codebase
 
@@ -88,14 +88,13 @@ Skip this step if no Update candidates were approved.
 
 ## Step 6: Run `/create-skill` Skill
 
-For each approved candidate with Status **New**, process sequentially:
+Output all approved **New** candidates as text in a single batch. For each candidate, list the proposed name, description, target directory (`<target-skill-directory>/<name>/`), and the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`). The full set of concepts makes each skill's usage patterns clearly understood so `/create-skill` can skip its Step 1 (usage patterns) and Step 2 (planning reusable resources, since project skills typically need none).
 
-1. Output the proposed name, description, target directory (`<target-skill-directory>/<name>/`), and the 3–8 convention statements as text. Organize convention statements under `## <Section>` headings with inline evidence citations (`file_path:line`). This makes the skill's concept clearly understood so `/create-skill` can skip its Step 1 (usage patterns understanding) and Step 2 (planning reusable resources, since project skills typically need none).
-2. Run the `/create-skill` skill. It handles initialization, editing, review, evaluation, and apply for that skill.
-
-After all New candidates are processed, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
+Run the `/create-skill` skill once with this batch of candidates in context. It handles initialization, editing, and its own batch-aware review, evaluation, and apply cycle for all the new skills.
 
 Do not write any skill whose Status was not explicitly approved in Step 4.
+
+After `/create-skill` completes, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
 
 ## Rules
 
