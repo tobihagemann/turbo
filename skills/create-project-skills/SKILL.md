@@ -15,8 +15,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 2. Extract patterns in parallel
 3. Evaluate patterns
 4. Propose skill list
-5. Apply updates
-6. Run `/create-skill` skill for the batch of new skills
+5. Run `/create-skill` skill
 
 ## Step 1: Survey Codebase
 
@@ -80,19 +79,20 @@ After all candidates are listed, use `AskUserQuestion` to confirm the proposal w
 
 For each Rename conflict candidate, use a separate `AskUserQuestion` asking whether to update the existing skill, create the new one alongside it, or skip.
 
-## Step 5: Apply Updates
+## Step 5: Run `/create-skill` Skill
 
-For each approved candidate with Status **Update**, read the current file, apply the unified diff from Step 3, and write back. Output a one-line confirmation per file.
+Output all approved candidates (both **New** and **Update** status) as text in a single batch. For each candidate, list:
 
-Skip this step if no Update candidates were approved.
+- Status tag, proposed name, description
+- Target path `<target-skill-directory>/<name>/SKILL.md`
+- For **New**: the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`)
+- For **Update**: the existing file path and the unified diff to apply
 
-## Step 6: Run `/create-skill` Skill
+This gives `/create-skill` everything it needs to skip its Step 1 (usage patterns clearly understood) and Step 2 (project skills typically need no additional reusable resources).
 
-Output all approved **New** candidates as text in a single batch. For each candidate, list the proposed name, description, target directory (`<target-skill-directory>/<name>/`), and the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`). The full set of concepts makes each skill's usage patterns clearly understood so `/create-skill` can skip its Step 1 (usage patterns) and Step 2 (planning reusable resources, since project skills typically need none).
+Run the `/create-skill` skill once with this batch in context. For New candidates it handles initialization and editing. For Update candidates it applies the diffs. Its batch-aware review, evaluation, and apply cycle then runs across all touched skills.
 
-Run the `/create-skill` skill once with this batch of candidates in context. It handles initialization, editing, and its own batch-aware review, evaluation, and apply cycle for all the new skills.
-
-Do not write any skill whose Status was not explicitly approved in Step 4.
+Do not include any candidate whose Status was not explicitly approved in Step 4.
 
 After `/create-skill` completes, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
 
