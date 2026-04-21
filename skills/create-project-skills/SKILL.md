@@ -81,18 +81,13 @@ For each Rename conflict candidate, use a separate `AskUserQuestion` asking whet
 
 ## Step 5: Run `/create-skill` Skill
 
-Output all approved candidates (both **New** and **Update** status) as text in a single batch. For each candidate, list:
+Build the batch from approved candidates only. Do not include anything not explicitly approved in Step 4.
 
-- Status tag, proposed name, description
-- Target path `<target-skill-directory>/<name>/SKILL.md`
-- For **New**: the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`)
-- For **Update**: the existing file path and the unified diff to apply
+Output all approved candidates (both **New** and **Update** status) as text in a single batch. For each candidate, list the Status tag, proposed name, description, target path `<target-skill-directory>/<name>/SKILL.md`, and the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`). These convention statements define the target state the final SKILL.md should match, regardless of whether the skill is being created or updated.
 
-This gives `/create-skill` everything it needs to skip its Step 1 (usage patterns clearly understood) and Step 2 (project skills typically need no additional reusable resources).
+This gives `/create-skill` everything it needs to skip its Step 1 (usage patterns clearly understood) and Step 2 (project skills typically need no additional reusable resources). For Update candidates, `/create-skill` also skips its Step 3 (initialization) per its own "skill already exists, iteration needed" skip rule and iterates on the existing SKILL.md in Step 4 until it matches the target convention statements.
 
-Run the `/create-skill` skill once with this batch in context. For New candidates it handles initialization and editing. For Update candidates it applies the diffs. Its batch-aware review, evaluation, and apply cycle then runs across all touched skills.
-
-Do not include any candidate whose Status was not explicitly approved in Step 4.
+Run the `/create-skill` skill once with this batch in context. Its batch-aware review, evaluation, and apply cycle then runs across all touched skills.
 
 After `/create-skill` completes, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
 
