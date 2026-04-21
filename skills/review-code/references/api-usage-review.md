@@ -10,6 +10,7 @@
 
 - **Wrong signatures** — incorrect parameter count, order, or types
 - **Deprecated APIs** — using methods/classes/functions marked as deprecated
+- **Superseded APIs** — older API still works but documentation recommends a newer alternative
 - **Version mismatches** — using APIs not available in the project's pinned version
 - **Missing required parameters** — omitting parameters that have no default value
 - **Incorrect return type assumptions** — treating the return value as a different type than documented
@@ -24,7 +25,7 @@ Flag an issue only when ALL of these hold:
 1. The documentation or loaded skill clearly contradicts the usage (not ambiguous or underdocumented)
 2. The issue is discrete and actionable
 3. The documented behavior applies to the library version in the project's dependency file
-4. The issue would cause incorrect behavior, a runtime error, or a deprecation warning
+4. The issue would cause incorrect behavior, a runtime error, a deprecation warning, or uses an API the documentation explicitly recommends superseding
 
 ## Priority Levels
 
