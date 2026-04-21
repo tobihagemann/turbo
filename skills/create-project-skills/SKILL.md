@@ -15,7 +15,8 @@ At the start, use `TaskCreate` to create a task for each phase:
 2. Extract patterns in parallel
 3. Evaluate patterns
 4. Propose skill list
-5. Write skills
+5. Apply updates
+6. Run `/create-skill` skill for each new skill
 
 ## Step 1: Survey Codebase
 
@@ -79,20 +80,22 @@ After all candidates are listed, use `AskUserQuestion` to confirm the proposal w
 
 For each Rename conflict candidate, use a separate `AskUserQuestion` asking whether to update the existing skill, create the new one alongside it, or skip.
 
-## Step 5: Write Skills
+## Step 5: Apply Updates
 
-For each approved candidate:
+For each approved candidate with Status **Update**, read the current file, apply the unified diff from Step 3, and write back. Output a one-line confirmation per file.
 
-1. If Status is **Update**, read the current file, apply the diff, and write back. Output a one-line confirmation per file.
-2. If Status is **New**, write `<target-skill-directory>/<name>/SKILL.md` with:
-   - YAML frontmatter (`name`, `description` in third person with trigger phrases)
-   - A short intro paragraph only if the title and sections don't make the purpose obvious
-   - Convention statements organized under `## <Section>` headings
-   - Inline evidence citations (`file_path:line`) on statements where a concrete reference helps
+Skip this step if no Update candidates were approved.
+
+## Step 6: Run `/create-skill` Skill
+
+For each approved candidate with Status **New**, process sequentially:
+
+1. Output the proposed name, description, target directory (`<target-skill-directory>/<name>/`), and the 3–8 convention statements as text. Organize convention statements under `## <Section>` headings with inline evidence citations (`file_path:line`). This makes the skill's concept clearly understood so `/create-skill` can skip its Step 1 (usage patterns understanding) and Step 2 (planning reusable resources, since project skills typically need none).
+2. Run the `/create-skill` skill. It handles initialization, editing, review, evaluation, and apply for that skill.
+
+After all New candidates are processed, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
 
 Do not write any skill whose Status was not explicitly approved in Step 4.
-
-Output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped, list them so the user knows what was left out.
 
 ## Rules
 
