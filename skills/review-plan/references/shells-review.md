@@ -6,11 +6,11 @@ Shells review focuses on structural wiring, not broad codebase patterns. Skip sw
 
 ## What to Review
 
-- **Spec coverage** — The union of every shell's `Covers Spec Requirements` field must equal the set of requirements in the source spec. Flag any requirement not covered by any shell. Partial coverage must be marked `(partial: <what's deferred>)` with the deferred work named in that shell's Open Questions.
+- **Spec coverage** — The union of every shell's `Covers Spec Requirements` field must equal the full set of `R<N>` IDs in the spec's `## Requirements` section. Flag any R-id not covered by any shell. Partial coverage must be marked `R<N> (partial: <what's deferred>)` with the deferred work named in that shell's Open Questions.
 - **Wiring** — Every entry in a shell's `Consumes` field must trace to a prior shell's `Produces` entry (check dependency ordering via `depends_on` frontmatter) or an explicit "from existing codebase" annotation. Flag missing prerequisites (Consumes with no source), dead ends (Produces not consumed by any later shell and not part of the final system's entry points), and implicit dependencies (Consumes tracing to a shell not in `depends_on`).
 - **Cited-element accuracy** — For each external resource a shell names (file path, function, type, API surface, codebase reference, documentation link), open the cited target and verify it exists and supports the contract the shell assigns to it. Wrong citations pass spec-text review and surface later as unimplementable shells.
 - **Completeness** — Walk through shells in dependency order, accumulating Produces. After the final shell, verify every spec requirement is satisfied by a reachable component. No component should be orphaned.
-- **No duplication** — `Covers Spec Requirements` fields across shells must be disjoint. Flag any requirement appearing in more than one shell. If two shells intentionally touch the same area, the requirement should still map to exactly one.
+- **No duplication** — A bare `R<N>` claiming full coverage must appear in exactly one shell. A partial marker `R<N> (partial: <what's deferred>)` may co-occur with other partial markers for the same R-id only when the deferred slices are non-overlapping. Flag: a bare `R<N>` appearing in more than one shell; overlapping partial slices for the same R-id; a bare `R<N>` co-occurring with any partial marker for the same R-id.
 
 ## Determination Criteria
 

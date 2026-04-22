@@ -6,6 +6,7 @@ Read project context (CLAUDE.md and any existing codebase) to understand constra
 
 ## What to Review
 
+- **Structural completeness** — Spec has the mandatory sections `## Overview`, `## Requirements`, and `## Design`. Requirements uses contiguous `R<N>` IDs starting at `R1` with no gaps or duplicates, including across subheadings when requirements are grouped. Every Design element traces to at least one requirement.
 - **Completeness** — Missing requirements, undefined behavior, TODOs, placeholder text, or "TBD" markers that would block planning
 - **Consistency** — Internal contradictions between sections (e.g., data model conflicts with API design, feature list conflicts with MVP scope)
 - **Clarity** — Ambiguous requirements that could lead to misinterpretation during implementation
