@@ -14,6 +14,6 @@ Use `TaskCreate` to create a task for each phase:
 
 In the turn that invokes `/implement`, write out each fix in the working set as an explicit bullet: summary + files + change description. If an entry turns out to need broader scope or deeper analysis during implementation, stop and re-classify it as `investigate` or `standard` (leave it in the backlog for a future run).
 
-Then run the `/implement` skill. `/implement` loads `/code-style`, applies the fixes, and runs `/finalize` to review, test, and commit.
+Then run the `/implement` skill.
 
 Then use the TaskList tool and proceed to any remaining task.

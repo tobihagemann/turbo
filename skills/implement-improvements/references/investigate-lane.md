@@ -23,7 +23,7 @@ If `/investigate` surfaces complexity that exceeds a single-session fix (multi-s
 
 In the turn that invokes `/implement`, write out each investigation's concluded fix as an explicit bullet: summary + files + change description. Being explicit matters here because `/investigate`'s earlier output has likely displaced continuation context, so `/implement` needs a fresh, self-contained description.
 
-Then run the `/implement` skill. `/implement` loads `/code-style`, applies the fixes, and runs `/finalize` to review, test, and commit.
+Then run the `/implement` skill.
 
 Then use the TaskList tool and proceed to any remaining task.
 
