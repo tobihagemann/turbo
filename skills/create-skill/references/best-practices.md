@@ -993,10 +993,15 @@ The right shape is a single skill that emits N+1 Agent tool calls in one message
 
 ### Phrase multi-Agent parallel dispatch imperatively
 
-When a step launches multiple Agents concurrently, use a clear imperative like "Use the Agent tool to launch all agents below in a single message (`model: "opus"`, do not set `run_in_background`) so they run concurrently:" followed by uniform bulleted Agent roles. Addendum phrasing ("one per X plus one for Y") reads as sequential — the main agent launches the N, waits, then handles Y separately. If one bullet expands to multiple calls (e.g., "one per active type"), state the expected total call count explicitly so the model doesn't collapse the fan-out into a single Agent.
+Tool calls within a single assistant message run concurrently. Tool calls across separate messages run sequentially. To fan out N Agents in parallel, emit one assistant message containing N Agent tool calls.
 
-- ✗ **Avoid**: "Launch one Agent per active type plus one for the extra reviewer, all in a single message."
-- ✓ **Good**: "Use the Agent tool to launch all agents below in a single message. For full review that is six Agent tool calls (five internal + one peer)." Then list agents as uniform bullets.
+Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
+
+> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`.
+
+State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one Agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
+
+When the items being parallelized are themselves skills, each parallel item is an Agent tool call whose prompt invokes the target skill via the Skill tool. The Agent fan-out parallelizes; the Skill load is the work each Agent does.
 
 ### Hoist conditional opt-out checks above dispatch logic
 
