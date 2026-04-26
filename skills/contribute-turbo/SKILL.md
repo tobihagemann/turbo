@@ -23,9 +23,9 @@ git -C ~/.turbo/repo remote -v
 
 ## Step 2: Mirror Installed Skill Changes
 
-Mirror session edits from `~/.claude/skills/<name>/` (where edits land first) into `~/.turbo/repo/skills/<name>/` (the basis for the contribution).
+Port session corrections from `~/.claude/skills/<name>/` (where edits land first) into `~/.turbo/repo/skills/<name>/` (the basis for the contribution), leaving any persistent local customizations in the installed copy untouched.
 
-For each turbo skill that drifts between the two locations, copy the installed version into the repo. Skip any skill that already has uncommitted changes in `~/.turbo/repo/` so manual edits made directly in the repo are preserved.
+Detect drifted skills:
 
 ```bash
 for skill in ~/.claude/skills/*/; do
@@ -33,12 +33,17 @@ for skill in ~/.claude/skills/*/; do
   repo_dir=~/.turbo/repo/skills/"$name"
   [ -d "$repo_dir" ] || continue
   diff -rq "$skill" "$repo_dir" >/dev/null 2>&1 && continue
-  if git -C ~/.turbo/repo status --porcelain skills/"$name"/ | grep -q .; then
-    continue
-  fi
-  rsync -a --delete "$skill" "$repo_dir"/
+  echo "$name"
 done
 ```
+
+For each drifted skill, first check whether the repo copy already has unstaged changes for it (`git -C ~/.turbo/repo status --porcelain skills/<name>/`). If it does, use `AskUserQuestion` to ask the user how to proceed before mirroring — those changes will conflate with mirrored corrections in Step 3 if not resolved.
+
+Then read both versions of every changed file and classify each hunk:
+
+- **Correction** — a session edit meant to improve the skill upstream. For modified files, apply each correction hunk with the Edit tool. For new files in the installed copy, create the matching file in the repo copy with the Write tool. For files deleted from the installed copy, remove the repo copy with `rm`.
+- **Customization** — a persistent local addition that does not belong upstream (extra workflow steps, personal paths, machine-specific notes, internal references). Leave it in the installed copy; do not propagate.
+- **Ambiguous** — use `AskUserQuestion` to confirm classification before applying.
 
 ## Step 3: Review Pending Changes
 
