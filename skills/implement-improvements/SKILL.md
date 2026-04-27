@@ -1,11 +1,11 @@
 ---
 name: implement-improvements
-description: "Validate improvements from .turbo/improvements.md and run one lane based on the user's choice: trivial fixes, investigation, or standard planning. One lane per session. Use when the user asks to \"implement improvements\", \"work on improvements\", \"address improvements\", \"process improvement backlog\", \"tackle improvements\", or \"implement noted improvements\"."
+description: "Validate improvements from .turbo/improvements.md, recommend a working set tailored to what's in the backlog, and run one lane: trivial fixes, investigation, or standard planning. One lane per session. Use when the user asks to \"implement improvements\", \"work on improvements\", \"address improvements\", \"process improvement backlog\", \"tackle improvements\", or \"implement noted improvements\"."
 ---
 
 # Implement Improvements
 
-Validate improvements from `.turbo/improvements.md` and run one lane per session: trivial, investigate, or standard. Mixing lanes in a single run tangles commits, so the skill processes exactly one lane each time. Entries outside the chosen lane or category filter stay in the backlog for future runs.
+Validate improvements from `.turbo/improvements.md`, propose a specific working set based on the backlog's actual contents, and run one lane per session: trivial, investigate, or standard. Mixing lanes in a single run tangles commits, so the skill processes exactly one lane each time. Entries outside the confirmed working set stay in the backlog for future runs.
 
 ## Task Tracking
 
@@ -13,7 +13,7 @@ At the start, use `TaskCreate` to create a task for each step:
 
 1. Read the backlog
 2. Validate and classify
-3. Report, confirm, and prune stale
+3. Recommend, confirm, and prune stale
 4. Run the chosen lane
 5. Prune working-set entries from the backlog
 
@@ -59,9 +59,9 @@ For any Active entry without a Type field, infer one on the fly. Base the classi
 
 Do not ask the user to pick. If genuinely ambiguous, default to `standard`.
 
-## Step 3: Report, Confirm, and Prune Stale
+## Step 3: Recommend, Confirm, and Prune Stale
 
-Present a summary grouped by type and status. Include each entry's category inline and a category tally across active entries so the user can narrow the working set by theme:
+Output the backlog status as text first, grouped by type and status. Include each entry's category inline and a category tally across active entries:
 
 ```
 ## Improvement Backlog Status
@@ -85,15 +85,30 @@ Categories: refactor (N), performance (N), testing (N), docs (N)
 - [summary] — [what's ambiguous]
 ```
 
-Use `AskUserQuestion` to confirm:
-1. Which lane to run: trivial, investigate, or standard (if only one lane has active entries, default to it)
-2. Category filter (default: all)
-3. Whether to remove stale entries from the backlog
-4. Resolution for any unclear items
+### Recommend a Working Set
+
+Pick one specific working set tailored to the active entries. Read the entries again before recommending and weigh:
+
+- **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
+- **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger trivial batch.
+- **Impact vs effort** — A reliability or correctness entry often outweighs lower-stakes cleanups even when it's a single entry.
+- **Lane shape** — Trivial naturally batches multiple fixes per session, investigate runs one symptom per session, standard hands one entry to `/turboplan` per session.
+- **Unit of work size** — Don't undersize the session. A trivial batch should fill a focused session, so prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves session-sized work. Picking 1–2 entries off a cluster of 7 wastes the slot. Investigate and standard lanes are naturally one entry per session, but reject entries that turn out to be one-line fixes — those belong in the trivial lane.
+- **Backlog state** — Heavy trivial concentration calls for clearing the cluster; a long-deferred symptom often deserves the slot.
+
+State the recommendation as: lane + concrete working set (specific entries or a category-scoped subset) + one or two sentences on why this beats the alternatives. Then list 1–3 honest alternatives, each named with the actual entry or subset (e.g., "investigate the flaky presence test", "standard lane on persist-before-send"). When only one lane has active entries, recommend that lane and skip alternatives.
+
+### Confirm via AskUserQuestion
+
+Use `AskUserQuestion` to confirm. Combine into the same prompt:
+
+1. Confirm the recommended working set or pick one of the named alternatives
+2. Whether to remove stale entries — include only when stale entries exist
+3. Resolution for unclear items — include only when unclear entries exist
 
 If the user confirmed stale removal, edit `.turbo/improvements.md` to delete the stale entries.
 
-Compute the **working set**: active entries matching the confirmed lane and category filter, after unclear resolution. If the working set is empty, stop.
+Compute the **working set** from the confirmed choice. If the working set is empty, stop.
 
 ## Step 4: Run the Chosen Lane
 
