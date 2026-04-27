@@ -1,6 +1,6 @@
-# Resolve Findings: Trivial Path
+# Resolve Findings: Direct Path
 
-Apply evaluated findings directly. `/apply-findings` handles the verdict-aware routing: Escalate prompts, note-for-later captures, and conflict detection.
+Apply evaluated findings via `/apply-findings`.
 
 ## Task Tracking
 

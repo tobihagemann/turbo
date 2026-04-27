@@ -1,6 +1,6 @@
-# Turboplan: Small-Task Mode
+# Turboplan: Plan Mode
 
-Draft → refine → self-improve → mark ready → halt for a user-supplied small task.
+Draft → refine → self-improve → mark ready → halt to produce a plan file the user implements in a fresh session.
 
 ## Task Tracking
 
@@ -38,5 +38,5 @@ Halt with this message:
 
 ## Rules
 
-- Do not edit the plan file directly. Revisions go through `/refine-plan` or `/draft-plan`.
-- Do not attempt to auto-implement. The user drives implementation with `/implement-plan` in a fresh session.
+- Route revisions through `/refine-plan` or `/draft-plan`.
+- Hand implementation to the user via the Phase 5 halt; the user runs `/implement-plan` in a fresh session.

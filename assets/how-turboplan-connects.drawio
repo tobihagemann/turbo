@@ -49,7 +49,7 @@
         <mxCell id="111" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/pick-next-shell" vertex="1">
           <mxGeometry height="40" width="150" x="370" y="460" as="geometry" />
         </mxCell>
-        <mxCell id="120" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="103" value="small-task">
+        <mxCell id="120" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="103" value="plan">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="275" y="100" />
@@ -57,7 +57,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="121" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="109" value="complex">
+        <mxCell id="121" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="109" value="spec">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="325" y="110" />
@@ -68,7 +68,7 @@
         <mxCell id="5000" parent="100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="/implement" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="140" as="geometry" />
         </mxCell>
-        <mxCell id="4010" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="5000" value="trivial">
+        <mxCell id="4010" edge="1" parent="100" source="101" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="5000" value="direct">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="225" y="110" />

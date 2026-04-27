@@ -1,11 +1,17 @@
 ---
-name: migrate-turboplans
-description: "Migrate legacy plan and shell files in .turbo/ to the current layout. Splits legacy artifacts between .turbo/shells/ (unexpanded shells, needs /expand-shell) and .turbo/plans/ (expanded plans and standalone plans), backfills minimal frontmatter, and deletes legacy prompt-plan indexes. Use when the user asks to \"migrate turboplans\", \"migrate turbo plans\", \"upgrade plan format\", \"add frontmatter to plans\", or \"convert old plans\"."
+name: migrate-turbo-files
+description: "Migrate legacy files in .turbo/ to current formats. Covers plans and shells (layout split, frontmatter normalization, prompt-plan index cleanup) and improvements.md (legacy `trivial`/`standard` Type values rewritten to `direct`/`plan`). Use when the user asks to \"migrate turbo files\", \"migrate turbo\", \"migrate turboplans\", \"migrate turbo plans\", \"upgrade plan format\", \"add frontmatter to plans\", \"convert old plans\", or \"migrate improvements\"."
 ---
 
-# Migrate Plans
+# Migrate Turbo Files
 
-Current layout: unexpanded shells live in `.turbo/shells/` with `spec:` and `depends_on:` frontmatter. Plans live in `.turbo/plans/` with `status:` (required) and optional `spec:` for provenance. This skill migrates legacy shapes to that layout.
+Current layouts:
+
+- Unexpanded shells live in `.turbo/shells/` with `spec:` and `depends_on:` frontmatter.
+- Plans live in `.turbo/plans/` with `status:` (required) and optional `spec:` for provenance.
+- `.turbo/improvements.md` entries use Type values `direct`, `investigate`, or `plan`. Legacy values `trivial` and `standard` map to `direct` and `plan` respectively.
+
+This skill migrates legacy shapes to those layouts.
 
 ## Task Tracking
 
@@ -15,7 +21,8 @@ Use `TaskCreate` to create a task for each step:
 2. Migrate prompt plan indexes
 3. Process remaining files in `.turbo/plans/`
 4. Normalize frontmatter on remaining plans
-5. Clean up and report
+5. Migrate `improvements.md` Type values
+6. Clean up and report
 
 ## Step 1: Scan and Classify Existing Files
 
@@ -28,8 +35,9 @@ Scan for all legacy shapes:
   - **Regular plan** — no frontmatter or legacy `type: plan` frontmatter, not shell-shaped, no `## Pattern Survey`. Target: stays in `.turbo/plans/`, frontmatter normalized.
   - **Already-current plan** — has frontmatter with `status:` and no `type:`. Skip.
 - **Files in `.turbo/shells/*.md`** — if they already have current frontmatter (no `type:`, no `status:`, just `spec:` and `depends_on:`), they're migrated. Otherwise, queue for normalization in Step 3.
+- **`.turbo/improvements.md`** — read the file if it exists. Count entries whose `- **Type**:` line carries the legacy values `trivial` or `standard`. Queue these for rewriting in Step 5.
 
-Report what was found: number of indexes, unexpanded shells in `.turbo/plans/`, expanded plans in `.turbo/plans/`, regular plans, already-current plans, already-current shells. If nothing needs migration, report and stop.
+Report what was found: number of indexes, unexpanded shells in `.turbo/plans/`, expanded plans in `.turbo/plans/`, regular plans, already-current plans, already-current shells, and improvements entries with legacy Type values. If nothing needs migration, report and stop.
 
 ## Step 2: Migrate Prompt Plan Indexes
 
@@ -120,7 +128,16 @@ For regular plans in `.turbo/plans/` that were not handled by Steps 2 or 3:
 
 The `status: done` default here differs from Step 3's `ready` default for expanded plans. Reasoning: regular plans without frontmatter are old enough that they're assumed implemented; expanded plans may have been expanded but never implemented, so `ready` is the safer default.
 
-## Step 5: Clean Up and Report
+## Step 5: Migrate `improvements.md` Type Values
+
+For each entry queued in Step 1, rewrite its `- **Type**:` line in place:
+
+- `- **Type**: trivial` → `- **Type**: direct`
+- `- **Type**: standard` → `- **Type**: plan`
+
+`investigate` is unchanged. Preserve all other entry content (Category, Where, Why, Noted, summary). If `improvements.md` does not exist or no entries carry legacy values, skip this step.
+
+## Step 6: Clean Up and Report
 
 After all files are migrated:
 
@@ -136,16 +153,18 @@ Report a summary:
 - Number of expanded plans normalized in place in `.turbo/plans/`
 - Number of shells normalized in place in `.turbo/shells/`
 - Number of regular plans that received frontmatter
+- Number of improvements entries with rewritten Type values
 - Number of files already migrated (skipped)
 - Files deleted (indexes and relocated source files)
 
 ## Rules
 
-- Never modify the spec files in `.turbo/specs/`.
-- Never overwrite a file that already exists at the target path with valid current frontmatter.
+- Treat `.turbo/specs/` as read-only.
+- Skip any target path that already has valid current frontmatter.
 - Preserve all existing body content when adding or normalizing frontmatter. The migration is additive, structural (directory moves), and subtractive (legacy index deletion), never content-destructive.
 - If a shell file referenced by an index does not exist, report the mismatch and skip that entry.
 - If the source spec path in an index does not resolve, still migrate the files but note the missing spec in the report.
-- Never write `type:` into any migrated file. The directory is the type signal.
-- Never write `depends_on:` into a plan. The dependency graph lives on shells only.
-- The migration never produces `status: draft` because legacy artifacts predate the draft concept and cannot retroactively go through refinement; `ready` is the baseline for migrated expanded plans.
+- Omit `type:` from all migrated files; the directory is the type signal.
+- Reserve `depends_on:` for shells; plans omit it.
+- Use `ready` as the baseline status for migrated expanded plans; `draft` is reserved for refinement-stage artifacts.
+- For `improvements.md`, only the Type value changes. Leave summaries, categories, file paths, rationales, and dates untouched.

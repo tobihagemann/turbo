@@ -1,4 +1,4 @@
-# Implement Improvements: Standard Lane
+# Implement Improvements: Plan Lane
 
 Run `/turboplan` with the working-set entries. The user runs `/implement-plan` in a fresh session afterward.
 

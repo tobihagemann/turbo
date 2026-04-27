@@ -17,7 +17,7 @@ Before starting the loop, use `TaskCreate` to add one sub-task per entry in the 
 
 For each entry in the working set, run the `/investigate` skill. In the problem statement passed to `/investigate`, include the entry's summary and rationale, then append a note that this is an improvement-backlog entry likely to be a symptom and that `/investigate` must run `/consult-codex` regardless of how many hypotheses surface.
 
-If `/investigate` surfaces complexity that exceeds a single-session fix (multi-subsystem change, architectural decision), stop that entry and re-classify it as `standard` (leave it in the backlog for a future run).
+If `/investigate` surfaces complexity that exceeds a single-session fix (multi-subsystem change, architectural decision), stop that entry and re-classify it as `plan` (leave it in the backlog for a future run).
 
 ## Phase 2: Run `/implement` Skill for the Concluded Fixes
 

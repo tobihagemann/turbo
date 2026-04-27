@@ -1,11 +1,11 @@
 ---
 name: implement-improvements
-description: "Validate improvements from .turbo/improvements.md, recommend a working set tailored to what's in the backlog, and run one lane: trivial fixes, investigation, or standard planning. One lane per session. Use when the user asks to \"implement improvements\", \"work on improvements\", \"address improvements\", \"process improvement backlog\", \"tackle improvements\", or \"implement noted improvements\"."
+description: "Validate improvements from .turbo/improvements.md, recommend a working set tailored to what's in the backlog, and run one lane: direct fixes, investigation, or planned work. One lane per session. Use when the user asks to \"implement improvements\", \"work on improvements\", \"address improvements\", \"process improvement backlog\", \"tackle improvements\", or \"implement noted improvements\"."
 ---
 
 # Implement Improvements
 
-Validate improvements from `.turbo/improvements.md`, propose a specific working set based on the backlog's actual contents, and run one lane per session: trivial, investigate, or standard. Mixing lanes in a single run tangles commits, so the skill processes exactly one lane each time. Entries outside the confirmed working set stay in the backlog for future runs.
+Validate improvements from `.turbo/improvements.md`, propose a specific working set based on the backlog's actual contents, and run one lane per session: direct, investigate, or plan. Mixing lanes in a single run tangles commits, so the skill processes exactly one lane each time. Entries outside the confirmed working set stay in the backlog for future runs.
 
 ## Task Tracking
 
@@ -24,7 +24,7 @@ Read `.turbo/improvements.md`. If the file does not exist, tell the user there a
 Parse all entries, extracting for each:
 
 - **Summary** (the `###` heading)
-- **Type** (`trivial`, `investigate`, or `standard`; may be missing in older entries)
+- **Type** (`direct`, `investigate`, or `plan`; may be missing in older entries — `trivial` and `standard` are accepted as legacy aliases for `direct` and `plan`)
 - **Category**
 - **Where** (file paths or areas)
 - **Why** (rationale)
@@ -53,11 +53,11 @@ When in doubt, classify as Active. The cost of re-examining a resolved issue is 
 
 For any Active entry without a Type field, infer one on the fly. Base the classification on the code you just read during validation, not just the entry's one-line summary.
 
-- **trivial** — A direct fix: typo, rename, obvious one-liner, small localized cleanup with clear scope. No investigation or plan needed.
-- **investigate** — A symptom, not a fix: unclear root cause, performance question, intermittent bug, "something feels off". Needs dedicated root-cause analysis before any change.
-- **standard** — Everything else: clear-scope work that warrants planning (multi-file refactor, test additions, feature work).
+- **direct** — Clear scope and a known approach, ready to apply via `/implement`.
+- **investigate** — A symptom that needs root-cause analysis first: unclear root cause, performance question, intermittent bug, "something feels off".
+- **plan** — Everything else: the approach warrants writing down before implementing (multi-file refactor, test additions, feature work). Dispatched to `/turboplan`, which routes the work itself.
 
-Do not ask the user to pick. If genuinely ambiguous, default to `standard`.
+Pick the type without asking the user. Default to `plan` when genuinely ambiguous.
 
 ## Step 3: Recommend, Confirm, and Prune Stale
 
@@ -69,13 +69,13 @@ Output the backlog status as text first, grouped by type and status. Include eac
 ### Active (N)
 Categories: refactor (N), performance (N), testing (N), docs (N)
 
-**Trivial (N)**
+**Direct (N)**
 - [summary] (category) — [one-line reason it's still relevant]
 
 **Investigate (N)**
 - [summary] (category) — [one-line reason it's still relevant]
 
-**Standard (N)**
+**Plan (N)**
 - [summary] (category) — [one-line reason it's still relevant]
 
 ### Stale (N)
@@ -90,13 +90,13 @@ Categories: refactor (N), performance (N), testing (N), docs (N)
 Pick one specific working set tailored to the active entries. Read the entries again before recommending and weigh:
 
 - **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
-- **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger trivial batch.
+- **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger direct batch.
 - **Impact vs effort** — A reliability or correctness entry often outweighs lower-stakes cleanups even when it's a single entry.
-- **Lane shape** — Each lane batches a cluster, just in different shapes. Trivial groups direct fixes into one `/implement` run. Investigate dispatches `/investigate` per symptom, then shares one `/implement` for the concluded fixes. Standard hands a cohesive cluster to `/turboplan`, whose complexity routing decides whether it becomes one plan or a multi-shell spec.
-- **Unit of work size** — Don't undersize the session. Prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves session-sized work. Picking 1–2 entries off a cluster of 7 wastes the slot. Reject entries that turn out to be one-line fixes when running standard or investigate — those belong in the trivial lane.
-- **Backlog state** — Heavy trivial concentration calls for clearing the cluster; a long-deferred symptom often deserves the slot.
+- **Lane shape** — Each lane batches a cluster, just in different shapes. Direct groups clear-scope fixes into one `/implement` run. Investigate dispatches `/investigate` per symptom, then shares one `/implement` for the concluded fixes. Plan hands a cohesive cluster to `/turboplan`, whose complexity routing decides whether it becomes one plan or a multi-shell spec.
+- **Unit of work size** — Right-size the session. Prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves session-sized work; picking 1–2 entries off a cluster of 7 wastes the slot. Route any entry that turns out to be a clear-scope direct fix to the direct lane instead.
+- **Backlog state** — Heavy direct concentration calls for clearing the cluster; a long-deferred symptom often deserves the slot.
 
-State the recommendation as: lane + concrete working set (specific entries or a category-scoped subset) + one or two sentences on why this beats the alternatives. Then list 1–3 honest alternatives, each named with the actual entry or subset (e.g., "investigate the flaky presence test", "standard lane on persist-before-send"). When only one lane has active entries, recommend that lane and skip alternatives.
+State the recommendation as: lane + concrete working set (specific entries or a category-scoped subset) + one or two sentences on why this beats the alternatives. Then list 1–3 honest alternatives, each named with the actual entry or subset (e.g., "investigate the flaky presence test", "plan lane on persist-before-send"). When only one lane has active entries, recommend that lane and skip alternatives.
 
 ### Confirm via AskUserQuestion
 
@@ -114,9 +114,9 @@ Compute the **working set** from the confirmed choice. If the working set is emp
 
 Read the reference file for the confirmed lane and follow its phases:
 
-- **Trivial lane** — [references/trivial-lane.md](references/trivial-lane.md)
+- **Direct lane** — [references/direct-lane.md](references/direct-lane.md)
 - **Investigate lane** — [references/investigate-lane.md](references/investigate-lane.md)
-- **Standard lane** — [references/standard-lane.md](references/standard-lane.md)
+- **Plan lane** — [references/plan-lane.md](references/plan-lane.md)
 
 State the chosen lane before continuing with the reference file.
 
@@ -124,13 +124,13 @@ State the chosen lane before continuing with the reference file.
 
 Edit `.turbo/improvements.md` to delete the working-set entries that the lane processed. "Processed" means:
 
-- **Trivial lane** — entries whose fixes were applied
+- **Direct lane** — entries whose fixes were applied
 - **Investigate lane** — entries whose concluded fixes were applied
-- **Standard lane** — entries now captured in the plan file produced by `/turboplan`
+- **Plan lane** — entries now captured in the plan file produced by `/turboplan`
 
-Keep any entries the lane re-classified mid-flight (trivial → investigate/standard, or investigate → standard). These stay in the backlog for a future run. Delete the file if no entries remain.
+Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
 
 ## Rules
 
 - `.turbo/` is gitignored. Edits to `.turbo/improvements.md` are local-only and do not need to be staged or committed.
-- If the user selected a lane, do not secondarily run another lane in the same session. Other active entries stay in the backlog for a future run.
+- Run exactly one lane per session. Leave other active entries in the backlog for a future run.

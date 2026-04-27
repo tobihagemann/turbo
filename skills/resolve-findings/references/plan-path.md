@@ -1,4 +1,4 @@
-# Resolve Findings: Standard Path
+# Resolve Findings: Plan Path
 
 Run `/turboplan` with the accepted findings as the task description.
 

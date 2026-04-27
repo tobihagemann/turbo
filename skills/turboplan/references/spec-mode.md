@@ -1,4 +1,4 @@
-# Turboplan: Complex-Project Mode
+# Turboplan: Spec Mode
 
 Spec out the project and decompose into shells, then halt for the user to drive implementation.
 
@@ -45,4 +45,4 @@ Halt with this message:
 
 ## Rules
 
-- Do not attempt to auto-implement shells. Each shell is implemented in its own fresh session via `/implement-plan` after `/pick-next-shell` halts.
+- Hand shell implementation to the user via the Phase 6 halt; each shell is implemented in its own fresh session via `/implement-plan` after `/pick-next-shell` halts.
