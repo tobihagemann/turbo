@@ -678,6 +678,24 @@ If a skill is project-specific by design (lives in the project repo, not in a sh
 
 Also consider whether inline examples are needed at all. Parenthetical examples like "(e.g. click the Submit button)" often add no value when the instruction is already clear. Prefer concise instructions without examples over instructions cluttered with obvious ones.
 
+### Prefer positive phrasing
+
+State what to do. Imperative verbs ("defer", "limit", "exclude", "halt", "describe") give the agent a clear action; chains of "Never X. Don't Y. Avoid Z." force the agent to invert the prohibition into an action before acting on it.
+
+**Bad example: Negative**:
+```markdown
+- Never modify files in `vendor/`. Files there are managed by the package manager.
+```
+
+**Good example: Positive**:
+```markdown
+- Treat files in `vendor/` as read-only.
+```
+
+The positive form names the action and drops the explanatory clause that just restates the boundary.
+
+Use negative phrasing only when a positive imperative cannot articulate the rule unambiguously. When an explicit enumeration of prohibited items is load-bearing, prefer positive verbs ("Exclude", "Omit", "Reserve X for Y") over "Never include" or "Don't add". Redundant negative restatements — a rule paired with a tautological-boundary clause that says the same thing — are always trim targets.
+
 ## Common patterns
 
 ### Template pattern
