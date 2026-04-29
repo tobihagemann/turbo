@@ -1,0 +1,18 @@
+{
+  "name": "turbo",
+  "owner": {
+    "name": "Tobias Hagemann",
+    "email": "tobias@hagemann.dev"
+  },
+  "plugins": [
+    {
+      "name": "turbo",
+      "source": "./",
+      "description": "A composable dev process for Claude Code, packaged as modular skills",
+      "homepage": "https://github.com/tobihagemann/turbo",
+      "repository": "https://github.com/tobihagemann/turbo",
+      "license": "MIT",
+      "keywords": ["skills", "workflow", "dev-process", "composable"]
+    }
+  ]
+}
