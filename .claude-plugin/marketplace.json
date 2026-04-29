@@ -1,5 +1,6 @@
 {
   "name": "turbo",
+  "description": "A composable dev process for Claude Code, packaged as modular skills",
   "owner": {
     "name": "Tobias Hagemann",
     "email": "tobias@hagemann.dev"
