@@ -972,6 +972,15 @@ When a skill needs user input, reference the tool by name (`AskUserQuestion`) in
 - ✗ **Avoid**: "Ask the user which option they prefer."
 - ✓ **Good**: "Use `AskUserQuestion` to determine which option the user prefers."
 
+### Explicitly invoke skills when the verb matches a skill name
+
+When a step body uses an action verb that is also the name of an existing skill, the bare verb reads as inline reasoning and the agent skips the actual Skill tool call. Name the skill explicitly so the invocation is unambiguous.
+
+- ✗ **Avoid**: "If a check fails, halt and `<verb>`."
+- ✓ **Good**: "If a check fails, run the `/<verb>` skill."
+
+Complements the explicit numbered-step rule for skill dependencies (see "Cross-skill dependencies") by covering verb collisions inside step bodies.
+
 ### Output content as text before AskUserQuestion
 
 When a skill presents structured content (tables, plans, reports) before asking for approval, output the content as text first. `AskUserQuestion` has limited UI space and should only carry the approval prompt, not the content being reviewed.
@@ -1075,6 +1084,7 @@ Workflow skills often need to prevent the agent from skipping steps ("don't rati
 
 - **Skip gate**: When the agent might want to skip a re-run that should happen (e.g., changes were made but the agent judges re-running unnecessary), require it to use `AskUserQuestion` to request skip permission. This converts "don't skip silently" into "can't skip silently."
 - **Exhaustion gate**: When a loop reaches its iteration cap but hasn't stabilized, use `AskUserQuestion` to ask whether to continue for another iteration or escalate to a different approach. This replaces the hard stop with a human-in-the-loop decision.
+- **Blocker gate**: When a step is blocked by a missing dependency, unclear requirement, or environmental issue that needs user input to resolve, use `AskUserQuestion` to surface the blocker and let the user choose how to proceed. Phrasing like "halt and report" or "stop" leaves no recovery path; an `AskUserQuestion` gate keeps the workflow live.
 
 ```markdown
 **If changes were made**, run `/this-skill` again using the Skill tool.
