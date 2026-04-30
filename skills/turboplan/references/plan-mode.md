@@ -14,7 +14,7 @@ Use `TaskCreate` to create a task for each phase:
 
 ## Phase 1: Run `/draft-plan` Skill
 
-Run the `/draft-plan` skill with the user's task description. This produces a new plan at `.turbo/plans/<slug>.md`. If a slug was passed, forward it. Capture the resolved plan path from `/draft-plan`'s output for the next phases.
+Run the `/draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a spec path; `/draft-plan`'s Spec-Derived Input handling activates when a spec path is passed. This produces a new plan at `.turbo/plans/<slug>.md`. Capture the resolved plan path from `/draft-plan`'s output for the next phases.
 
 ## Phase 2: Run `/refine-plan` Skill
 

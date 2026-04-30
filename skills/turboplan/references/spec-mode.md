@@ -1,6 +1,6 @@
 # Turboplan: Spec Mode
 
-Spec out the project and decompose into shells, then halt for the user to drive implementation.
+Spec out the project and decompose into shells, then halt for the user to drive implementation. If the spec turns out to fit a single session, automatically switch to plan mode.
 
 ## Task Tracking
 
@@ -13,6 +13,8 @@ Use `TaskCreate` to create a task for each phase:
 5. Run `/self-improve` skill
 6. Halt and tell the user to run `/clear` then `/pick-next-shell`
 
+If `/draft-shells` lands on the single-shell bail-out (Phase 3), the flow switches to plan mode by following [plan-mode.md](plan-mode.md). Mark tasks 4-6 deleted via `TaskUpdate`, then create five new tasks for [plan-mode.md](plan-mode.md)'s Phases 1-5 before continuing.
+
 ## Phase 1: Run `/draft-spec` Skill
 
 Run the `/draft-spec` skill with the user's task description. `/draft-spec` guides the discussion and writes `.turbo/specs/<slug>.md`. Capture the spec path.
@@ -23,7 +25,12 @@ Run the `/refine-plan` skill with `spec <path>` from Phase 1. This loops review,
 
 ## Phase 3: Run `/draft-shells` Skill
 
-Run the `/draft-shells` skill, passing the spec path from Phase 1. Capture the resulting shell paths.
+Run the `/draft-shells` skill, passing the spec path from Phase 1.
+
+After it returns, check `.turbo/shells/<spec-slug>-*.md`:
+
+- **Shells written** — capture the shell paths and continue with Phase 4.
+- **No shells written** — `/draft-shells` hit the single-shell bail-out. Tell the user "Decomposition produced one shell, switching to plan mode." Then read [plan-mode.md](plan-mode.md) and follow its phases, passing `<spec path>` from Phase 1 as the Phase 1 input. Phases 4-6 of this file do not run.
 
 ## Phase 4: Run `/refine-plan` Skill (Shells)
 
@@ -46,3 +53,4 @@ Halt with this message:
 ## Rules
 
 - Hand shell implementation to the user via the Phase 6 halt; each shell is implemented in its own fresh session via `/implement-plan` after `/pick-next-shell` halts.
+- When `/draft-shells` triggers the single-shell bail-out, [plan-mode.md](plan-mode.md)'s phases replace Phases 4-6 here. The spec from Phase 1 and its refinement from Phase 2 already happened and remain the source of truth for the plan.

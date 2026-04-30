@@ -17,6 +17,8 @@ At the start, use `TaskCreate` to create a task for each step:
 4. Write shell files
 5. Present summary
 
+If decomposition lands on one shell, the Single-Shell Bail-out at the end of Step 2 marks tasks 3-5 deleted via `TaskUpdate` and exits.
+
 ## Step 1: Resolve the Source Spec
 
 Determine which spec to decompose using these rules in order:
@@ -64,7 +66,6 @@ Items folded into a shell go into that shell's Implementation Steps. If several 
 
 - One shell = one logical unit of work (a feature, a subsystem, a layer)
 - Never split tightly-coupled pieces across shells (if UI + API + tests are inseparable, keep them together)
-- If the entire scope fits one session, produce a single shell
 - Each shell must leave the codebase fully integrated, with no components unreachable from the project's entry points
 - When a shell builds infrastructure that a later shell consumes, name the consumer explicitly in the Produces field
 
@@ -95,6 +96,16 @@ Each shell gets a slug derived from its title using spec slug rules (lowercase, 
 
 Example: spec slug `photo-sorter-v2`, Shell 3 titled "Build duplicate detection" → slug `photo-sorter-v2-03-build-duplicate-detection`, written to `.turbo/shells/photo-sorter-v2-03-build-duplicate-detection.md`.
 
+### Single-Shell Bail-out
+
+If decomposition lands on exactly one shell, do not write a shell file. A one-shell decomposition is structurally equivalent to a plan: `depends_on` is empty, Covers lists every R-id, Produces/Consumes has no consumers, and `/pick-next-shell` automation has nothing to coordinate.
+
+Present this message:
+
+> Decomposition produced one shell, so no shell file was written. The spec at `<resolved spec path>` fits a single session and is plan-shaped.
+
+Mark the remaining `/draft-shells` tasks ("Resolve open questions", "Write shell files", "Present summary") as deleted via `TaskUpdate`. Do not create `.turbo/shells/`. Then use the TaskList tool and proceed to any remaining task.
+
 ## Step 3: Resolve Open Questions
 
 If no open questions emerged during decomposition or carried over from the spec, skip this step.
@@ -109,7 +120,7 @@ If the user selects "Other" and provides a freeform answer, accept it and procee
 
 Default to resolving. Defer only when the answer genuinely needs codebase or pattern-survey context that is not yet available.
 
-If an answer would restructure the decomposition significantly (changes shell count, merges existing shells, or splits one shell into several), re-run Step 2 with the new constraint before continuing to Step 4.
+If an answer would restructure the decomposition significantly (changes shell count, merges existing shells, or splits one shell into several), re-run Step 2 with the new constraint before continuing to Step 4. If the new count is 1, the Single-Shell Bail-out at the end of Step 2 applies.
 
 ## Step 4: Write Shell Files
 

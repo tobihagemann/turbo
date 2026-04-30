@@ -696,6 +696,15 @@ The positive form names the action and drops the explanatory clause that just re
 
 Use negative phrasing only when a positive imperative cannot articulate the rule unambiguously. When an explicit enumeration of prohibited items is load-bearing, prefer positive verbs ("Exclude", "Omit", "Reserve X for Y") over "Never include" or "Don't add". Redundant negative restatements — a rule paired with a tautological-boundary clause that says the same thing — are always trim targets.
 
+### Prefer qualitative descriptions for judgment calls
+
+When a skill describes a threshold the agent must judge (when something is too large, when to split, when to combine), prefer qualitative descriptions over numeric heuristics. Numbers like "more than 15 files" or "3+ subsystems" feel precise but encourage box-ticking — agents tally and cross the threshold without engaging the underlying judgment. Qualitative descriptions ("the work would exhaust a session", "too many distinct conventions to absorb") force the agent to evaluate the actual situation.
+
+- ✗ **Avoid**: "Split when a shell would touch more than 15-20 files or span 3+ unrelated subsystems."
+- ✓ **Good**: "Split when the combined work would exhaust a single session: too much code to read in full, or too many distinct conventions to absorb."
+
+Use numbers only when the threshold is mechanically verifiable and the count is the actual signal (e.g., "cap at 3 retries", "every R-id must appear in at least one Covers field").
+
 ## Common patterns
 
 ### Template pattern
@@ -932,6 +941,15 @@ Always use forward slashes in file paths, even on Windows:
 
 Unix-style paths work across all platforms, while Windows-style paths cause errors on Unix systems.
 
+### Compute relative paths from the file's actual location
+
+When a skill file references another file in the same skill, the relative path resolves from the file's own location, not from `SKILL.md`. A reference file at `skills/X/references/foo.md` linking to a sibling at `skills/X/references/bar.md` writes `bar.md`, not `references/bar.md`.
+
+Use markdown links rather than inline code for cross-references. `[bar.md](bar.md)` matches how `SKILL.md` links to its references and how skills link to each other; inline `` `bar.md` `` reads as a path mention but loses the click-through and the convention.
+
+- ✗ **Avoid**: From `skills/X/references/spec-mode.md`: "follow `references/plan-mode.md`" — broken path; not a link.
+- ✓ **Good**: From `skills/X/references/spec-mode.md`: "follow [plan-mode.md](plan-mode.md)".
+
 ### Avoid offering too many options
 
 Don't present multiple approaches unless necessary:
@@ -1077,6 +1095,17 @@ If any prior step produced changes, run the `/this-skill` skill again, skipping 
 
 - Cap at 3 consecutive runs to prevent runaway loops.
 ```
+
+### Use neutral exit signals so parent pipelines can continue
+
+When a skill detects a clean early-exit case (a degenerate input that doesn't warrant the full output), the exit instructions need to allow parent pipelines to detect and reroute. Phrasing like "Halt and tell the user X" reads as a hard stop and terminates the agent's flow, including any parent pipeline that called the skill.
+
+Phrasing like "Present this message: <factual summary>. Then use the TaskList tool and proceed to any remaining task." lets the agent surface what happened and continue to whatever task is next. The signal that the early-exit fired lives in the side effects (no file written, factual message shown), and the parent pipeline reads them via filesystem checks or remaining-task detection.
+
+Blocker gates (covered below) handle a different case: when the agent needs the user to choose between recoveries. Use neutral exit signals when the work simply terminates earlier than the full path.
+
+- ✗ **Avoid**: "Halt and tell the user 'no shells produced — run `/draft-plan` instead.'"
+- ✓ **Good**: "Present this message: '<factual summary>'. Then use the TaskList tool and proceed to any remaining task."
 
 ### Prefer AskUserQuestion gates over anti-skip prose rules
 
