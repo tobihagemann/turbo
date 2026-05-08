@@ -213,6 +213,9 @@ the error messages in this module are inconsistent, /note-improvement
 # Extracting session learnings
 /self-improve
 
+# Saving session state before compacting
+/create-handoff
+
 # Creating a new skill
 /create-skill for a skill that <description>
 ```
