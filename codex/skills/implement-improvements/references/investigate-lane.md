@@ -1,0 +1,32 @@
+# Implement Improvements: Investigate Lane
+
+Diagnose each working-set entry via `$investigate`, then apply the concluded fixes via `$implement`.
+
+The working set is the entries the user confirmed in SKILL.md Step 3.
+
+## Task Tracking
+
+Track each phase with the Codex plan tool:
+
+1. Run `$investigate` skill for each working-set entry
+2. Run `$implement` skill for the concluded fixes
+
+## Phase 1: Run `$investigate` Skill for Each Working-Set Entry
+
+Before starting the loop, add one sub-task per entry in the working set (e.g., `Investigate: <summary>`). Mark each sub-task `in_progress` before the corresponding `$investigate` run and `completed` after.
+
+For each entry in the working set, run the `$investigate` skill. In the problem statement passed to `$investigate`, include the entry's summary and rationale, then append a note that this is an improvement-backlog entry likely to be a symptom and that `$investigate` must run `$consult-claude` regardless of how many hypotheses surface.
+
+If `$investigate` surfaces complexity that exceeds a single-session fix (multi-subsystem change, architectural decision), stop that entry and re-classify it as `plan` (leave it in the backlog for a future run).
+
+## Phase 2: Run `$implement` Skill for the Concluded Fixes
+
+In the turn that invokes `$implement`, write out each investigation's concluded fix as an explicit bullet: summary + files + change description. Being explicit matters here because `$investigate`'s earlier output has likely displaced continuation context, so `$implement` needs a fresh, self-contained description.
+
+Then run the `$implement` skill.
+
+Then update or check the active plan and proceed to any remaining task.
+
+## Rules
+
+- Run `$finalize` only once (inside `$implement` in Phase 2), not once per investigation.
