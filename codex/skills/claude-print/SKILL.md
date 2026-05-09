@@ -12,7 +12,7 @@ Run a non-interactive Claude Code CLI print-mode call from Codex. This is the Co
 Default to read-only review:
 
 ```bash
-claude -p --permission-mode dontAsk --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)" "<prompt>" < /dev/null
+claude -p --permission-mode dontAsk --allowedTools="Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)" "<prompt>" < /dev/null
 ```
 
 The Bash allow-list is restricted to read-only git subcommands so peer review cannot mutate the working tree, branches, or remotes. Use broader permissions only when the user explicitly asks Claude to perform write-capable work.
@@ -31,7 +31,7 @@ For large context, write the context to `.turbo/claude/<tag>-ctx.txt` and pipe i
 
 ```bash
 mkdir -p .turbo/claude
-cat .turbo/claude/<tag>-ctx.txt | claude -p --permission-mode dontAsk --allowedTools "Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)" "<prompt>"
+cat .turbo/claude/<tag>-ctx.txt | claude -p --permission-mode dontAsk --allowedTools="Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)" "<prompt>"
 ```
 
 ## Step 3: Run Synchronously
