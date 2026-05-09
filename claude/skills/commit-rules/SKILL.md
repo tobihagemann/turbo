@@ -11,6 +11,7 @@ description: "Shared commit message rules and technical constraints referenced b
 - Concise and descriptive
 - Imperative mood, present tense
 - No commit description—summarize everything in the message
+- Don't reference `.turbo/` content (filenames, IDs, headings) in commit messages. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
 
 ## Technical Constraints
 

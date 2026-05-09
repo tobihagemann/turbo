@@ -45,3 +45,4 @@ Then use the TaskList tool and proceed to any remaining task.
 ## Rules
 
 - Never stage or commit files containing secrets (`.env`, credentials, API keys). Warn if detected.
+- Don't reference `.turbo/` content (filenames, IDs, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

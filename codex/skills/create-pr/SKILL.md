@@ -62,3 +62,7 @@ stateDiagram-v2
 - Use descriptive labels on arrows (method names, HTTP verbs)
 - Place diagrams after the summary paragraph under a `## Flow` or `## State Machine` heading
 - One diagram per type max — don't include both unless the PR truly has both patterns
+
+## Rules
+
+- Don't reference `.turbo/` content (filenames, IDs, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

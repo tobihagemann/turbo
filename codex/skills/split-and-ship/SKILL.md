@@ -48,3 +48,4 @@ Then update or check the active plan and proceed to any remaining task.
 - Never lose uncommitted work. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery.
 - Stacked PRs target the previous group's branch. Independent PRs target the default branch.
 - For stacked groups, the PR description should note the dependency chain.
+- Don't reference `.turbo/` content (filenames, IDs, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

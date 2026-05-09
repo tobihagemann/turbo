@@ -37,3 +37,4 @@ Then use the TaskList tool and proceed to any remaining task.
 ## Rules
 
 - Defer `git commit`, `git push`, and PR creation to Step 4.
+- Don't reference `.turbo/` content (filenames, IDs, headings) in code or comments. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
