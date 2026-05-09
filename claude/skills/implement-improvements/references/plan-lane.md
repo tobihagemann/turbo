@@ -18,6 +18,6 @@ Run the `/turboplan` skill with the working set as the task description. Include
 - **Dependencies** — Order so foundational changes come first
 - **Conflicts** — Flag if two improvements contradict each other
 
-`/turboplan` produces a plan file and halts its own flow.
+`/turboplan` produces a plan or spec and halts its own flow.
 
 Then use the TaskList tool and proceed to any remaining task.

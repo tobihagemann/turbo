@@ -19,7 +19,7 @@ At the start, use `TaskCreate` to create a task for each step:
 
 ## Step 1: Read the Backlog
 
-Read `.turbo/improvements.md`. If the file does not exist, tell the user there are no improvements to implement and stop.
+Read `.turbo/improvements.md`. If the file does not exist, there are no improvements to implement; stop.
 
 Parse all entries, extracting for each:
 
@@ -126,7 +126,7 @@ Edit `.turbo/improvements.md` to delete the working-set entries that the lane pr
 
 - **Direct lane** — entries whose fixes were applied
 - **Investigate lane** — entries whose concluded fixes were applied
-- **Plan lane** — entries now captured in the plan file produced by `/turboplan`
+- **Plan lane** — entries now captured in the plan or spec produced by `/turboplan`. If `/turboplan` routed to spec mode, the entries are tracked across the resulting shells; treat them as processed once the spec and shells are written.
 
 Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
 

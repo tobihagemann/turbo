@@ -22,9 +22,9 @@ At the start, use `TaskCreate` to create a task for each step:
 
 Check terminal conditions first:
 
-- **No shells and no plans** — tell the user to run `/turboplan` for a new task and stop
-- **No shells, but plans exist with `status: done` for all** — report the project is complete and stop
-- **No shells, but plans exist with a non-`done` status** — suggest running `/implement-plan` to finish the remaining plans and stop
+- **No shells and no plans** — nothing to pick; stop
+- **No shells, but plans exist with `status: done` for all** — the project is complete; stop
+- **No shells, but plans exist with a non-`done` status** — there are unfinished plans; stop
 
 If shells exist in `.turbo/shells/`, glob `.turbo/shells/*.md` and read each file's YAML frontmatter. A shell's `depends_on` entry is satisfied when `.turbo/plans/<dep-slug>.md` exists with `status: done` in its frontmatter.
 
@@ -43,7 +43,7 @@ Run the `/expand-shell` skill, passing the shell file path. Capture the resultin
 
 ## Step 3: Run `/refine-plan` Skill
 
-Run the `/refine-plan` skill with the plan path from Step 2. Loops until the plan stabilizes.
+Run the `/refine-plan` skill with the plan path from Step 2.
 
 ## Step 4: Run `/self-improve` Skill
 

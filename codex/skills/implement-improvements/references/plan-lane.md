@@ -1,6 +1,6 @@
 # Implement Improvements: Plan Lane
 
-Run `$turboplan` with the working-set entries. The user runs `$implement-plan` in a fresh session afterward.
+Run `$turboplan` with the working-set entries.
 
 The working set is the entries the user confirmed in SKILL.md Step 3.
 
@@ -17,7 +17,5 @@ Run the `$turboplan` skill with the working set as the task description. Include
 - **Synergies** — Group improvements that touch the same files or areas
 - **Dependencies** — Order so foundational changes come first
 - **Conflicts** — Flag if two improvements contradict each other
-
-`$turboplan` produces a plan file and halts its own flow.
 
 Then update or check the active plan and proceed to any remaining task.

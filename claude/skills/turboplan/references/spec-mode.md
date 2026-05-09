@@ -21,7 +21,7 @@ Run the `/draft-spec` skill with the user's task description. `/draft-spec` guid
 
 ## Phase 2: Run `/refine-plan` Skill (Spec)
 
-Run the `/refine-plan` skill with `spec <path>` from Phase 1. This loops review, evaluation, and application until the spec stabilizes or the iteration cap is hit.
+Run the `/refine-plan` skill with `spec <path>` from Phase 1.
 
 ## Phase 3: Run `/draft-shells` Skill
 
@@ -30,11 +30,11 @@ Run the `/draft-shells` skill, passing the spec path from Phase 1.
 After it returns, check `.turbo/shells/<spec-slug>-*.md`:
 
 - **Shells written** — capture the shell paths and continue with Phase 4.
-- **No shells written** — `/draft-shells` hit the single-shell bail-out. Tell the user "Decomposition produced one shell, switching to plan mode." Then read [plan-mode.md](plan-mode.md) and follow its phases, passing `<spec path>` from Phase 1 as the Phase 1 input. Phases 4-6 of this file do not run.
+- **No shells written** — `/draft-shells` hit the single-shell bail-out. Switch to plan mode: read [plan-mode.md](plan-mode.md) and follow its phases, passing `<spec path>` from Phase 1 as the Phase 1 input. Phases 4-6 of this file do not run.
 
 ## Phase 4: Run `/refine-plan` Skill (Shells)
 
-Run the `/refine-plan` skill with `shells <slug>` from Phase 3. This loops review, evaluation, and application until the shells stabilize or the iteration cap is hit.
+Run the `/refine-plan` skill with `shells <slug>` from Phase 3.
 
 ## Phase 5: Run `/self-improve` Skill
 

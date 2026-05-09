@@ -1,11 +1,11 @@
 ---
 name: pick-next-shell
-description: "Pick the next shell whose dependencies are satisfied and carry it through planning: expand, refine, self-improve, halt. Use when the user asks to \"pick next shell\", \"next shell\", \"continue project\", \"what's next\", \"next implementation step\", or \"continue with the plan\"."
+description: "Pick the next shell whose dependencies are satisfied and carry it through planning and implementation: expand, refine, self-improve, implement. Use when the user asks to \"pick next shell\", \"next shell\", \"continue project\", \"what's next\", \"next implementation step\", or \"continue with the plan\"."
 ---
 
 # Pick Next Shell
 
-Pick the next shell from `.turbo/shells/` whose dependencies are satisfied, then carry it through the planning pipeline: expand → refine → self-improve → halt.
+Pick the next shell from `.turbo/shells/` whose dependencies are satisfied, then carry it through expansion and implementation: expand → refine → self-improve → implement.
 
 ## Task Tracking
 
@@ -16,15 +16,15 @@ At the start, use `update_plan` to track each step:
 3. Run `$refine-plan` skill
 4. Run `$self-improve` skill
 5. Mark plan ready
-6. Halt with next-step instructions
+6. Run `$implement-plan` skill
 
 ## Step 1: Scan Shells and Pick Next
 
 Check terminal conditions first:
 
-- **No shells and no plans** — tell the user to run `$turboplan` for a new task and stop
-- **No shells, but plans exist with `status: done` for all** — report the project is complete and stop
-- **No shells, but plans exist with a non-`done` status** — suggest running `$implement-plan` to finish the remaining plans and stop
+- **No shells and no plans** — nothing to pick; stop
+- **No shells, but plans exist with `status: done` for all** — the project is complete; stop
+- **No shells, but plans exist with a non-`done` status** — there are unfinished plans; stop
 
 If shells exist in `.turbo/shells/`, glob `.turbo/shells/*.md` and read each file's YAML frontmatter. A shell's `depends_on` entry is satisfied when `.turbo/plans/<dep-slug>.md` exists with `status: done` in its frontmatter.
 
@@ -43,7 +43,7 @@ Run the `$expand-shell` skill, passing the shell file path. Capture the resultin
 
 ## Step 3: Run `$refine-plan` Skill
 
-Run the `$refine-plan` skill with the plan path from Step 2. Loops until the plan stabilizes.
+Run the `$refine-plan` skill with the plan path from Step 2.
 
 ## Step 4: Run `$self-improve` Skill
 
@@ -53,17 +53,14 @@ Run the `$self-improve` skill to compound planning learnings.
 
 Update the plan's YAML frontmatter to `status: ready`.
 
-## Step 6: Halt with Next-Step Instructions
+## Step 6: Run `$implement-plan` Skill
 
-Halt with this message:
+Run the `$implement-plan` skill with the plan path from Step 2.
 
-> Plan ready at `<plan path>`.
->
-> Planning context is likely full, and the plan is comprehensive enough to continue fresh. Run `/clear`, then `$implement-plan <slug>` to implement. After that, run `$pick-next-shell` again for the next shell.
+Then update or check the active plan and proceed to any remaining task.
 
 ## Rules
 
 - Do not edit plan files directly. Revisions go through `$refine-plan`.
 - Never modify the spec file.
-- Do not attempt to auto-implement. The user drives implementation with `$implement-plan` in a fresh session.
 - If a shell file is missing or has invalid frontmatter, halt and report.

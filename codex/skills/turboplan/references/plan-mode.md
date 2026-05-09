@@ -1,6 +1,6 @@
 # Turboplan: Plan Mode
 
-Draft → refine → self-improve → mark ready → halt to produce a plan file the user implements in a fresh session.
+Draft → refine → self-improve → mark ready → implement to produce a plan file and execute it in the same session.
 
 ## Task Tracking
 
@@ -10,15 +10,15 @@ Use `update_plan` to track each phase:
 2. Run `$refine-plan` skill
 3. Run `$self-improve` skill
 4. Mark plan ready
-5. Halt with next-step instructions
+5. Run `$implement-plan` skill
 
 ## Phase 1: Run `$draft-plan` Skill
 
-Run the `$draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a spec path; `$draft-plan`'s Spec-Derived Input handling activates when a spec path is passed. This produces a new plan at `.turbo/plans/<slug>.md`. Capture the resolved plan path from `$draft-plan`'s output for the next phases.
+Run the `$draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a spec path. Capture the resolved plan path from `$draft-plan`'s output for the next phases.
 
 ## Phase 2: Run `$refine-plan` Skill
 
-Run the `$refine-plan` skill with `<path>` from Phase 1. This loops review, evaluation, and application until the plan stabilizes or the iteration cap is hit.
+Run the `$refine-plan` skill with `<path>` from Phase 1.
 
 ## Phase 3: Run `$self-improve` Skill
 
@@ -28,15 +28,12 @@ Run the `$self-improve` skill to compound planning learnings.
 
 Update the plan's YAML frontmatter to `status: ready`.
 
-## Phase 5: Halt with Next-Step Instructions
+## Phase 5: Run `$implement-plan` Skill
 
-Halt with this message:
+Run the `$implement-plan` skill with the plan path from Phase 1.
 
-> Plan ready at `<plan path>`.
->
-> Planning context is likely full, and the plan is comprehensive enough to continue fresh. Run `/clear`, then `$implement-plan <slug>` to implement.
+Then update or check the active plan and proceed to any remaining task.
 
 ## Rules
 
 - Route revisions through `$refine-plan` or `$draft-plan`.
-- Hand implementation to the user via the Phase 5 halt; the user runs `$implement-plan` in a fresh session.

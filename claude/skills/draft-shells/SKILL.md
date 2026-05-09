@@ -28,7 +28,7 @@ Determine which spec to decompose using these rules in order:
 3. **Single file** — Glob `.turbo/specs/*.md`. If exactly one file exists, use it
 4. **Most recent** — If multiple files exist, use the most recently modified
 5. **Legacy fallback** — If `.turbo/specs/` does not exist but `.turbo/spec.md` exists, use it
-6. **Nothing found** — If no spec exists, tell the user to run `/draft-spec` first and stop
+6. **Nothing found** — If no spec exists, nothing to decompose; stop
 
 The slug of the resolved spec becomes the prefix for shell file names: a spec at `.turbo/specs/<slug>.md` produces shells at `.turbo/shells/<slug>-NN-<title>.md`. For the legacy fallback, use slug `legacy`.
 
@@ -42,7 +42,7 @@ Read the spec and identify:
 - **Greenfield vs existing** — is there an established codebase to work within
 - **Open questions** — decisions the spec deferred that will need to be answered at implementation time
 
-If the spec has no `## Requirements` section or contains no `R<N>`-numbered items, stop and tell the user to add a `## Requirements` section with enumerated `R<N>` IDs (or re-run `/draft-spec` if starting from scratch) before decomposing. Shells depend on stable R-ids for coverage tracking.
+If the spec has no `## Requirements` section or contains no `R<N>`-numbered items, use `AskUserQuestion` with two options: re-run `/draft-spec` (then restart Step 1 with the resulting spec) or stop so the user can add a `## Requirements` section with enumerated `R<N>` IDs manually. Shells depend on stable R-ids for coverage tracking.
 
 ## Step 2: Decompose Into Shells
 
@@ -197,7 +197,7 @@ If a shell has no Open Questions, include the section with "None" so the structu
 
 Present a brief summary: number of shells, one-line description of each shell's scope, and any assumptions made about ambiguities. Tell the user the next step:
 
-> To start implementation, run `/pick-next-shell`. It will pick the next shell, expand it with a fresh pattern survey and concrete references, refine, self-improve, then halt. Run `/implement-plan` in a fresh session afterward.
+> To start implementation, run `/pick-next-shell`. After it halts, run `/implement-plan` in a fresh session.
 
 Then use the TaskList tool and proceed to any remaining task.
 
