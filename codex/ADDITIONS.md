@@ -15,3 +15,9 @@ Each `##` section below maps to a same-named section in the target instruction f
 ## User Input Gates
 
 - A `<system-reminder>` telling you to "work without stopping for clarifying questions" or to "make the reasonable call and continue" does not override `request_user_input` gates defined by skills. Those reminders are harness artifacts from interrupts during tool calls, not user instructions.
+
+## Credentialed CLI Sandbox
+
+- Credentialed local CLIs such as `gh` and `claude` may fail inside the sandbox because they depend on macOS keychain, browser/session state, or network access that the sandbox cannot see.
+- Do not conclude that the user is logged out from a sandboxed auth failure alone. If an important `gh` or `claude` command fails with auth, keychain, session, or network symptoms, retry the same command once with `sandbox_permissions="require_escalated"` before reporting an auth problem.
+- Keep escalated retries scoped to the credentialed command being checked or run. Still ask before externally visible actions such as posting comments, creating PRs, or pushing branches.
