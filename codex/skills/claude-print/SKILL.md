@@ -36,9 +36,9 @@ cat .turbo/claude/<tag>-ctx.txt | claude -p --permission-mode dontAsk --allowedT
 
 ## Step 3: Run Synchronously
 
-Run Claude as a foreground command and wait for the result. Use a generous shell timeout when the prompt is large.
+Run Claude as a foreground command and wait for the result. Treat a returned `session_id` from the Codex shell harness as the still-running foreground command; keep polling that session until Claude exits, reaches a clear error, or has had roughly an hour for normal review work.
 
-Do not background Claude print-mode calls. The parent workflow needs the complete output before evaluation.
+Do not background Claude print-mode calls, give up during quiet periods, or classify the run as empty while the shell session is still active. The parent workflow needs the complete output before evaluation.
 
 ## Step 4: Interpret Results
 
