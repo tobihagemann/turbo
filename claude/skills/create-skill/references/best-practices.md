@@ -455,6 +455,16 @@ If a step has a clear condition for when to execute and when to skip, state both
 - ✗ **Avoid**: "Optionally spawn a subagent to verify findings."
 - ✓ **Good**: "Spawn a subagent when there are 3+ non-trivial findings. **Skip** when all findings are clear-cut."
 
+### Address Subagents Directly
+
+When a skill's body needs to constrain how a subagent invoking it should behave, address that subagent directly using "If you are a subagent" gating. Phrasings like "from inside an Agent subagent" or "when wrapped in a subagent" read as third-person references and are ambiguous: the reader may parse them as "from inside an Agent subagent that I would spawn" rather than "if I am that subagent".
+
+- ✗ **Avoid**: "When this skill is invoked from inside an Agent subagent, the Agent prompt must include..."
+- ✗ **Avoid**: "Subagents wrapping this skill should..."
+- ✓ **Good**: "If you are a subagent, follow these guardrails..."
+
+Skills are loaded by the subagent itself when it invokes the skill via the Skill tool. The body's instructions arrive in the subagent's own context, so direct second-person address is correct.
+
 ### Prefer Qualitative Descriptions for Judgment Calls
 
 When a skill describes a threshold the agent must judge (when something is too large, when to split, when to combine), prefer qualitative descriptions over numeric heuristics. Numbers like "more than 15 files" or "3+ subsystems" feel precise but encourage box-ticking — agents tally and cross the threshold without engaging the underlying judgment. Qualitative descriptions ("the work would exhaust a session", "too many distinct conventions to absorb") force the agent to evaluate the actual situation.
@@ -803,6 +813,16 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 
 - ✗ **Avoid**: Launching Agent + Agent + Skill in one message expecting all three to do work concurrently.
 - ✓ **Good**: Launching three Agents in one message, each running its respective skill.
+
+### Dispatching Bash Tool Calls
+
+When a skill's Bash invocation needs non-default parameters (`timeout`, `dangerouslyDisableSandbox`), specify them in a parenthetical the same way as for Agent calls. Vague phrasing like "use a generous timeout" leaves Claude to guess which timeout (Bash tool parameter vs. shell `timeout` command) and what value.
+
+- ✗ **Avoid**: "Use a generous timeout."
+- ✗ **Avoid**: "Wrap the command in a shell `timeout` of 1 hour: `timeout 3600 X`."
+- ✓ **Good**: "Run X via the Bash tool (`timeout: 3600000`, do not set `run_in_background`)."
+
+The parenthetical names parameters and values directly, parallel to (`model: "opus"`, do not set `run_in_background`) for Agent calls. Specify whatever value the operation actually requires in milliseconds. Documented timeout ceilings are not enforced as hard limits. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
 
 ### Using AskUserQuestion
 

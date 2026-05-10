@@ -35,9 +35,9 @@ The piped form (`cat context.txt | codex exec "..."`) is safe — `cat` closes t
 
 ## Synchronous Execution
 
-Run codex as a foreground Bash call wrapped in a shell `timeout` of 3600 seconds (1 hour): `timeout 3600 codex exec ...`. Do not pass `run_in_background: true`. Background execution is available only to main agents.
+Run codex via the Bash tool (`timeout: 3600000`, do not set `run_in_background`).
 
-If you are a subagent, do not pair `codex exec` with `Monitor`. Wait for the Bash call to return before emitting final text. `Monitor` only delivers events that arrive during your current turn. Once you emit final text and return, any further events are dropped. Backgrounding codex and then waiting idle on `Monitor` produces a false-complete: you return `"Waiting for codex to finish"` before codex has produced anything.
+If you are a subagent, do not pair `codex exec` with `Monitor`. Wait for the Bash call to return before emitting final text. `Monitor` only delivers events during your current turn; events after you emit final text are dropped. Backgrounding codex and idling on `Monitor` produces a false-complete: you return `"Waiting for codex to finish"` before codex has produced anything.
 
 ## Permission Levels
 

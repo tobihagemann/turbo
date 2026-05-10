@@ -5,7 +5,7 @@ If you are a subagent invoking `/peer-review`, read this before you do anything 
 ## Guardrails
 
 1. **Wait synchronously** for `/peer-review` to return. Do not return early. Forward codex's complete output verbatim as your final result.
-2. **Do not use `Monitor`.** Run codex as a foreground Bash call wrapped in a shell `timeout` of 3600 seconds (1 hour).
+2. **Do not use `Monitor`.** Run codex via the Bash tool (`timeout: 3600000`, do not set `run_in_background`).
 3. **Treat as peer-review failure** (not as a successful empty result):
    - Premature return before codex completes
    - `"Waiting for codex to finish"` text
