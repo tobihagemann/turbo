@@ -55,3 +55,7 @@ Compare codex's output against the dimensions and structure requested in Step 2,
 Do not synthesize peer findings locally to fill a gap. Peer review's value is independence; locally written findings labeled "peer" mislead the consumer.
 
 Then use the TaskList tool and proceed to any remaining task.
+
+## When You Are a Subagent
+
+If you are a subagent, follow the guardrails in [references/subagent-wrapping.md](references/subagent-wrapping.md). Otherwise codex events can drop after you emit final text, producing a false-empty return that silently bypasses Step 4's `AskUserQuestion` gate.
