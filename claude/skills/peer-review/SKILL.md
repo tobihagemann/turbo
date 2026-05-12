@@ -40,6 +40,8 @@ Assemble the prompt using codex's XML tag conventions (see `/codex-exec` Prompt 
 
   The `(lines <start>-<end>)` slot is optional; include it when reviewing code, omit for section references. Include the `(<dimension>)` parenthetical whenever the request identifies a dimension label (covers both single- and multi-dimension cases); omit only for undifferentiated reviews where no dimension was named. Default priority scale: P0 (fundamentally flawed or blocking), P1 (significant gap or urgent), P2 (moderate issue), P3 (minor improvement). End with an Overall Verdict block containing a 1–3 sentence assessment. If there are no issues, state that the material looks sound.
 
+Include an explicit instruction that codex perform the review itself rather than delegating to another peer review skill or back to Claude. The prompt has already crossed the tool boundary; further forwarding would loop.
+
 ## Step 3: Run `/codex-exec` Skill
 
 Invoke `/codex-exec` via the Skill tool in read-only mode with the assembled prompt.
