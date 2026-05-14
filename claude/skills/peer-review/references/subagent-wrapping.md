@@ -11,7 +11,8 @@ If you are a subagent invoking `/peer-review`, read this before you do anything 
    - `"Waiting for codex to finish"` text
    - Empty output
    - Partial output (missing dimensions in a multi-dimension fan-out)
-4. **Report the failure cause specifically** (usage limit, timeout, error message) when applicable.
+   - A background ID returned in place of codex output (the harness force-backgrounded the foreground Bash call). Do not return text like "still in progress, no findings yet" — that is the same false-empty shape as the Monitor case, just with a different cause. Poll the background ID with `BashOutput` within your turn until codex completes; if you must return before then, surface the background ID verbatim and explicitly request the parent resume you via `SendMessage` once the process finishes.
+4. **Report the failure cause specifically** (usage limit, timeout, force-background without recovery, error message) when applicable.
 
 ## Failure Reporting
 

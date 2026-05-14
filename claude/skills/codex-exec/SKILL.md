@@ -35,9 +35,9 @@ The piped form (`cat context.txt | codex exec "..."`) is safe — `cat` closes t
 
 ## Synchronous Execution
 
-Run codex via the Bash tool (`timeout: 3600000`, do not set `run_in_background`).
+Run codex via the Bash tool (`timeout: 3600000`, do not set `run_in_background`). On long runs the harness may force the call into the background anyway; the Bash result then contains a background ID instead of codex output. Poll the background ID with `BashOutput` until codex completes, then treat the final output as the synchronous result.
 
-If you are a subagent, do not pair `codex exec` with `Monitor`. Wait for the Bash call to return before emitting final text. `Monitor` only delivers events during your current turn; events after you emit final text are dropped. Backgrounding codex and idling on `Monitor` produces a false-complete: you return `"Waiting for codex to finish"` before codex has produced anything.
+If you are a subagent, do not pair `codex exec` with `Monitor`. Wait for the Bash call to return before emitting final text. `Monitor` only delivers events during your current turn; events after you emit final text are dropped. Backgrounding codex and idling on `Monitor` produces a false-complete: you return `"Waiting for codex to finish"` before codex has produced anything. The same false-empty trap applies if the harness force-backgrounds the call and you return the background ID as if codex finished — see [/peer-review subagent-wrapping](../peer-review/references/subagent-wrapping.md) for the recovery pattern.
 
 ## Permission Levels
 
