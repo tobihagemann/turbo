@@ -35,10 +35,20 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 ### Clarity and Standards
 
 - **Project standards** — coding conventions from CLAUDE.md not followed (import sorting, naming conventions, component patterns, error handling patterns, module style)
-- **Unnecessary complexity** — deep nesting, redundant abstractions, unclear variable or function names, comments that describe obvious code, nested ternary operators (prefer switch/if-else chains), redundant boolean comparisons (e.g., `x == true` instead of `x`)
+- **Unnecessary complexity** — deep nesting, redundant abstractions, unclear variable or function names, nested ternary operators (prefer switch/if-else chains), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 - **Unclear code** — overly compact one-liners that sacrifice readability; explicit code is better than clever code
 - **Over-simplification** — too many concerns combined into a single function or component, helpful abstractions removed that were aiding code organization, "fewer lines" prioritized over readability
-- **Dead weight** — unnecessary comments, redundant code, abstractions that add indirection without value
+- **Dead weight** — redundant code, abstractions that add indirection without value
+
+### Comments and Documentation
+
+- **Restates the code** — a comment that paraphrases the immediately-following statement
+- **Mirrors the declaration name** — a doc comment whose text is an English translation of the declaration's name
+- **Echoes the type signature** — parameter or return descriptions that repeat name and type without adding constraints (size, units, ranges, preconditions are not echoes)
+- **History or change narration** — references to PRs, tickets, prior behavior, or recent changes; state the current invariant only
+- **Framework or stdlib explainers** — describes what a well-known language keyword or library construct does
+- **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys
+- **Markdown status-update voice** — for markdown changes in the diff, prose framed as recent updates or transitions; rewrite as timeless current-state prose
 
 ## Determination Criteria
 
@@ -61,7 +71,8 @@ Flag an issue only when ALL of these hold:
 
 - Style-only differences that do not obscure meaning or violate documented standards
 - Micro-optimizations with no measurable impact
+- Comments that capture a hidden constraint or invariant, a workaround for a specific bug, a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code
 
-**Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity>`
+**Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity | documentation>`
 
 **Verdict label:** `Simplicity: <clean | issues found>`
