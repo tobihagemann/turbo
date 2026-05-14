@@ -10,6 +10,7 @@ description: "Shared commit message rules and technical constraints referenced b
 - Match the style from `git log -n 10 --oneline`
 - Concise and descriptive
 - Imperative mood, present tense
+- Aim for ≤100 characters in the subject
 - No commit description—summarize everything in the message
 - Don't reference `.turbo/` content (filenames, IDs, headings) in commit messages. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
 
