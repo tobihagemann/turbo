@@ -29,8 +29,10 @@ Review code files in scope. Flag a comment when it adds no information beyond wh
 4. **Narrates history or change** — references PRs, tickets, prior behavior, or recent changes. State the current invariant; past behavior belongs in git history.
 5. **Explains language or framework constructs** — describes what a stdlib feature, language keyword, or well-known framework call does. Assume a competent reader.
 6. **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys. Idiomatic structural markers around a real section stay.
+7. **Verbose WHY** — a comment that captures real WHY but in more lines than the rationale requires. Tighten to one sentence per concern. If a rationale resists tightening, lift it to a design doc or commit message.
+8. **Multi-concern block** — a single comment bundling several independent rationales. Split each into a one-liner at its decision point, lift shared rationale to a higher-level location, or drop the parts not directly relevant here.
 
-**Keep these (the WHY exceptions):** comments that capture a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code.
+**Keep these (when expressed concisely):** comments that capture a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. When the rationale is verbose, tighten the prose; keep the rationale.
 
 For each flagged comment, propose: delete it, or rewrite it to state the WHY in one line.
 

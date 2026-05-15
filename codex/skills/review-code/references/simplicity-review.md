@@ -48,6 +48,8 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 - **History or change narration** — references to PRs, tickets, prior behavior, or recent changes; state the current invariant only
 - **Framework or stdlib explainers** — describes what a well-known language keyword or library construct does
 - **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys
+- **Verbose WHY** — a comment that captures real WHY but in more lines than the rationale requires; tighten to one sentence per concern, or lift the rationale to a design doc or commit message
+- **Multi-concern block** — a single comment bundling several independent rationales; split each into a one-liner at its decision point, lift shared rationale to a higher-level location, or drop the parts not directly relevant here
 - **Markdown status-update voice** — for markdown changes in the diff, prose framed as recent updates or transitions; rewrite as timeless current-state prose
 
 ## Determination Criteria
@@ -71,7 +73,7 @@ Flag an issue only when ALL of these hold:
 
 - Style-only differences that do not obscure meaning or violate documented standards
 - Micro-optimizations with no measurable impact
-- Comments that capture a hidden constraint or invariant, a workaround for a specific bug, a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code
+- Comments that concisely capture a hidden constraint or invariant, a workaround for a specific bug, a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. When the rationale is verbose, tighten the prose; keep the rationale.
 
 **Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity | documentation>`
 
