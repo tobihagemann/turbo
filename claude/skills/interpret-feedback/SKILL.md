@@ -34,7 +34,7 @@ Spawn a subagent with the feedback items and all available context. Instruct it 
 
 ### Run `/peer-review` Skill
 
-Spawn a subagent whose prompt includes the feedback items and all available context, and instructs it to invoke `/peer-review` via the Skill tool. Describe the request in natural language:
+Launch an Agent tool call whose prompt instructs the subagent to invoke `/peer-review` via the Skill tool. Describe the request in natural language:
 
 - **Material** — the listed third-party feedback items and their surrounding context.
 - **Task** — for each item, determine what the author most likely wants changed and why, whether the suggestion is technically sound, and where the phrasing is ambiguous enough to support multiple valid readings.
@@ -44,6 +44,8 @@ Spawn a subagent whose prompt includes the feedback items and all available cont
   2. Correctness — whether the suggestion is technically sound. If not, explain what the reviewer likely misunderstood, with evidence from the code
   3. Ambiguity — if the intent supports multiple valid readings, list each reading and which has stronger evidence
   4. Confidence — high (clear intent, sound suggestion), medium (likely intent but some uncertainty), or low (genuinely ambiguous or likely incorrect)
+
+The prompt must also state explicitly that the subagent's final assistant message must contain the verbatim findings text `/peer-review` produced.
 
 ## Step 3: Reconciliation
 

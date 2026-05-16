@@ -45,6 +45,8 @@ Run the `$peer-review` skill with the feedback items and all available context. 
   3. Ambiguity — if the intent supports multiple valid readings, list each reading and which has stronger evidence
   4. Confidence — high (clear intent, sound suggestion), medium (likely intent but some uncertainty), or low (genuinely ambiguous or likely incorrect)
 
+The branch prompt must also state explicitly that the sub-agent's final message must contain the verbatim findings text `$peer-review` produced.
+
 ## Step 3: Reconciliation
 
 Merge the two interpretations for each feedback item:

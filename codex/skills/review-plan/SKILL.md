@@ -63,7 +63,7 @@ Skip peer review when the caller asked (e.g., "without peer review", "no peer", 
 Run the review branches independently. Launch them with `spawn_agent` / `wait_agent` using inherited model defaults. That is two branches when peer review is active (one internal + one peer), or one branch when peer review is skipped.
 
 - **Internal branch:** Read the artifact text, the reference file content, project context (`AGENTS.md` and relevant codebase files), then apply criteria and return findings in the output format below.
-- **Peer review branch (unless skipping):** Run the `$peer-review` skill with a request describing: (a) the artifact under review; (b) the criteria live in `~/.agents/skills/review-plan/references/<type>-review.md` for the resolved type from Step 1 — Claude should read that file directly and use its priority scale; (c) the Overall Verdict should use the `Readiness: <ready | needs revision>` label.
+- **Peer review branch (unless skipping):** Run the `$peer-review` skill with a request describing: (a) the artifact under review; (b) the criteria live in `~/.agents/skills/review-plan/references/<type>-review.md` for the resolved type from Step 1 — Claude should read that file directly and use its priority scale; (c) the Overall Verdict should use the `Readiness: <ready | needs revision>` label. The branch prompt must also state explicitly that the sub-agent's final message must contain the verbatim findings text `$peer-review` produced.
 
 Aggregate findings with attribution (reviewer: "internal" or "peer"). Present them in the output format below.
 
