@@ -44,6 +44,7 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 
 - **Restates the code** — a comment that paraphrases the immediately-following statement
 - **Mirrors the declaration name** — a doc comment whose text is an English translation of the declaration's name
+- **Paraphrases name and signature** — a multi-line doc block above a declaration whose prose elaborates the name and signature without adding motivation, constraints, errors, preconditions, or non-obvious behavior (distinct from "Mirrors the declaration name", which targets one-line name translations, and from "Echoes the type signature", which targets parameter/return enumerations; this targets the free prose around a declaration); drop, or compress to the WHY when the prose actually carries one
 - **Echoes the type signature** — parameter or return descriptions that repeat name and type without adding constraints (size, units, ranges, preconditions are not echoes); drop the wrapping parameter/return/error enumeration when no entries survive trimming
 - **History or change narration** — references to PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"); state the current invariant only — past behavior belongs in git history, and session-derived lessons about tooling belong in auto memory or project instructions
 - **Framework or stdlib explainers** — describes what a well-known language keyword or library construct does
