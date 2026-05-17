@@ -23,20 +23,16 @@ Launch both agents below in a single assistant message so they run concurrently.
 
 Review code files in scope. Flag a comment when it adds no information beyond what the code already says:
 
-1. **Restates the code** — paraphrases the immediately-following statement.
-2. **Mirrors the declaration name** — doc comment whose text is an English translation of the declaration's name.
-3. **Paraphrases name and signature** — a multi-line doc block above a declaration whose prose elaborates the name and signature without adding motivation, constraints, errors, preconditions, or non-obvious behavior. Targets the free prose around a declaration; "Mirrors the declaration name" targets one-line name translations and "Echoes the type signature" targets parameter/return enumerations. Drop, or compress to the WHY when the prose actually carries one.
-4. **Echoes the type signature** — parameter or return descriptions that repeat name and type without adding constraints. Flag only the redundant lines; non-obvious constraints (size, units, ranges, preconditions) stay. Drop the wrapping parameter/return/error enumeration when no entries survive trimming.
-5. **Narrates history or change** — references PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"). State the current invariant; past behavior belongs in git history, and session-derived lessons about tooling belong in memories or AGENTS.md.
-6. **Explains language or framework constructs** — describes what a stdlib feature, language keyword, or well-known framework call does. Assume a competent reader.
-7. **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys. Idiomatic structural markers around a real section stay.
-8. **Verbose WHY** — a comment that captures real WHY but in more lines than the rationale requires. Tighten to one sentence per concern. If a rationale resists tightening, lift it to a design doc or commit message.
-9. **Multi-concern block** — a single comment bundling several independent rationales. Split each into a one-liner at its decision point, lift shared rationale to a higher-level location, or drop the parts not directly relevant here.
-10. **Block-narrates the next few lines** — a multi-line comment whose paragraph paraphrases the immediately-following block of code. Distinct from "Restates the code": that targets a paraphrase of a single statement; this targets a paraphrase of a multi-statement block. Drop, or compress to the WHY if the block makes a non-obvious choice.
+1. **Restates code, signature, or name** — paraphrases the immediately-following statement, a multi-statement block, a declaration's name, or the parameter/return shape. Includes doc blocks above a declaration whose prose elaborates the name and signature without adding rationale, and Parameters/Returns/Throws enumerations that only echo names and types. Flag only the redundant entries; non-obvious constraints (size, units, ranges, preconditions) stay. Drop the wrapping enumeration when no entries survive trimming.
+2. **Narrates history or change** — references PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"). State the current invariant; past behavior belongs in git history, and session-derived lessons about tooling belong in memories or AGENTS.md.
+3. **Explains language or framework constructs** — describes what a stdlib feature, language keyword, or well-known framework call does. Assume a competent reader.
+4. **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys. Idiomatic structural markers around a real section stay.
+5. **Overgrown rationale** — a comment that captures real WHY but in more lines or concerns than the rationale requires. Tighten to one sentence per concern, split bundled concerns to their decision points, or lift shared rationale to a design doc or commit message.
+6. **Compensates for unclear code** — a comment that exists because the code is hard to read. Flag the underlying code as a refactor opportunity (rename, extract, restructure) rather than tightening the comment.
 
-**Keep these (when expressed concisely):** comments that capture a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. The counterfactual must be load-bearing: a future maintainer would otherwise regress the code, not just a paraphrase of the bug that was fixed. Test: would you write this comment if the code had been greenfield from day one? When the rationale is verbose, tighten the prose; keep the rationale.
+**Keep these:** comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. Greenfield test: would you write this comment if the code had been greenfield from day one?
 
-For each flagged comment, propose: delete it, or compress it to the WHY.
+For each finding, propose: delete it, compress to the load-bearing WHY, or flag a refactor that would make the comment unnecessary.
 
 ### Agent 2: Markdown Documentation Review
 

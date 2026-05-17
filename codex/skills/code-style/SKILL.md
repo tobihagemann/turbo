@@ -12,4 +12,4 @@ When writing new code in an existing codebase, follow these principles:
 3. **Reuse existing code**: Before writing a new helper, check if an existing method can be reused or generalized. If a new helper is needed, model it after its closest sibling.
 4. **Maintain symmetry**: If adding `fooB()` parallel to `fooA()`, ensure naming, parameter order, and structure are symmetric. Rename `fooA()` if needed.
 5. **Logical ordering**: Place new methods, switch cases, and fields in the order that mirrors the existing grouping or business lifecycle, not just appended at the end.
-6. **Comment only the WHY**: Don't paraphrase what well-named code already says. A comment earns its place when it captures a hidden constraint, workaround, spec reference, or surprising behavior. Keep each comment to one concern; lift broader rationale to design docs or commit messages.
+6. **Refactor over comment**: When code needs explanation, first try renaming, extracting helpers, or restructuring so it self-explains. A comment is an admission that refactor failed to express the rationale, acceptable only for a load-bearing constraint the code itself cannot express. When in doubt, omit it.

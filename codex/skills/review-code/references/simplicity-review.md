@@ -42,16 +42,12 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 
 ### Comments and Documentation
 
-- **Restates the code** — a comment that paraphrases the immediately-following statement
-- **Mirrors the declaration name** — a doc comment whose text is an English translation of the declaration's name
-- **Paraphrases name and signature** — a multi-line doc block above a declaration whose prose elaborates the name and signature without adding motivation, constraints, errors, preconditions, or non-obvious behavior (distinct from "Mirrors the declaration name", which targets one-line name translations, and from "Echoes the type signature", which targets parameter/return enumerations; this targets the free prose around a declaration); drop, or compress to the WHY when the prose actually carries one
-- **Echoes the type signature** — parameter or return descriptions that repeat name and type without adding constraints (size, units, ranges, preconditions are not echoes); drop the wrapping parameter/return/error enumeration when no entries survive trimming
+- **Restates code, signature, or name** — paraphrases the immediately-following statement or multi-statement block; doc blocks whose text translates a declaration's name; doc blocks above a declaration whose prose elaborates the name and signature without adding rationale; parameter/return descriptions that only echo names and types. Non-obvious constraints (size, units, ranges, preconditions) stay; drop the wrapping parameter/return/error enumeration when no entries survive trimming
 - **History or change narration** — references to PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"); state the current invariant only — past behavior belongs in git history, and session-derived lessons about tooling belong in memories or AGENTS.md
 - **Framework or stdlib explainers** — describes what a well-known language keyword or library construct does
 - **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys
-- **Verbose WHY** — a comment that captures real WHY but in more lines than the rationale requires; tighten to one sentence per concern, or lift the rationale to a design doc or commit message
-- **Multi-concern block** — a single comment bundling several independent rationales; split each into a one-liner at its decision point, lift shared rationale to a higher-level location, or drop the parts not directly relevant here
-- **Block-narrates the next few lines** — a multi-line comment whose paragraph paraphrases the immediately-following block of code (distinct from "Restates the code", which targets a single statement; this targets a multi-statement block); drop, or compress to the WHY if the block makes a non-obvious choice
+- **Overgrown rationale** — a comment that captures real WHY but in more lines or concerns than the rationale requires; tighten to one sentence per concern, split bundled concerns to their decision points, or lift shared rationale to a design doc or commit message
+- **Compensates for unclear code** — a comment that exists because the code is hard to read; flag the underlying code as a refactor opportunity (rename, extract, restructure) rather than tightening the comment
 - **Markdown status-update voice** — for markdown changes in the diff, prose framed as recent updates or transitions; rewrite as timeless current-state prose
 
 ## Determination Criteria
@@ -75,7 +71,7 @@ Flag an issue only when ALL of these hold:
 
 - Style-only differences that do not obscure meaning or violate documented standards
 - Micro-optimizations with no measurable impact
-- Comments that concisely capture a hidden constraint or invariant, a workaround for a specific bug, a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. The counterfactual must be load-bearing — a future maintainer would otherwise regress the code, not just a paraphrase of the bug that was fixed (test: would you write this comment if the code had been greenfield from day one?). When the rationale is verbose, tighten the prose; keep the rationale.
+- Comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader. Greenfield test: would you write this comment if the code had been greenfield from day one?
 
 **Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity | documentation>`
 
