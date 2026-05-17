@@ -73,6 +73,7 @@ Identify product or design decisions the user's request did not resolve. Escalat
 - The plan assumes product requirements that were not stated
 - Design trade-offs affect UX or product direction rather than technical implementation
 - Multiple valid approaches exist and the choice is a matter of product preference, not technical merit
+- The plan would introduce a pattern not yet established in this codebase, or follow one sourced from outside it
 
 **Do not escalate** technical decisions the agent can make autonomously: which data structure, which existing pattern to follow, internal implementation approach. The boundary is product intent.
 
