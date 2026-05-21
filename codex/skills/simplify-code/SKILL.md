@@ -55,10 +55,11 @@ Review the same changes for efficiency:
 Review the same changes for clarity, standards, and balance:
 
 1. **Project standards**: coding conventions from AGENTS.md not followed — import sorting, naming conventions, component patterns, error handling patterns, module style
-2. **Unnecessary complexity**: deep nesting, redundant abstractions, unclear variable or function names, comments that describe obvious code, nested ternary operators (prefer switch/if-else chains), redundant boolean comparisons (e.g., `x == true` instead of `x`)
+2. **Unnecessary complexity**: deep nesting, redundant abstractions, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 3. **Unclear code**: choose clarity over brevity — explicit code is better than overly compact code. Consolidate related logic, but not at the cost of readability
-4. **Over-simplification**: overly clever solutions that are hard to understand, too many concerns combined into single functions or components, "fewer lines" prioritized over readability (dense one-liners, nested ternaries), helpful abstractions removed that were aiding code organization
-5. **Dead weight**: unnecessary comments, redundant code, abstractions that add indirection without value
+4. **Over-simplification**: overly clever solutions that are hard to understand, too many concerns combined into single functions or components, "fewer lines" prioritized over readability (dense one-liners), helpful abstractions removed that were aiding code organization
+5. **Dead weight**: redundant code, abstractions that add indirection without value
+6. **Unnecessary comments**: comments explaining WHAT the code does, narrating the change, or referencing the task/caller — delete; keep only non-obvious WHY (hidden constraints, subtle invariants, workarounds)
 
 ## Step 3: Fix Issues
 

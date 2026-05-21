@@ -35,7 +35,7 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 ### Clarity and Standards
 
 - **Project standards** — coding conventions from AGENTS.md not followed (import sorting, naming conventions, component patterns, error handling patterns, module style)
-- **Unnecessary complexity** — deep nesting, redundant abstractions, unclear variable or function names, nested ternary operators (prefer switch/if-else chains), redundant boolean comparisons (e.g., `x == true` instead of `x`)
+- **Unnecessary complexity** — deep nesting, redundant abstractions, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 - **Unclear code** — overly compact one-liners that sacrifice readability; explicit code is better than clever code
 - **Over-simplification** — too many concerns combined into a single function or component, helpful abstractions removed that were aiding code organization, "fewer lines" prioritized over readability
 - **Dead weight** — redundant code, abstractions that add indirection without value
@@ -44,6 +44,7 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 
 - **Restates code, signature, or name** — paraphrases the immediately-following statement or multi-statement block; doc blocks whose text translates a declaration's name; doc blocks above a declaration whose prose elaborates the name and signature without adding rationale; parameter/return descriptions that only echo names and types. Non-obvious constraints (size, units, ranges, preconditions) stay; drop the wrapping parameter/return/error enumeration when no entries survive trimming
 - **History or change narration** — references to PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"); state the current invariant only — past behavior belongs in git history, and session-derived lessons about tooling belong in memories or AGENTS.md
+- **Cross-references that decay** — names the caller ("used by X", "called from Y"), or task/flow/feature-flag context the code was added for ("added for the Y flow", "for the rollout"); delete — caller relationships belong in the call graph, feature context in the PR description
 - **Framework or stdlib explainers** — describes what a well-known language keyword or library construct does
 - **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys
 - **Overgrown rationale** — a comment that captures real WHY but in more lines or concerns than the rationale requires; tighten to one sentence per concern, split bundled concerns to their decision points, or lift shared rationale to a design doc or commit message
