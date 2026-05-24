@@ -1,6 +1,6 @@
 ---
 name: apply-findings
-description: "Apply findings by making the suggested code changes. Applies accepted verdicts, escalates ambiguous findings to the user, and offers to note skipped genuine improvements. Use when the user asks to \"apply findings\", \"apply fixes\", \"apply suggestions\", \"apply accepted findings\", \"fix the findings\", or \"apply the review results\"."
+description: "Apply findings by making the suggested code changes. Applies accepted verdicts, escalates ambiguous findings to the user, and offers to note genuine improvements for later. Use when the user asks to \"apply findings\", \"apply fixes\", \"apply suggestions\", \"apply accepted findings\", \"fix the findings\", or \"apply the review results\"."
 ---
 
 # Apply Findings
@@ -32,14 +32,7 @@ For findings with Escalate verdict, use `request_user_input` to present the trad
 - **Skip** — leave as-is
 - **Note for later** — run the `$note-improvement` skill to capture it
 
-## Step 4: Handle Skipped Improvements
-
-Do not surface findings skipped as false positives or subjective preferences. For findings skipped solely because they are pre-existing, out of scope, or disproportionate, use `request_user_input` to ask whether the user wants to apply the improvement now or note it for later:
-
-- **Apply now** — make the change inline
-- **Note for later** — run the `$note-improvement` skill to capture it
-
-## Step 5: Report Results
+## Step 4: Report Results
 
 Summarize what was applied, what was escalated, and what was skipped.
 
@@ -48,4 +41,4 @@ Then update or check the active plan and proceed to any remaining task.
 ## Rules
 
 - Only edit files. Do not stage, build, or test.
-- If two findings conflict (suggest opposite changes to the same code), skip both and report the conflict.
+- If two Apply findings conflict (suggest opposite changes to the same code), surface the conflict with `request_user_input` and let the user choose, rather than applying either.
