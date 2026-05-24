@@ -113,20 +113,21 @@ You then drive implementation one shell at a time. [`/pick-next-shell`](claude/s
 
 ## The Finalize Pipeline
 
-[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically. One command runs tests, iterative code polishing, changelog updates, self-improvement, and commit.
+[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
 
 ![How Finalize Connects](assets/how-finalize-connects.svg)
 
 `/finalize` runs through these phases automatically:
 
 1. **Polish Code** — Iterative loop: stage → format → lint → test → review → evaluate → apply → smoke test → re-run until stable
-2. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
-3. **Self-Improve** — Extract learnings, route to CLAUDE.md / AGENTS.md / memory / skills
-4. **Ship It** — Branch if needed, commit, push, create or update PR
+2. **Simplify Docs** — Strip unnecessary comments and documentation noise from the changed files
+3. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
+4. **Self-Improve** — Extract learnings, route to CLAUDE.md / AGENTS.md / memory / skills
+5. **Ship It** — Branch if needed, commit, push, create or update PR
 
 ## Self-Improvement
 
-[`/self-improve`](claude/skills/self-improve/SKILL.md) is a core skill that makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](claude/skills/finalize/SKILL.md) Phase 3). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Over time, Turbo gets better at your specific project.
+[`/self-improve`](claude/skills/self-improve/SKILL.md) is a core skill that makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](claude/skills/finalize/SKILL.md) Phase 4). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Over time, Turbo gets better at your specific project.
 
 [`/note-improvement`](claude/skills/note-improvement/SKILL.md) captures improvement opportunities that come up during work but are out of scope: code review findings you chose to skip, refactoring ideas, missing tests. These get tracked in `.turbo/improvements.md` so they don't get lost. Since `.turbo/` is gitignored, it doesn't clutter the repo. Each entry is tagged with a type — `direct`, `investigate`, or `plan` — so it can be routed correctly later. When you're ready to act on them, [`/implement-improvements`](claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, filters stale items, and runs one lane per session: direct entries go through [`/implement`](claude/skills/implement/SKILL.md) for a clear-scope fix, investigate entries run [`/investigate`](claude/skills/investigate/SKILL.md) with [`/consult-codex`](claude/skills/consult-codex/SKILL.md) and then [`/implement`](claude/skills/implement/SKILL.md), and plan entries go through [`/turboplan`](claude/skills/turboplan/SKILL.md).
 
