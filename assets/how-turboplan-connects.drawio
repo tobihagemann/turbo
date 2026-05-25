@@ -1,6 +1,6 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36" version="29.6.6">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.6 Chrome/144.0.7559.236 Electron/40.8.4 Safari/537.36">
   <diagram id="turboplan-flow" name="How Turboplan Connects">
-    <mxGraphModel dx="1851" dy="1762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1700" math="0" shadow="0">
+    <mxGraphModel dx="2416" dy="1824" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -179,7 +179,7 @@
         <mxCell id="6001" parent="400" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Resolve plan" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="6002" parent="400" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Read context + skills" vertex="1">
+        <mxCell id="6002" parent="400" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Read context" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="110" as="geometry" />
         </mxCell>
         <mxCell id="6003" parent="400" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="/implement" vertex="1">
@@ -389,18 +389,24 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="5100" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdfa;strokeColor=#14b8a6;fontColor=#134e4a;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/implement" vertex="1">
-          <mxGeometry height="230" width="210" x="270" y="680" as="geometry" />
+          <mxGeometry height="290" width="210" x="320" y="680" as="geometry" />
         </mxCell>
         <mxCell id="5101" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/code-style" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="5102" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="Implement" vertex="1">
+        <mxCell id="5104" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="Load skills" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="5103" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/finalize" vertex="1">
+        <mxCell id="5102" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="Implement" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="170" as="geometry" />
         </mxCell>
-        <mxCell id="5110" edge="1" parent="5100" source="5101" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5102">
+        <mxCell id="5103" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/finalize" vertex="1">
+          <mxGeometry height="40" width="150" x="30" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="5110" edge="1" parent="5100" source="5101" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5104">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5112" edge="1" parent="5100" source="5104" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5102">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="5111" edge="1" parent="5100" source="5102" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5103">
@@ -410,9 +416,9 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="665" y="510" />
-              <mxPoint x="520" y="510" />
-              <mxPoint x="520" y="660" />
-              <mxPoint x="375" y="660" />
+              <mxPoint x="540" y="510" />
+              <mxPoint x="540" y="660" />
+              <mxPoint x="425" y="660" />
             </Array>
           </mxGeometry>
         </mxCell>
