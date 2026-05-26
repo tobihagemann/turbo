@@ -389,7 +389,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="5100" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdfa;strokeColor=#14b8a6;fontColor=#134e4a;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/implement" vertex="1">
-          <mxGeometry height="290" width="210" x="320" y="680" as="geometry" />
+          <mxGeometry height="350" width="210" x="320" y="680" as="geometry" />
         </mxCell>
         <mxCell id="5101" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dcfce7;strokeColor=#22c55e;fontColor=#14532d;fontSize=12;" value="/code-style" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
@@ -400,8 +400,11 @@
         <mxCell id="5102" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ccfbf1;strokeColor=#14b8a6;fontColor=#134e4a;fontSize=12;" value="Implement" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="170" as="geometry" />
         </mxCell>
-        <mxCell id="5103" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/finalize" vertex="1">
+        <mxCell id="5105" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffedd5;strokeColor=#f97316;fontColor=#7c2d12;fontSize=12;" value="/preview" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="5103" parent="5100" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/finalize" vertex="1">
+          <mxGeometry height="40" width="150" x="30" y="290" as="geometry" />
         </mxCell>
         <mxCell id="5110" edge="1" parent="5100" source="5101" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5104">
           <mxGeometry relative="1" as="geometry" />
@@ -409,7 +412,10 @@
         <mxCell id="5112" edge="1" parent="5100" source="5104" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5102">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="5111" edge="1" parent="5100" source="5102" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5103">
+        <mxCell id="5111" edge="1" parent="5100" source="5102" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5105">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5113" edge="1" parent="5100" source="5105" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="5103">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="5200" edge="1" parent="1" source="5000" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="5100" value="">

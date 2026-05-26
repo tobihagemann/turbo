@@ -10,7 +10,7 @@ The Claude Code edition is production-tested. The Codex edition is currently exp
 2. **Implement** — Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) on the plan, or [`/implement`](claude/skills/implement/SKILL.md) for ad-hoc changes
 3. **Finalize** — [`/finalize`](claude/skills/finalize/SKILL.md) runs tests, code polishing, commit, and PR. It kicks in automatically after any `/implement*` skill; run it yourself if you built by hand.
 
-This loop is the core. Two more pipelines run alongside it for work that does not fit the loop: [`/audit`](claude/skills/audit/SKILL.md) for project-wide health checks and [`/onboard`](claude/skills/onboard/SKILL.md) for ramping up on new projects. Beyond the four pipelines, Turbo ships [60+ skills](#all-skills) for debugging, reviewing, dependency upgrades, and self-improvement that makes each session teach the next. See the [prompt examples](#prompt-examples) for how they look in practice, or read on for the full picture.
+This loop is the core. Two more pipelines run alongside it for work that does not fit the loop: [`/audit`](claude/skills/audit/SKILL.md) for project-wide health checks and [`/onboard`](claude/skills/onboard/SKILL.md) for ramping up on new projects. Beyond the four pipelines, Turbo ships [70+ skills](#all-skills) for debugging, reviewing, dependency upgrades, and self-improvement that makes each session teach the next. See the [prompt examples](#prompt-examples) for how they look in practice, or read on for the full picture.
 
 ## Editions
 
@@ -99,7 +99,7 @@ Claude Code's built-in plan mode is a starting point, but it tends to produce pl
 
 [`/turboplan`](claude/skills/turboplan/SKILL.md) has three modes, named by what each one produces and selected automatically by its complexity analysis:
 
-- **Direct mode** — Clear scope and a known approach. Hands off to [`/implement`](claude/skills/implement/SKILL.md), which loads [`/code-style`](claude/skills/code-style/SKILL.md) plus any task-specific skills, applies the change, and runs [`/finalize`](claude/skills/finalize/SKILL.md). No plan file is written.
+- **Direct mode** — Clear scope and a known approach. Hands off to [`/implement`](claude/skills/implement/SKILL.md), which loads [`/code-style`](claude/skills/code-style/SKILL.md) plus any task-specific skills, applies the change, previews any UI/UX change for you to try, and runs [`/finalize`](claude/skills/finalize/SKILL.md). No plan file is written.
 - **Plan mode** — Single-session change whose approach warrants writing down before implementing. Runs [`/draft-plan`](claude/skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](claude/skills/refine-plan/SKILL.md) → [`/self-improve`](claude/skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session.
 - **Spec mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](claude/skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-plan`](claude/skills/refine-plan/SKILL.md) to iteratively review and revise the spec, then [`/draft-shells`](claude/skills/draft-shells/SKILL.md) to decompose the spec into shells with YAML frontmatter, then [`/refine-plan`](claude/skills/refine-plan/SKILL.md) to review and revise the shells, then [`/self-improve`](claude/skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-shell`](claude/skills/pick-next-shell/SKILL.md) in fresh sessions to plan each shell, then [`/implement-plan`](claude/skills/implement-plan/SKILL.md) to implement it.
 
@@ -152,6 +152,8 @@ The guide covers both traditional onboarding (setup, build commands, tooling) an
 ## Browser and UI Testing
 
 [`/smoke-test`](claude/skills/smoke-test/SKILL.md) and [`/exploratory-test`](claude/skills/exploratory-test/SKILL.md) (Claude) / [`$smoke-test`](codex/skills/smoke-test/SKILL.md) and [`$exploratory-test`](codex/skills/exploratory-test/SKILL.md) (Codex) automate manual testing — the kind of hands-on verification you'd normally do yourself. The underlying tools differ per edition:
+
+For changes where you want to judge the feel yourself, [`/preview`](claude/skills/preview/SKILL.md) / [`$preview`](codex/skills/preview/SKILL.md) stands up the live app and hands it to you to try a UI/UX change firsthand, then waits for your verdict before continuing. `/implement` runs it automatically before `/finalize` when a change touches a user-facing surface, and you can run it standalone any time you want to poke at the running app.
 
 **Claude Code:**
 
@@ -207,6 +209,7 @@ the error messages in this module are inconsistent, /note-improvement
 # Testing manually
 /smoke-test
 /exploratory-test
+/preview  ← stand up the app so you can try a UI change yourself
 
 # Picking the next issue to work on
 /pick-next-issue

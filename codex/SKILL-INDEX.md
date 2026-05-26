@@ -37,7 +37,7 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 | [`$polish-code`](skills/polish-code/SKILL.md) | Iterative quality loop: stage → format → lint → test → review → evaluate → apply → smoke test → re-run until stable | [`$stage`](skills/stage/SKILL.md), [`$review-code`](skills/review-code/SKILL.md), [`$evaluate-findings`](skills/evaluate-findings/SKILL.md), [`$apply-findings`](skills/apply-findings/SKILL.md), [`$smoke-test`](skills/smoke-test/SKILL.md), [`$investigate`](skills/investigate/SKILL.md) |
 | [`$simplify-code`](skills/simplify-code/SKILL.md) | Review code quality and fix issues | |
 | [`$simplify-docs`](skills/simplify-docs/SKILL.md) | Review code comments and markdown docs for unnecessary content and fix issues | |
-| [`$implement`](skills/implement/SKILL.md) | Standard implementation flow: load code-style rules, make the change, run `$finalize` | [`$code-style`](skills/code-style/SKILL.md), [`$finalize`](skills/finalize/SKILL.md) |
+| [`$implement`](skills/implement/SKILL.md) | Standard implementation flow: load code-style rules, make the change, preview UI/UX changes, run `$finalize` | [`$code-style`](skills/code-style/SKILL.md), [`$preview`](skills/preview/SKILL.md), [`$finalize`](skills/finalize/SKILL.md) |
 | [`$investigate`](skills/investigate/SKILL.md) | Systematic root cause analysis for bugs and failures | [`$consult-claude`](skills/consult-claude/SKILL.md), [`$evaluate-findings`](skills/evaluate-findings/SKILL.md), [`$consult-oracle`](skills/consult-oracle/SKILL.md) |
 
 ## Testing
@@ -46,6 +46,7 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 |---|---|---|
 | [`$create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | |
 | [`$smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | `browser-use@openai-bundled` plugin, [`$investigate`](skills/investigate/SKILL.md) |
+| [`$preview`](skills/preview/SKILL.md) | Stand up the live app and hand it to the user to judge a UI/UX change firsthand | |
 | [`$exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios | [`$create-test-plan`](skills/create-test-plan/SKILL.md), `browser-use@openai-bundled` plugin, [`$investigate`](skills/investigate/SKILL.md) |
 
 ## Dependencies and Tooling
