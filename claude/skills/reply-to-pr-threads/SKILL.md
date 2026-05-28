@@ -69,7 +69,7 @@ Then use `AskUserQuestion` to ask whether to post. Offer:
 
 ## Step 5: Post Replies
 
-For each approved draft, post via the reply mutation:
+For each approved draft, write the drafted reply to `.turbo/pr/thread-<thread-id>.md` with the Write tool, then post via the reply mutation:
 
 ```bash
 gh api graphql -f query='
@@ -77,10 +77,10 @@ mutation($threadId: ID!, $body: String!) {
   addPullRequestReviewThreadReply(input: {pullRequestReviewThreadId: $threadId, body: $body}) {
     comment { id }
   }
-}' -f threadId="THREAD_ID" -f body="REPLY_BODY"
+}' -f threadId='<thread-id>' -F body=@.turbo/pr/thread-<thread-id>.md
 ```
 
-Substitute `THREAD_ID` with the thread's id and `REPLY_BODY` with the drafted reply text for each post. Report what was posted and what was skipped (due to auto-resolution between re-fetch and posting).
+Substitute `<thread-id>` with the thread's id for each post. Report what was posted and what was skipped (due to auto-resolution between re-fetch and posting).
 
 Then use the TaskList tool and proceed to any remaining task.
 

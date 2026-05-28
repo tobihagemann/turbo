@@ -68,13 +68,10 @@ Output the drafted title and description as text, alongside the original for com
 
 ## Step 7: Apply the Update
 
-After confirmation, update the PR:
+After confirmation, write the drafted body to `.turbo/pr/<PR_NUMBER>-body.md` with the Write tool, then update the PR:
 
 ```bash
-gh pr edit <PR_NUMBER> --title "<TITLE>" --body "$(cat <<'EOF'
-<BODY CONTENT HERE>
-EOF
-)"
+gh pr edit <PR_NUMBER> --title "<TITLE>" --body-file .turbo/pr/<PR_NUMBER>-body.md
 ```
 
 ## Diagrams
