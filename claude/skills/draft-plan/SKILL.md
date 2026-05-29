@@ -17,6 +17,7 @@ Use `TaskCreate` to create a task for each step:
 4. Escalate product decisions
 5. Deep-dive discussion
 6. Draft and write the plan file
+7. Present summary and finalize
 
 ## Step 1: Capture the Task and Pick a Slug
 
@@ -154,6 +155,15 @@ Files to read in full before starting implementation:
 - **Verification**: Describe how to know the change actually works. Prefer specific test commands, named test files, or named smoke checks over vague phrases like "run the tests." If the change has no observable behavior, say so explicitly.
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
 - **Scope**: Plan content describes what to build. Do not embed task tracking, skill loading, `/finalize` invocation, test commands, or commit instructions in the plan content — those are execution-wrapper concerns.
+
+## Step 7: Present Summary and Finalize
+
+Present a brief summary of the drafted plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. Fit the summary to the plan rather than a fixed template.
+
+Then use `AskUserQuestion` to offer two paths:
+
+- **Approve** (Recommended) — the plan is final.
+- **Revise** — the user describes what to change. Apply the edits to the plan file, then re-summarize and re-present.
 
 Then use the TaskList tool and proceed to any remaining task.
 

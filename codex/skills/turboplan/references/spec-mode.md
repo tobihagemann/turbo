@@ -42,7 +42,9 @@ Run the `$self-improve` skill to compound planning learnings.
 
 ## Phase 6: Run `$pick-next-shell` Skill
 
-Run the `$pick-next-shell` skill.
+Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. Fit the summary to the artifacts rather than a fixed template.
+
+Then run the `$pick-next-shell` skill.
 
 Then update or check the active plan and proceed to any remaining task.
 

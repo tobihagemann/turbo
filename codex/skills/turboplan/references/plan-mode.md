@@ -30,7 +30,9 @@ Update the plan's YAML frontmatter to `status: ready`.
 
 ## Phase 5: Run `$implement-plan` Skill
 
-Run the `$implement-plan` skill with the plan path from Phase 1.
+Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. Fit the summary to the plan rather than a fixed template.
+
+Then run the `$implement-plan` skill with the plan path from Phase 1.
 
 Then update or check the active plan and proceed to any remaining task.
 

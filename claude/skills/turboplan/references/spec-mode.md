@@ -11,7 +11,7 @@ Use `TaskCreate` to create a task for each phase:
 3. Run `/draft-shells` skill
 4. Run `/refine-plan` skill (shells)
 5. Run `/self-improve` skill
-6. Halt and tell the user to run `/clear` then `/pick-next-shell`
+6. Summarize and halt
 
 If `/draft-shells` lands on the single-shell bail-out (Phase 3), the flow switches to plan mode by following [plan-mode.md](plan-mode.md). Mark tasks 4-6 deleted via `TaskUpdate`, then create five new tasks for [plan-mode.md](plan-mode.md)'s Phases 1-5 before continuing.
 
@@ -40,9 +40,11 @@ Run the `/refine-plan` skill with `shells <slug>` from Phase 3.
 
 Run the `/self-improve` skill to compound planning learnings.
 
-## Phase 6: Halt with Next-Step Instructions
+## Phase 6: Summarize and Halt
 
-Halt with this message:
+Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. Fit the summary to the artifacts rather than a fixed template.
+
+Then halt with this message:
 
 > Spec and shells ready.
 > - Spec: `<spec path>`

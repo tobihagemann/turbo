@@ -200,7 +200,14 @@ If a shell has no Open Questions, include the section with "None" so the structu
 
 ## Step 5: Present Summary
 
-Present a brief summary: number of shells, one-line description of each shell's scope, and any assumptions made about ambiguities. Tell the user the next step:
+Present a brief summary of the decomposition: number of shells, a one-line description of each shell's scope, and any assumptions made about ambiguities. Fit the summary to the decomposition rather than a fixed template.
+
+Then use `AskUserQuestion` to offer two paths:
+
+- **Approve** (Recommended) — the decomposition is final.
+- **Revise** — the user describes what to change. Apply it, re-running Step 2 when the change is structural (it alters shell count or boundaries) and rewriting the affected shell files, then re-summarize and re-present.
+
+After approval, tell the user the next step:
 
 > To start implementation, run `/pick-next-shell`. After it halts, run `/implement-plan` in a fresh session.
 

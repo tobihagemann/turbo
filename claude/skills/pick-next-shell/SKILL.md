@@ -16,7 +16,7 @@ At the start, use `TaskCreate` to create a task for each step:
 3. Run `/refine-plan` skill
 4. Run `/self-improve` skill
 5. Mark plan ready
-6. Halt with next-step instructions
+6. Summarize and halt
 
 ## Step 1: Scan Shells and Pick Next
 
@@ -53,9 +53,11 @@ Run the `/self-improve` skill to compound planning learnings.
 
 Update the plan's YAML frontmatter to `status: ready`.
 
-## Step 6: Halt with Next-Step Instructions
+## Step 6: Summarize and Halt
 
-Halt with this message:
+Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. Fit the summary to the plan rather than a fixed template.
+
+Then halt with this message:
 
 > Plan ready at `<plan path>`.
 >

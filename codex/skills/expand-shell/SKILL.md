@@ -16,7 +16,8 @@ Use `update_plan` to track each step:
 3. Escalate the shell's open questions
 4. Write the plan
 5. Verify the plan against the shell
-6. Delete the shell
+6. Present summary and gate
+7. Delete the shell
 
 ## Step 1: Load the Shell and Verify Consumes
 
@@ -152,7 +153,18 @@ Re-read the shell at `.turbo/shells/<shell-slug>.md` and the drafted plan at `.t
 
 If every item passes, proceed to Step 6. If any item fails, revise the plan to close the gap and re-verify before proceeding. Do not delete the shell while any check is failing.
 
-## Step 6: Delete the Shell
+## Step 6: Present Summary and Gate
+
+Present a brief summary of the expanded plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. Fit the summary to the plan rather than a fixed template.
+
+Then use `request_user_input` to offer two paths:
+
+- **Approve** (Recommended) — the plan is final; proceed to delete the shell.
+- **Revise** — the user describes what to change. Apply the edits to the plan file while keeping the shell's structural contract intact, re-verify against the shell as in Step 5, then re-summarize and re-present.
+
+Do not delete the shell until the user approves.
+
+## Step 7: Delete the Shell
 
 Delete the source shell at `.turbo/shells/<shell-slug>.md`. The plan is now the authoritative artifact for this work.
 
@@ -163,6 +175,6 @@ Then update or check the active plan and proceed to any remaining task.
 - Never proceed past Step 1 if Consumes verification fails.
 - The shell's structural contract (Produces, Consumes, Covers) is authoritative. If the pattern survey reveals conflicts, note them in the plan's Context or Verification sections rather than altering the contract.
 - The plan file is the only output. Do not write code, scaffolding, or other project files.
-- Delete the source shell only after the plan file has been written successfully and Step 5 verification has passed. Never delete before.
+- Delete the source shell only after the plan file has been written successfully, Step 5 verification has passed, and the user has approved the plan at Step 6. Never delete before.
 - Do not run `$review-plan` or any review skills here.
 - Do not embed task tracking, skill loading, or `$finalize` invocation in the plan file.

@@ -10,7 +10,7 @@ Use `TaskCreate` to create a task for each phase:
 2. Run `/refine-plan` skill
 3. Run `/self-improve` skill
 4. Mark plan ready
-5. Halt with next-step instructions
+5. Summarize and halt
 
 ## Phase 1: Run `/draft-plan` Skill
 
@@ -28,9 +28,11 @@ Run the `/self-improve` skill to compound planning learnings.
 
 Update the plan's YAML frontmatter to `status: ready`.
 
-## Phase 5: Halt with Next-Step Instructions
+## Phase 5: Summarize and Halt
 
-Halt with this message:
+Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. Fit the summary to the plan rather than a fixed template.
+
+Then halt with this message:
 
 > Plan ready at `<plan path>`.
 >
