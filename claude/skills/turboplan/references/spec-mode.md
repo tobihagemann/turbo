@@ -42,7 +42,7 @@ Run the `/self-improve` skill to compound planning learnings.
 
 ## Phase 6: Summarize and Halt
 
-Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. Fit the summary to the artifacts rather than a fixed template.
+Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. When the project delivers user-facing value, also present a short list of user stories capturing what users gain from it. Skip the stories for work with no user-facing gain, such as internal refactors or infrastructure. Fit both to the artifacts rather than a fixed template.
 
 Then halt with this message:
 
