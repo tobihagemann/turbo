@@ -4,6 +4,8 @@
 
 Bugs, logic errors, and correctness problems: incorrect control flow, off-by-one errors, null/undefined access, type mismatches, broken error handling, race conditions, resource leaks, and state lifecycle bugs.
 
+Also audit removed behavior: when the change deletes a line or block, identify the invariant, guard, validation, or cleanup it enforced and confirm the change re-establishes it elsewhere or proves it is no longer needed.
+
 ## Determination Criteria
 
 Flag an issue only when ALL of these hold:

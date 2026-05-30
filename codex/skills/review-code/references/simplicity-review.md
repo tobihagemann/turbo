@@ -40,6 +40,12 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 - **Over-simplification** — too many concerns combined into a single function or component, helpful abstractions removed that were aiding code organization, "fewer lines" prioritized over readability
 - **Dead weight** — redundant code, abstractions that add indirection without value
 
+### Altitude and Fix-Depth
+
+- **Special case on shared infrastructure** — a narrow branch, flag, or conditional added to a shared mechanism to handle one case, where generalizing the mechanism removes the need for the special case; name the generalization
+- **Shallow fix at the symptom** — a change applied at one call site that the same shape will require again at the next similar site; prefer addressing the shared root
+- **Wrong layer** — logic placed in a caller, wrapper, or leaf when it belongs in the shared layer all paths flow through, or pushed into shared infrastructure when it is specific to one caller
+
 ### Comments and Documentation
 
 - **Restates code, signature, or name** — paraphrases the immediately-following statement or multi-statement block; doc blocks whose text translates a declaration's name; doc blocks above a declaration whose prose elaborates the name and signature without adding rationale; parameter/return descriptions that only echo names and types. Non-obvious constraints (size, units, ranges, preconditions) stay; drop the wrapping parameter/return/error enumeration when no entries survive trimming
@@ -74,6 +80,6 @@ Flag an issue only when ALL of these hold:
 - Micro-optimizations with no measurable impact
 - Comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader. Greenfield test: would you write this comment if the code had been greenfield from day one?
 
-**Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity | documentation>`
+**Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity | altitude | documentation>`
 
 **Verdict label:** `Simplicity: <clean | issues found>`
