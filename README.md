@@ -97,7 +97,7 @@ Claude Code's built-in plan mode is a starting point, but it tends to produce pl
 
 ![How Turboplan Connects](assets/how-turboplan-connects.svg)
 
-[`/turboplan`](claude/skills/turboplan/SKILL.md) has three modes, named by what each one produces and selected automatically by its complexity analysis:
+[`/turboplan`](claude/skills/turboplan/SKILL.md) has three modes, named by what each one produces. Its complexity analysis recommends a mode, then you confirm the route:
 
 - **Direct mode** — Clear scope and a known approach. Hands off to [`/implement`](claude/skills/implement/SKILL.md), which loads [`/code-style`](claude/skills/code-style/SKILL.md) plus any task-specific skills, applies the change, previews any UI/UX change for you to try, and runs [`/finalize`](claude/skills/finalize/SKILL.md). No plan file is written.
 - **Plan mode** — Single-session change whose approach warrants writing down before implementing. Runs [`/draft-plan`](claude/skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](claude/skills/refine-plan/SKILL.md) → [`/self-improve`](claude/skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session.
