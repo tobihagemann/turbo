@@ -21,7 +21,7 @@ Determine what to review:
 
 ## Step 2: Run Reviews in Parallel
 
-Read the reference file(s) for the active type(s):
+Each active type maps to a criteria reference file:
 
 - **Correctness** — [references/correctness-review.md](references/correctness-review.md)
 - **Security** — [references/security-review.md](references/security-review.md)
@@ -34,10 +34,10 @@ Full review activates all six types; a single-concern argument activates one. Sk
 
 Run the review branches independently. Launch them with `spawn_agent` / `wait_agent` using inherited model defaults. For full review that is six internal branches plus one peer branch; for single-concern it is one internal branch plus one peer branch.
 
-- **Internal branch (one per active type):** The branch prompt must include the scope, the type's reference file content, the output format below, and this directive: apply the reference file's determination criteria as the bar for a real finding, then return every finding that clears that bar tagged with its priority. Coverage is the goal at this stage, so surface everything that qualifies and let the priority tags convey severity.
+- **Internal branch (one per active type):** The branch prompt must include the scope, the path to the type's reference file (`~/.agents/skills/review-code/references/<type>-review.md`), the output format below, and this directive: read that reference file directly, apply its determination criteria as the bar for a real finding, then return every finding that clears that bar tagged with its priority. Coverage is the goal at this stage, so surface everything that qualifies and let the priority tags convey severity. The branch must also return the Overall Verdict block for its type, using the verdict label from the reference file it read.
 - **Peer review branch (unless skipping):** Run the `$peer-review` skill with a request describing: (a) the scope to review; (b) each active type as a separate review dimension so they are reviewed independently; (c) for each dimension, the criteria live in `~/.agents/skills/review-code/references/<type>-review.md` — the reviewer should read that file directly, use its priority scale and verdict label, and include any extra metadata fields it specifies (e.g., `**Category:**`, `**Library:**`, `**Docs:**`) between the `**Reviewer:**` line and the paragraph. The branch prompt must also state explicitly that the sub-agent's final message must contain the verbatim findings text `$peer-review` produced.
 
-Aggregate findings with attribution (reviewer: "internal" or "peer"; type; file path). Present them in the output format below.
+Aggregate the findings and per-type verdicts the branches return, with attribution (reviewer: "internal" or "peer"; type; file path). Present them in the output format below.
 
 Then update or check the active plan and proceed to any remaining task.
 
@@ -56,7 +56,7 @@ Return findings as a numbered list. For each finding:
 
 The reference file may specify additional metadata fields (e.g., `**Category:**`, `**Library:**`, `**Docs:**`). Include them between the `**Reviewer:**` line and the paragraph.
 
-After all findings, add an overall verdict per active type using the label from each reference file. For single-concern, that is one verdict block; for full review, six. After the per-type verdicts, add a single combined `## Peer Review Verdict` block summarizing what the peer review returned.
+After all findings, place the Overall Verdict block each internal branch returned for its type (each uses the verdict label from its reference file). For single-concern, that is one verdict block; for full review, six. After the per-type verdicts, add a single combined `## Peer Review Verdict` block summarizing what the peer review returned.
 
 ```
 ## Overall Verdict — <type>
