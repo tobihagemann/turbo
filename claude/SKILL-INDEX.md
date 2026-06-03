@@ -117,6 +117,7 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 | [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) | Recall implementation reasoning from past Claude Code transcripts for a commit or file location | |
 | [`/create-handoff`](skills/create-handoff/SKILL.md) | Write a handoff file at `.turbo/handoff/<YYYY-MM-DD>-<slug>.md` capturing task, status, open decisions, in-flight changes, and next step | |
 | [`/explain-this`](skills/explain-this/SKILL.md) | Explain whatever the user is pointing at in plain language: a pending question, code, an error, output, or an artifact | |
+| [`/understand-change`](skills/understand-change/SKILL.md) | Teach the user to deeply understand a change through interactive tutoring: restate, drill why/what/how, and quiz until mastery | |
 | [`/create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure | [`/evaluate-findings`](skills/evaluate-findings/SKILL.md), [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/create-project-skills`](skills/create-project-skills/SKILL.md) | Scan the codebase and generate project-specific skills that capture inferred conventions | [`/create-skill`](skills/create-skill/SKILL.md) |
 | [`/update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo skills with always-latest instructions fetched from GitHub | |
