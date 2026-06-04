@@ -12,6 +12,28 @@ The Claude Code edition is production-tested. The Codex edition is currently exp
 
 This loop is the core. Two more pipelines run alongside it for work that does not fit the loop: [`/audit`](claude/skills/audit/SKILL.md) for project-wide health checks and [`/onboard`](claude/skills/onboard/SKILL.md) for ramping up on new projects. Beyond the four pipelines, Turbo ships [70+ skills](#all-skills) for debugging, reviewing, dependency upgrades, and self-improvement that makes each session teach the next. See the [prompt examples](#prompt-examples) for how they look in practice, or read on for the full picture.
 
+## Quick Start
+
+### Prerequisites
+
+Pick your edition: [`claude/SETUP.md`](claude/SETUP.md) for Claude Code, [`codex/SETUP.md`](codex/SETUP.md) for Codex. Both editions work best with their respective Max-tier plans (pipeline workflows are context-heavy). Additional tools are installed during setup.
+
+**External services:** The Claude edition benefits from ChatGPT Plus or higher for Codex peer review. The Codex edition benefits from Claude Code access for Claude peer review. ChatGPT Pro or Business is useful for [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md), where Pro models are the only ones that reliably solve very hard problems. [`/peer-review`](claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) are designed as swappable puzzle pieces, so if you don't have access, replace them with alternatives that work for you.
+
+### Automatic Setup (Recommended)
+
+In Claude Code or Codex, prompt:
+
+```
+Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and follow the guide for your edition.
+```
+
+The agent reads the root [`SETUP.md`](SETUP.md), picks the file that matches its harness ([`claude/SETUP.md`](claude/SETUP.md) or [`codex/SETUP.md`](codex/SETUP.md)), clones the repo, installs skills, configures the environment, and walks you through each step interactively.
+
+### Updating
+
+Run [`/update-turbo`](claude/skills/update-turbo/SKILL.md) (Claude Code) or [`$update-turbo`](codex/skills/update-turbo/SKILL.md) (Codex) to update all skills. It fetches the latest update instructions from GitHub, builds a changelog, handles conflict detection for customized skills, and manages exclusions.
+
 ## Editions
 
 ```text
@@ -19,13 +41,11 @@ claude/   # Claude Code edition
 codex/    # Codex edition
 ```
 
-Each edition is a self-contained tree with its own `SETUP.md`, `UPDATE.md`, `MIGRATION.md`, `ADDITIONS.md`, `SKILL-CONVENTIONS.md`, and `skills/`. The root-level `SETUP.md`, `MIGRATION.md`, and `SKILL-CONVENTIONS.md` are short routers that point at the per-edition files. The root `UPDATE.md` exists only to migrate users with pre-split installations onto the per-edition flow. `ADDITIONS.md` lives only under each edition since its content is injected into the harness's instruction file during setup.
+Each edition is a self-contained tree with its own `SETUP.md`, `UPDATE.md`, `MIGRATION.md`, `ADDITIONS.md`, `SKILL-CONVENTIONS.md`, and `skills/`. The root-level files are short routers that point at the per-edition versions.
 
 ## What Is This?
 
-Turbo covers the full dev lifecycle: reviewing code, creating PRs, investigating bugs, self-improving from session learnings, and more.
-
-Five ideas shape the design:
+Turbo covers the full dev lifecycle. Five ideas shape its design:
 
 1. **Standardized process.** Skills capture dev workflows so you can run them directly instead of prompting from scratch. [`/turboplan`](claude/skills/turboplan/SKILL.md) analyzes complexity and routes to the right mode. [`/finalize`](claude/skills/finalize/SKILL.md) runs your entire post-implementation QA in one command. [`/investigate`](claude/skills/investigate/SKILL.md) follows a structured root cause analysis cycle. The skill is the prompt.
 2. **Layered design.** Skills compose other skills to any depth. [`/review-code security`](claude/skills/review-code/SKILL.md) runs a single-concern scan. [`/review-code`](claude/skills/review-code/SKILL.md) with no argument runs all six types in parallel. [`/polish-code`](claude/skills/polish-code/SKILL.md) loops format → lint → test → review → evaluate → apply → smoke test until stable. [`/finalize`](claude/skills/finalize/SKILL.md) wraps the whole pipeline with self-improvement and commit. [`/audit`](claude/skills/audit/SKILL.md) fans out to all analysis skills in parallel, evaluates the combined findings, and produces a health report. Each pipeline composes with a natural, predictable interface. See [The Turboplan Pipeline](#the-turboplan-pipeline) and [The Finalize Pipeline](#the-finalize-pipeline) for worked examples.
@@ -35,7 +55,7 @@ Five ideas shape the design:
 
 The one thing beyond skills is each edition's `ADDITIONS.md` (e.g. [`claude/ADDITIONS.md`](claude/ADDITIONS.md)), a small set of behavioral rules added to your harness's instruction file during setup. The most important one is **Skill Loading**: without it, the agent tends to skip reloading skills it has already seen in a session, which causes it to silently drop steps in nested pipelines like [`/finalize`](claude/skills/finalize/SKILL.md). The additions are kept in sync by [`/update-turbo`](claude/skills/update-turbo/SKILL.md). See [claude/docs/skill-loading-reasoning.md](claude/docs/skill-loading-reasoning.md) for the full rationale (Claude-specific failure modes and mitigations; the Codex edition adapts the same rules in [`codex/ADDITIONS.md`](codex/ADDITIONS.md)).
 
-The other core piece is [`/self-improve`](claude/skills/self-improve/SKILL.md), which makes the whole system compound. After each session, it extracts lessons from the conversation and routes them to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Every session teaches the agent something, and future sessions benefit.
+The other core piece is [`/self-improve`](claude/skills/self-improve/SKILL.md), which makes the whole system compound: it routes each session's lessons back into your project's instructions, memory, and skills. See [Self-Improvement](#self-improvement) below.
 
 ## Works Best With
 
@@ -68,28 +88,6 @@ Skills communicate through standard interfaces: git staging area, PR state, and 
 ## Sponsorship
 
 If Turbo has helped you ship faster and you're so inclined, I'd greatly appreciate it if you'd consider [sponsoring my open source work](https://github.com/sponsors/tobihagemann).
-
-## Quick Start
-
-### Prerequisites
-
-Pick your edition: [`claude/SETUP.md`](claude/SETUP.md) for Claude Code, [`codex/SETUP.md`](codex/SETUP.md) for Codex. Both editions work best with their respective Max-tier plans (pipeline workflows are context-heavy). Additional tools are installed during setup.
-
-**External services:** The Claude edition benefits from ChatGPT Plus or higher for Codex peer review. The Codex edition benefits from Claude Code access for Claude peer review. ChatGPT Pro or Business is useful for [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md), where Pro models are the only ones that reliably solve very hard problems. [`/peer-review`](claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) are designed as swappable puzzle pieces, so if you don't have access, replace them with alternatives that work for you.
-
-### Automatic Setup (Recommended)
-
-In Claude Code or Codex, prompt:
-
-```
-Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and follow the guide for your edition.
-```
-
-The agent reads the root [`SETUP.md`](SETUP.md), picks the file that matches its harness ([`claude/SETUP.md`](claude/SETUP.md) or [`codex/SETUP.md`](codex/SETUP.md)), clones the repo, installs skills, configures the environment, and walks you through each step interactively.
-
-### Updating
-
-Run [`/update-turbo`](claude/skills/update-turbo/SKILL.md) (Claude Code) or [`$update-turbo`](codex/skills/update-turbo/SKILL.md) (Codex) to update all skills. It fetches the latest update instructions from GitHub, builds a changelog, handles conflict detection for customized skills, and manages exclusions.
 
 ## The Turboplan Pipeline
 
