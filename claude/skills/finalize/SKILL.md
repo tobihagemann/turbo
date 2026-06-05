@@ -37,9 +37,7 @@ Run the `/self-improve` skill for the current session. Always run this phase eve
 
 ### Step 1: Analyze Split
 
-Examine the staged changes and evaluate whether they should be split into multiple commits, branches, and PRs for reviewability.
-
-Detect the repository's default branch via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`. Check the current branch name and whether a PR already exists for it using `gh pr view`. If a PR exists, read its title and description to understand the branch's purpose. This context informs which changes belong on the current branch and which should be split off.
+Examine the staged changes and evaluate whether they form a single reviewable unit or several independently reviewable units. This step decides only whether to split; the chosen ship skill owns all repository-state detection and the commit, push, branch, and PR intent.
 
 Run `git diff --cached --stat` and `git diff --cached` to understand the scope. Categorize changes along three dimensions:
 
@@ -61,9 +59,9 @@ If changes span multiple reviewable units, propose an ordered list of groups. Fo
 - File list (flag files with mixed-concern hunks)
 - Branch topology: stacked on the previous group (when this group depends on it) or independent (when it can stand alone)
 
-Use `AskUserQuestion` to let the user choose: ship as a single commit/PR, or split.
+Use `AskUserQuestion` to let the user choose whether to keep the changes together or split them.
 
-- **Ship** — run the `/ship` skill
+- **Ship together** — run the `/ship` skill
 - **Split** — run the `/split-and-ship` skill
 
 Then use the TaskList tool and proceed to any remaining task.
