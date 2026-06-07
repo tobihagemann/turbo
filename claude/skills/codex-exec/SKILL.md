@@ -43,19 +43,21 @@ If you are a subagent, do not pair `codex exec` with `Monitor`. Wait for the Bas
 
 | Level | Flag | When to Use |
 |-------|------|-------------|
-| Read-only (default) | *(none)* | Analysis, code reading, generating reports |
+| Read-only | `--sandbox read-only` | Analysis, code reading, generating reports |
 | Workspace write | `--sandbox workspace-write` | Editing files within the project |
 | Full access | `--sandbox danger-full-access` | Installing packages, running tests, system operations |
 | Full auto | `--full-auto` | Combined with a sandbox level for unattended execution |
 
-For fix or implementation tasks, default to `--sandbox workspace-write --full-auto` so Codex can edit files without confirmation prompts. Use read-only for analysis or research tasks.
+Omitting `--sandbox` falls back to the codex config and project trust level (trusted projects run workspace-write), so always pass the flag explicitly.
+
+For fix or implementation tasks, default to `--sandbox workspace-write --full-auto` so Codex can edit files without confirmation prompts. Use `--sandbox read-only` for analysis or research tasks.
 
 ## Options
 
 | Option | Description |
 |--------|-------------|
 | `--full-auto` | Allow file edits without confirmation prompts |
-| `--sandbox <level>` | Permission level: `danger-full-access`, `workspace-write` |
+| `--sandbox <level>` | Permission level: `read-only`, `workspace-write`, `danger-full-access` |
 | `--json` | JSON Lines output (progress + final message) |
 | `-o <path>` | Write final message to a file |
 | `--output-schema <path>` | Enforce JSON Schema on the output |
