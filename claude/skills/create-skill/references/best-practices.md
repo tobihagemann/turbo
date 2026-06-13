@@ -820,9 +820,9 @@ When a skill's Bash invocation needs non-default parameters (`timeout`, `dangero
 
 - ✗ **Avoid**: "Use a generous timeout."
 - ✗ **Avoid**: "Wrap the command in a shell `timeout` of 1 hour: `timeout 3600 X`."
-- ✓ **Good**: "Run X via the Bash tool (`timeout: 3600000`, do not set `run_in_background`)."
+- ✓ **Good**: "Run X via the Bash tool (`timeout: 600000`, do not set `run_in_background`)."
 
-The parenthetical names parameters and values directly, parallel to (`model: "opus"`, do not set `run_in_background`) for Agent calls. Specify whatever value the operation actually requires in milliseconds. Documented timeout ceilings are not enforced as hard limits. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
+The parenthetical names parameters and values directly, parallel to (`model: "opus"`, do not set `run_in_background`) for Agent calls. The Bash `timeout` maximum (600000 ms) is enforced: a larger value is not honored — the harness backgrounds the call immediately and hard-kills it at 600s, truncating output. Cap at `timeout: 600000`; if the command overruns that window, the harness force-backgrounds it and it runs to completion, recoverable by reading its output file. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
 
 ### Using AskUserQuestion
 

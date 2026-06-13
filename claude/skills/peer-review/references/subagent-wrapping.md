@@ -1,18 +1,12 @@
 # Subagent Wrapping
 
-If you are a subagent invoking `/peer-review`, read this before you do anything else, then follow the guardrails.
+If you are a subagent invoking `/peer-review`, follow these guardrails. They cover the subagent return contract; the codex run mechanics (timeout, force-background recovery, the `Monitor` ban) live in `/codex-exec`.
 
 ## Guardrails
 
-1. **Wait synchronously** for `/peer-review` to return. Do not return early. Forward codex's complete output verbatim as your final result.
-2. **Do not use `Monitor`.** Run codex via the Bash tool (`timeout: 3600000`, do not set `run_in_background`).
-3. **Treat as peer-review failure** (not as a successful empty result):
-   - Premature return before codex completes
-   - `"Waiting for codex to finish"` text
-   - Empty output
-   - Partial output (missing dimensions in a multi-dimension fan-out)
-   - A background ID returned in place of codex output (the harness force-backgrounded the foreground Bash call). Do not return text like "still in progress, no findings yet" — that is the same false-empty shape as the Monitor case, just with a different cause. Poll the background ID with `BashOutput` within your turn until codex completes; if you must return before then, surface the background ID verbatim and explicitly request the parent resume you via `SendMessage` once the process finishes.
-4. **Report the failure cause specifically** (usage limit, timeout, force-background without recovery, error message) when applicable.
+1. **Wait synchronously, in this turn.** Do not return until codex's complete output is in hand, then forward it verbatim. If codex was force-backgrounded, `Read` the output file repeatedly within this same turn until it holds the final result. You are not re-invoked by the completion `<task-notification>` after you return, so you cannot end your turn to wait for it. If you truly cannot finish in-turn, surface the task ID and cause verbatim and request the parent resume you via `SendMessage` once codex completes.
+2. **Treat as peer-review failure** (not as a successful empty result): premature return before codex completes, `"Waiting for codex to finish"` text, empty output, partial output (missing dimensions in a multi-dimension fan-out), or a background ID returned in place of findings.
+3. **Report the failure cause specifically** (usage limit, timeout, force-background without recovery, error message) when applicable.
 
 ## Failure Reporting
 

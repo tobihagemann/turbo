@@ -60,7 +60,7 @@ cat ".turbo/codex/$CODEX_TAG-ctx.txt" | codex exec -s read-only -o ".turbo/codex
 
 Parse the `session id:` line from the CLI output. This UUID is needed for follow-up turns.
 
-Run via the Bash tool (`timeout: 3600000`, do not set `run_in_background`) per turn.
+Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`) per turn.
 
 ## Step 3: Read and Evaluate Response
 

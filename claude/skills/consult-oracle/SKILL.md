@@ -45,7 +45,7 @@ Write a clear, specific problem description. Include what has already been tried
 
 ## Step 4: Run the Oracle
 
-Run via the Bash tool (`timeout: 3600000`, do not set `run_in_background`). The script loads `chatgptUrl` from `~/.turbo/config.json` automatically. Generate a random tag and persist the response:
+Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`). The script loads `chatgptUrl` from `~/.turbo/config.json` automatically. Generate a random tag and persist the response:
 
 ```bash
 ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p .turbo/oracle

@@ -38,4 +38,4 @@ codex review "Focus on security issues and error handling"
 ## Options
 
 - Use `--title` to add context when reviewing feature branches or PRs
-- Run via the Bash tool (`timeout: 3600000`, do not set `run_in_background`)
+- Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`)
