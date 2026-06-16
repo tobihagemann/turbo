@@ -57,12 +57,12 @@ If changes span multiple reviewable units, propose an ordered list of groups. Fo
 
 - Name and one-line description
 - File list (flag files with mixed-concern hunks)
-- Branch topology: stacked on the previous group (when this group depends on it) or independent (when it can stand alone)
+- Dependencies: which earlier groups, if any, this group builds on
 
-Use `request_user_input` to let the user choose whether to keep the changes together or split them.
+Use `request_user_input` to let the user choose whether to ship the changes together or split them up.
 
-- **Ship together** — run the `$ship` skill
-- **Split** — run the `$split-and-ship` skill
+- **Ship together** — ship all staged changes as one unit; run the `$ship` skill
+- **Split up** — ship each group as its own unit; run the `$split-and-ship` skill
 
 Then update or check the active plan and proceed to any remaining task.
 
