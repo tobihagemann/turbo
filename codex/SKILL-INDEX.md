@@ -48,7 +48,7 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 | [`$create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | |
 | [`$smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | `browser-use@openai-bundled` plugin, [`$investigate`](skills/investigate/SKILL.md) |
 | [`$preview`](skills/preview/SKILL.md) | Stand up the live app and hand it to the user to judge a UI/UX change firsthand | |
-| [`$exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios | [`$create-test-plan`](skills/create-test-plan/SKILL.md), `browser-use@openai-bundled` plugin, [`$investigate`](skills/investigate/SKILL.md) |
+| [`$exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios, plus usability observations | [`$create-test-plan`](skills/create-test-plan/SKILL.md), `browser-use@openai-bundled` plugin, [`$investigate`](skills/investigate/SKILL.md), [`$user-experience`](skills/user-experience/SKILL.md) |
 
 ## Dependencies and Tooling
 
@@ -103,6 +103,7 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 |---|---|---|
 | [`$code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | |
 | [`$frontend-design`](skills/frontend-design/SKILL.md) | Design guidelines for distinctive, production-grade frontend interfaces | |
+| [`$user-experience`](skills/user-experience/SKILL.md) | UX lens: whether a change serves the user's goal and whether its flow holds together (Understanding, Bridging, Flowing) | |
 | [`$github-voice`](skills/github-voice/SKILL.md) | Shared writing style rules for GitHub-facing output (PR comments, descriptions, titles) | |
 | [`$commit-rules`](skills/commit-rules/SKILL.md) | Shared commit message rules and technical constraints | |
 | [`$changelog-rules`](skills/changelog-rules/SKILL.md) | Shared changelog conventions and formatting rules | |

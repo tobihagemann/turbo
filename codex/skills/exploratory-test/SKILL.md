@@ -1,11 +1,21 @@
 ---
 name: exploratory-test
-description: "Execute multi-level exploratory testing of the app covering basic functionality, complex operations, adversarial testing, and cross-cutting scenarios. Deeper than $smoke-test. Use when the user asks to \"exploratory test\", \"test thoroughly\", \"test all scenarios\", \"deep test\", \"test edge cases\", \"test everything\", \"break it\", or \"find bugs by testing\"."
+description: "Execute multi-level exploratory testing of the app covering basic functionality, complex operations, adversarial testing, and cross-cutting scenarios, plus usability observations through a UX lens reported separately from defects. Deeper than $smoke-test. Use when the user asks to \"exploratory test\", \"test thoroughly\", \"test all scenarios\", \"deep test\", \"test edge cases\", \"test everything\", \"break it\", \"find bugs by testing\", \"test usability\", or \"check the UX while testing\"."
 ---
 
 # Exploratory Test
 
 Execute multi-level exploratory testing that goes beyond smoke testing to actively find bugs through escalating test scenarios.
+
+## Task Tracking
+
+At the start, use `update_plan` to track each step:
+
+1. Load or create test plan
+2. Determine testing approach
+3. Run `$user-experience` skill (when user-facing)
+4. Execute tests by level
+5. Report
 
 ## Step 1: Load or Create Test Plan
 
@@ -18,7 +28,11 @@ Check if `.turbo/test-plan.md` exists.
 
 Use the approach specified in the test plan. If the plan does not specify one, determine it using the same logic as `$create-test-plan` Step 3.
 
-## Step 3: Execute Tests by Level
+## Step 3: Run `$user-experience` Skill (When User-Facing)
+
+If the app has a user-facing surface (UI, screens, commands, messages, or any behavior a user sees or does), run the `$user-experience` skill to load the UX lens before executing tests, so usability concerns surface while interacting with the app. When it is unclear whether the surface is user-facing, use `request_user_input` to ask rather than skipping silently. Skip this step for test targets with no user-facing behavior (internal library or infrastructure).
+
+## Step 4: Execute Tests by Level
 
 Work through each level sequentially. Complete all tests in a level before moving to the next.
 
@@ -29,6 +43,7 @@ Work through each level sequentially. Complete all tests in a level before movin
 3. Capture the result (screenshot, output, or state observation)
 4. Compare against the expected outcome
 5. Record **PASS** or **FAIL** with details
+6. When the UX lens is loaded, note any usability observation it surfaces, kept separate from the PASS/FAIL verdict
 
 ### Level Progression
 
@@ -51,7 +66,7 @@ Launch the app. Use the `computer-use@openai-bundled` plugin to interact with th
 
 Run commands directly.
 
-## Step 4: Report
+## Step 5: Report
 
 Present results organized by level:
 
@@ -77,9 +92,18 @@ Exploratory Test Results:
 Overall: X/Y passed across all levels
 ```
 
+Report usability observations from the UX lens below the level results, separately from the PASS/FAIL defects. A scenario can pass every functional check and still surface a usability concern.
+
+```
+## Usability Observations
+- [UX] <observation> — names the UX context it touches (Understanding, Bridging, or Flowing) and the goal mismatch or friction it creates
+```
+
 For each failure, include the relevant screenshot, output, or state observation.
 
 Update `.turbo/test-plan.md` by checking off completed tests and annotating results.
+
+Then update or check the active plan and proceed to any remaining task.
 
 ## Rules
 
