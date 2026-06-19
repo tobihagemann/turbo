@@ -48,11 +48,11 @@ Invoke `/codex-exec` via the Skill tool in read-only mode with the assembled pro
 
 ## Step 4: Shape the Response
 
-Compare codex's output against the dimensions and structure requested in Step 2, then classify it into one of three branches:
+Compare codex's output against the reviewed material and the dimensions and structure requested in Step 2, then classify it into one of three branches:
 
 - **Codex returned the requested findings** — output them verbatim.
 - **Incomplete output** (any reason — partial fan-out with missing dimensions, mid-run truncation, sections cut off, sub-agent failure, single-dimension review that ends mid-finding, etc.) — output what came back verbatim, name what is missing relative to Step 2's request, then append: "**Action required:** Peer review returned partial output. Use the `AskUserQuestion` tool to ask the user whether to retry peer review now (transient codex errors like usage limits often clear within minutes) or proceed with the partial findings. State what is missing so the user can decide."
-- **No output / codex failed** — output a single notice stating the cause (usage limit, error, empty response), then append: "**Action required:** Peer review failed. Use the `AskUserQuestion` tool to ask the user whether to retry peer review now (transient codex errors like usage limits often clear within minutes) or proceed without peer review."
+- **No output / codex failed** — codex returned nothing, errored, hit a usage limit, or returned off-topic output that addresses code, files, or topics outside the reviewed material instead of the requested findings. Do not emit off-topic content as findings. Output a single notice stating the cause, then append: "**Action required:** Peer review failed. Use the `AskUserQuestion` tool to ask the user whether to retry peer review now (transient codex errors like usage limits often clear within minutes) or proceed without peer review."
 
 Do not synthesize peer findings locally to fill a gap. Peer review's value is independence; locally written findings labeled "peer" mislead the consumer.
 
