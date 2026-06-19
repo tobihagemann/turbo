@@ -126,6 +126,14 @@ For changes requiring manual intervention:
 
 If configuration format changed, read current config, transform to new format, write updated config.
 
+### Step 4: Sync Version-Pinned CI/Container References
+
+Some packages pin their version outside the manifest, beyond the package manager's reach, so a green local run hides the drift. For every upgraded package (major, minor, or patch), search CI and container configs for the old version string with `rg "<old-version>" .github Dockerfile* docker-compose* .devcontainer` and bump it in lockstep:
+
+- CI container images whose tag must track the package — e.g. a Playwright image tag kept in lockstep with the installed `@playwright/test` version.
+- Base images and tool versions in `Dockerfile`, `.devcontainer/`, and `docker-compose.yml`.
+- Pinned tool versions in CI setup steps (`actions/setup-node` `node-version`, `setup-python`, toolchain files).
+
 ## Phase 7: Verification
 
 Run the project's test, build, and lint commands. Detect which commands are available from the project's config files and scripts. Use project-level task runners when present (`Makefile`, `Taskfile`, `justfile`, npm scripts, etc.).
