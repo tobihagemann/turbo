@@ -2,12 +2,14 @@
 """Run the oracle CLI with configuration from ~/.turbo/config.json.
 
 Configuration:
-  oracle.chatgptUrl  ChatGPT URL (default: https://chatgpt.com/)
+  oracle.chatgptUrl     ChatGPT URL (default: https://chatgpt.com/)
+  oracle.chromeProfile  Chrome profile whose signed-in ChatGPT session is reused (default: Default)
 
 Usage: python3 scripts/run_oracle.py --prompt "<question>" --file <files...>
 
-All arguments are forwarded to the oracle CLI. --engine, --browser-inline-cookies-file,
-and --chatgpt-url are set automatically and should not be passed manually.
+All arguments are forwarded to the oracle CLI. --engine, --browser-chrome-profile,
+and --chatgpt-url are set automatically and should not be passed manually. The
+default model (GPT-5.5 Pro) and picker strategy are left to the oracle CLI.
 """
 
 import json, os, sys, subprocess
@@ -25,12 +27,12 @@ def load_config():
 config = load_config()
 
 chatgpt_url = config.get('chatgptUrl', 'https://chatgpt.com/')
-cookies_path = os.path.expanduser('~/.oracle/cookies.json')
+chrome_profile = config.get('chromeProfile', 'Default')
 
 cmd = [
-    'npx', '-y', '@steipete/oracle',
+    'npx', '-y', '@steipete/oracle@latest',
     '--engine', 'browser',
-    '--browser-inline-cookies-file', cookies_path,
+    '--browser-chrome-profile', chrome_profile,
     '--chatgpt-url', chatgpt_url,
     *sys.argv[1:],
 ]

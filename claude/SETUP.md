@@ -195,7 +195,7 @@ Use `AskUserQuestion` to ask whether the user wants to set up oracle. Explain th
 It requires:
 
 - **Chrome** with an active ChatGPT session
-- **Python 3** with the `cryptography` package (`pip3 install cryptography`)
+- **Node.js 24+** (required by the oracle CLI)
 - A `~/.turbo/config.json` file with oracle settings:
 
 ```json
