@@ -75,7 +75,7 @@ For each shell, identify the structural contract with the rest of the decomposit
 
 - **Produces** — What this shell creates that other shells (or the final system) can use. List concrete artifacts at the conceptual level: modules, types, endpoints, data models, UI screens, migration files. File paths are filled in at expansion time.
 - **Consumes** — What this shell depends on that must already exist. Either listed in a prior shell's Produces (and that producing shell named directly in this shell's frontmatter `depends_on`), or marked "from existing codebase" if it predates this decomposition. Every Consumes entry must be traceable to a source.
-- **Covers spec requirements** — Which `R<N>` IDs from the spec's `## Requirements` section this shell implements. The union of Covers across all shells must equal the full set of R-ids in the spec. Every R-id must appear in at least one shell's Covers. Write one R-id per bullet in the Step 4 template. For partial coverage of a single R-id, mark the entry `R<N> (partial: <what's deferred>)` and name the deferred work in that shell's Open Questions. A bare `R<N>` for partial coverage breaks the invariant. When a single R-id spans two shells — typically when one shell ships scaffolding or placeholders that a later shell fills — neither shell may claim it bare. Both shells use `R<N> (partial: <what's deferred to the other shell>)` with non-overlapping deferred slices. The bare form is reserved for an R-id that is fully satisfied as of the end of one shell. Do not invent variant annotations such as `(finished: ...)`, `(closing: ...)`, `(completes: ...)`, or any other annotation that tries to convey "this is the shell that ships the rest"; use the two-partials pattern instead.
+- **Covers spec requirements** — Which `R<N>` IDs from the spec's `## Requirements` section this shell implements. The union of Covers across all shells must equal the full set of R-ids in the spec. Every R-id must appear in at least one shell's Covers. Write one R-id per bullet in the Step 4 template. For partial coverage of a single R-id, mark the entry `R<N> (partial: <the slice this shell owns>)`. A bare `R<N>` is reserved for an R-id fully satisfied by one shell; a bare claim for partial coverage breaks the invariant. Two patterns spread an R-id across shells. **Split requirement:** the work partitions into pieces that together complete it, typically when one shell ships scaffolding or placeholders a later shell fills. Each contributing shell claims its owned slice; the owned slices must be non-overlapping and together complete the requirement, and none may claim it bare. **Cross-cutting obligation:** every (or several) shells must satisfy it independently, such as a per-shell quality gate. Each applicable shell claims its own instance as a partial; none may bare-claim it on one foundation shell, which would read done while later shells silently skip it. Do not invent variant annotations such as `(finished: ...)`, `(closing: ...)`, or `(completes: ...)`; use the owned-slice partial form.
 
 ### Shell Slug
 
@@ -149,7 +149,7 @@ depends_on: []
 
 - R<N>
 - R<N>
-- R<M> (partial: <what's deferred>)
+- R<M> (partial: <owned slice>)
 - ...
 
 ## Implementation Steps (High-Level)
@@ -211,6 +211,7 @@ Then use the TaskList tool and proceed to any remaining task.
 - Shell files are the only outputs. Do not modify the spec or project files.
 - Every Consumes entry must be backed by an explicit edge in the shell's frontmatter `depends_on` (or marked "from existing codebase").
 - The union of all Covers fields must equal the full set of R-ids in the spec's `## Requirements` section. Every R-id must appear in at least one shell's Covers.
-- Coverage notations: only bare `R<N>` (full, claimed exactly once) and `R<N> (partial: <what's deferred>)`. Do not invent variants like `(finished: ...)`.
-- When a requirement's work splits across two shells, use the two-partials pattern. Never co-occur a bare claim with a partial claim for the same R-id.
+- Coverage notations: only bare `R<N>` (full, claimed exactly once) and `R<N> (partial: <the slice this shell owns>)`. Do not invent variants like `(finished: ...)`.
+- When a requirement's work partitions across shells, each contributing shell claims its owned slice; owned slices must be non-overlapping and together complete it. Never co-occur a bare claim with a partial claim for the same R-id.
+- A cross-cutting obligation every (or several) shells must satisfy independently is claimed by each applicable shell as its own instance, never bare on a single shell.
 - Implementation Steps (High-Level) describe build work. Exclude `git commit`, `git push`, and PR creation.
