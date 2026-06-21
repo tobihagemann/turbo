@@ -60,6 +60,8 @@ cat ".turbo/codex/$CODEX_TAG-ctx.txt" | codex exec -s read-only -o ".turbo/codex
 
 Parse the `session id:` line from the CLI output. This UUID is needed for follow-up turns.
 
+The `session id:` line appears only in stdout chrome, never in the `-o` file. When a follow-up turn may be needed, do not pipe `codex exec` stdout through `head`/`tail` or any filter that drops early lines — that silently discards the session id and makes `resume` impossible. If stdout must be truncated, also `grep` for `session id:` so the id is always retained.
+
 Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`) per turn.
 
 ## Step 3: Read and Evaluate Response
