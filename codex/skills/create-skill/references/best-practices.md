@@ -799,6 +799,17 @@ Mentioning `$skill-name` injects the skill's SKILL.md as a contextual fragment f
 - ✗ **Avoid**: Mentioning `$skill-A` and `$skill-B` in the same step expecting both to do work concurrently.
 - ✓ **Good**: Issuing two `spawn_agent` calls, each instructing its sub-agent to read and follow its respective skill.
 
+#### Keep Parallel Review/Analysis Sub-Agents Read-Only on the Shared Tree
+
+When a skill fans out parallel sub-agents that read the same working tree (reviewers, analyzers, mappers), direct each sub-agent's prompt to treat the shared working tree and its git index as read-only. Concurrent sub-agents editing files or running git state-changing commands (`add`, `commit`, `checkout`, `restore`, `stash`, `reset`) on the tree they all share race each other and the orchestrator, and a botched restore can corrupt uncommitted work or poison the index.
+
+Give a sanctioned outlet rather than banning empirical work: a sub-agent that needs to verify a finding (such as a mutation experiment to confirm a test is non-vacuous) creates an isolated `git worktree`, experiments there, and discards it. Default to reading and reasoning; reach for a worktree only when empirical proof materially raises confidence.
+
+Put the constraint in the per-sub-agent dispatch instruction — the text that reaches the sub-agent — not only in the orchestrator's Rules section. An orchestrator-level "does not modify" line governs the orchestrator, not the sub-agents it launches.
+
+- ✗ **Avoid**: A Rules line "Analysis-only: does not modify source code" with no read-only constraint in the sub-agent prompts.
+- ✓ **Good**: "Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only; any empirical check runs in an isolated `git worktree` it discards afterward."
+
 ### Using request_user_input
 
 When a skill needs structured user input, reference the tool by name (`request_user_input`) instead of vague phrasing like "ask the user" or "wait for user confirmation." Naming the tool directly avoids ambiguity about how the question should be surfaced.

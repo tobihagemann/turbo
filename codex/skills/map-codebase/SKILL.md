@@ -31,7 +31,7 @@ Build a file manifest grouped by top-level source directory. This manifest is sh
 
 ## Step 2: Launch Inspection Agents
 
-Launch the 7 agents below in parallel. Each agent receives the scoped file manifest and its exploration brief.
+Launch the 7 agents below in parallel. Each agent receives the scoped file manifest and its exploration brief, and its prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
 
 ### Dimensions
 

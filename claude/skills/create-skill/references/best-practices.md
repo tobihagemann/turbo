@@ -814,6 +814,17 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 - ✗ **Avoid**: Launching Agent + Agent + Skill in one message expecting all three to do work concurrently.
 - ✓ **Good**: Launching three Agents in one message, each running its respective skill.
 
+#### Keep Parallel Review/Analysis Subagents Read-Only on the Shared Tree
+
+When a skill fans out parallel subagents that read the same working tree (reviewers, analyzers, mappers), direct each subagent's prompt to treat the shared working tree and its git index as read-only. Concurrent agents editing files or running git state-changing commands (`add`, `commit`, `checkout`, `restore`, `stash`, `reset`) on the tree they all share race each other and the orchestrator, and a botched restore can corrupt uncommitted work or poison the index.
+
+Give a sanctioned outlet rather than banning empirical work: a subagent that needs to verify a finding (such as a mutation experiment to confirm a test is non-vacuous) creates an isolated `git worktree`, experiments there, and discards it. Default to reading and reasoning; reach for a worktree only when empirical proof materially raises confidence.
+
+Put the constraint in the per-subagent dispatch instruction — the text that reaches the subagent — not only in the orchestrator's Rules section. An orchestrator-level "does not modify" line governs the orchestrator, not the subagents it launches.
+
+- ✗ **Avoid**: A Rules line "Analysis-only: does not modify source code" with no read-only constraint in the subagent prompts.
+- ✓ **Good**: "Every agent's prompt directs it to treat the shared working tree and its git index as read-only; any empirical check runs in an isolated `git worktree` it discards afterward."
+
 ### Dispatching Bash Tool Calls
 
 When a skill's Bash invocation needs non-default parameters (`timeout`, `dangerouslyDisableSandbox`), specify them in a parenthetical the same way as for Agent calls. Vague phrasing like "use a generous timeout" leaves Claude to guess which timeout (Bash tool parameter vs. shell `timeout` command) and what value.

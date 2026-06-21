@@ -44,7 +44,7 @@ If missing, use `request_user_input` to ask whether to create one before proceed
 
 ## Step 3: Launch All Analysis Agents
 
-Launch the analysis agents below in parallel. Each sub-agent's prompt instructs it to invoke its assigned skill by reading and following the installed skill instructions, with the partition's file list passed in for partitioned skills.
+Launch the analysis agents below in parallel. Each sub-agent's prompt instructs it to invoke its assigned skill by reading and following the installed skill instructions, with the partition's file list passed in for partitioned skills, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the sub-agent discards afterward.
 
 Expect (6 partitioned rows × number of partitions, plus 5 project-wide rows) Codex sub-agent calls total. State the count explicitly before emitting the batch.
 

@@ -33,7 +33,7 @@ Once scope is determined:
 
 ## Step 2: Run Debt Analysis Agents
 
-Launch the agents below in parallel with `spawn_agent` / `wait_agent` using inherited model defaults. Each sub-agent's prompt instructs it to read [references/debt-reviewer.md](references/debt-reviewer.md) for the debt taxonomy, detection heuristics, the impact/effort rubric, and the finding output format before scanning.
+Launch the agents below in parallel with `spawn_agent` / `wait_agent` using inherited model defaults. Each sub-agent's prompt instructs it to read [references/debt-reviewer.md](references/debt-reviewer.md) for the debt taxonomy, detection heuristics, the impact/effort rubric, and the finding output format before scanning, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the sub-agent discards afterward.
 
 Expect (one per partition, plus one project-wide architecture agent) Codex sub-agent calls total. State the count explicitly before emitting the batch.
 

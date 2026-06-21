@@ -60,7 +60,7 @@ Read the reference file for the resolved type:
 
 Skip peer review when the caller asked (e.g., "without peer review", "no peer", "internal only"). For shells, the internal review focuses on structural wiring and skips the project context read.
 
-Run the review branches independently. Launch them with `spawn_agent` / `wait_agent` using inherited model defaults. That is two branches when peer review is active (one internal + one peer), or one branch when peer review is skipped.
+Run the review branches independently. Launch them with `spawn_agent` / `wait_agent` using inherited model defaults. That is two branches when peer review is active (one internal + one peer), or one branch when peer review is skipped. Every branch prompt must direct it to treat the shared working tree and its git index as read-only and to assess findings by reading and reasoning. For a check that genuinely requires mutating code (such as testing whether a finding holds), the branch works in an isolated `git worktree` it discards afterward.
 
 - **Internal branch:** Read the artifact text, the reference file content, project context (`AGENTS.md` and relevant codebase files), then apply criteria and return findings in the output format below.
 - **Peer review branch (unless skipping):** Run the `$peer-review` skill with a request describing: (a) the artifact under review; (b) the criteria live in `~/.agents/skills/review-plan/references/<type>-review.md` for the resolved type from Step 1 — Claude should read that file directly and use its priority scale; (c) the Overall Verdict should use the `Readiness: <ready | needs revision>` label. The branch prompt must also state explicitly that the sub-agent's final message must contain the verbatim findings text `$peer-review` produced.

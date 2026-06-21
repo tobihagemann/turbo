@@ -44,7 +44,7 @@ If missing, use `AskUserQuestion` to ask whether to create one before proceeding
 
 ## Step 3: Launch All Analysis Agents
 
-Use the Agent tool to launch all analysis agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`. Each Agent's prompt instructs the subagent to invoke its assigned skill via the Skill tool, with the partition's file list passed in for partitioned skills.
+Use the Agent tool to launch all analysis agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`. Each Agent's prompt instructs the subagent to invoke its assigned skill via the Skill tool, with the partition's file list passed in for partitioned skills, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
 
 Expect (6 partitioned rows × number of partitions, plus 5 project-wide rows) Agent tool calls total. State the count explicitly when emitting the calls.
 

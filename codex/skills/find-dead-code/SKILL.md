@@ -52,7 +52,7 @@ If no CLI tool is installed, skip to Step 3. Do not ask the user to install anyt
 
 ## Step 3: Test-Only Analysis — Parallel Subagents (Core)
 
-This is the primary analysis. Launch one subagent per top-level source directory from Step 1 in a single assistant message so they run concurrently. State the count explicitly when emitting the calls.
+This is the primary analysis. Launch one subagent per top-level source directory from Step 1 in a single assistant message so they run concurrently. State the count explicitly when emitting the calls. Each subagent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the subagent discards afterward.
 
 ### Subagent Strategy
 
