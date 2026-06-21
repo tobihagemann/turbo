@@ -85,9 +85,9 @@ Example: spec slug `photo-sorter-v2`, Shell 3 titled "Build duplicate detection"
 
 ### Recommend and Confirm Shell Count
 
-Form a recommended count from the seams and combination constraints above. The trade-off: more shells each cost a fresh-session handoff (lost in-memory context, a repeated pattern survey, an extra `$pick-next-shell` round); fewer shells risk overloading a session. Land the recommendation where that balance falls: lean toward fewer when the seams are weak, toward more when a strong seam or session overload pushes the work apart.
+Form a recommended count from the seams and combination constraints above. The trade-off: more shells each cost a fresh-session handoff (lost in-memory context, a repeated pattern survey, an extra `$pick-next-shell` round) and a full review pass of their own; fewer shells risk overloading a session. Land the recommendation where that balance falls: lean toward fewer when the seams are weak, toward more when a strong seam or session overload pushes the work apart. When the call is close, round down.
 
-Output the recommendation as text: the recommended count, a one-line scope for each proposed shell, and a line or two on why that count over its neighbors. Then use `request_user_input` to have the user set the final count. Offer the recommended count first, marked "(Recommended)", alongside 1-2 alternative counts; the auto-appended "Other" lets the user type any count.
+Output the recommendation as text: the recommended count, a one-line scope for each proposed shell, and a line or two on why that count over its neighbors. Then use `request_user_input` to have the user set the final count. Offer the recommended count first, marked "(Recommended)", alongside 1-2 alternative counts; when the recommended count is 2 or more, include at least one option below it so the leaner choice is always on offer; the auto-appended "Other" lets the user type any count.
 
 If the user picks a different count, re-group to match it: merge adjacent shells to reduce, or split at a seam to raise, keeping combined pieces together. Carry the confirmed count into the rest of the decomposition.
 
