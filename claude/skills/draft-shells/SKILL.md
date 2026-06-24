@@ -190,7 +190,7 @@ If a shell has no Open Questions, include the section with "None" so the structu
 
 ## Step 5: Present Summary
 
-Present a brief summary of the decomposition: number of shells, a one-line description of each shell's scope, and any assumptions made about ambiguities. When the project delivers user-facing value, also present a short list of user stories capturing what users gain from it. Skip the stories for work with no user-facing gain, such as internal refactors or infrastructure. Fit both to the decomposition rather than a fixed template.
+Present a brief summary of the decomposition: number of shells, a one-line description of each shell's scope, and any assumptions made about ambiguities. When the project delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the decomposition rather than a fixed template.
 
 Then use `AskUserQuestion` to offer two paths:
 

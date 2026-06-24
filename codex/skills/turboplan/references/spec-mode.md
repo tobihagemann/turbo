@@ -42,7 +42,7 @@ Run the `$self-improve` skill to compound planning learnings.
 
 ## Phase 6: Run `$pick-next-shell` Skill
 
-Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. When the project delivers user-facing value, also present a short list of user stories capturing what users gain from it. Skip the stories for work with no user-facing gain, such as internal refactors or infrastructure. Fit both to the artifacts rather than a fixed template.
+Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. When the project delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the artifacts rather than a fixed template.
 
 Then run the `$pick-next-shell` skill.
 

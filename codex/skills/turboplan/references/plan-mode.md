@@ -30,7 +30,7 @@ Update the plan's YAML frontmatter to `status: ready`.
 
 ## Phase 5: Run `$implement-plan` Skill
 
-Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers user-facing value, also present a short list of user stories capturing what someone gains from it. Skip the stories for changes with no user-facing gain, such as internal refactors or infrastructure work. Fit both to the plan rather than a fixed template.
+Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
 Then run the `$implement-plan` skill with the plan path from Phase 1.
 

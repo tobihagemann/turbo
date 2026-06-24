@@ -155,7 +155,7 @@ If every item passes, proceed to Step 6. If any item fails, revise the plan to c
 
 ## Step 6: Present Summary and Gate
 
-Present a brief summary of the expanded plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. When the plan delivers user-facing value, also present a short list of user stories capturing what someone gains from it. Skip the stories for changes with no user-facing gain, such as internal refactors or infrastructure work. Fit both to the plan rather than a fixed template.
+Present a brief summary of the expanded plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
 Then use `request_user_input` to offer two paths:
 
