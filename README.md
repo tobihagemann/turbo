@@ -61,16 +61,15 @@ The other core piece is [`/self-improve`](claude/skills/self-improve/SKILL.md), 
 
 Turbo amplifies your existing process. It shines when your project has the right infrastructure in place:
 
-- **Tests** — The [`/polish-code`](claude/skills/polish-code/SKILL.md) loop inside [`/finalize`](claude/skills/finalize/SKILL.md) runs your test suite and reviews test coverage gaps. Without tests, there's no safety net. If your project doesn't have automated tests, [`/smoke-test`](claude/skills/smoke-test/SKILL.md) can fill the gap by launching your app and verifying changes manually (it runs in the same loop), but real tests are always better. See [Browser and UI Testing](#browser-and-ui-testing) for the tools that power browser and native app verification.
+- **Tests** — The [`/polish-code`](claude/skills/polish-code/SKILL.md) loop inside [`/finalize`](claude/skills/finalize/SKILL.md) runs your test suite and reviews coverage gaps. Without tests, there's no safety net. If your project has none, [`/smoke-test`](claude/skills/smoke-test/SKILL.md) can fill the gap by launching your app and verifying changes manually in the same loop, but real tests are always better. See [Browser and UI Testing](#browser-and-ui-testing) for the tools behind that verification.
 - **Linters and formatters** — The [`/polish-code`](claude/skills/polish-code/SKILL.md) loop runs your formatter and linter before code review. If you don't have one, style issues slip through.
-- **Pre-commit hooks** — [`/finalize`](claude/skills/finalize/SKILL.md) ends by running [`/ship`](claude/skills/ship/SKILL.md) (or [`/split-and-ship`](claude/skills/split-and-ship/SKILL.md) when changes split into multiple groups), which commits your changes and triggers any pre-commit hooks you have configured. `/ship` fixes hook failures and retries the commit. If your project uses tools like `husky`, `lint-staged`, or `pre-commit`, Turbo works with them automatically.
-- **Dead code analysis** — [`/find-dead-code`](claude/skills/find-dead-code/SKILL.md) (standalone skill, not part of [`/finalize`](claude/skills/finalize/SKILL.md)) identifies unused code via parallel analysis, but it's even better when your project already has tools like `knip`, `vulture`, or `periphery` integrated.
-- **Technical debt assessment** — [`/assess-technical-debt`](claude/skills/assess-technical-debt/SKILL.md) (standalone skill) surfaces the big-refactor debt other reviews keep out of scope (complexity hotspots, deprecated APIs, duplication, architecture rot), ranked by impact and effort into `.turbo/technical-debt.md` with an interactive HTML version. It leans on complexity and duplication analyzers like `lizard` or `jscpd` when they're installed.
+- **Pre-commit hooks** — When [`/finalize`](claude/skills/finalize/SKILL.md) commits, it triggers any pre-commit hooks you have configured and fixes hook failures before retrying. If your project uses tools like `husky`, `lint-staged`, or `pre-commit`, Turbo works with them automatically.
+- **Existing analysis tools** — Skills like [`/find-dead-code`](claude/skills/find-dead-code/SKILL.md) and [`/assess-technical-debt`](claude/skills/assess-technical-debt/SKILL.md) lean on integrated tools (`knip`, `vulture`, `periphery`, `lizard`, `jscpd`) when your project already has them.
 - **Dependencies** — [GitHub CLI](https://cli.github.com/) powers PR operations. The Claude edition uses Codex for peer review; the Codex edition uses Claude for peer review. Everything works without peer review, but the full pipeline is better with it. See the edition setup guides for details.
 
 ## Who It's For
 
-The target audience is experienced developers who want to move faster without sacrificing quality. That said, beginners are welcome too. Turbo is a great way to learn how a professional dev workflow looks. Just don't blindly trust outputs. Review what Claude produces, understand _why_ it made those choices, and build your own judgment alongside it.
+Turbo is for experienced developers who want to move faster without sacrificing quality. That said, beginners are welcome too. Turbo is a great way to learn how a professional dev workflow looks. Just don't blindly trust outputs. Review what Claude produces, understand _why_ it made those choices, and build your own judgment alongside it.
 
 If your plan is vague, your architecture is unclear, and you skip every review finding, Turbo won't save you. Garbage in, garbage out.
 
@@ -92,7 +91,7 @@ If Turbo has helped you ship faster and you're so inclined, I'd greatly apprecia
 
 ## The Turboplan Pipeline
 
-Claude Code's built-in plan mode is a starting point, but it tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny. It can also feel too restrictive for iterative planning. Turbo replaces raw plan mode with [`/turboplan`](claude/skills/turboplan/SKILL.md) as a universal entry point. You always start with `/turboplan` — whether your task is a single-session change or a multi-subsystem project. `/turboplan` analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality. `/turboplan` does not require plan mode to be active. Direct work chains straight through [`/implement`](claude/skills/implement/SKILL.md) to [`/finalize`](claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](claude/skills/implement-plan/SKILL.md) session, and spec-mode projects halt again after [`/pick-next-shell`](claude/skills/pick-next-shell/SKILL.md) before implementation.
+Claude Code's built-in plan mode tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny, and it can feel too restrictive for iterative planning. Turbo replaces it with [`/turboplan`](claude/skills/turboplan/SKILL.md) as a universal entry point: whether your task is a single-session change or a multi-subsystem project, you start there. It analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality, with no need for plan mode to be active. Direct work chains straight through [`/implement`](claude/skills/implement/SKILL.md) to [`/finalize`](claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](claude/skills/implement-plan/SKILL.md) session, and spec-mode projects halt again after [`/pick-next-shell`](claude/skills/pick-next-shell/SKILL.md) before implementation.
 
 ![How Turboplan Connects](assets/how-turboplan-connects.svg)
 
@@ -126,13 +125,19 @@ You then drive implementation one shell at a time. [`/pick-next-shell`](claude/s
 
 ## Self-Improvement
 
-[`/self-improve`](claude/skills/self-improve/SKILL.md) is a core skill that makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](claude/skills/finalize/SKILL.md) Phase 4). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Over time, Turbo gets better at your specific project.
+[`/self-improve`](claude/skills/self-improve/SKILL.md) makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](claude/skills/finalize/SKILL.md) Phase 4). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Over time, Turbo gets better at your specific project.
 
-[`/note-improvement`](claude/skills/note-improvement/SKILL.md) captures improvement opportunities that come up during work but are out of scope: code review findings you chose to skip, refactoring ideas, missing tests. These get tracked in `.turbo/improvements.md` so they don't get lost. Since `.turbo/` is gitignored, it doesn't clutter the repo. Each entry is tagged with a type — `direct`, `investigate`, or `plan` — so it can be routed correctly later. When you're ready to act on them, [`/implement-improvements`](claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, filters stale items, and runs one lane per session: direct entries go through [`/implement`](claude/skills/implement/SKILL.md) for a clear-scope fix, investigate entries run [`/investigate`](claude/skills/investigate/SKILL.md) (the lane instructs it to always run [`/consult-codex`](claude/skills/consult-codex/SKILL.md)) and then [`/implement`](claude/skills/implement/SKILL.md), and plan entries go through [`/turboplan`](claude/skills/turboplan/SKILL.md).
+[`/note-improvement`](claude/skills/note-improvement/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests. They're tracked in `.turbo/improvements.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
+
+When you're ready to act, [`/implement-improvements`](claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
+
+- **`direct`** → [`/implement`](claude/skills/implement/SKILL.md) for a clear-scope fix
+- **`investigate`** → [`/investigate`](claude/skills/investigate/SKILL.md), then [`/implement`](claude/skills/implement/SKILL.md)
+- **`plan`** → [`/turboplan`](claude/skills/turboplan/SKILL.md)
 
 ## Out-of-Loop Pipelines
 
-Two pipelines run alongside the main loop instead of inside it. They are not part of plan-implement-finalize, but they share the same composition style.
+Two pipelines run alongside the main loop rather than inside it. They share the same composition style as the plan-implement-finalize core.
 
 ### Project-Wide Audit
 
