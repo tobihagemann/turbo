@@ -777,7 +777,7 @@ The right shape is a single skill that emits N+1 Agent tool calls in one message
 
 ### Dispatching Agent Tool Calls
 
-When a skill spawns subagents, always set `model` and `run_in_background` explicitly in a parenthetical. Omitting `run_in_background` lets the harness auto-decide, and it backgrounds the agent by default — so foreground parallelism only happens when each call passes `run_in_background: false` explicitly. Vague phrasing like "launch concurrently" or "in parallel" produces the same accidental backgrounding.
+When a skill spawns subagents, set `model` and `run_in_background` explicitly in a parenthetical, and state in words that the agents run **in the foreground**. Omitting `run_in_background` lets the harness auto-decide, and it backgrounds the agent by default — so foreground execution only happens when each call passes `run_in_background: false` explicitly. The executing model treats a bare `run_in_background: false` as a redundant default and silently drops it (keeping `model: "opus"` while discarding the flag), so pair the value with its reason ("omitting it backgrounds the agent") and the natural-language intent ("run in the foreground"). The two signals together keep the flag from being dropped. Vague phrasing like "launch concurrently" or "in parallel" produces accidental backgrounding.
 
 Multiple foreground Agent tool calls in a single message already run in parallel. Prefer foreground agents over background agents:
 
@@ -786,7 +786,7 @@ Multiple foreground Agent tool calls in a single message already run in parallel
 
 - ✗ **Avoid**: "Launch all four agents concurrently in a single message."
 - ✗ **Avoid**: "Spawn a subagent to review the output."
-- ✓ **Good**: "Launch all four agents in a single message (`model: "opus"`, `run_in_background: false`)."
+- ✓ **Good**: "Launch all four agents in a single message, in the foreground (`model: "opus"`, `run_in_background: false`; omitting it backgrounds the agent)."
 
 #### Phrase Multi-Agent Parallel Dispatch Imperatively
 
@@ -794,7 +794,7 @@ Tool calls within a single assistant message run concurrently. Tool calls across
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
 
-> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and sets `run_in_background: false`.
+> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently in the foreground. Each Agent call uses `model: "opus"` and sets `run_in_background: false` explicitly; omitting it backgrounds the agent.
 
 State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one Agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
 
