@@ -777,16 +777,16 @@ The right shape is a single skill that emits N+1 Agent tool calls in one message
 
 ### Dispatching Agent Tool Calls
 
-When a skill spawns subagents, always specify `model` and `run_in_background` explicitly in a parenthetical. Vague phrasing like "launch concurrently" or "in parallel" causes flaky behavior where Claude sometimes sets `run_in_background: true` and sometimes doesn't.
+When a skill spawns subagents, always set `model` and `run_in_background` explicitly in a parenthetical. Omitting `run_in_background` lets the harness auto-decide, and it backgrounds the agent by default — so foreground parallelism only happens when each call passes `run_in_background: false` explicitly. Vague phrasing like "launch concurrently" or "in parallel" produces the same accidental backgrounding.
 
 Multiple foreground Agent tool calls in a single message already run in parallel. Prefer foreground agents over background agents:
 
-- **Foreground parallel** (recommended): Multiple Agent calls in one message run concurrently and return all results in the same turn. Reliable and simple.
+- **Foreground parallel** (recommended): Multiple Agent calls in one message, each with `run_in_background: false`, run concurrently and return all results in the same turn. Reliable and simple.
 - **Background** (`run_in_background: true`): The model must later retrieve results via `TaskOutput` or `SendMessage`, which frequently fails with "Invalid tool parameters" — causing agent output to be silently lost. Only use background agents when the main thread has genuinely independent work to do and does not need the agent's output to proceed.
 
 - ✗ **Avoid**: "Launch all four agents concurrently in a single message."
 - ✗ **Avoid**: "Spawn a subagent to review the output."
-- ✓ **Good**: "Launch all four agents in a single message (`model: "opus"`, do not set `run_in_background`)."
+- ✓ **Good**: "Launch all four agents in a single message (`model: "opus"`, `run_in_background: false`)."
 
 #### Phrase Multi-Agent Parallel Dispatch Imperatively
 
@@ -794,7 +794,7 @@ Tool calls within a single assistant message run concurrently. Tool calls across
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
 
-> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`.
+> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and sets `run_in_background: false`.
 
 State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one Agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
 
@@ -833,7 +833,7 @@ When a skill's Bash invocation needs non-default parameters (`timeout`, `dangero
 - ✗ **Avoid**: "Wrap the command in a shell `timeout` of 1 hour: `timeout 3600 X`."
 - ✓ **Good**: "Run X via the Bash tool (`timeout: 600000`, do not set `run_in_background`)."
 
-The parenthetical names parameters and values directly, parallel to (`model: "opus"`, do not set `run_in_background`) for Agent calls. The Bash `timeout` maximum (600000 ms) is enforced: a larger value is not honored — the harness backgrounds the call immediately and hard-kills it at 600s, truncating output. Cap at `timeout: 600000`; if the command overruns that window, the harness force-backgrounds it and it runs to completion, recoverable by reading its output file. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
+The parenthetical names parameters and values directly, parallel to (`model: "opus"`, `run_in_background: false`) for Agent calls. Unlike the Agent tool, the Bash tool stays foreground when `run_in_background` is omitted, so "do not set `run_in_background`" is the correct foreground phrasing for Bash calls. The Bash `timeout` maximum (600000 ms) is enforced: a larger value is not honored — the harness backgrounds the call immediately and hard-kills it at 600s, truncating output. Cap at `timeout: 600000`; if the command overruns that window, the harness force-backgrounds it and it runs to completion, recoverable by reading its output file. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
 
 ### Using AskUserQuestion
 

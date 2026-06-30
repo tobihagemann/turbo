@@ -17,7 +17,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 
 ## Step 1: Launch All Agents
 
-Use the Agent tool to launch all 6 agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`. Each Composed Skills agent invokes its assigned skill via the Skill tool; each Inline Agent follows its exploration brief directly.
+Use the Agent tool to launch all 6 agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and sets `run_in_background: false`. Each Composed Skills agent invokes its assigned skill via the Skill tool; each Inline Agent follows its exploration brief directly.
 
 ### Composed Skills
 

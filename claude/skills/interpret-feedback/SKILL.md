@@ -19,7 +19,7 @@ For each item, collect whatever context is available: code snippets, diffs, surr
 
 ## Step 2: Run Two Interpretations in Parallel
 
-Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`. That is two Agent tool calls total.
+Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and sets `run_in_background: false`. That is two Agent tool calls total.
 
 ### Internal Interpretation
 

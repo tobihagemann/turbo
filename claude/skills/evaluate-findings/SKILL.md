@@ -59,7 +59,7 @@ After the initial assessment, challenge uncertain findings from a different angl
 
 Spawn when any finding has **Medium** or **Low** confidence. Send only those findings to the subagent. High-confidence findings pass through unchallenged. Skip this step entirely if all findings are High confidence.
 
-Launch a single subagent (`model: "opus"`, do not set `run_in_background`). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the subagent to challenge each finding: try to prove it wrong, or confirm it with evidence.
+Launch a single subagent (`model: "opus"`, `run_in_background: false`). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the subagent to challenge each finding: try to prove it wrong, or confirm it with evidence.
 
 The subagent picks research tools based on claim type:
 

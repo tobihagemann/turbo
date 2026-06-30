@@ -33,7 +33,7 @@ Once scope is determined:
 
 ## Step 2: Run Debt Analysis Agents
 
-Use the Agent tool to launch all agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`. Each Agent's prompt instructs it to read [references/debt-reviewer.md](references/debt-reviewer.md) for the debt taxonomy, detection heuristics, the impact/effort rubric, and the finding output format before scanning, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
+Use the Agent tool to launch all agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and sets `run_in_background: false`. Each Agent's prompt instructs it to read [references/debt-reviewer.md](references/debt-reviewer.md) for the debt taxonomy, detection heuristics, the impact/effort rubric, and the finding output format before scanning, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
 
 Expect (one per partition, plus one project-wide architecture agent) Agent tool calls total. State the count explicitly when emitting the calls.
 

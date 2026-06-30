@@ -39,12 +39,12 @@ Check if `.turbo/threat-model.md` exists. If it does, continue to Step 3.
 
 If missing, use `AskUserQuestion` to ask whether to create one before proceeding. The security review benefits from threat model context, but creating one adds time.
 
-- **Yes** — launch an Agent tool call (`model: "opus"`, do not set `run_in_background`) whose prompt instructs it to invoke the `/create-threat-model` skill via the Skill tool. Wait for completion before continuing.
+- **Yes** — launch an Agent tool call (`model: "opus"`, `run_in_background: false`) whose prompt instructs it to invoke the `/create-threat-model` skill via the Skill tool. Wait for completion before continuing.
 - **No** — continue without a threat model.
 
 ## Step 3: Launch All Analysis Agents
 
-Use the Agent tool to launch all analysis agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and does not set `run_in_background`. Each Agent's prompt instructs the subagent to invoke its assigned skill via the Skill tool, with the partition's file list passed in for partitioned skills, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
+Use the Agent tool to launch all analysis agents below in a single assistant message so they run concurrently. Each Agent call uses `model: "opus"` and sets `run_in_background: false`. Each Agent's prompt instructs the subagent to invoke its assigned skill via the Skill tool, with the partition's file list passed in for partitioned skills, and to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
 
 Expect (6 partitioned rows × number of partitions, plus 5 project-wide rows) Agent tool calls total. State the count explicitly when emitting the calls.
 
