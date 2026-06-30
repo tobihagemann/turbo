@@ -31,7 +31,7 @@ Build a file manifest grouped by top-level source directory. This manifest is sh
 
 ## Step 2: Launch Inspection Agents
 
-Use the Agent tool to launch all 7 agents below in a single assistant message so they run concurrently in the foreground. Each Agent call uses `model: "opus"` and sets `run_in_background: false` explicitly; omitting it backgrounds the agent. Each agent receives the scoped file manifest and its exploration brief, and its prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
+Use the Agent tool to launch all 7 agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"`. Each agent receives the scoped file manifest and its exploration brief, and its prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the agent discards afterward.
 
 ### Dimensions
 

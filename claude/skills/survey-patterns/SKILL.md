@@ -18,7 +18,7 @@ State the task back in one sentence to confirm scope before searching.
 
 ## Step 2: Spawn Pattern Survey Subagent
 
-Spawn a single subagent in the foreground (`model: "opus"`, `run_in_background: false`; omitting it backgrounds the agent). The subagent's prompt must include:
+Spawn a single subagent in the foreground (`model: "opus"`). The subagent's prompt must include:
 
 1. The confirmed task description from Step 1
 2. An instruction to read [references/pattern-surveyor.md](references/pattern-surveyor.md) for survey guidelines, categories, and output format before searching
