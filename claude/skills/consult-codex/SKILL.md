@@ -62,7 +62,7 @@ Parse the `session id:` line from the CLI output. This UUID is needed for follow
 
 The `session id:` line appears only in stdout chrome, never in the `-o` file. When a follow-up turn may be needed, do not pipe `codex exec` stdout through `head`/`tail` or any filter that drops early lines — that silently discards the session id and makes `resume` impossible. If stdout must be truncated, also `grep` for `session id:` so the id is always retained.
 
-Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`) per turn.
+Run via the Bash tool as a foreground call (`timeout: 600000`, the Bash maximum; do not set `run_in_background`) per turn. A larger timeout is not honored: the harness backgrounds the call immediately and hard-kills codex at 600s, truncating its output. If a consult outlives a valid timeout, the harness force-backgrounds it and the run continues to completion — recover the answer by reading the `-o` file, then reading it again once the `<task-notification>` reports completion. For a backgrounded run the `session id:` is in the task's stdout output file rather than the immediate tool result, so `grep` that file for it when a follow-up turn is needed. Never wait with `Monitor`, and never return the task ID or an interim file snapshot as the result — each is a false-empty return.
 
 ## Step 3: Read and Evaluate Response
 
