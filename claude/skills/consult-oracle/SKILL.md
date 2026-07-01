@@ -42,6 +42,20 @@ ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p .turbo/oracle
 python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output ".turbo/oracle/$ORACLE_TAG.txt"
 ```
 
-## Step 4: Synthesize
+## Step 4: Follow Up
+
+Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Run via the Bash tool with the same settings as Step 3 (`timeout: 600000`, do not set `run_in_background`):
+
+```bash
+python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output ".turbo/oracle/$ORACLE_TAG.txt"
+```
+
+Find the slug with `python3 scripts/run_oracle.py status` (the Slug column; follow-ups nest under their parent session) or from the directory names under `~/.oracle/sessions/`.
+
+Reuse the chat for a multi-turn review of the same code; start a fresh session (Step 3) for an unrelated question. Cap at 5 turns to prevent runaway conversations.
+
+When the reviewed code changed since the prior turn, re-attach the changed files (`--file <paths>`) or a fresh diff, or state what changed. Otherwise the model reasons from the earlier attachments and flags already-fixed issues as live contradictions.
+
+## Step 5: Synthesize
 
 Read the response from `.turbo/oracle/$ORACLE_TAG.txt`. Summarize the key insights from the consultation. Cross-reference suggestions with official docs and peer open-source implementations before applying. Oracle suggestions are starting points, not guaranteed solutions.
