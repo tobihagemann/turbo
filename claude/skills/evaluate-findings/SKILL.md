@@ -9,6 +9,8 @@ Assess external feedback (code reviews, AI suggestions, PR comments) with advers
 
 ## Step 1: Assess Each Finding
 
+If you already assessed a finding earlier in this session and recorded a verdict of Skip or Escalate — for example when an iterating loop re-runs review and the same finding resurfaces — do not re-adjudicate it from scratch. When the re-reported finding matches one you already judged (same location and substance) and presents no new evidence beyond what your recorded reason already accounts for, keep that verdict and reason without re-reading the code, re-verifying, or routing it to the Devil's Advocate in Step 2. Assess fresh only when the finding raises materially new evidence, or when you have not judged it before in this session.
+
 For each finding:
 
 1. **Read the referenced code** at the mentioned location — include the full function or logical block, not just the flagged line
