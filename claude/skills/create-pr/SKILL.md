@@ -19,10 +19,16 @@ Draft a title and description, embedding any diagrams in the body. Output the dr
 
 ## Step 3: Confirm and Create
 
-Use `AskUserQuestion` for confirmation only. Write the drafted body to `.turbo/pr/body.md` with the Write tool, then create the PR with `gh pr create --body-file`:
+Use `AskUserQuestion` for confirmation only. Generate a random tag so the body file is unique across sessions:
 
 ```bash
-gh pr create --title "<TITLE>" --body-file .turbo/pr/body.md
+head -c 4 /dev/urandom | xxd -p
+```
+
+Write the drafted body to `.turbo/pr/<tag>-body.md` (using the printed tag) with the Write tool, then create the PR with `gh pr create --body-file`:
+
+```bash
+gh pr create --title "<TITLE>" --body-file .turbo/pr/<tag>-body.md
 ```
 
 Do not set `--assignee` unless the user explicitly asks to assign someone.

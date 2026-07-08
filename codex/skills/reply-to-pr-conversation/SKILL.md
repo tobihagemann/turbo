@@ -51,12 +51,12 @@ Then use `request_user_input` to ask whether to post. Offer:
 
 ## Step 4: Post the Comment
 
-Auto-detect owner, repo, and PR number from the current branch if not provided. Write the drafted body to `.turbo/pr/comment.md` with `apply_patch`, then post via the issue-comments REST endpoint:
+Auto-detect owner, repo, and PR number from the current branch if not provided. Write the drafted body to `.turbo/pr/<pr_number>-comment.md` with `apply_patch`, then post via the issue-comments REST endpoint:
 
 ```bash
 gh api -X POST \
   "/repos/<owner>/<repo>/issues/<pr_number>/comments" \
-  -F body=@.turbo/pr/comment.md
+  -F body=@.turbo/pr/<pr_number>-comment.md
 ```
 
 Report the posted comment's URL.
