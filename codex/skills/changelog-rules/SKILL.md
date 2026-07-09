@@ -69,6 +69,14 @@ Entries describe what changed **for the user**. Focus on outcomes and impact.
 - Describe the experience, not the mechanism.
 - When a change prevents a problem or protects the user, say what it does for them.
 
+### Net Delta from the Last Release
+
+Entries describe the change relative to the last released version.
+
+- Watch for entries that only make sense against an unreleased build, like "no longer does X" or "removed the Y glitch" where X or Y never shipped.
+- When finalizing a release, review every entry and rewrite or collapse anything a user of the previous release would not observe.
+- Keep one entry per net user-visible change.
+
 ## PR and Issue References
 
 Reference both the PR and any associated GitHub issue in each entry using inline parenthetical format with linked numbers in ascending order.
