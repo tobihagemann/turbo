@@ -108,6 +108,7 @@ Then update or check the active plan and proceed to any remaining task.
 ## Rules
 
 - Always clean up: close browser sessions, stop dev servers started by this skill.
+- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), and use temporary directories for scratch state.
 - Never modify application code. This skill is read-only verification. Report failures without attempting to fix them.
 - If the dev server fails to start, report the error and stop.
 - Tail app logs in a background shell for errors or warnings while running tests, so backend failures surface alongside test observations.

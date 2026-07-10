@@ -122,9 +122,11 @@ Then update or check the active plan and proceed to any remaining task.
 ## Rules
 
 - Always clean up: close browser sessions, stop dev servers started by this skill.
+- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), and use temporary directories for scratch state.
 - Never modify code. This skill is read-only verification. If a test fails, report the failure — do not attempt to fix it.
 - If the dev server fails to start, report the error and stop.
 - Keep tests focused on the determined scope.
+- When the scope has an interactive surface, drive that surface directly — a CLI command, HTTP request, or UI interaction — rather than importing an internal function to print its result or re-running the unit test suite. The Integration Test Path is the only sanctioned non-interactive fallback.
 - Tail app logs in a background shell for errors or warnings while verifying, so backend failures surface alongside UI checks.
 - After the last UI interaction, perform one additional log read or status check before reporting. Background-shell output that lands after the agent emits final text is not surfaced, so the extra action gives it time to appear in a polled read. Matters most when this skill runs inside a sub-agent.
 - To diagnose failures, run the `$investigate` skill on the smoke test report.
