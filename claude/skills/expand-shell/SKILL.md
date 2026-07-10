@@ -92,6 +92,8 @@ Expand the shell into a full plan using:
 4. A Verification section with specific test commands and expected observable results for this shell's work
 5. A Context Files section listing the files an implementer needs to read in full
 
+Replace Pattern Survey references to the source shell with stable spec or codebase anchors before writing the plan. Omit a source-shell reference when no stable replacement supports the claim; Step 7 deletes the shell.
+
 Create `.turbo/plans/` if it does not exist. Write the plan to `.turbo/plans/<shell-slug>.md` using this structure:
 
 ````markdown
@@ -139,7 +141,7 @@ State the plan path before proceeding.
 - **Implementation Steps**: Use concrete `file_path` references and named functions or symbols. Reference existing functions and utilities from the Pattern Survey instead of reinventing them. Each step describes a discrete unit of work that can be tracked independently during execution.
 - **Verification**: Describe how to know the change actually works. Prefer specific test commands, named test files, or named smoke checks over vague phrases like "run the tests." If the change has no observable behavior, say so explicitly.
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
-- **Scope**: Plan content describes what to build. Do not include task tracking, skill loading, test commands, or commit instructions — those are execution-wrapper concerns.
+- **Scope**: Plan content describes what to build. Do not include task tracking, skill loading, or commit instructions — those are execution-wrapper concerns.
 
 ## Step 5: Verify the Plan Against the Shell
 
@@ -150,6 +152,7 @@ Re-read the shell at `.turbo/shells/<shell-slug>.md` and the drafted plan at `.t
 - **Covers** — Every spec requirement listed in the shell's Covers is addressed by the Implementation Steps.
 - **Context fidelity** — The plan's Context preserves the intent of the shell's Context (verbatim or lightly edited, not reinterpreted).
 - **Scope** — The plan does not add artifacts or responsibilities beyond the shell's Produces. Scope creep belongs in a new shell, not this plan.
+- **Stable references** — The plan does not cite the source shell or another artifact scheduled for deletion.
 
 If every item passes, proceed to Step 6. If any item fails, revise the plan to close the gap and re-verify before proceeding. Do not delete the shell while any check is failing.
 
