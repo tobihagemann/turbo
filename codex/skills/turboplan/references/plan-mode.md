@@ -1,6 +1,6 @@
 # Turboplan: Plan Mode
 
-Draft → refine → self-improve → mark ready → implement to produce a plan file and execute it in the same session.
+Draft → refine → self-improve → mark ready → halt to produce a plan file the user implements after an optional `/compact`.
 
 ## Task Tracking
 
@@ -10,7 +10,7 @@ Use `update_plan` to track each phase:
 2. Run `$refine-plan` skill
 3. Run `$self-improve` skill
 4. Mark plan ready
-5. Run `$implement-plan` skill
+5. Summarize and halt
 
 ## Phase 1: Run `$draft-plan` Skill
 
@@ -28,14 +28,17 @@ Run the `$self-improve` skill to compound planning learnings.
 
 Update the plan's YAML frontmatter to `status: ready`.
 
-## Phase 5: Run `$implement-plan` Skill
+## Phase 5: Summarize and Halt
 
 Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
-Then run the `$implement-plan` skill with the plan path from Phase 1.
+Then halt with this message:
 
-Then update or check the active plan and proceed to any remaining task.
+> Plan ready at `<plan path>`.
+>
+> This is a good point to `/compact` before implementing. Then run `$implement-plan <slug>` to implement.
 
 ## Rules
 
 - Route revisions through `$refine-plan` or `$draft-plan`.
+- Hand implementation to the user via the Phase 5 halt; the user runs `$implement-plan` after an optional `/compact`.

@@ -1,11 +1,11 @@
 ---
 name: pick-next-shell
-description: "Pick the next shell whose dependencies are satisfied and carry it through planning and implementation: expand, refine, self-improve, implement. Use when the user asks to \"pick next shell\", \"next shell\", \"continue project\", \"what's next\", \"next implementation step\", or \"continue with the plan\"."
+description: "Pick the next shell whose dependencies are satisfied and carry it through planning: expand, refine, self-improve, halt. Use when the user asks to \"pick next shell\", \"next shell\", \"continue project\", \"what's next\", \"next implementation step\", or \"continue with the plan\"."
 ---
 
 # Pick Next Shell
 
-Pick the next shell from `.turbo/shells/` whose dependencies are satisfied, then carry it through expansion and implementation: expand → refine → self-improve → implement.
+Pick the next shell from `.turbo/shells/` whose dependencies are satisfied, then carry it through the planning pipeline: expand → refine → self-improve → halt.
 
 ## Task Tracking
 
@@ -16,7 +16,7 @@ At the start, use `update_plan` to track each step:
 3. Run `$refine-plan` skill
 4. Run `$self-improve` skill
 5. Mark plan ready
-6. Run `$implement-plan` skill
+6. Summarize and halt
 
 ## Step 1: Scan Shells and Pick Next
 
@@ -53,16 +53,19 @@ Run the `$self-improve` skill to compound planning learnings.
 
 Update the plan's YAML frontmatter to `status: ready`.
 
-## Step 6: Run `$implement-plan` Skill
+## Step 6: Summarize and Halt
 
 Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
-Then run the `$implement-plan` skill with the plan path from Step 2.
+Then halt with this message:
 
-Then update or check the active plan and proceed to any remaining task.
+> Plan ready at `<plan path>`.
+>
+> This is a good point to `/compact` before implementing. Then run `$implement-plan <slug>` to implement. After that, run `$pick-next-shell` again for the next shell.
 
 ## Rules
 
 - Do not edit plan files directly. Revisions go through `$refine-plan`.
 - Never modify the spec file.
+- Do not attempt to auto-implement. The user drives implementation with `$implement-plan` after an optional `/compact`.
 - If a shell file is missing or has invalid frontmatter, halt and report.

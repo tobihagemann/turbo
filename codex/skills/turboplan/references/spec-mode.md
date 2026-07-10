@@ -1,6 +1,6 @@
 # Turboplan: Spec Mode
 
-Spec out the project, decompose into shells, then run `$pick-next-shell`. If the spec turns out to fit a single session, automatically switch to plan mode.
+Spec out the project and decompose into shells, then halt for the user to drive implementation. If the spec turns out to fit a single session, automatically switch to plan mode.
 
 ## Task Tracking
 
@@ -11,7 +11,7 @@ Use `update_plan` to track each phase:
 3. Run `$draft-shells` skill
 4. Run `$refine-plan` skill (shells)
 5. Run `$self-improve` skill
-6. Run `$pick-next-shell` skill
+6. Summarize and halt
 
 If `$draft-shells` lands on the single-shell bail-out (Phase 3), the flow switches to plan mode by following [plan-mode.md](plan-mode.md). Replace the active plan with new entries for [plan-mode.md](plan-mode.md)'s Phases 1-5 (Codex `update_plan` only supports `pending`/`in_progress`/`completed`, so call `update_plan` with the new step list to drop tasks 4-6 from this file).
 
@@ -40,14 +40,19 @@ Run the `$refine-plan` skill with `shells <slug>` from Phase 3.
 
 Run the `$self-improve` skill to compound planning learnings.
 
-## Phase 6: Run `$pick-next-shell` Skill
+## Phase 6: Summarize and Halt
 
 Present a brief summary of the finished spec and shell decomposition: the problem, the chosen solution, and how the work splits across shells, short enough to read at a glance so the user does not have to open the full spec. When the project delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the artifacts rather than a fixed template.
 
-Then run the `$pick-next-shell` skill.
+Then halt with this message:
 
-Then update or check the active plan and proceed to any remaining task.
+> Spec and shells ready.
+> - Spec: `<spec path>`
+> - Shells: `<N>` shells in `.turbo/shells/`
+>
+> This is a good point to `/compact` before picking up the first shell. Then run `$pick-next-shell` to pick the first shell and carry it through expand → refine → self-improve → halt. After that, run `$implement-plan <slug>` to execute the plan and chain into `$finalize`.
 
 ## Rules
 
+- Hand shell implementation to the user via the Phase 6 halt; the user runs `$pick-next-shell` after an optional `/compact`.
 - When `$draft-shells` triggers the single-shell bail-out, [plan-mode.md](plan-mode.md)'s phases replace Phases 4-6 here. The spec from Phase 1 and its refinement from Phase 2 already happened and remain the source of truth for the plan.
