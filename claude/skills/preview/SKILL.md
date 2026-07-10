@@ -43,9 +43,10 @@ Output as text:
 
 ## Step 5: Verdict Gate
 
-Use `AskUserQuestion` to ask the user for their verdict after they have tried the app. Two options:
+Use `AskUserQuestion` to ask the user for their verdict after they have tried the app. Three options, with keeping the app running as the default:
 
-- **Looks good** — stop every process this skill started.
+- **Looks good, keep it running** — leave every process this skill started running so the user can keep using the app.
+- **Looks good, shut it down** — stop every process this skill started.
 - **Needs changes** — note what the user wants different, make the change, rebuild or refresh the running app so it is live, then repeat this step's gate.
 
 Then use the TaskList tool and proceed to any remaining task.
