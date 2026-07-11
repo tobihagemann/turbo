@@ -40,3 +40,4 @@ Flag an issue only when ALL of these hold:
 - Wording, stylistic, or cosmetic preferences that don't affect buildability
 - Alternative approaches without evidence of concrete advantages over the chosen one
 - Suggestions that add complexity without clear implementation value
+- Missing execution-wrapper content (skill invocations, task tracking, or finalize/commit steps) when the workflow that produced the plan forbids that content in plan files, the execution wrapper already discovers the required capability from the plan's substantive work, and the plan carries concrete acceptance criteria for that outcome. Still flag when the wrapper cannot discover the capability, or when the plan lacks substantive behavior or verification for the intended outcome.

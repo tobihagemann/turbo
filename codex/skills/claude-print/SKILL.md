@@ -40,7 +40,15 @@ Run Claude as a foreground command and wait for the result. Treat a returned `se
 
 Do not background Claude print-mode calls, give up during quiet periods, or classify the run as empty while the shell session is still active. The parent workflow needs the complete output before evaluation.
 
-## Step 4: Interpret Results
+## Step 4: Retry Credential Failures From a Fresh Context
+
+When Claude reports an authentication, keychain, or session failure (for example, a `Not logged in` message) from a restricted execution context, do not conclude the user is logged out yet.
+
+When the active harness exposes host execution, retry the same read-only command once from a fresh host-capable context. Use a fresh context rather than reusing one whose environment may stay restricted after its context changed. Retry only within the harness's existing permissions; do not bypass permission policy to reach the host.
+
+If host execution is unavailable, or the fresh retry still fails, report the failure unchanged and let the active workflow decide the next step.
+
+## Step 5: Interpret Results
 
 Treat Claude's output as a review signal, not as an authority. Cross-check actionable findings against the codebase before applying fixes.
 
