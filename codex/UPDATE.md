@@ -324,15 +324,12 @@ For each skill where the user chose **Merge** (Modified-customized) or **Migrate
 If `codex/ADDITIONS.md` changed since `codex.lastUpdateHead` (detected in Phase 1 Step 4):
 
 1. Read `codex/ADDITIONS.md` from `~/.turbo/repo/`.
-2. Determine which targets to sync. Setup writes ADDITIONS to two locations and either may be present:
-   - **User-global:** `~/.codex/AGENTS.md` (or the configured Codex global instruction file, if the user overrode the default).
-   - **Project-local:** the repository root `AGENTS.md` of the project the user is working in.
-   For each location that exists, treat it as a sync target. Skip locations that don't exist (the user opted out at setup).
-3. For each target, for each `##` section in `codex/ADDITIONS.md`:
+2. Read `~/.codex/AGENTS.md`. This is the only sync target: `$update-turbo` maintains the user-global copy, never a project's root `AGENTS.md`. Project-local additions are a one-time setup choice the user maintains themselves.
+3. For each `##` section in `codex/ADDITIONS.md`:
    - If no matching same-named section exists in the target → **new**
    - If a matching section exists but content differs → **changed**
    - If content matches → skip
-4. If any target has new or changed sections, ask the user:
+4. If there are new or changed sections, ask the user:
 
 ```
 AGENTS additions updated:
@@ -343,10 +340,10 @@ New:
 Changed:
 - "Section Name" — what changed
 
-Apply to <list of target files that need updating>?
+Apply to ~/.codex/AGENTS.md?
 ```
 
-5. If approved, update each target file:
+5. If approved, update `~/.codex/AGENTS.md`:
    - Append new sections under their original heading.
    - Replace changed sections with the updated content.
 

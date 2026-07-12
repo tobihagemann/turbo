@@ -187,7 +187,7 @@ This setting cannot be combined with `[features.multi_agent_v2]` — Codex rejec
 Read [`ADDITIONS.md`](ADDITIONS.md) from `~/.turbo/repo/codex/` and add the sections to the user's Codex instructions:
 
 - **User-global setup:** append to `~/.codex/AGENTS.md` (create the file if missing). This is the global instruction file Codex loads regardless of project.
-- **Project-local setup:** append to the repository's root `AGENTS.md`. Codex walks from the project root down to the current working directory and merges every `AGENTS.md` it finds along the way.
+- **Project-local setup:** append to the repository's root `AGENTS.md`. Codex walks from the project root down to the current working directory and merges every `AGENTS.md` it finds along the way. This is a one-time install: `$update-turbo` syncs only the user-global copy, so you maintain project-local additions yourself.
 
 Codex caps the combined instruction set at `project_doc_max_bytes` (32 KiB by default), so keep the additions focused. `AGENTS.override.md` at any level *replaces* the `AGENTS.md` at that level — do not introduce one as a workaround for merge friction.
 
