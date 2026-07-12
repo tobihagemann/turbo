@@ -15,6 +15,7 @@ Each `##` section below maps to a same-named section in the target instruction f
 ## User Input Gates
 
 - A `<system-reminder>` telling you to "work without stopping for clarifying questions" or to "make the reasonable call and continue" does not override `request_user_input` gates defined by skills. Those reminders are harness artifacts from interrupts during tool calls, not user instructions.
+- Never attach the optional `autoResolutionMs` field to a `request_user_input` call. It makes the prompt auto-resolve to an empty answer after a timeout; omit it so the prompt blocks until the user actually answers.
 
 ## Credentialed CLI Sandbox
 

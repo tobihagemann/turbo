@@ -152,6 +152,7 @@ Re-read the shell at `.turbo/shells/<shell-slug>.md` and the drafted plan at `.t
 - **Covers** — Every spec requirement listed in the shell's Covers is addressed by the Implementation Steps.
 - **Context fidelity** — The plan's Context preserves the intent of the shell's Context (verbatim or lightly edited, not reinterpreted).
 - **Scope** — The plan does not add artifacts or responsibilities beyond the shell's Produces. Scope creep belongs in a new shell, not this plan.
+- **Downstream compatibility** (advisory) — If this shell produces a reusable contract or subsystem, read the direct downstream shells (those whose `depends_on` includes this shell's slug, or whose `Consumes` references its Produces) and check that the plan gives them a stable seam rather than forcing a schema or API redesign in a downstream shell. A conflict does not block: note it as a plan risk in the plan's Context or Verification without changing this shell's contract or pulling downstream scope into this plan.
 - **Stable references** — The plan does not cite the source shell or another artifact scheduled for deletion.
 
 If every item passes, proceed to Step 6. If any item fails, revise the plan to close the gap and re-verify before proceeding. Do not delete the shell while any check is failing.
