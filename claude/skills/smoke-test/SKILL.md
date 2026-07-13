@@ -92,7 +92,7 @@ Core verification loop per test:
 
 ### Integration Test Path
 
-Fallback when Step 3 routed here because nothing was interactive. Run the discovered target. Use the Monitor tool to tail output for long-running suites so failures surface as they happen.
+Fallback when Step 3 routed here because nothing was interactive. Run the discovered target. Run multiple integration targets sequentially when they reset or mutate a shared test database, even when the checks are otherwise independent. Use the Monitor tool to tail output for long-running suites so failures surface as they happen.
 
 Core verification loop per run:
 
