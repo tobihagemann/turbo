@@ -58,16 +58,14 @@ If any test fails, fix the issues and stage the fixes.
 
 Check whether any file was edited during Steps 5-6. Any edit counts.
 
-The iteration number below refers to the `$polish-code` run currently executing Step 7. It is not the iteration number of a prospective re-run. Iteration 1 is the initial run; iteration 2 is the first auto-re-run; iteration 3 is the second auto-re-run; iteration 4 and beyond exist only when the user opts in at the hard-cap ask. Iterations 1 and 2 always follow the classification gate (they never trigger the hard cap at their own Step 7, even when the auto-re-run they spawn would be iteration 3). The hard cap fires at the end of iteration 3 and every iteration thereafter.
+Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on. The loop is not capped; it terminates on its own: when a run makes no changes, when a round makes only in-place edits, or when you judge a further re-run pointless.
 
-**Iterations 1 and 2, if changes were made**, classify what Steps 5-6 edited:
+**If changes were made**, classify what Steps 5-6 edited:
 
 - **Structural edits** (fixed bugs, new or removed functions, changed function signatures, moved code between files, changed control flow, added or removed dependencies, corrected a stale or wrong comment that was itself a documentation bug) — run `$polish-code` again as a fresh skill invocation. Scope the diff command to only the files modified in Steps 5-6: use `git diff --cached -- <file1> <file2> ...` as the diff command for `$review-code`. Smoke test scope remains unchanged (full feature scope, not file-narrowed). If the round contains both structural and in-place edits, treat it as structural and re-run automatically.
-- **In-place edits only** (renamed local variables without changing behavior, reformatted, adjusted whitespace, edited neutral comments) — output a summary of what changed, then use `request_user_input` to ask whether to run one more round or stop here. Do not silently continue or silently stop.
+- **In-place edits only** (renamed local variables without changing behavior, reformatted, adjusted whitespace, edited neutral comments) — the loop has converged. Output a summary of what changed and stop; do not re-run.
 
-**Iterations 1 and 2, if changes were made but you believe re-running is unnecessary**, use `request_user_input` to ask for skip permission. Do not skip silently.
-
-**Iteration 3 or later, if Steps 5-6 of this run made changes**, the hard cap is reached. This replaces the classification gate above for iteration 3 and every iteration after it. Output a summary of what is still changing and whether it is structural or in-place. Then use `request_user_input` to offer three options: continue for another iteration, stop here and accept the current state, or escalate to `$consult-oracle` for a different perspective on the remaining issues.
+**If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `$review-code`. It does not affect which steps run or whether skills are invoked.
 

@@ -77,16 +77,14 @@ Run the `$apply-findings` skill on the evaluated results.
 
 Check whether the artifact file(s) were edited during Step 4. Any edit counts.
 
-The iteration number below refers to the `$refine-plan` run currently executing Step 5. It is not the iteration number of a prospective re-run. Iteration 1 is the initial run; iteration 2 is the first auto-re-run; iteration 3 is the second auto-re-run; iteration 4 and beyond exist only when the user opts in at the hard-cap ask. Iterations 1 and 2 always follow the classification gate (they never trigger the hard cap at their own Step 5, even when the auto-re-run they spawn would be iteration 3). The hard cap fires at the end of iteration 3 and every iteration thereafter.
+Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on. The loop is not capped; it terminates on its own: when a run makes no changes, when a round makes only prose-only edits, or when you judge a further re-run pointless.
 
-**Iterations 1 and 2, if changes were made**, classify what Step 4 edited:
+**If changes were made**, classify what Step 4 edited:
 
 - **Structural edits** — run `$refine-plan` again by reading and following the installed skill instructions, passing the artifact type and resolved path. If the round contains both structural and prose-only edits, treat it as structural and re-run automatically.
-- **Prose-only edits only** (reworded sentences in place, fixed stale examples, clarified existing text without changing meaning) — output a summary of what changed, then use `request_user_input` to ask whether to run one more round or stop here. Do not silently continue or silently stop.
+- **Prose-only edits only** (reworded sentences in place, fixed stale examples, clarified existing text without changing meaning) — the loop has converged. Output a summary of what changed and stop; do not re-run.
 
-**Iterations 1 and 2, if changes were made but you believe re-running is unnecessary**, use `request_user_input` to ask for skip permission. Do not skip silently.
-
-**Iteration 3 or later, if Step 4 of this run made changes**, the hard cap is reached. This replaces the classification gate above for iteration 3 and every iteration after it. Output a summary of what is still changing and whether it is structural or prose-only. Then use `request_user_input` to offer three options: continue for another iteration, stop here and accept the artifact as-is, or escalate to `$consult-oracle` for a different perspective on the remaining issues.
+**If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 

@@ -617,7 +617,7 @@ If any prior step produced changes, run the `$this-skill` skill again, skipping 
 
 ## Rules
 
-- Cap at 3 consecutive runs to prevent runaway loops.
+- The loop ends when a run makes no changes. Rely on that convergence signal rather than a fixed iteration cap.
 ```
 
 ### Use Neutral Exit Signals So Parent Pipelines Can Continue
@@ -825,23 +825,20 @@ When a skill presents structured content (tables, plans, reports) before asking 
 - ✗ **Avoid**: "Show the drafted context to the user via `request_user_input` for approval."
 - ✓ **Good**: "Output the plan as text. Then use `request_user_input` to ask for approval."
 
-#### Prefer request_user_input Gates over Anti-Skip Prose Rules
+#### Gate Genuine Blockers; Leave the Agent's Own Judgment to the Agent
 
-Workflow skills often need to prevent the agent from skipping steps ("don't rationalize away the re-run") or stopping early at iteration caps. Verbose "Do NOT" blocks and anti-rationalization prose are unreliable: the agent reads the rule and still finds ways to rationalize around it. Convert soft rules into hard gates using `request_user_input`.
+Reserve `request_user_input` for decisions that genuinely need the user. When the agent can make the call itself, let it act and state its reasoning rather than gating.
 
-- **Skip gate**: When the agent might want to skip a re-run that should happen (e.g., changes were made but the agent judges re-running unnecessary), require it to use `request_user_input` to request skip permission. This converts "don't skip silently" into "can't skip silently."
-- **Exhaustion gate**: When a loop reaches its iteration cap but hasn't stabilized, use `request_user_input` to ask whether to continue for another iteration or escalate to a different approach. This replaces the hard stop with a human-in-the-loop decision.
 - **Blocker gate**: When a step is blocked by a missing dependency, unclear requirement, or environmental issue that needs user input to resolve, use `request_user_input` to surface the blocker and let the user choose how to proceed. Phrasing like "halt and report" or "stop" leaves no recovery path; a `request_user_input` gate keeps the workflow live.
+- **Skip decision**: When the agent judges a re-run unnecessary (changes were made but re-running would surface nothing new), let it stop on its own judgment. Require it to output what changed and its reasoning for stopping so the decision stays auditable, but do not gate on the user.
 
 ```markdown
 **If changes were made**, run the `$this-skill` skill again.
 
-**If changes were made but you believe re-running is unnecessary**, use `request_user_input` to ask for skip permission. Do not skip silently.
-
-**If this is iteration 3 and changes were still made**, the hard cap is reached. Use `request_user_input` to tell the user that 3 iterations were not enough to stabilize, summarize what is still changing, and offer two options: continue for another iteration, or escalate to a different approach for the remaining issues.
+**If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
 ```
 
-Removing verbose "Do NOT" blocks and "Rules" sections that restate the anti-skip rule often wins alongside adding the gates: the prose was unreliable anyway, and the gates replace it with enforceable behavior.
+Self-looping skills terminate on their own convergence signal (a run that makes no changes, or a round of only cosmetic edits). Rely on that rather than an iteration cap.
 
 #### request_user_input Is Gated to Interactive Modes and the Main Conversation
 
