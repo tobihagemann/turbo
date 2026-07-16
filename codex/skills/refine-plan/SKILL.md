@@ -86,6 +86,8 @@ Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on.
 
 **If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
 
+**When the same class of defect recurs across iterations**, stop patching the individual instance and instead write the root-cause invariant into the artifact itself, enumerating the worked failures it must prevent. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
+
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 
 Then update or check the active plan and proceed to any remaining task.

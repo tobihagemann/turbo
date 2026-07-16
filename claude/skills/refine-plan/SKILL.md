@@ -88,6 +88,8 @@ The iteration number below refers to the `/refine-plan` run currently executing 
 
 **Iteration 3 or later, if Step 4 of this run made changes**, the hard cap is reached. This replaces the classification gate above for iteration 3 and every iteration after it. Output a summary of what is still changing and whether it is structural or prose-only. Then use `AskUserQuestion` to offer three options: continue for another iteration, stop here and accept the artifact as-is, or escalate to `/consult-oracle` for a different perspective on the remaining issues.
 
+**When the same class of defect recurs across iterations**, stop patching the individual instance and instead write the root-cause invariant into the artifact itself, enumerating the worked failures it must prevent. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
+
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 
 Then use the TaskList tool and proceed to any remaining task.

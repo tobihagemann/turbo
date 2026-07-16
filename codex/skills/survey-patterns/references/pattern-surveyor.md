@@ -26,6 +26,7 @@ Cover all three categories in one sweep. The searches overlap heavily: the same 
 - Read files only after a glob or `rg` result indicates they are relevant
 - Issue multiple tool calls in parallel when searching for different things simultaneously
 - Target the search by keyword and file type. Avoid reading entire directories.
+- When counting occurrences of a target (symbol, route, URL, identifier) to size a change's blast radius, enumerate it across all its syntactic forms — named reference, bare string literal, value passed into a helper where the assertion lives elsewhere — rather than trusting a single search pattern's count.
 
 ### 4. Decide on Alignment
 

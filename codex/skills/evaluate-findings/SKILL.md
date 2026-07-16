@@ -46,6 +46,8 @@ Also assign an internal confidence level — **High**, **Medium**, or **Low** �
 
 **Conflict guidance:** When two findings contradict each other (they suggest opposite changes to the same code), treat the conflict as input, not a reason to skip. Verify each against the code and judge each on its merits as usual. If both are defensible and the choice is a genuine trade-off, assign Escalate to both, naming the opposing options so the user can decide.
 
+An affirmation that something is correct is not a finding and carries no evidentiary weight; agreement among reviewers, or a reviewer's authority, does not settle whether a problem exists. When reviewers disagree on whether something is a problem at all — including one asserting it is fine while another flags it — treat the question as unresolved and verify it against the code, without letting the affirmation substitute for verification.
+
 **Verdict guidance:**
 
 - Never auto-dismiss findings about security defaults, permission escalation, or fail-open vs fail-closed behavior. Always surface these even if the behavior appears intentional.

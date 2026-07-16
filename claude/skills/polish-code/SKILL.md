@@ -69,6 +69,8 @@ The iteration number below refers to the `/polish-code` run currently executing 
 
 **Iteration 3 or later, if Steps 5-6 of this run made changes**, the hard cap is reached. This replaces the classification gate above for iteration 3 and every iteration after it. Output a summary of what is still changing and whether it is structural or in-place. Then use `AskUserQuestion` to offer three options: continue for another iteration, stop here and accept the current state, or escalate to `/consult-oracle` for a different perspective on the remaining issues.
 
+**When the same class of defect recurs across iterations**, stop patching the individual instance and instead encode the root-cause invariant structurally — a shared guard or type, or a regression test that pins the class against the worked failures it must prevent. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
+
 The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `/review-code`. It does not affect which steps run or whether skills are invoked.
 
 Then use the TaskList tool and proceed to any remaining task.
