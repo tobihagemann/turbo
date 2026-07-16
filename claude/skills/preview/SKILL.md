@@ -47,6 +47,6 @@ Use `AskUserQuestion` to ask the user for their verdict after they have tried th
 
 - **Looks good, keep it running** — leave every process this skill started running so the user can keep using the app.
 - **Looks good, shut it down** — stop every process this skill started.
-- **Needs changes** — note what the user wants different, make the change, rebuild or refresh the running app so it is live, then repeat this step's gate.
+- **Needs changes** — note what the user wants different, make the change, rebuild or refresh the running app so it is live, then repeat this step's gate. When the user's response or session context surfaces further open issues, resolve every known issue — fixing and re-verifying each — before re-asking the verdict; the gate re-fires only once no known issue remains.
 
 Then use the TaskList tool and proceed to any remaining task.

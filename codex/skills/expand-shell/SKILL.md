@@ -149,7 +149,7 @@ Re-read the shell at `.turbo/shells/<shell-slug>.md` and the drafted plan at `.t
 
 - **Produces** — Every artifact listed in the shell's Produces is created by at least one Implementation Step in the plan.
 - **Consumes** — Every dependency listed in the shell's Consumes is referenced in the Implementation Steps, Context Files, or Pattern Survey.
-- **Covers** — Every spec requirement listed in the shell's Covers is addressed by the Implementation Steps.
+- **Covers** — Read each spec requirement listed in the shell's Covers together with its nested acceptance criteria, and confirm each one is addressed by an Implementation Step and, where it has observable behavior, exercised by the Verification section.
 - **Context fidelity** — The plan's Context preserves the intent of the shell's Context (verbatim or lightly edited, not reinterpreted).
 - **Scope** — The plan does not add artifacts or responsibilities beyond the shell's Produces. Scope creep belongs in a new shell, not this plan.
 - **Downstream compatibility** (advisory) — If this shell produces a reusable contract or subsystem, read the direct downstream shells (those whose `depends_on` includes this shell's slug, or whose `Consumes` references its Produces) and check that the plan gives them a stable seam rather than forcing a schema or API redesign in a downstream shell. A conflict does not block: note it as a plan risk in the plan's Context or Verification without changing this shell's contract or pulling downstream scope into this plan.
