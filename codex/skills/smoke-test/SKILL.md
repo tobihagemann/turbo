@@ -50,6 +50,17 @@ Approach: [browser-use@openai-bundled / computer-use@openai-bundled / terminal]
 Dev server command: [command]
 ```
 
+When another agent will execute this plan, append a **Setup contract** capturing what the executor needs and cannot safely rediscover:
+
+- **Start environment** — commands and variables to bring up each service in isolation
+- **Test identity** — the account or credentials the run authenticates as
+- **Seed/reset** — operations that establish or restore baseline data
+- **Required state** — fixtures or preconditions each scenario depends on
+- **Mock boundaries** — external services stubbed, with the response shapes and state transitions to return
+- **Owned cleanup** — named sessions, ports, and scratch resources this run creates and must release
+
+Include an item only when the executor would otherwise derive it from application source; omit anything the running app makes self-evident. Require these details when the chosen testing approach prohibits reading application source as setup documentation.
+
 ## Step 4: Execute
 
 If a project-specific testing skill or MCP tool was identified in Step 2, use that. The paths below are fallbacks.
