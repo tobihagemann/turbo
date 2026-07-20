@@ -39,6 +39,12 @@ Run codex via the Bash tool as a foreground call (do not set `run_in_background`
 
 If codex outlives the timeout, the harness force-backgrounds it (returning a task ID and an output file path) and the run continues to completion uninterrupted. Recover it by reading the output file: `Read` the path, then `Read` it again once the `<task-notification>` reports completion. Never wait with `Monitor` (it returns immediately, and events that arrive after your final text are dropped), and never return the task ID, an interim file snapshot, or `"Waiting for codex to finish"` as the result — each is a false-empty return.
 
+## Transient Crash Retry
+
+Re-run the command once when the Bash call returned an error exit with no stdout and no task ID. Recover a force-backgrounded run per Synchronous Execution rather than retrying it. Keep the same prompt; when the run writes to an `-o` file, point the retry at a fresh path. Treat a second failure as final.
+
+Treat models-manager and cache-TTL errors as non-fatal warnings. Read the error text for usage-limit and authentication signatures and report those without retrying.
+
 ## Permission Levels
 
 | Level | Flag | When to Use |
