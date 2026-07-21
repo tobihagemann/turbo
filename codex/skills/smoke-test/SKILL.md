@@ -128,7 +128,7 @@ Overall: X/Y passed
 
 If any test failed, include the relevant snapshot, screenshot, or output showing the failure.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

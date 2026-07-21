@@ -9,7 +9,7 @@ Deep architecture report. Fans out parallel inspections across different aspects
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Scope
 2. Launch inspection agents

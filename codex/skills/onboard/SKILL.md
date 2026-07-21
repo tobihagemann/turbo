@@ -9,7 +9,7 @@ Developer onboarding pipeline. Composes `$map-codebase`, `$review-tooling`, and 
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Launch all agents
 2. Synthesize and generate markdown report

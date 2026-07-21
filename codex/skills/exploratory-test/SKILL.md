@@ -9,7 +9,7 @@ Execute multi-level exploratory testing that goes beyond smoke testing to active
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Load or create test plan
 2. Determine testing approach
@@ -103,7 +103,7 @@ For each failure, include the relevant screenshot, output, or state observation.
 
 Update `.turbo/test-plan.md` by checking off completed tests and annotating results.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

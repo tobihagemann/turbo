@@ -9,7 +9,7 @@ Guide a collaborative discussion to explore a project idea, then synthesize the 
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Capture the vision and pick a slug
 2. Consult task-specific skills and docs
@@ -185,7 +185,7 @@ After approval:
 
 > The spec is ready at the resolved spec path. To break it into shells, run `$draft-shells`.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

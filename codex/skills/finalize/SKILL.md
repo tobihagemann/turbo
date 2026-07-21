@@ -9,7 +9,7 @@ Post-implementation QA workflow: tests, code polishing, commit, and self-improve
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$polish-code` skill
 2. Run `$simplify-docs` skill
@@ -64,7 +64,7 @@ Use `request_user_input` to let the user choose whether to ship the changes toge
 - **Ship together** — ship all staged changes as one unit; run the `$ship` skill
 - **Split up** — ship each group as its own unit; run the `$split-and-ship` skill
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

@@ -215,4 +215,4 @@ Report that the contribution is complete.
 
 Skip this step in fork mode (the upstream has not changed until the PR is merged).
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

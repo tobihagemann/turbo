@@ -165,7 +165,7 @@ Then use `request_user_input` to offer two paths:
 - **Approve** (Recommended) — the plan is final.
 - **Revise** — the user describes what to change. Apply the edits to the plan file, then re-summarize and re-present.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

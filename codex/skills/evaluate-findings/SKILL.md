@@ -120,4 +120,4 @@ For findings whose severity was re-assessed from the upstream level, append the 
 
 For disputed findings, add a callout below the table showing both perspectives. For each finding, indicate scope in the Issue column (e.g., "Pre-existing:" prefix).
 
-Then update or check the active plan and proceed to any remaining task. The next pending skill — `$resolve-findings` or `$apply-findings` — reads the findings table directly, including Escalate verdicts, which `$apply-findings` surfaces to the user via `request_user_input`.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow. The next pending skill — `$resolve-findings` or `$apply-findings` — reads the findings table directly, including Escalate verdicts, which `$apply-findings` surfaces to the user via `request_user_input`.

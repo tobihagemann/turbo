@@ -9,7 +9,7 @@ Fetch PR context, run a comprehensive code review, evaluate findings, and dispat
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$fetch-pr-comments` skill
 2. Detect base branch

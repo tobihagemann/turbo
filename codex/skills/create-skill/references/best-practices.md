@@ -624,12 +624,12 @@ If any prior step produced changes, run the `$this-skill` skill again, skipping 
 
 When a skill detects a clean early-exit case (a degenerate input that doesn't warrant the full output), the exit instructions need to allow parent pipelines to detect and reroute. Phrasing like "Halt and tell the user X" reads as a hard stop and terminates the agent's flow, including any parent pipeline that called the skill.
 
-Phrasing like "Present this message: <factual summary>. Then update or check the active plan and proceed to any remaining step." lets the agent surface what happened and continue to whatever task is next. The signal that the early-exit fired lives in the side effects (no file written, factual message shown), and the parent pipeline reads them via filesystem checks or remaining-step detection.
+Phrasing like "Present this message: <factual summary>. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow." lets the agent surface what happened and continue to whatever task is next. The signal that the early-exit fired lives in the side effects (no file written, factual message shown), and the parent pipeline reads them via filesystem checks or remaining-step detection.
 
 Blocker gates (covered in "Using request_user_input") handle a different case: when the agent needs the user to choose between recoveries. Use neutral exit signals when the work simply terminates earlier than the full path.
 
 - ✗ **Avoid**: "Halt and tell the user 'no shells produced — run `$draft-plan` instead.'"
-- ✓ **Good**: "Present this message: '<factual summary>'. Then update or check the active plan and proceed to any remaining step."
+- ✓ **Good**: "Present this message: '<factual summary>'. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow."
 
 ## Common Patterns
 

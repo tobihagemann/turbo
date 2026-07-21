@@ -67,7 +67,7 @@ Run the review branches independently. Launch them with `spawn_agent` / `wait_ag
 
 Aggregate findings with attribution (reviewer: "internal" or "peer"). Present them in the output format below.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Output Format
 

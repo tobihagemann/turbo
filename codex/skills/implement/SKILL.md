@@ -9,7 +9,7 @@ Standard implementation flow: load style rules, make the change, run post-implem
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$code-style` skill
 2. Load task-specific skills
@@ -44,7 +44,7 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 Run the `$finalize` skill.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

@@ -7,7 +7,7 @@ description: "Stage, format, lint, test, review, smoke test, and re-run itself u
 
 ## Task Tracking
 
-At the start of every invocation (including re-runs from Step 7), use `update_plan` to track each step:
+At the start of every invocation (including re-runs from Step 7), use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$stage` skill
 2. Deterministic cleanup
@@ -71,7 +71,7 @@ Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `$review-code`. It does not affect which steps run or whether skills are invoked.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

@@ -54,4 +54,4 @@ Keep it dense. Omit anything that has no real content.
 
 Tell the user where the handoff was written and quote the next-step statement so the path forward is visible at a glance.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

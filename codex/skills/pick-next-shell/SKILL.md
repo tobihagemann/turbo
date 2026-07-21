@@ -9,7 +9,7 @@ Pick the next shell from `.turbo/shells/` whose dependencies are satisfied, then
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Scan shells and pick next
 2. Run `$expand-shell` skill

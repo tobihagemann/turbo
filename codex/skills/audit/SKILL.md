@@ -9,7 +9,7 @@ Project-wide health audit. Fans out to all analysis skills, evaluates findings, 
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Scope and partition
 2. Threat model

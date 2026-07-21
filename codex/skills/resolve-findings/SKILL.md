@@ -9,7 +9,7 @@ Choose a path for evaluated findings and run it. Direct path applies fixes direc
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Choose path
 2. Run the chosen path
@@ -32,4 +32,4 @@ Read the reference file for the confirmed path and follow its phases:
 
 State the chosen path before continuing with the reference file.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

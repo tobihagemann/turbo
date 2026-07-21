@@ -92,4 +92,4 @@ Run the `$evaluate-findings` skill on the review findings.
 
 Run the `$apply-findings` skill on the evaluated findings.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

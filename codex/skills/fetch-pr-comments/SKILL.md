@@ -101,7 +101,7 @@ For each file with unresolved threads, show:
 - For threads with multiple comments, show each comment with its author
 - If there are zero unresolved threads, zero review body comments, and zero issue comments, say so and stop
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

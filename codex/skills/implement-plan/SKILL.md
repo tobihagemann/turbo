@@ -9,7 +9,7 @@ Execute an implementation plan file.
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Resolve and read the plan file
 2. Read context files
@@ -48,7 +48,7 @@ Run the `$implement` skill. The plan file, its file references, and its Verifica
 
 After `$implement` completes, set the plan's frontmatter `status:` to `done`. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip this step.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

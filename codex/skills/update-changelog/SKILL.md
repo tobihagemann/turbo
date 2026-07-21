@@ -39,7 +39,7 @@ Read the current Unreleased section of the changelog. Look for entries that rela
 
 Add or update entries in the Unreleased section following `$changelog-rules` conventions. Create subsection headers as needed (e.g., `### Added`).
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

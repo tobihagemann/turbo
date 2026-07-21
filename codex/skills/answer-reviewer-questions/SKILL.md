@@ -33,7 +33,7 @@ _Grounding: derived from current code_
 
 Include the `_Grounding:_` line only when `$recall-reasoning` returned no transcript. Omit it when the answer is grounded in recalled reasoning.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

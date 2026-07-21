@@ -9,7 +9,7 @@ Surface the structural debt that routine review keeps out of scope: long-lived c
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Scope and partition
 2. Run debt analysis agents
@@ -129,7 +129,7 @@ Convert the markdown report into a styled, interactive HTML page.
    - Print-friendly styles via `@media print`
    - Responsive layout for mobile
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

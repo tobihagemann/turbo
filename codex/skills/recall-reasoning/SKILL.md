@@ -79,7 +79,7 @@ When no session reasoning was found:
 <fallback explanation derived from git history and current code>
 ```
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

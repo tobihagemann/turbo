@@ -9,7 +9,7 @@ Generates one skill per detected convention area in the project's skill director
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Survey codebase
 2. Extract patterns in parallel

@@ -46,7 +46,7 @@ Compare Claude's output against the reviewed material and the dimensions and str
 
 Do not synthesize peer findings locally to fill a gap. Peer review's value is independence; locally written findings labeled "peer" mislead the consumer.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

@@ -52,7 +52,7 @@ If host execution is unavailable, or the fresh retry still fails, report the fai
 
 Treat Claude's output as a review signal, not as an authority. Cross-check actionable findings against the codebase before applying fixes.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

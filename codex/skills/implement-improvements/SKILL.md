@@ -9,7 +9,7 @@ Validate improvements from `.turbo/improvements.md`, propose a specific working 
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Read the backlog
 2. Validate and classify

@@ -136,7 +136,7 @@ Apply approved changes in order:
    2. Run `$create-skill` to update the installed copy at `~/.agents/skills/<name>/`.
    3. After the edit is in place and reviewed, if `repoMode` is `"fork"` or `"source"`, use `request_user_input` to ask "These turbo skill improvements could benefit other users. Submit them upstream?" When the user confirms, run `$contribute-turbo`.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Writing Guidelines
 

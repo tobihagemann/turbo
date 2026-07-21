@@ -9,7 +9,7 @@ Loop the review pipeline over a planning artifact until no new findings are acce
 
 ## Task Tracking
 
-At the start of every invocation (including re-runs from Step 5), use `update_plan` to track each step:
+At the start of every invocation (including re-runs from Step 5), use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Resolve the artifact
 2. Run `$review-plan` skill
@@ -90,7 +90,7 @@ Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ### Structural Edit Examples by Type
 

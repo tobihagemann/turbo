@@ -29,7 +29,7 @@ The sub-agent covers all three categories (Analogous Features, Reusable Utilitie
 
 Output the sub-agent's report verbatim. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the sub-agent produces.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

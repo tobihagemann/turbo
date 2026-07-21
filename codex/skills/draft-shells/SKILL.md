@@ -9,7 +9,7 @@ Decompose a specification file into shells at `.turbo/shells/<spec-slug>-NN-<tit
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Resolve the source spec
 2. Decompose into shells
@@ -99,7 +99,7 @@ Present this message:
 
 > Decomposition produced one shell, so no shell file was written. The spec at `<resolved spec path>` fits a single session and is plan-shaped.
 
-Call `update_plan` with a shortened step list that omits the remaining `$draft-shells` steps ("Resolve open questions", "Write shell files", "Present summary"). Do not create `.turbo/shells/`. Then update or check the active plan and proceed to any remaining task.
+Do not create `.turbo/shells/`. Then call `update_plan` with a step list that drops the remaining `$draft-shells` steps ("Resolve open questions", "Write shell files", "Present summary") and continue with the next step of the active workflow.
 
 ## Step 3: Resolve Open Questions
 
@@ -201,7 +201,7 @@ After approval, tell the user the next step:
 
 > To start implementation, run `$pick-next-shell`.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

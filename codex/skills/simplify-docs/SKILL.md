@@ -56,4 +56,4 @@ Wait for both agents to complete. Aggregate their findings, then apply each fix 
 
 When done, briefly summarize what was removed or rewritten (or confirm the docs were already clean).
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

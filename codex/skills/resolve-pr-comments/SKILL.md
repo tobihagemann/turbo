@@ -9,7 +9,7 @@ Fetch unresolved review comments from a GitHub PR (inline threads, review-body o
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each step:
+At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Fetch comments
 2. Triage review bodies and issue comments

@@ -16,7 +16,7 @@ Resolve what to preview using the first match:
 3. **Conversation context** — prior conversation contains recent work. Extract what changed, where it lives, and the expected behavior.
 4. **App-level discovery** — fresh context with no prior work. Examine entry points, routes, and the README to identify the app's core user-facing flows.
 
-If the resolved scope has no user-visible surface to try (a CLI-only change, a library with no entry point, backend work with no UI to look at), present this message: "Nothing to preview — <one-line reason>." Then update or check the active plan and proceed to any remaining task.
+If the resolved scope has no user-visible surface to try (a CLI-only change, a library with no entry point, backend work with no UI to look at), present this message: "Nothing to preview — <one-line reason>." Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Step 2: Determine Launch Approach
 
@@ -49,4 +49,4 @@ Use `request_user_input` to ask the user for their verdict after they have tried
 - **Looks good, shut it down** — stop every process this skill started.
 - **Needs changes** — note what the user wants different, make the change, rebuild or refresh the running app so it is live, then repeat this step's gate. When the user's response or session context surfaces further open issues, resolve every known issue — fixing and re-verifying each — before re-asking the verdict; the gate re-fires only once no known issue remains.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

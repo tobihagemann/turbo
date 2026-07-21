@@ -26,7 +26,7 @@ For follow-up questions, include Claude's previous answer and the new evidence g
 
 Summarize the useful parts of Claude's response. Cross-reference suggestions with the repository before acting.
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

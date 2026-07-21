@@ -18,4 +18,4 @@ Run the `$turboplan` skill with the working set as the task description. Include
 - **Dependencies** — Order so foundational changes come first
 - **Conflicts** — Flag if two improvements contradict each other
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

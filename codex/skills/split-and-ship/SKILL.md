@@ -13,7 +13,7 @@ A split plan must exist in the conversation. The plan specifies an ordered list 
 
 ## Task Tracking
 
-At the start, use `update_plan` to track each phase:
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Choose realization path
 2. Ship the groups
@@ -71,7 +71,7 @@ For each group:
 2. Check out the last created branch
 3. Output a summary table: group name, branch, PR URL, and base branch
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Step 3: Ship as Commits on the Current Branch
 
@@ -100,7 +100,7 @@ For each group:
 2. Drop the stash
 3. Output a summary table: group name and commit subject
 
-Then update or check the active plan and proceed to any remaining task.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 
