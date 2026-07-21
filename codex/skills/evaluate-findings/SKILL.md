@@ -61,11 +61,11 @@ An affirmation that something is correct is not a finding and carries no evident
 
 After the initial assessment, challenge uncertain findings from a different angle.
 
-Spawn when any finding has **Medium** or **Low** confidence. Send only those findings to the subagent. High-confidence findings pass through unchallenged. Skip this step entirely if all findings are High confidence.
+Spawn when any finding has **Medium** or **Low** confidence. Send only those findings to the sub-agent. High-confidence findings pass through unchallenged. Skip this step entirely if all findings are High confidence.
 
-Launch a single subagent (inherited model defaults). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the subagent to challenge each finding: try to prove it wrong, or confirm it with evidence.
+Launch a single sub-agent (inherited model defaults). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the sub-agent to challenge each finding: try to prove it wrong, or confirm it with evidence.
 
-The subagent picks research tools based on claim type:
+The sub-agent picks research tools based on claim type:
 
 | Claim Type | Tool |
 |------------|------|
@@ -79,9 +79,9 @@ Use whatever documentation tools are available. The specific tools vary by proje
 
 **Budget:** max 2 research actions per finding. If the first action is conclusive, skip the second.
 
-### Subagent Verdicts
+### Sub-agent Verdicts
 
-The subagent returns per finding:
+The sub-agent returns per finding:
 
 - **Confirmed** — found evidence supporting the claim (with source)
 - **Disputed** — found counter-evidence (with source and explanation)
@@ -89,13 +89,13 @@ The subagent returns per finding:
 
 ## Step 3: Reconciliation
 
-Merge subagent results with the initial assessment:
+Merge sub-agent results with the initial assessment:
 
 - **Confirmed**: verdict and severity stand. Note the evidence source.
 - **Disputed**: if originally Apply, downgrade to Skip or Escalate. Re-assess severity if the evidence changes the impact picture. Show both perspectives.
 - **Inconclusive**: verdict and severity stand, note the uncertainty.
 
-Findings not investigated by the subagent keep their original verdict.
+Findings not investigated by the sub-agent keep their original verdict.
 
 For Apply findings, document the issue and location. For Escalate findings, note what information would resolve the ambiguity. For Skip findings, document why.
 
@@ -106,15 +106,15 @@ Summarize the evaluated findings in a table:
 | File | Issue | Source | Severity | Verdict |
 |------|-------|--------|----------|---------|
 
-When Step 2 ran (any finding was investigated by the Devil's Advocate subagent), add an Investigated column:
+When Step 2 ran (any finding was investigated by the Devil's Advocate sub-agent), add an Investigated column:
 
 | File | Issue | Source | Severity | Verdict | Investigated |
 |------|-------|--------|----------|---------|--------------|
 
 Where Investigated shows:
-- *(empty)* — not investigated by subagent
-- **Confirmed** (source) — subagent found supporting evidence
-- **Disputed: [reason]** — subagent found counter-evidence
+- *(empty)* — not investigated by sub-agent
+- **Confirmed** (source) — sub-agent found supporting evidence
+- **Disputed: [reason]** — sub-agent found counter-evidence
 
 For findings whose severity was re-assessed from the upstream level, append the change in the Severity cell (e.g., "High (was Medium)").
 

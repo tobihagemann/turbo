@@ -17,7 +17,7 @@ Determine what to review:
 
 ## Step 2: Launch Two Review Agents in Parallel
 
-Launch both agents below in a single assistant message so they run concurrently. Pass the scope from Step 1 to each agent.
+Launch both agents below with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. Pass the scope from Step 1 to each agent.
 
 ### Agent 1: Code Comments Review
 

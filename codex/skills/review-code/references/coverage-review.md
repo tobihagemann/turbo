@@ -6,6 +6,14 @@
 2. Search for existing test files covering the target code.
 3. Identify the project's test framework and conventions by reading existing test files.
 
+### Verifying Pin Claims
+
+Before asserting that a behavior is unpinned, or that a new test pins one, verify it by mutation: in an isolated `git worktree` discarded afterward, invert or remove the line at issue, run the suite, and check whether a test fails. A test that passes against the mutation does not pin the behavior. Cite the mutation and its result as evidence in the finding's paragraph; the `**Failure scenario:**` line still reads trigger → consequence: the unguarded path and what shipping it lets through.
+
+This covers any claim that a specific behavior is or is not guarded, including "tests exist but miss this path" — target the unguarded path. Settle "this module has no tests at all" by inspection.
+
+Skip the mutation when a fresh checkout cannot run the suite cheaply: it needs an install or build step, there is no runnable test command, or the suite depends on state outside the tree such as fixed ports, shared databases, caches, untracked local configuration, or external services. When skipping, say in the finding's paragraph that the claim rests on inspection alone.
+
 ## What to Review
 
 - **No test coverage** — functions or modules with no corresponding tests

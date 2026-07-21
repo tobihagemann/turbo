@@ -11,7 +11,7 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - Write in a natural, human tone. Avoid stiff or formal phrasing.
 - Don't over-explain. Say what needs saying, then stop.
 - Sound like the author, not like an AI assistant.
-- Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, subagents, etc.). The recipient doesn't know about these tools.
+- Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, sub-agents, etc.). The recipient doesn't know about these tools.
 - Soften opinions when asking questions. Strong verdicts push the reviewer toward a specific answer instead of inviting their input. Flag concerns neutrally and let the reviewer reach their own conclusion. Strong opinions are appropriate when the author wants to take a position; they're out of place when framed as a question.
 
 ## Voice by Author Association

@@ -35,7 +35,7 @@ Full review activates all six types; a single-concern argument activates one. Sk
 Use the Agent tool to launch all agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"`. For full review that is seven Agent tool calls (six internal + one peer); for single-concern it is two (one internal + one peer). Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to assess findings by reading and reasoning. For a check that genuinely requires mutating code (such as testing whether a finding holds), the agent works in an isolated `git worktree` it discards afterward.
 
 - **Internal Agent (one per active type):** Launch a separate Agent tool call for each active type. The subagent's prompt must include the scope, the path to the type's reference file (`~/.claude/skills/review-code/references/<type>-review.md`), the output format below, and this directive: read that reference file directly, apply its determination criteria as the bar for a real finding, then report every finding that clears that bar tagged with its priority. Coverage is the goal at this stage, so surface everything that qualifies and let the priority tags convey severity. The subagent must also return the Overall Verdict block for its type, using the verdict label from the reference file it read.
-- **Peer review Agent (unless skipping):** Launch an Agent tool call whose prompt instructs the subagent to invoke `/peer-review` via the Skill tool with a request describing: (a) the scope to review; (b) all active types covered in one single-pass review run that evaluates every dimension, each judged independently against its criteria file, rather than a per-dimension parallel fan-out; (c) for each dimension, the criteria live in `~/.claude/skills/review-code/references/<type>-review.md` — the reviewer should read that file directly, use its priority scale and verdict label, and include any extra metadata fields it specifies (e.g., `**Category:**`, `**Library:**`, `**Docs:**`) between the `**Reviewer:**` line and the paragraph. The prompt must also state explicitly that the subagent's final assistant message must contain the verbatim findings text `/peer-review` produced.
+- **Peer review Agent (unless skipping):** Launch an Agent tool call whose prompt instructs the subagent to invoke `/peer-review` via the Skill tool with a request describing: (a) the scope to review; (b) all active types covered in one single-pass review run that evaluates every dimension, each judged independently against its criteria file, rather than a per-dimension parallel fan-out; (c) for each dimension, the criteria live in `~/.claude/skills/review-code/references/<type>-review.md` — the reviewer should read that file directly, use its priority scale and verdict label, and include any extra metadata fields it specifies; (d) the output format below, including the `**Failure scenario:**` line. The prompt must also state explicitly that the subagent's final assistant message must contain the verbatim findings text `/peer-review` produced.
 
 Aggregate the findings and per-type verdicts the subagents return, with attribution (reviewer: "internal" or "peer"; type; file path). Present them in the output format below.
 
@@ -43,18 +43,21 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Output Format
 
-Return findings as a numbered list. For each finding:
+Format each finding as:
 
 ```
 ### [P<N>] <title (imperative, ≤80 chars)>
 
 **File:** `<file path>` (lines <start>-<end>)
 **Reviewer:** <internal | peer> (<type>)
+**Failure scenario:** <concrete trigger → the consequence>
 
 <one paragraph explaining the issue and its impact>
 ```
 
-The reference file may specify additional metadata fields (e.g., `**Category:**`, `**Library:**`, `**Docs:**`). Include them between the `**Reviewer:**` line and the paragraph.
+For `**Failure scenario:**`, state the consequence a user or maintainer would observe: an error, wrong output, or data loss; for the non-correctness types, the concrete cost — what breaks on the next change, what is duplicated, what goes untested, which stated rule is violated. An intermediate state ("the cached value goes stale", "the collection keeps growing") stops short of a consequence; carry it through to what that state causes.
+
+The reference file may specify additional metadata fields (e.g., `**Category:**`, `**Library:**`, `**Docs:**`). Include them between the `**Reviewer:**` line and the `**Failure scenario:**` line.
 
 After all findings, place the Overall Verdict block each internal subagent returned for its type (each uses the verdict label from its reference file). For single-concern, that is one verdict block; for full review, six. After the per-type verdicts, add a single combined `## Peer Review Verdict` block summarizing what the peer review returned.
 
@@ -70,5 +73,4 @@ If there are no qualifying findings for a type, state so under that type's verdi
 
 ## Rules
 
-- Present findings grouped by priority.
-- In full code review mode, present findings in file order to minimize context switching.
+- Present findings grouped by priority in single-concern mode, and in file order in full review mode to minimize context switching.

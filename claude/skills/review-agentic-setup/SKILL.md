@@ -117,7 +117,7 @@ Flag any compatibility gaps as findings. A project that invests in one tool's co
 
 ## Output Format
 
-Return findings as a numbered list. For each finding:
+Format each finding as:
 
 ```
 ### [P<N>] <title (imperative, <=80 chars)>

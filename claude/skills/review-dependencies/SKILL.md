@@ -64,7 +64,7 @@ If no updates are available, report that dependencies are up to date.
 
 ## Output Format
 
-Return findings as a numbered list. For each finding:
+Format each finding as:
 
 ```
 ### [P<N>] <title (imperative, <=80 chars)>

@@ -1,6 +1,6 @@
 ---
 name: find-dead-code
-description: "Find dead code using parallel subagent analysis and optional CLI tools, treating code only referenced from tests as dead. Use when the user asks to \"find dead code\", \"find unused code\", \"find unused exports\", \"find unreferenced functions\", \"clean up dead code\", or \"what code is unused\". Analysis-only — does not modify or delete code."
+description: "Find dead code using parallel sub-agent analysis and optional CLI tools, treating code only referenced from tests as dead. Use when the user asks to \"find dead code\", \"find unused code\", \"find unused exports\", \"find unreferenced functions\", \"clean up dead code\", or \"what code is unused\". Analysis-only — does not modify or delete code."
 ---
 
 # Find Dead Code
@@ -14,7 +14,7 @@ Determine the project structure:
 1. Check for config files: `package.json`, `tsconfig.json`, `pyproject.toml`, `setup.py`, `Package.swift`, `.xcodeproj`, `Cargo.toml`, `go.mod`, `pom.xml`, `build.gradle`
 2. Glob for source files: `**/*.ts`, `**/*.py`, `**/*.swift`, `**/*.go`, `**/*.rs`, `**/*.java`
 3. Identify source roots — where production code lives (e.g., `src/`, `lib/`, `Sources/`)
-4. **Partition the codebase** into analysis units by top-level source directories (e.g., `src/auth/`, `src/api/`, `src/utils/`, `lib/models/`). Each directory becomes one subagent's scope in Step 3.
+4. **Partition the codebase** into analysis units by top-level source directories (e.g., `src/auth/`, `src/api/`, `src/utils/`, `lib/models/`). Each directory becomes one sub-agent's scope in Step 3.
 
 If the user specified a scope, restrict analysis to that scope.
 
@@ -50,21 +50,21 @@ If a CLI tool is installed, run it as a fast first pass for **zero-reference** d
 
 If no CLI tool is installed, skip to Step 3. Do not ask the user to install anything.
 
-## Step 3: Test-Only Analysis — Parallel Subagents (Core)
+## Step 3: Test-Only Analysis — Parallel Sub-agents (Core)
 
-This is the primary analysis. Launch one subagent per top-level source directory from Step 1 in a single assistant message so they run concurrently. State the count explicitly when emitting the calls. Each subagent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the subagent discards afterward.
+This is the primary analysis. Launch one sub-agent per top-level source directory from Step 1 with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. State the count explicitly when emitting the calls. Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the sub-agent discards afterward.
 
-### Subagent Strategy
+### Sub-agent Strategy
 
-Each subagent receives:
+Each sub-agent receives:
 
 1. **Its assigned directory** to scan for exported symbols
 2. **The test file patterns** from Step 1
 3. **The full project root path** so it can grep across the entire codebase
 
-### Subagent Task
+### Sub-agent Task
 
-Each subagent performs these steps on its assigned directory:
+Each sub-agent performs these steps on its assigned directory:
 
 **a) Find exported/public symbols:**
 
@@ -93,7 +93,7 @@ Each subagent performs these steps on its assigned directory:
 
 ### Merging Results
 
-After all subagents complete, collect and merge their results. Deduplicate any symbols that appear in multiple reports (e.g., re-exports).
+After all sub-agents complete, collect and merge their results. Deduplicate any symbols that appear in multiple reports (e.g., re-exports).
 
 ## Step 4: Filter, Classify & Evaluate
 

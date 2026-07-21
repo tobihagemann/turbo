@@ -34,7 +34,7 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 
 ### Clarity and Standards
 
-- **Project standards** — coding conventions from AGENTS.md not followed (import sorting, naming conventions, component patterns, error handling patterns, module style)
+- **Project standards** — coding conventions not followed (import sorting, naming conventions, component patterns, error handling patterns, module style). Beyond the auto-loaded instruction files, read any `AGENTS.md` in a directory that is an ancestor of a changed file — a directory's file governs only the files at or below it, and an `AGENTS.override.md` at any level replaces the `AGENTS.md` there rather than adding to it. Flag a violation only when you can quote the exact rule and cite what breaks it: the offending line, or the location where a required element is missing. Name the file the rule came from
 - **Unnecessary complexity** — deep nesting, redundant abstractions, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 - **Unclear code** — overly compact one-liners that sacrifice readability; explicit code is better than clever code
 - **Over-simplification** — too many concerns combined into a single function or component, helpful abstractions removed that were aiding code organization, "fewer lines" prioritized over readability

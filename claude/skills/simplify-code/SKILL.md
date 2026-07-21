@@ -54,7 +54,7 @@ Review the same changes for efficiency:
 
 Review the same changes for clarity, standards, and balance:
 
-1. **Project standards**: coding conventions from CLAUDE.md not followed — import sorting, naming conventions, component patterns, error handling patterns, module style
+1. **Project standards**: coding conventions not followed — import sorting, naming conventions, component patterns, error handling patterns, module style. Beyond the auto-loaded instruction files, read any `CLAUDE.md` in a directory that is an ancestor of a changed file — a directory's file governs only the files at or below it — and any file those instructions import. Flag a violation only when you can quote the exact rule and cite what breaks it: the offending line, or the location where a required element is missing. Name the file the rule came from
 2. **Unnecessary complexity**: deep nesting, redundant abstractions, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 3. **Unclear code**: choose clarity over brevity — explicit code is better than overly compact code. Consolidate related logic, but not at the cost of readability
 4. **Over-simplification**: overly clever solutions that are hard to understand, too many concerns combined into single functions or components, "fewer lines" prioritized over readability (dense one-liners), helpful abstractions removed that were aiding code organization

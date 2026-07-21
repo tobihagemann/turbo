@@ -23,7 +23,7 @@ Run both interpretation branches independently. Launch them with `spawn_agent` /
 
 ### Internal Interpretation
 
-Spawn a subagent with the feedback items and all available context. Instruct it to:
+Spawn a sub-agent with the feedback items and all available context. Instruct it to:
 
 1. Read all referenced code and surrounding context
 2. For each feedback item, produce:
@@ -34,7 +34,7 @@ Spawn a subagent with the feedback items and all available context. Instruct it 
 
 ### Run `$peer-review` Skill
 
-Run the `$peer-review` skill with the feedback items and all available context. Describe the request in natural language:
+Spawn a Codex sub-agent and instruct it to read and follow `$peer-review` from the installed skill directory, with the feedback items and all available context. Describe the request in natural language:
 
 - **Material** — the listed third-party feedback items and their surrounding context.
 - **Task** — for each item, determine what the author most likely wants changed and why, whether the suggestion is technically sound, and where the phrasing is ambiguous enough to support multiple valid readings.

@@ -6,6 +6,8 @@ Bugs, logic errors, and correctness problems: incorrect control flow, off-by-one
 
 Also audit removed behavior: when the change deletes a line or block, identify the invariant, guard, validation, or cleanup it enforced and confirm the change re-establishes it elsewhere or proves it is no longer needed.
 
+Also trace call sites: for each function, method, or exported symbol the change modifies, search for its callers and check whether the change breaks any of them — a new precondition, a changed return shape or nullability, a newly thrown error, a different ordering or timing dependency. Check the other direction too: a parallel change elsewhere in the same changeset can make an existing call unsafe.
+
 ## Determination Criteria
 
 Flag an issue only when ALL of these hold:

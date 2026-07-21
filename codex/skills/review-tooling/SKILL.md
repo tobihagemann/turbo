@@ -112,7 +112,7 @@ When assessing CI/CD, check whether the pipeline runs tests and linters. A CI co
 
 ## Output Format
 
-Return findings as a numbered list. For each finding:
+Format each finding as:
 
 ```
 ### [P<N>] <title (imperative, <=80 chars)>

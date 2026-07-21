@@ -16,18 +16,18 @@ Determine what the change is about:
 
 State the task back in one sentence to confirm scope before searching.
 
-## Step 2: Spawn Pattern Survey Subagent
+## Step 2: Spawn Pattern Survey Sub-agent
 
-Spawn a single subagent (inherited model defaults). The subagent's prompt must include:
+Spawn a single sub-agent (inherited model defaults). The sub-agent's prompt must include:
 
 1. The confirmed task description from Step 1
 2. An instruction to read [references/pattern-surveyor.md](references/pattern-surveyor.md) for survey guidelines, categories, and output format before searching
 
-The subagent covers all three categories (Analogous Features, Reusable Utilities, Convention Anchors) in one sweep and returns a single structured report.
+The sub-agent covers all three categories (Analogous Features, Reusable Utilities, Convention Anchors) in one sweep and returns a single structured report.
 
 ## Step 3: Output Findings
 
-Output the subagent's report verbatim. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the subagent produces.
+Output the sub-agent's report verbatim. Do not reformat or re-synthesize — `references/pattern-surveyor.md` specifies the exact output format the sub-agent produces.
 
 Then update or check the active plan and proceed to any remaining task.
 
