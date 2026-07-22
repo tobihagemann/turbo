@@ -153,7 +153,7 @@ Stay on main. Commit directly with the same message style.
 
 ### Fork mode
 
-Run `$github-voice` to load writing style rules.
+Run the `$github-voice` skill to load writing style rules.
 
 Push and create a PR:
 
@@ -174,7 +174,7 @@ PR body format:
 - [1-3 bullet points]
 
 ## Context
-[The crafted "why" explanation from Step 6]
+[The "why" explanation from Step 6, rewritten in the voice rules just loaded]
 ```
 
 Return to main after creating the PR:

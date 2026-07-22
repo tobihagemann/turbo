@@ -753,7 +753,12 @@ Run the `/<rules-skill>` skill to load shared rules and conventions.
 - The actual steps of this skill
 ```
 
-**Style-guide dependencies as Step 1:** When a skill depends on a style-guide skill that loads conventions, place it as Step 1. Style guides shape all subsequent work. Burying them in a later step risks them being skipped.
+**Style-guide dependencies get their own step, placed late:** When a skill depends on a style-guide skill that loads conventions, give the load its own discrete instruction: a numbered step, or a numbered item in an ordered list. Burying it in a paragraph of prose is what makes it skippable.
+
+Place it before the first step the guide governs, with no work-producing step in between. In a short skill that is Step 1, as in the example above. In a longer one it lands later. Loading at Step 1 anyway can put the load ahead of the values it depends on: a guide that inspects an artifact needs the step that fetches that artifact to have run first, or it silently takes a fallback path. Late placement also skips the load entirely on runs that exit before the governed output is produced. When the governed output lives inside a conditional branch, the load is the first line of that branch.
+
+- ✗ **Avoid**: A six-step skill loads the style guide at Step 1, gathers context through Step 5, then drafts at Step 6.
+- ✓ **Good**: The same skill gathers context through Step 4, loads the style guide at Step 5, then drafts at Step 6.
 
 ### Explicitly Invoke Skills When the Verb Matches a Skill Name
 

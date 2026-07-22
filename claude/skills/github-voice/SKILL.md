@@ -1,6 +1,6 @@
 ---
 name: github-voice
-description: "Shared writing style rules for GitHub-facing output (PR comments, PR descriptions, PR titles). Differentiates insider vs outsider voice based on author association. Not typically invoked directly — loaded by other skills before composing GitHub text."
+description: "Shared writing style rules for GitHub-facing output (PR comments, PR descriptions, PR titles, issues, design proposals). Differentiates insider vs outsider voice based on author association. Not typically invoked directly — loaded by other skills before composing GitHub text."
 ---
 
 # GitHub Voice
@@ -10,6 +10,7 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - No em dashes (`—`) or double hyphens (`--`) used as dashes. Use periods, commas, colons, or restructure the sentence.
 - Write in a natural, human tone. Avoid stiff or formal phrasing.
 - Don't over-explain. Say what needs saying, then stop. Answer a question with exactly what it asked, in the vocabulary it used.
+- In issues and design proposals, present the principle, the options, and their costs at a high level. Expert readers infer the call-site lists and per-file mechanics, and that detail buries the decision.
 - When explaining how the code works, describe its current behavior. Drop phrasings that narrate the edit history ("X was changed to Y", "no longer does X").
 - Sound like the author, not like an AI assistant.
 - Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, subagents, etc.). The recipient doesn't know about these tools.
@@ -17,10 +18,16 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 
 ## Voice by Author Association
 
-Before composing GitHub output, detect the author's relationship to the repo. For PRs, check `author_association` on the PR object:
+Before composing GitHub output, detect the author's relationship to the repo. For an existing PR or issue, check `author_association` on that object:
 
 ```bash
-gh api repos/{owner}/{repo}/pulls/{number} --jq '.author_association'
+gh api repos/<owner>/<repo>/issues/<number> --jq '.author_association'
+```
+
+When no artifact exists yet, check your own access on the repo the artifact will be filed against, which is the PR base or the issue target. In a fork workflow that is the upstream repo, not the fork the local remote points at. `true` means insider:
+
+```bash
+gh api repos/<owner>/<repo> --jq '.permissions.push'
 ```
 
 ### Insider (OWNER, MEMBER, COLLABORATOR)
@@ -33,4 +40,4 @@ Skip context the teammate already has. Don't restate project conventions, recite
 
 Write as an outside contributor. Referring to "the project" or "the maintainers" is natural. Deferring to maintainer preferences is appropriate.
 
-If the association cannot be determined, default to outsider voice.
+If the relationship cannot be determined, default to outsider voice.

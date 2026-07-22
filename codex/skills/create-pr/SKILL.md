@@ -11,13 +11,15 @@ Draft a concise and descriptive title and a short paragraph for a PR. Explain th
 
 If git is in a feature branch, examine all commit messages and the full diff to understand the overall changes. Analyze the diff for diagram opportunities (see Diagrams section below).
 
-## Step 2: Draft Title and Description
+## Step 2: Run `$github-voice` Skill
 
-Run `$github-voice` to load writing style rules before drafting.
+Run the `$github-voice` skill to load writing style rules.
+
+## Step 3: Draft Title and Description
 
 Draft a title and description, embedding any diagrams in the body. Output the drafted title and description as chat text so the user can review it.
 
-## Step 3: Confirm and Create
+## Step 4: Confirm and Create
 
 Use `request_user_input` for confirmation only. Generate a random tag so the body file is unique across sessions:
 

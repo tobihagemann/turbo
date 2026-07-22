@@ -65,7 +65,7 @@ Turbo amplifies your existing process. It shines when your project has the right
 - **Linters and formatters** — The [`/polish-code`](claude/skills/polish-code/SKILL.md) loop runs your formatter and linter before code review. If you don't have one, style issues slip through.
 - **Pre-commit hooks** — When [`/finalize`](claude/skills/finalize/SKILL.md) commits, it triggers any pre-commit hooks you have configured and fixes hook failures before retrying. If your project uses tools like `husky`, `lint-staged`, or `pre-commit`, Turbo works with them automatically.
 - **Existing analysis tools** — Skills like [`/find-dead-code`](claude/skills/find-dead-code/SKILL.md) and [`/assess-technical-debt`](claude/skills/assess-technical-debt/SKILL.md) lean on integrated tools (`knip`, `vulture`, `periphery`, `lizard`, `jscpd`) when your project already has them.
-- **Dependencies** — [GitHub CLI](https://cli.github.com/) powers PR operations. The Claude edition uses Codex for peer review; the Codex edition uses Claude for peer review. Everything works without peer review, but the full pipeline is better with it. See the edition setup guides for details.
+- **Dependencies** — [GitHub CLI](https://cli.github.com/) powers PR and issue operations. The Claude edition uses Codex for peer review; the Codex edition uses Claude for peer review. Everything works without peer review, but the full pipeline is better with it. See the edition setup guides for details.
 
 ## Who It's For
 
@@ -217,6 +217,9 @@ the error messages in this module are inconsistent, /note-improvement
 
 # Picking the next issue to work on
 /pick-next-issue
+
+# Filing an issue
+/create-issue for the flaky upload test
 
 # Extracting session learnings
 /self-improve

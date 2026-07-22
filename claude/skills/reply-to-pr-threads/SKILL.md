@@ -7,11 +7,7 @@ description: "Draft, confirm, and post replies to GitHub PR review threads. Hand
 
 Draft replies for a processed review-thread list, confirm with the user, and post the surviving drafts.
 
-## Step 1: Run `/github-voice` Skill
-
-Run the `/github-voice` skill to load voice rules and the insider-vs-outsider detection.
-
-## Step 2: Re-fetch Thread State
+## Step 1: Re-fetch Thread State
 
 Auto-detect owner, repo, and PR number from the current branch if not provided, then query the current resolution state:
 
@@ -29,6 +25,10 @@ query($owner: String!, $repo: String!, $pr: Int!) {
 ```
 
 Drop threads whose `isResolved` is now true. Reviewers or bots such as CodeRabbit may resolve threads after the original fetch, and drafting replies for them is wasted work.
+
+## Step 2: Run `/github-voice` Skill
+
+Run the `/github-voice` skill to load voice rules and the insider-vs-outsider detection.
 
 ## Step 3: Draft Replies
 

@@ -49,9 +49,11 @@ Derive the PR description from the full diff, not from individual commits. The d
 2. Use the incremental diff (since last body edit) to understand what's new, but frame everything in the context of the whole PR
 3. Check if the changes introduce runtime flows or state transitions that warrant diagrams (see Diagrams section below)
 
-## Step 5: Draft Updated Title and Description
+## Step 5: Run `/github-voice` Skill
 
-Run `/github-voice` to load writing style rules before drafting.
+Run the `/github-voice` skill to load writing style rules.
+
+## Step 6: Draft Updated Title and Description
 
 Write an updated title and body that:
 
@@ -62,11 +64,11 @@ Write an updated title and body that:
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
 - **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
 
-## Step 6: Confirm with User
+## Step 7: Confirm with User
 
 Output the drafted title and description as text, alongside the original for comparison. Then use `AskUserQuestion` for confirmation.
 
-## Step 7: Apply the Update
+## Step 8: Apply the Update
 
 After confirmation, write the drafted body to `.turbo/pr/<PR_NUMBER>-body.md` with the Write tool, then update the PR:
 
