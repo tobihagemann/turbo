@@ -2,6 +2,8 @@
 
 Update installed Turbo skills from the local repo at `~/.turbo/repo/` with a dynamic changelog and interactive conflict resolution.
 
+Every `<rev>:<path>` argument below is a hazard when a shell variable holds the rev: brace it as `${var}:<path>`. In zsh, a colon directly after a parameter name introduces a modifier, and every path in this document begins with `c`, which zsh consumes as the `:c` modifier. The ref silently loses that character and fails to resolve. Double quotes do not prevent this; the braces do.
+
 ## Phase 1: Analysis
 
 ### Step 1: Fetch
@@ -171,7 +173,7 @@ Build a map of `(old → new)` pairs. For names appearing as either side of a re
 
 If git's rename detection threshold isn't met (e.g., the rename also rewrote `SKILL.md` substantially), the rename falls through to the standard matrix as Removed-upstream + New-upstream — data is still safe (Removed-upstream prompts on customized installs); the UX just doesn't recognize the rename.
 
-For each remaining `<name>` (i.e., names not paired in the rename map), compute four flags:
+For each remaining `<name>` (i.e., names not paired in the rename map), compute four flags. Brace any rev variable in the `cat-file` probes below: their errors are suppressed, so an unbraced rev makes every flag come back false and routes every installed skill into **User-local**.
 
 | Flag | How |
 |---|---|
@@ -197,6 +199,8 @@ Combine the flags into one of these categories:
 | ✓ | ✗ | ✗ | — | **Already gone** |
 
 When `old_exists` and `new_exists` are both true and the upstream content is identical between `<lastUpdateHead>` and `<remote>/main` for that skill, mark the entry as **No-op** regardless of the `clean` flag — the skill didn't actually change upstream.
+
+Before continuing, confirm the probes actually ran: every name from the old-upstream enumeration must have `old_exists` true, and every name from the new-upstream enumeration must have `new_exists` true. Only installed-only names may have both false. A violation means the `<rev>:<path>` probes are mangled rather than that the skills are missing. Stop here, report the failing ref, and leave `claude.lastUpdateHead` unchanged so a corrected run can retry.
 
 ### Step 2: Resolve
 
