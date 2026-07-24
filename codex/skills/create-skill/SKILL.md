@@ -5,7 +5,18 @@ description: "Create a new skill or update an existing skill that extends Codex'
 
 # Create Skill
 
-This skill guides the creation of effective skills. For conceptual background, structure details, and writing best practices, read [references/best-practices.md](references/best-practices.md).
+This skill guides the creation of effective skills. Authoring guidance is split across the reference files below. Read the ones the current step needs rather than all of them.
+
+| Reference | Covers |
+|---|---|
+| [references/principles.md](references/principles.md) | Conciseness, instructions-not-documentation, degrees of freedom |
+| [references/structure.md](references/structure.md) | Frontmatter, naming, descriptions, progressive disclosure, file layout |
+| [references/writing.md](references/writing.md) | Prose rules: terminology, phrasing, conditions, thresholds |
+| [references/workflows.md](references/workflows.md) | Step/phase structure, feedback loops, exit signals, output patterns |
+| [references/composition.md](references/composition.md) | Depending on, invoking, and fanning out to other skills |
+| [references/tools.md](references/tools.md) | `spawn_agent`, `request_user_input`, and MCP tool invocation |
+| [references/evaluation.md](references/evaluation.md) | Evaluations and iterating on a skill from observed behavior |
+| [references/scripts.md](references/scripts.md) | Skills that bundle executable code |
 
 ## Step 1: Understanding the Skill with Concrete Examples
 
@@ -65,7 +76,16 @@ When editing the (newly-generated or existing) skill, remember that the skill is
 
 To begin implementation, start with the reusable resources identified above: `scripts/`, `references/`, and `assets/` files. Note that this step may require user input. For example, when implementing a `brand-guidelines` skill, the user may need to provide brand assets or templates to store in `assets/`, or documentation to store in `references/`.
 
-Read [references/best-practices.md](references/best-practices.md) for writing style, structure, and content guidelines before writing SKILL.md.
+Before writing SKILL.md, read [references/principles.md](references/principles.md), [references/structure.md](references/structure.md), and [references/writing.md](references/writing.md). These apply to every skill.
+
+Then read the references matching what this skill does:
+
+- Multi-step or looping workflow → [references/workflows.md](references/workflows.md), plus [references/tools.md](references/tools.md) when it gates on user input
+- Depends on or fans out to other skills → [references/composition.md](references/composition.md), plus [references/tools.md](references/tools.md) when it fans out
+- Dispatches `spawn_agent`, `request_user_input`, or MCP calls → [references/tools.md](references/tools.md)
+- Bundles executable scripts → [references/scripts.md](references/scripts.md)
+
+Read [references/evaluation.md](references/evaluation.md) when validating the skill against real tasks or refining it from observed behavior.
 
 ## Task Tracking
 

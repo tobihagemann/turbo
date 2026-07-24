@@ -1,6 +1,6 @@
 # Codex Skill Conventions
 
-This file holds Turbo conventions for the Codex edition. The Claude Code edition has its own conventions in `claude/SKILL-CONVENTIONS.md`. General skill-authoring principles (applicable to any skill, in any project) live in `codex/skills/create-skill/references/best-practices.md`. When adding guidance, place turbo-specific rules here and general principles there; when a rule fits both, prefer the narrower home.
+This file holds Turbo conventions for the Codex edition. The Claude Code edition has its own conventions in `claude/SKILL-CONVENTIONS.md`. General skill-authoring principles (applicable to any skill, in any project) live in `codex/skills/create-skill/references/`, split by topic and indexed in that skill's SKILL.md. When adding guidance, place turbo-specific rules here and general principles there; when a rule fits both, prefer the narrower home.
 
 - Codex `SKILL.md` frontmatter has `name` and `description`; descriptions include trigger phrases.
 - Skills should not reference which pipelines call them (stay self-contained).

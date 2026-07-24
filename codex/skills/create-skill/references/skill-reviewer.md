@@ -2,6 +2,27 @@
 
 Review and improve skills for maximum effectiveness and reliability.
 
+## Contents
+
+- Review Process
+  - 1. Locate and Read Skill
+  - 2. Validate Structure
+  - 3. Evaluate Description (Most Critical)
+  - 4. Assess Content Quality
+  - 5. Check Progressive Disclosure
+  - 6. Review Supporting Files (if present)
+  - 7. Identify Issues
+- Quality Standards
+- Output Format
+  - Summary
+  - Description Analysis
+  - Content Quality
+  - Progressive Disclosure
+  - Issues by Severity
+  - Positive Aspects
+  - Overall Rating
+  - Priority Recommendations
+
 ## Review Process
 
 ### 1. Locate and Read Skill
@@ -57,7 +78,7 @@ Anti-patterns to watch for:
 - First/second person in description ("I can help you", "You can use this")
 - Missing key triggers
 - No references when they'd be valuable
-- **Narrator prose**: meta-framing that explains the file to its own reader ("This SKILL.md is the router..."), cross-skill commentary ("This is the sibling of /other-skill"), marketing copy ("X is the structured alternative to Y"), architecture commentary that restates what the instructions already convey, historical rationale, and tautological boundary statements ("X is Y's job; this skill only does Z")
+- **Narrator prose**: meta-framing that explains the file to its own reader ("This SKILL.md is the router..."), cross-skill commentary ("This is the sibling of $other-skill"), marketing copy ("X is the structured alternative to Y"), architecture commentary that restates what the instructions already convey, historical rationale, and tautological boundary statements ("X is Y's job; this skill only does Z")
 - **"Step 0" as mode detection**: a numbered step that only inspects caller input or picks a mode. Should be folded into the opening prose, not given a step heading
 
 ## Quality Standards

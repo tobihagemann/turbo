@@ -7,5 +7,7 @@ Edition-specific skill conventions:
 
 General skill-authoring principles (applicable to any skill, in any project) live alongside each edition's `create-skill` skill:
 
-- **Claude Code** — [`claude/skills/create-skill/references/best-practices.md`](claude/skills/create-skill/references/best-practices.md)
-- **Codex** — [`codex/skills/create-skill/references/best-practices.md`](codex/skills/create-skill/references/best-practices.md)
+- **Claude Code** — [`claude/skills/create-skill/references/`](claude/skills/create-skill/references/)
+- **Codex** — [`codex/skills/create-skill/references/`](codex/skills/create-skill/references/)
+
+Each edition's `create-skill` SKILL.md lists the reference files and what each one covers.

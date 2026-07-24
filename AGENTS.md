@@ -21,7 +21,7 @@ claude/                   # Claude Code edition (parallel tree)
 
 Each skill is self-contained. Skills compose other skills to any depth via `$skill-name` invocations. The key distinction is between analysis skills (return structured findings without acting) and workflow skills (compose analysis skills and act on results).
 
-For Codex skill conventions, see [`codex/SKILL-CONVENTIONS.md`](codex/SKILL-CONVENTIONS.md). General skill-authoring principles live in [`codex/skills/create-skill/references/best-practices.md`](codex/skills/create-skill/references/best-practices.md).
+For Codex skill conventions, see [`codex/SKILL-CONVENTIONS.md`](codex/SKILL-CONVENTIONS.md). General skill-authoring principles live in [`codex/skills/create-skill/references/`](codex/skills/create-skill/references/), split by topic and indexed in that skill's SKILL.md.
 
 ## Key Files
 

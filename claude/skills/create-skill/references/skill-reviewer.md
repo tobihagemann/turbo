@@ -2,6 +2,27 @@
 
 Review and improve skills for maximum effectiveness and reliability.
 
+## Contents
+
+- Review Process
+  - 1. Locate and Read Skill
+  - 2. Validate Structure
+  - 3. Evaluate Description (Most Critical)
+  - 4. Assess Content Quality
+  - 5. Check Progressive Disclosure
+  - 6. Review Supporting Files (if present)
+  - 7. Identify Issues
+- Quality Standards
+- Output Format
+  - Summary
+  - Description Analysis
+  - Content Quality
+  - Progressive Disclosure
+  - Issues by Severity
+  - Positive Aspects
+  - Overall Rating
+  - Priority Recommendations
+
 ## Review Process
 
 ### 1. Locate and Read Skill
