@@ -37,6 +37,10 @@ If multiple candidates exist, pick the one with the lowest shell number (from th
 
 State the picked shell path and its dependencies before continuing.
 
+Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the picked shell's basename without `.md`. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
+
+Attempt `create_goal` with the objective: "Carry the shell at <shell path> through expand, refine, and self-improve, mark the plan ready, and halt after the summary. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete at the halt that follows the plan-ready summary." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+
 ## Step 2: Run `$expand-shell` Skill
 
 Run the `$expand-shell` skill, passing the shell file path. Capture the resulting plan path for Step 3.
@@ -57,7 +61,7 @@ Update the plan's YAML frontmatter to `status: ready`.
 
 Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
-Then halt with this message:
+If this run created a goal in Step 1, mark it complete with `update_goal`. Then halt with this message:
 
 > Plan ready at `<plan path>`.
 >

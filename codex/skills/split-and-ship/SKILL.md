@@ -52,7 +52,7 @@ Verify `git stash list` shows the saved changes before proceeding.
 
 ### Ship each group
 
-Use `update_plan` to track each group. Process groups in order.
+Use `update_plan` to track each group, restating any remaining steps of a parent workflow alongside them. Process groups in order.
 
 For each group:
 
@@ -86,7 +86,7 @@ Verify `git stash list` shows the saved changes before proceeding.
 
 ### Commit each group
 
-Run the `$commit-rules` skill to load commit message rules. Use `update_plan` to track each group. Process groups in order.
+Run the `$commit-rules` skill to load commit message rules. Use `update_plan` to track each group, restating any remaining steps of a parent workflow alongside them. Process groups in order.
 
 For each group:
 

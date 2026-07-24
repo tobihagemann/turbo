@@ -69,7 +69,7 @@ Read [references/best-practices.md](references/best-practices.md) for writing st
 
 ## Task Tracking
 
-At the start of Step 5, track each remaining step with the Codex plan tool:
+At the start of Step 5, track each remaining step with the Codex plan tool, restating any remaining steps of a parent workflow alongside them:
 
 - "Review the skill" for Step 5
 - "Run $evaluate-findings skill" for Step 6

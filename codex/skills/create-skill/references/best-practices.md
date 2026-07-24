@@ -618,6 +618,7 @@ If any prior step produced changes, run the `$this-skill` skill again, skipping 
 ## Rules
 
 - The loop ends when a run makes no changes. Rely on that convergence signal rather than a fixed iteration cap.
+- Only defects justify a re-run. When a round stops surfacing defects and keeps surfacing improvements of kinds earlier rounds already applied, the loop has converged; a clean round is the termination signal, never grounds for a confirmation round.
 ```
 
 ### Use Neutral Exit Signals So Parent Pipelines Can Continue
@@ -843,7 +844,7 @@ Reserve `request_user_input` for decisions that genuinely need the user. When th
 **If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
 ```
 
-Self-looping skills terminate on their own convergence signal (a run that makes no changes, or a round of only cosmetic edits). Rely on that rather than an iteration cap.
+Self-looping skills terminate on their own convergence signal (a run that makes no changes, or a round of only cosmetic edits). Rely on that rather than an iteration cap. Judge the signal by the trend across rounds: once rounds stop surfacing defects and keep surfacing improvements of kinds earlier rounds already applied, the loop has converged even when the edits were structural. Give the loop a durable anchor: record iteration number and applied/rejected verdicts in a ledger under `.turbo/loops/`, and anchor uncapped loops with a goal whose objective names the ledger path, so compaction cannot erase the loop's memory of its own decisions.
 
 #### request_user_input Is Gated to Interactive Modes and the Main Conversation
 

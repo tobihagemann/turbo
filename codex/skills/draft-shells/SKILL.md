@@ -208,7 +208,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 - Never merge setup and finalization into the same shell
 - When it is ambiguous whether two pieces belong together, default to combining them into one candidate shell; the user can split at the gate
 - Each shell must be self-contained with enough structural context (Context, Produces, Consumes, Covers) to understand the work without reading the full spec
-- Shell files are the only outputs. Do not modify the spec or project files.
+- Shell files and workflow-state bookkeeping under `.turbo/` are the only outputs. Do not modify the spec or project files.
 - Every Consumes entry must be backed by an explicit edge in the shell's frontmatter `depends_on` (or marked "from existing codebase").
 - The union of all Covers fields must equal the full set of R-ids in the spec's `## Requirements` section. Every R-id must appear in at least one shell's Covers.
 - Coverage notations: only bare `R<N>` (full, claimed exactly once) and `R<N> (partial: <the slice this shell owns>)`. Do not invent variants like `(finished: ...)`.

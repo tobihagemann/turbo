@@ -4,7 +4,7 @@ Spec out the project and decompose into shells, then halt for the user to drive 
 
 ## Task Tracking
 
-Use `update_plan` to track each phase:
+Use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$draft-spec` skill
 2. Run `$refine-plan` skill (spec)

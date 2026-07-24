@@ -17,6 +17,10 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 4. Run `$self-improve` skill
 5. Ship It
 
+Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
+
+Then attempt `create_goal` with the objective: "Run `$finalize` post-implementation QA on the staged changes through Phase 5 (Ship It). Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete when Phase 5 finishes." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+
 ## Phase 1: Run `$polish-code` Skill
 
 Run the `$polish-code` skill for the current changes.
@@ -64,7 +68,7 @@ Use `request_user_input` to let the user choose whether to ship the changes toge
 - **Ship together** — ship all staged changes as one unit; run the `$ship` skill
 - **Split up** — ship each group as its own unit; run the `$split-and-ship` skill
 
-Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

@@ -17,7 +17,8 @@ Read project context (CLAUDE.md and files mentioned in the plan) to understand t
 - **Pattern Alignment** — Proposed approach follows existing codebase patterns where applicable. Deviations from established patterns are justified
 - **Side effects** — Other consumers, callers, or co-firing components affected by changes to shared surfaces (helpers, lifecycle hooks, globals)
 - **Design Direction** — Whether the chosen approach is the simplest safe option. Challenge assumptions the plan depends on and flag when a different approach would be safer or simpler
-- **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies
+- **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the plan and its spec describe: when they bound the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap, and machinery for it is a finding under Design Direction instead
+- **Proportionality** — Steps whose machinery (leases, locks, queues, versioning schemes, state machines, new persistent entities) exceeds the failure modes and scale the plan's Context or governing spec admits
 
 ## Determination Criteria
 

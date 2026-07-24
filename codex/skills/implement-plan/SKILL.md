@@ -32,6 +32,10 @@ If multiple plans exist and the most-recent choice is non-obvious (e.g., several
 
 State the resolved plan path before continuing, then read the file.
 
+Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the resolved plan's basename. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
+
+Attempt `create_goal` with the objective: "Execute the implementation plan at <plan path> through `$implement`, then set the plan's frontmatter status to done when it has frontmatter. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the plan file, the workflow file, and any active ledger, and continue from the first unfinished entry. Mark this goal complete only after that status update, or after `$implement` completes for a plan without frontmatter." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+
 ## Step 2: Read Context Files
 
 Read in full:
@@ -46,7 +50,9 @@ Run the `$implement` skill. The plan file, its file references, and its Verifica
 
 ## Step 4: Update Plan Status
 
-After `$implement` completes, set the plan's frontmatter `status:` to `done`. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip this step.
+After `$implement` completes, set the plan's frontmatter `status:` to `done`. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip the status update.
+
+If this run created a goal in Step 1, mark it complete with `update_goal`.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

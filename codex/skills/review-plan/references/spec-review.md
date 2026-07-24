@@ -14,7 +14,8 @@ Read project context (AGENTS.md and any existing codebase) to understand constra
 - **Scope** — Spec focuses on a coherent system. No unconnected components or features that serve no specified consumer
 - **YAGNI** — Unrequested features, over-engineering, or premature abstractions that add complexity without clear value
 - **Design Direction** — Whether the proposed system design is the simplest safe option. Challenge assumptions about users, environment, or dependencies and flag when a different approach would be safer or simpler
-- **Failure Modes** — Scenarios the spec does not account for: partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies
+- **Failure Modes** — Scenarios the spec does not account for: partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the spec describes: when the spec bounds the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap, and machinery for it is a YAGNI finding instead
+- **Proportionality** — Requirements or acceptance criteria whose machinery (leases, locks, queues, versioning schemes, state machines, new persistent entities) exceeds the failure modes and scale the spec's own stated bounds admit, wherever the spec states them (Overview, Users, or a requirement)
 
 ## Determination Criteria
 

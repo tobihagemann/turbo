@@ -9,7 +9,7 @@ Produce an implementation plan at `.turbo/plans/<slug>.md`. Capture the task, su
 
 ## Task Tracking
 
-Use `update_plan` to track each step:
+Use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Capture the task and pick a slug
 2. Run `$survey-patterns` skill
@@ -75,6 +75,7 @@ Identify product or design decisions the user's request did not resolve. Escalat
 - Design trade-offs affect UX or product direction rather than technical implementation
 - Multiple valid approaches exist and the choice is a matter of product preference, not technical merit
 - The plan would introduce a pattern not yet established in this codebase, or follow one sourced from outside it
+- The plan adds consistency or durability machinery (a lease, lock, queue, versioning scheme, or new persistent entity) that no stated requirement or spec bound demands; carrying that machinery is itself a product decision
 
 **Do not escalate** technical decisions the agent can make autonomously: which data structure, which existing pattern to follow, internal implementation approach. The boundary is product intent.
 
@@ -171,5 +172,5 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 - Never skip the pattern survey.
 - Never skip decision escalation for questions left unanswered. When entering from a Spec-Derived Input, questions the spec already resolves are considered answered and may be skipped.
-- The plan file is the only output. Do not write code, scaffolding, or other project files.
+- The plan file and workflow-state bookkeeping under `.turbo/` are the only outputs. Do not write code, scaffolding, or other project files.
 - Do not run `$review-plan` or any review skills here.

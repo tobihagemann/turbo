@@ -4,7 +4,7 @@ Draft → refine → self-improve → mark ready → halt to produce a plan file
 
 ## Task Tracking
 
-Use `update_plan` to track each phase:
+Use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$draft-plan` skill
 2. Run `$refine-plan` skill

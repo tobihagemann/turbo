@@ -20,9 +20,10 @@ Group Apply findings by file path and apply in file order to minimize context sw
 1. Read the full function or logical block at the referenced location
 2. Verify the finding still applies to the current code
 3. When the finding carries a suggested fix, treat the fix as a separate claim from the finding and verify it independently before applying it — trace it against the failure modes the finding names. If the fix does not hold up, treat the finding as Escalate (surface it in Step 3) and record why the remedy fails, rather than applying an unsound fix on the finding's authority.
-4. Check what the fix you are about to make changes about the inputs the code accepts. When the change in accepted inputs is exactly the defect the finding names, apply it normally. When it turns away or newly admits anything beyond that defect — a value or path a legitimate caller could send — that is a behavior change: treat the finding as Escalate (surface it in Step 3) and name the input class that changes.
-5. Make the fix
-6. If the finding renames an identifier, search the file for all occurrences of the old name before marking the fix complete. The cited location is often only one of several references.
+4. When the fix would reverse a decision the user made earlier — in discussion or recorded in the artifact — treat the finding as Escalate (surface it in Step 3) and name the original decision.
+5. Check what the fix you are about to make changes about the inputs the code accepts. When the change in accepted inputs is exactly the defect the finding names, apply it normally. When it turns away or newly admits anything beyond that defect — a value or path a legitimate caller could send — that is a behavior change: treat the finding as Escalate (surface it in Step 3) and name the input class that changes.
+6. Make the fix
+7. If the finding renames an identifier, search the file for all occurrences of the old name before marking the fix complete. The cited location is often only one of several references.
 
 If a finding references code that has changed since it was generated (e.g., by a prior fix in this same run), re-assess whether it still applies. Skip if the code has diverged.
 

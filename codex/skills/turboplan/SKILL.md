@@ -27,7 +27,11 @@ Form a recommended route from the dimensions and criteria above. Output the reco
 
 Then use `request_user_input` to have the user set the final route. Offer the recommended mode first, marked "(Recommended)", alongside the other two modes; the auto-appended "Other" lets the user describe a different path.
 
-Carry the confirmed route into its reference file from the table above and follow its steps.
+Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the task summary (lowercased, non-alphanumerics to hyphens, truncated to 40 characters at a word boundary). It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus the confirmed route's step list from its reference file as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
+
+Attempt `create_goal` with the objective: "Carry the task '<task summary>' through the confirmed <route> route's final step; for plan and spec routes that is the route's designed summarize-and-halt, and if the route re-routes, the new route's final step applies. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete at the route's final step, before any designed halt message." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+
+Carry the confirmed route into its reference file from the table above and follow its steps. If this run created the goal, resolve it inside the route's own flow rather than after it: mark it complete with `update_goal` when the route's final step is reached, before emitting any designed halt message.
 
 ## Rules
 

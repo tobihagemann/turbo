@@ -4,7 +4,7 @@ Run `$implement`. Direct mode goes straight to implementation; `.turbo/plans/` s
 
 ## Task Tracking
 
-Use `update_plan` to track each phase:
+Use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$implement` skill
 

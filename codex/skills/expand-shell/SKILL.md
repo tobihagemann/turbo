@@ -9,7 +9,7 @@ Expand a shell into a full implementation plan. The shell's Context, Produces, C
 
 ## Task Tracking
 
-Use `update_plan` to track each step:
+Use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Load the shell and verify consumes
 2. Run `$survey-patterns` skill (shell-focused)
@@ -151,7 +151,7 @@ Re-read the shell at `.turbo/shells/<shell-slug>.md` and the drafted plan at `.t
 - **Consumes** — Every dependency listed in the shell's Consumes is referenced in the Implementation Steps, Context Files, or Pattern Survey.
 - **Covers** — Read each spec requirement listed in the shell's Covers together with its nested acceptance criteria, and confirm each one is addressed by an Implementation Step and, where it has observable behavior, exercised by the Verification section.
 - **Context fidelity** — The plan's Context preserves the intent of the shell's Context (verbatim or lightly edited, not reinterpreted).
-- **Scope** — The plan does not add artifacts or responsibilities beyond the shell's Produces. Scope creep belongs in a new shell, not this plan.
+- **Scope** — The plan does not add artifacts or responsibilities beyond the shell's Produces. Scope creep belongs in a new shell, not this plan. Concretization keeps the data model at the shell's altitude: when steps would multiply persistent entities, tables, or state machines beyond what Produces and the Covers requirements name, treat that as scope creep and revise.
 - **Downstream compatibility** (advisory) — If this shell produces a reusable contract or subsystem, read the direct downstream shells (those whose `depends_on` includes this shell's slug, or whose `Consumes` references its Produces) and check that the plan gives them a stable seam rather than forcing a schema or API redesign in a downstream shell. A conflict does not block: note it as a plan risk in the plan's Context or Verification without changing this shell's contract or pulling downstream scope into this plan.
 - **Stable references** — The plan does not cite the source shell or another artifact scheduled for deletion.
 
@@ -178,7 +178,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 - Never proceed past Step 1 if Consumes verification fails.
 - The shell's structural contract (Produces, Consumes, Covers) is authoritative. If the pattern survey reveals conflicts, note them in the plan's Context or Verification sections rather than altering the contract.
-- The plan file is the only output. Do not write code, scaffolding, or other project files.
+- The plan file and workflow-state bookkeeping under `.turbo/` are the only outputs. Do not write code, scaffolding, or other project files.
 - Delete the source shell only after the plan file has been written successfully, Step 5 verification has passed, and the user has approved the plan at Step 6. Never delete before.
 - Do not run `$review-plan` or any review skills here.
 - Do not embed task tracking, skill loading, or `$finalize` invocation in the plan file.

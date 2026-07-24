@@ -17,6 +17,15 @@ At the start of every invocation (including re-runs from Step 7), use `update_pl
 6. Run `$smoke-test` skill
 7. Re-run `$polish-code` skill if changed
 
+## Loop State
+
+Loop state lives at `.turbo/loops/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. At the start of every invocation, read the ledger if it exists.
+
+- **Fresh loop** (no ledger, or its `Status:` line is `closed`): write a fresh ledger with `Status: active`, then attempt `create_goal` with the objective: "Run the `$polish-code` loop on <scope> until converged: a run with no changes, an in-place-only round, or remaining findings that do not justify another re-run. Loop state: `.turbo/loops/<slug>.md`; re-read it after any context compaction and do not re-adjudicate findings it records as rejected. Mark this goal complete when the loop converges." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+- **Continuing loop** (`Status: active`): this invocation is the iteration after the last one the ledger records, whether a Step 7 re-run or a resumption after an interruption. Continue from the recorded state. If no unfinished goal exists, attempt `create_goal` with the same objective as a fresh loop.
+- **During each iteration:** have the ledger path in context when Step 4 runs so recorded verdicts are honored. After Step 7's classification, append the iteration number, the round's applied and rejected verdicts with reasons, and the classification.
+- **Convergence stop** (a run with no changes, an in-place-only round, or a further re-run judged pointless): set `Status: closed`; if this loop created the goal, mark it complete with `update_goal`. An inherited goal stays active for the outer workflow. A halt on an unresolved failure leaves `Status: active` and the goal untouched, so the next invocation resumes the recorded state.
+
 ## Step 1: Run `$stage` Skill
 
 Run the `$stage` skill.
@@ -66,6 +75,8 @@ Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on.
 - **In-place edits only** (renamed local variables without changing behavior, reformatted, adjusted whitespace, edited neutral comments) — the loop has converged. Output a summary of what changed and stop; do not re-run.
 
 **If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
+
+Judge convergence by the trend across iterations: when rounds have stopped surfacing defects (wrong behavior, security exposures, broken contracts) and keep surfacing improvements of kinds earlier rounds already applied, a further re-run is pointless even though the edits were structural. A round that surfaces no defects is the termination signal; never add a confirmation round, an extra reviewer, or review steps beyond this skill's own.
 
 **When the same class of defect recurs across iterations**, stop patching the individual instance and instead encode the root-cause invariant structurally — a shared guard or type, or a regression test that pins the class against the worked failures it must prevent. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 

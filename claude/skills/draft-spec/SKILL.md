@@ -64,6 +64,7 @@ Interview the user relentlessly about every aspect of the project until you reac
 | **Users and personas** | Who uses this? Goals, pain points, technical sophistication |
 | **Core behaviors** | Primary capabilities and user-facing workflows — the behaviors the system must exhibit |
 | **Non-functional requirements** | Performance, security, accessibility, i18n, compliance |
+| **Scale and operational rigor** | How many users and operators, now and realistically? Concurrent writers? Which rigor tier is proportionate — personal tool, small team, or business-critical — and what failure tolerance does that imply? |
 
 ### Design (gather after requirements are clear)
 
@@ -153,6 +154,8 @@ State decisions, not options. Where a decision was deferred, move it to Open Que
 - Use concrete details from the discussion, not vague generalizations.
 - Every Design element must trace to at least one requirement. If a design element has no requirement to justify it, either add the requirement or drop the element.
 - Every specified component (data model entity, API endpoint, utility, service) must trace to a consumer in the spec. If a component exists only to "support future work," either spec the future work as a requirement or defer the component.
+- State the deployment's bounds in the Overview or a requirement: user and operator count, concurrency, and the rigor tier the user chose.
+- Consistency and durability machinery (leases, locks, queues, versioning schemes, state machines beyond simple status fields) is a cost decision. Surface it in the discussion with its carrying cost; never add it to the draft unasked.
 - Where the user deferred a decision, capture it in Open Questions.
 - Where recommendations were accepted, state them in Design with brief rationale.
 

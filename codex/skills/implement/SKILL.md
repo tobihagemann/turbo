@@ -18,6 +18,10 @@ At the start, use `update_plan` to track each step, restating any remaining step
 5. Run `$preview` skill for UI/UX changes
 6. Run `$finalize` skill
 
+Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
+
+Then attempt `create_goal` with the objective: "Make this change: <one-line task summary>. Carry it through `$finalize`'s final step. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete when `$finalize` has finished." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+
 ## Step 1: Run `$code-style` Skill
 
 Run the `$code-style` skill to load mirror, reuse, and symmetry rules before editing.
@@ -44,7 +48,7 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 Run the `$finalize` skill.
 
-Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 
