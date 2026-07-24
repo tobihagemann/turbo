@@ -75,6 +75,12 @@ Organize into subsections by attack surface area (not by STRIDE category or comp
 ### [3.N] [Surface Name]
 **Surface**: What is exposed and where (1-2 sentences with file references).
 
+**Entry points and sinks**
+- `path:line` (untrusted input) → `path:line` (dangerous operation): what enters and what it reaches. When a surface has no code-level entry point, or nothing dangerous behind it, say so here.
+
+**Hot files**
+- `path` (1-3 files whose logic concentrates this surface, beyond the lines cited above)
+
 **Mitigations**
 - What the code already does to defend this surface (observations, not recommendations).
 
@@ -86,6 +92,7 @@ Organize into subsections by attack surface area (not by STRIDE category or comp
 
 **For each surface, document**:
 - 1-2 sentence surface description with file references
+- Each entry point paired to the sink it reaches, both as `path:line`, plus the Hot files a reviewer must read end-to-end. When a surface has no code-level entry point or nothing dangerous behind it, say so rather than listing an empty field
 - 2-4 mitigation bullets describing existing defenses (what the code does, not what it should do)
 - 2-3 attacker stories: one sentence each, naming attacker type, action, and consequence
 
@@ -107,7 +114,7 @@ Close with a calibration paragraph explaining how the application's deployment m
 Before presenting the output, validate:
 
 1. **Codebase-specific**: Every claim references actual files, modules, or architectural patterns. No generic filler.
-2. **Complete coverage**: All security-sensitive flows from Step 2 appear in at least one attack surface.
+2. **Complete coverage**: All security-sensitive flows from Step 2 appear in at least one attack surface, anchored by `path:line` in that surface's entry points or sinks.
 3. **Balanced mitigations**: Each surface lists existing defenses. If none exist, state that explicitly.
 4. **Concrete stories**: Each attacker story names a specific attacker, action, and consequence. No abstract "an attacker could exploit a vulnerability."
 5. **Consistent severity**: Calibration in section 4 is consistent with severity context in section 3 stories.

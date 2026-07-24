@@ -2,11 +2,13 @@
 
 ## Review Instructions
 
-Check if `.turbo/threat-model.md` exists at the repository root. If it does, read sections 2 (Trust Boundaries and Assumptions) and 3 (Attack Surface, Mitigations and Attacker Stories) to understand assets at risk, identified attack surfaces with existing mitigations, and attacker stories. Use this context to prioritize findings. If no threat model exists, proceed without it.
+Check if `.turbo/threat-model.md` exists at the repository root. If it does, read sections 2 (Trust Boundaries and Assumptions) and 3 (Attack Surface, Mitigations and Attacker Stories) to understand assets at risk, identified attack surfaces with existing mitigations, and attacker stories. Treat the entry points, sinks, and hot files listed by surfaces that intersect the reviewed scope as read targets, and use the attacker stories to prioritize findings. If no threat model exists, proceed without it.
 
 ### Review Mindset
 
 Do not treat the existence of a check, sanitizer, or authorization guard as proof of safety. When a defense exists, reason about whether it actually constrains the value or state as intended across the full transformation and execution chain. A regex that validates a URL before decoding does not constrain the decoded URL. A permission check in one handler does not protect a second handler that skips it. Start from what the code is trying to guarantee, then look for ways that guarantee can fail.
+
+Hold dismissals to the same standard. Refute a finding only with a mitigation you located and read. An expectation that the framework escapes the value, that the caller already validated it, or that the type constrains it stays an assumption until you have read the code that enforces it, and an assumption leaves the finding standing.
 
 ## What to Review
 
@@ -46,6 +48,8 @@ Flag an issue only when ALL of these hold:
 - Defense-in-depth suggestions when the primary defense demonstrably holds (not just exists)
 - Vulnerabilities in test code that cannot be reached in production
 
-**Extra metadata:** `**Category:** <vulnerability class>`
+**Extra metadata:** `**Category:** <vulnerability class>` and `**Sink:** <sink line, verbatim> in <enclosing function or method>`
+
+The sink is the line where attacker-influenced data reaches the dangerous operation. Quote it inside a code span so source punctuation survives rendering. Omit the `**Sink:**` field for findings with no data flow behind them, such as a weak algorithm choice, an insecure default, a hardcoded credential, or a dependency CVE.
 
 **Verdict label:** `Security: <secure | concerns found>`

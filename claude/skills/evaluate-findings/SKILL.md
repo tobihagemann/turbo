@@ -63,7 +63,7 @@ After the initial assessment, challenge uncertain findings from a different angl
 
 Spawn when any finding has **Medium** or **Low** confidence. Send only those findings to the subagent. High-confidence findings pass through unchallenged. Skip this step entirely if all findings are High confidence.
 
-Launch a single subagent in the foreground (`model: "opus"`). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the subagent to challenge each finding: try to prove it wrong, or confirm it with evidence.
+Launch a single subagent in the foreground (`model: "opus"`). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the subagent to challenge each finding: try to prove it wrong, or confirm it with evidence. A refutation counts only when it rests on a defense, guarantee, or documented behavior the subagent located and read, or on behavior it observed by running the code; an expectation that a framework, caller, or type already handles the case returns Inconclusive and leaves the initial verdict standing.
 
 The subagent picks research tools based on claim type:
 
