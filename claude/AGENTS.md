@@ -5,12 +5,14 @@ You are working in the Claude Code edition tree. The default Claude Code instruc
 ## Read Before Editing
 
 - [`CLAUDE.md`](CLAUDE.md) — Claude edition rules and overlay
-- [`SKILL-CONVENTIONS.md`](SKILL-CONVENTIONS.md) — Claude skill conventions, plus a "Harness Reference" section with tool names, permission modes, and skill/CLAUDE.md hierarchies, and a "Harness Vocabulary" table that translates Codex terms into Claude Code equivalents
+- [`SKILL-CONVENTIONS.md`](SKILL-CONVENTIONS.md) — Claude skill conventions
+- [`skills/create-skill/references/harness.md`](skills/create-skill/references/harness.md) — harness facts: tool names, permission modes, skill and CLAUDE.md hierarchies
+- [`docs/harness-vocabulary.md`](docs/harness-vocabulary.md) — table translating Codex terms into Claude Code equivalents
 - [`ADDITIONS.md`](ADDITIONS.md) — Claude-specific user instructions
 
 ## Vocabulary
 
-Use Claude Code vocabulary in `claude/skills/`: `TaskCreate` / `TaskList` for plan tracking, `AskUserQuestion` for user gates, the Skill tool for invoking skills, `~/.claude/skills` for the install path, `CLAUDE.md` for project instructions. The full Codex→Claude mapping is in [`SKILL-CONVENTIONS.md`](SKILL-CONVENTIONS.md) under "Harness Vocabulary". Do not introduce Codex primitives here.
+Use Claude Code vocabulary in `claude/skills/`: `TaskCreate` / `TaskList` for plan tracking, `AskUserQuestion` for user gates, the Skill tool for invoking skills, `~/.claude/skills` for the install path, `CLAUDE.md` for project instructions. The full Codex→Claude mapping is in [`docs/harness-vocabulary.md`](docs/harness-vocabulary.md). Do not introduce Codex primitives here.
 
 ## Cross-Edition Sync
 

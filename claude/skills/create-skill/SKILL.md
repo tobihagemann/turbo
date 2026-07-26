@@ -17,6 +17,7 @@ This skill guides the creation of effective skills. Authoring guidance is split 
 | [references/tools.md](references/tools.md) | Agent, Bash, AskUserQuestion, and MCP tool invocation |
 | [references/evaluation.md](references/evaluation.md) | Evaluations and iterating on a skill from observed behavior |
 | [references/scripts.md](references/scripts.md) | Skills that bundle executable code |
+| [references/harness.md](references/harness.md) | Harness tool names, permission modes, and discovery paths |
 
 For conceptual background on how Skills work, see the Skills overview on platform.claude.com.
 
@@ -86,6 +87,7 @@ Then read the references matching what this skill does:
 - Depends on or fans out to other skills → [references/composition.md](references/composition.md), plus [references/tools.md](references/tools.md) when it fans out
 - Dispatches Agent, Bash, `AskUserQuestion`, or MCP calls → [references/tools.md](references/tools.md)
 - Bundles executable scripts → [references/scripts.md](references/scripts.md)
+- Targets a specific harness primitive, or depends on an exact tool name, limit, or discovery path → [references/harness.md](references/harness.md)
 
 Read [references/evaluation.md](references/evaluation.md) when validating the skill against real tasks or refining it from observed behavior.
 
