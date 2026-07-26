@@ -66,7 +66,11 @@ After the initial assessment, challenge uncertain findings from a different angl
 
 Spawn when any finding has **Medium** or **Low** confidence. Send only those findings to the sub-agent. High-confidence findings pass through unchallenged. Skip this step entirely if all findings are High confidence.
 
-Launch a single sub-agent (inherited model defaults). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the sub-agent to challenge each finding: try to prove it wrong, or confirm it with evidence. A refutation counts only when it rests on a defense, guarantee, or documented behavior the sub-agent located and read, or on behavior it observed by running the code; an expectation that a framework, caller, or type already handles the case returns Inconclusive and leaves the initial verdict standing.
+Capture `git status --short` and `git diff HEAD | git hash-object --stdin` before spawning.
+
+Launch a single sub-agent (inherited model defaults). Provide the Medium/Low-confidence findings with their file locations, claims, and initial verdicts. Instruct the sub-agent to challenge each finding: try to prove it wrong, or confirm it with evidence. A refutation counts only when it rests on a defense, guarantee, or documented behavior the sub-agent located and read, or on behavior it observed by running the code; an expectation that a framework, caller, or type already handles the case returns Inconclusive and leaves the initial verdict standing. The sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only; an experiment that needs a scratch project runs in a temp directory outside the repo, or in an isolated `git worktree` it discards afterward.
+
+**Verify the tree:** re-run both commands when the sub-agent returns. Delete what the sub-agent created and revert what it modified or staged, leaving everything the pre-spawn capture already showed untouched.
 
 The sub-agent picks research tools based on claim type:
 
