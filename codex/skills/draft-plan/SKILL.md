@@ -79,6 +79,8 @@ Identify product or design decisions the user's request did not resolve. Escalat
 
 **Do not escalate** technical decisions the agent can make autonomously: which data structure, which existing pattern to follow, internal implementation approach. The boundary is product intent.
 
+**Confirm external constraints before escalating.** When an option depends on a third-party API, service, or platform behaving a particular way, drop it unless that behavior is confirmed by current documentation.
+
 Present each decision as a concise trade-off with options. Mark the strongest option "(Recommended)" and place it first. Draft plan steps that depend on these decisions only after the user responds.
 
 ## Step 5: Deep-Dive Discussion

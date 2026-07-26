@@ -7,6 +7,8 @@ description: "Find dead code using parallel subagent analysis and optional CLI t
 
 Identify dead code in a codebase. **Core rule: code only used in tests is still dead code.** Only production usage counts.
 
+In an incomplete or abandoned implementation, a declared-but-unused symbol may be intended-but-not-yet-used. When git history shows it was added as a deliberate part of an unfinished stack, recommend **investigate** rather than **delete**.
+
 ## Step 1: Detect Languages, Scope & Test Boundaries
 
 Determine the project structure:

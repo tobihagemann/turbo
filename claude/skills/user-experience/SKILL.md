@@ -33,6 +33,6 @@ Translate the need into the right solution rather than the first one that comes 
 Trace the path the user takes from end to end.
 
 - Follow the full journey: how the user arrives, the change itself, and what happens after.
-- Walk the unhappy paths: empty states, errors, interruptions, first-time versus returning use.
+- Walk the unhappy paths in the running software when it can be run: empty states, seeded defaults, errors, interruptions, first-time versus returning use. Flag any of these judged from source alone.
 - Confirm the user always knows what just happened and what to do next.
 - Surface friction: redundant steps, dead ends, and points where the user must hold state in their head.
