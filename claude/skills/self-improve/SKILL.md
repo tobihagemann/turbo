@@ -37,7 +37,7 @@ If `~/.turbo/repo/` exists, identify which installed skills are turbo skills:
 
 **Skip** when the conversation is visible in full from the user's own first message.
 
-When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk transcript. Spawn a single subagent in the foreground (`model: "opus"`). The subagent's prompt must include:
+When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk transcript. Spawn a single subagent in the foreground (`model: "opus"`, no `name`). The subagent's prompt must include:
 
 1. The absolute path of the project root
 2. A distinctive phrase from the visible conversation, for confirming which transcript belongs to this session

@@ -50,7 +50,7 @@ Stage all changes made in this step before continuing.
 
 ## Step 6: Run `/smoke-test` Skill
 
-Run the `/smoke-test` skill to produce the smoke test plan. Delegate test execution to a subagent using the Agent tool in the foreground (`model: "opus"`). Pass the plan and the diff command (`git diff --cached`) to the subagent.
+Run the `/smoke-test` skill to produce the smoke test plan. Delegate test execution to a subagent using the Agent tool in the foreground (`model: "opus"`, no `name`). Pass the plan and the diff command (`git diff --cached`) to the subagent.
 
 If any test fails, fix the issues and stage the fixes.
 

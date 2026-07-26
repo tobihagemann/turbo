@@ -5,6 +5,7 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
 ## Contents
 
 - Dispatching Agent Tool Calls
+  - Never Name a Spawned Agent
   - Phrase Multi-Agent Parallel Dispatch Imperatively
   - Hoist Conditional Opt-Out Checks Above Dispatch Logic
   - Skill Tool Calls Don't Parallelize with Agent Calls
@@ -18,7 +19,7 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
 
 ## Dispatching Agent Tool Calls
 
-When a skill spawns subagents, make foreground execution a salient, standalone instruction in plain words — e.g. "Run them in the foreground so all results return in this turn." Subagents background by default: the harness auto-decides and leans background, especially when the spawning agent does not strictly need the results inline. Do not rely on the `run_in_background: false` parameter — the executing model treats `false` as the redundant schema default and silently drops it, and burying the intent in a parenthetical alongside `model`/`run_in_background` loses salience under context load (the observed real-world failure mode). State the foreground intent as its own sentence and keep only `model` in the parenthetical. Vague phrasing like "launch concurrently" or "in parallel" lets the agents background.
+When a skill spawns subagents, make foreground execution a salient, standalone instruction in plain words — e.g. "Run them in the foreground so all results return in this turn." Subagents background by default: the harness auto-decides and leans background, especially when the spawning agent does not strictly need the results inline. Do not rely on the `run_in_background: false` parameter — the executing model treats `false` as the redundant schema default and silently drops it, and burying the intent in a parenthetical alongside `model`/`run_in_background` loses salience under context load (the observed real-world failure mode). State the foreground intent as its own sentence and keep the parenthetical to parameter values (`model`, and `no name` per Never Name a Spawned Agent below). Vague phrasing like "launch concurrently" or "in parallel" lets the agents background.
 
 Multiple Agent tool calls in a single message run in parallel. Prefer foreground agents over background agents:
 
@@ -27,7 +28,19 @@ Multiple Agent tool calls in a single message run in parallel. Prefer foreground
 
 - ✗ **Avoid**: "Launch all four agents concurrently in a single message."
 - ✗ **Avoid**: "Spawn a subagent to review the output."
-- ✓ **Good**: "Launch all four agents in a single message. Run them in the foreground so all results return in this turn (`model: "opus"`)."
+- ✓ **Good**: "Launch all four agents in a single message. Run them in the foreground so all results return in this turn (`model: "opus"`, no `name`)."
+
+### Never Name a Spawned Agent
+
+Direct every dispatch instruction to omit the `name` parameter. A named agent becomes an addressable teammate: the Agent call returns only a spawn acknowledgement and an `agent_id`, never the agent's report, and its completion arrives out of band as an `idle_notification` wrapped in a `<teammate-message>`. A skill that expects the result inline gets a spawn receipt instead, and the `run_in_background: false` parameter does not prevent this.
+
+Because the rule prevents the teammate channel from being used at all, dispatch instructions need no paired recovery text for it. Should a named agent ever idle, its result has already been delivered: read it and continue rather than answering with `SendMessage`, which only makes a finished agent re-idle without emitting text and invites a nudge loop. Keep that knowledge here rather than repeating it in every skill that spawns.
+
+Do not add file-based delivery fallbacks (having each agent `Write` its report to an agreed path) to work around this. Writing to disk masks the misread channel rather than fixing it, and the spawning agent still burns turns waiting on a report that already arrived.
+
+- ✗ **Avoid**: `Agent(name: "internal-reviewer", run_in_background: false, ...)` then nudging it when it idles.
+- ✓ **Good** (fan-out): "Each Agent call uses `model: "opus"` and no `name`."
+- ✓ **Good** (single agent): "Spawn a single subagent in the foreground (`model: "opus"`, no `name`)."
 
 ### Phrase Multi-Agent Parallel Dispatch Imperatively
 
@@ -35,7 +48,7 @@ Tool calls within a single assistant message run concurrently. Tool calls across
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
 
-> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"`.
+> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`.
 
 State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one Agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
 
@@ -74,7 +87,7 @@ When a skill's Bash invocation needs non-default parameters (`timeout`, `dangero
 - ✗ **Avoid**: "Wrap the command in a shell `timeout` of 1 hour: `timeout 3600 X`."
 - ✓ **Good**: "Run X via the Bash tool (`timeout: 600000`, do not set `run_in_background`)."
 
-The parenthetical names parameters and values directly, parallel to (`model: "opus"`) for Agent calls. The Bash tool stays foreground when `run_in_background` is omitted, so "do not set `run_in_background`" is the correct foreground phrasing for Bash calls (unlike the Agent tool, whose subagents background by default — see Dispatching Agent Tool Calls above). The Bash `timeout` maximum (600000 ms) is enforced: a larger value is not honored — the harness backgrounds the call immediately and hard-kills it at 600s, truncating output. Cap at `timeout: 600000`; if the command overruns that window, the harness force-backgrounds it and it runs to completion, recoverable by reading its output file. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
+The parenthetical names parameters and values directly, parallel to (`model: "opus"`) for Agent calls. The Bash tool stays foreground when `run_in_background` is omitted, so "do not set `run_in_background`" is the correct foreground phrasing for Bash calls (unlike the Agent tool, whose subagents background by default — see Dispatching Agent Tool Calls above). The Bash `timeout` maximum (600000 ms) is enforced: a larger value is not honored — the harness backgrounds the call immediately and hard-kills it at 600s, truncating output. Cap at `timeout: 600000`. A command that overruns that window is normally force-backgrounded: the result carries a task ID, and the command runs to completion recoverable from its output file. A skill whose command can overrun should say how to recover it. Rarely the command is hard-killed instead, giving an error exit reading `Command timed out after <duration>` with no task ID and no output file; that signature is a timeout, so never route it into a retry-on-crash rule that would re-run the work from scratch. Reach for a shell wrapper like GNU `timeout` only when the Bash tool's parameter cannot achieve the goal.
 
 ## Using AskUserQuestion
 

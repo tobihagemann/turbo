@@ -101,12 +101,12 @@ At the start of Step 5, use `TaskCreate` to create a task for each remaining ste
 
 ## Step 5: Review the Skill
 
-After writing all files, spawn a subagent in the foreground (`model: "opus"`) to review the skill. The subagent should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines.
+After writing all files, spawn a subagent in the foreground (`model: "opus"`, no `name`) to review the skill. The subagent should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines.
 
 - **For new skills**, frame the review as open-ended: propose improvements, convention checks, writing quality.
 - **For modified skills** (simplification, restructuring, bug fix), frame the review as regression-focused: check whether the change broke anything. Tell the reviewer not to propose new features.
 - **For same-session iteration** (re-reviewing a skill after applying findings from a previous review in the same session), treat as modified: the review is checking whether the fixes broke anything.
-- **For batch changes** (multiple skills created or modified in the same session), use the Agent tool to launch one review subagent per skill in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"`. State the total count explicitly when emitting the calls.
+- **For batch changes** (multiple skills created or modified in the same session), group the work by distinct change rather than by skill. Two skills received the same change when the edited text is identical; otherwise each is a distinct change. Launch one review subagent per distinct change, plus one subagent covering every site of a change applied identically across several skills. Give that subagent the full site list, and have it check each site in its own local context and flag any comparable location in the batch that should have received the change but did not. Use the Agent tool to launch them all in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. State the total count and which sites map to which subagent when emitting the calls.
 
 ## Step 6: Run `/evaluate-findings` Skill
 

@@ -104,7 +104,7 @@ After writing all files, spawn a Codex sub-agent (inherited model defaults) to r
 - **For new skills**, frame the review as open-ended: propose improvements, convention checks, writing quality.
 - **For modified skills** (simplification, restructuring, bug fix), frame the review as regression-focused: check whether the change broke anything. Tell the reviewer not to propose new features.
 - **For same-session iteration** (re-reviewing a skill after applying findings from a previous review in the same session), treat as modified: the review is checking whether the fixes broke anything.
-- **For batch changes** (multiple skills created or modified in the same session), launch one Codex sub-agent per skill in a single batch so the reviews run in parallel.
+- **For batch changes** (multiple skills created or modified in the same session), group the work by distinct change rather than by skill. Two skills received the same change when the edited text is identical; otherwise each is a distinct change. Launch one Codex sub-agent per distinct change, plus one sub-agent covering every site of a change applied identically across several skills. Give that sub-agent the full site list, and have it check each site in its own local context and flag any comparable location in the batch that should have received the change but did not. State the total count and which sites map to which sub-agent. Issue all `spawn_agent` calls in one batch so they run concurrently, then collect their results with `wait_agent`. Each sub-agent inherits the parent model.
 
 ## Step 6: Run `$evaluate-findings` Skill
 

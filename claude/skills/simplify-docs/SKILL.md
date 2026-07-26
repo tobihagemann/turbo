@@ -17,7 +17,7 @@ Determine what to review:
 
 ## Step 2: Launch Two Review Agents in Parallel
 
-Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"`. Pass the scope from Step 1 to each agent.
+Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Pass the scope from Step 1 to each agent.
 
 ### Agent 1: Code Comments Review
 

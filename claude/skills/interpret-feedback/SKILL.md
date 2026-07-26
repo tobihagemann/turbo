@@ -19,8 +19,7 @@ For each item, collect whatever context is available: code snippets, diffs, surr
 
 ## Step 2: Run Two Interpretations in Parallel
 
-Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"`. That is two Agent tool calls total.
-
+Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. That is two Agent tool calls total.
 ### Internal Interpretation
 
 Spawn a subagent with the feedback items and all available context. Instruct it to:

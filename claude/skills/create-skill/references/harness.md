@@ -9,7 +9,8 @@ Quick reference for the Claude Code harness: canonical tool names, limits, and d
 - `Edit` / `Write` / `Read` / `NotebookEdit` — file operations. `Edit` requires the file to be read first.
 - `Bash` — shell execution; supports `run_in_background` for long-running commands.
 - `Skill tool` — invoke an installed skill by name.
-- `Agent tool` — spawn a sub-agent. The `subagent_type` field selects a specialized agent (built-ins include `Explore`, `Plan`, `general-purpose`, plus user-defined types). Generic sub-agents accept a `model` override.
+- `Agent tool` — spawn a sub-agent. The `subagent_type` field selects a specialized agent (built-ins include `Explore`, `Plan`, `general-purpose`, plus user-defined types). Generic sub-agents accept a `model` override. The `name` field makes the sub-agent an addressable teammate, which changes how its result is delivered; see Never Name a Spawned Agent in `tools.md`.
+- `SendMessage` — message another agent by name, or by the raw `agent_id` from its spawn result when it has no name. Background sub-agents can also message `main`.
 
 **Sub-agents:** No documented hard cap on count or nesting; pragmatic limits are whatever the parent context can manage. Sub-agents inherit the parent model unless `model` is specified. Specialized agents have restricted tool subsets defined per agent type.
 
