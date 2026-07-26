@@ -31,7 +31,19 @@ If `~/.turbo/repo/` exists, identify which installed skills are turbo skills:
 
 **Exception:** If the current project IS the turbo repo (i.e., the working directory contains this skill collection), route turbo skill lessons through the **Existing user/project skill** destination in Step 4 — edits go directly to `claude/skills/<name>/` in the project, with no installed-copy indirection and no contribution flow.
 
-## Step 2: Identify Session Skills and Scan for Lessons
+## Step 2: Gather Session Evidence and Scan for Lessons
+
+### Recover Pre-Compaction Evidence
+
+**Skip** when the conversation is visible in full from the user's own first message.
+
+When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk transcript. Spawn a single subagent in the foreground (`model: "opus"`). The subagent's prompt must include:
+
+1. The absolute path of the project root
+2. A distinctive phrase from the visible conversation, for confirming which transcript belongs to this session
+3. An instruction to read [references/transcript-miner.md](references/transcript-miner.md) for transcript location, extraction, and output format
+
+Treat the returned items as raw evidence for the scan below.
 
 ### Identify Session Skills
 

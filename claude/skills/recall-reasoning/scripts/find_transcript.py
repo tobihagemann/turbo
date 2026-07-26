@@ -240,9 +240,17 @@ NOISE_PREFIXES = (
     '<bash-stdout>',
     '<bash-stderr>',
     '<system-reminder>',
+    '<task-notification>',
     'Base directory for this skill:',
-    'Called the ',
     'Caveat: The messages below were generated',
+    '(Re-invocation of',
+)
+
+# Read like ordinary prose, so only harness-injected user records are filtered.
+USER_NOISE_PREFIXES = (
+    'Called the ',
+    'Skill /',
+    'Another Claude session sent',
 )
 
 
@@ -255,6 +263,8 @@ def clean_text(content, rtype):
         if all(isinstance(p, dict) and p.get('type') == 'tool_result' for p in content):
             return None
     if any(text.startswith(p) for p in NOISE_PREFIXES):
+        return None
+    if rtype == 'user' and text.startswith(USER_NOISE_PREFIXES):
         return None
     if rtype == 'assistant' and '[tool_use:' in text:
         lines = [l for l in text.split('\n') if not l.startswith('[tool_use:')]
