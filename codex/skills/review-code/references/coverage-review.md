@@ -18,6 +18,7 @@ Skip the mutation when a fresh checkout cannot run the suite cheaply: it needs a
 
 - **No test coverage** — functions or modules with no corresponding tests
 - **Missing edge cases** — tests exist but miss critical paths (error handling, boundary conditions, empty inputs, concurrent access)
+- **Test efficacy** — tests that cannot fail when the behavior they guard breaks (the assertion reads a surface the code under test does not write, or a mechanism other than the one under test produces the same observable)
 - **Risk-level mismatch** — high-risk code (auth, data handling, financial logic) with only basic happy-path tests
 - **Convention gaps** — tests not following the project's established testing patterns
 

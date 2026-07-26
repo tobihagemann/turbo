@@ -97,7 +97,9 @@ Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on.
 
 Judge convergence by the trend across iterations: when rounds have stopped surfacing defects (contradictions, infeasible steps, missing requirements) and keep surfacing improvements of kinds earlier rounds already applied, a further re-run is pointless even though the edits were structural. A round that surfaces no defects is the termination signal; never add a confirmation round, an extra reviewer, or review steps beyond this skill's own.
 
-**When the same class of defect recurs across iterations**, stop patching the individual instance and instead write the root-cause invariant into the artifact itself, enumerating the worked failures it must prevent. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
+Judge the kind of surviving defect as well as the trend. Once earlier rounds have drained the design- and requirement-level defects and a round's findings are dominated by claims that a named identifier does not exist or does not match its declaration, the artifact has passed the point where reviewing it as text pays, even when the count is rising and every finding is genuine. Implementation surfaces that class immediately; a further re-run is pointless. Expect any round that adds mechanism to seed defects at the seams it creates.
+
+**When the same class of defect recurs across iterations**, stop patching the individual instance and instead write the root-cause invariant into the artifact itself, enumerating the worked failures it must prevent. In the same pass, re-read the whole artifact against the new invariant and fix every instance it catches, including text written before the invariant existed. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 

@@ -14,6 +14,7 @@ Read project context (AGENTS.md and files mentioned in the plan) to understand t
 - **Concreteness** — Every step references a concrete anchor (file/line, function, symbol, or file to create), and named symbols/types are verifiable in the codebase. Flag vague directives or placeholder language
 - **Consistency** — Internal contradictions between sections (e.g., Implementation Steps disagree with Verification, two steps describe the same call differently)
 - **Verification** — The plan has a verification section that describes how to confirm the change works. Flag if missing, or if it is vague ("run tests" without naming which tests or what to look for)
+- **Test efficacy** — When the plan proposes, keeps, or reshapes a test as a regression net, check that the test can fail when the behavior it guards breaks. Flag an assertion that reads a surface the code under test does not write, or a case where a mechanism other than the one under test produces the same observable
 - **Pattern Alignment** — Proposed approach follows existing codebase patterns where applicable. Deviations from established patterns are justified
 - **Side effects** — Other consumers, callers, or co-firing components affected by changes to shared surfaces (helpers, lifecycle hooks, globals)
 - **Design Direction** — Whether the chosen approach is the simplest safe option. Challenge assumptions the plan depends on and flag when a different approach would be safer or simpler
