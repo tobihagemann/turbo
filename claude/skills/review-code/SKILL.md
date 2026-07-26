@@ -19,6 +19,8 @@ Determine what to review:
 - If a **file list or directory** was provided, review those files directly (read the full files, not a diff).
 - If **neither** was provided, default to diffing against the repository's default branch (detect via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`). If there are no changes against the default branch, stop and state that there is nothing to review.
 
+State the resolved file list before continuing: add `--name-only` to a diff command, or list the files for a file or directory scope. When the scope is a staged diff, also state how many further files `git diff HEAD --name-only` reports, so a scope narrower than intended stays visible before fanning out.
+
 ## Step 2: Run Reviews in Parallel
 
 Each active type maps to a criteria reference file:
