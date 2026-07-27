@@ -200,7 +200,9 @@ Combine the flags into one of these categories:
 
 When `old_exists` and `new_exists` are both true and the upstream content is identical between `<lastUpdateHead>` and `<remote>/main` for that skill, mark the entry as **No-op** regardless of the `clean` flag — the skill didn't actually change upstream.
 
-Before continuing, confirm the probes actually ran: every name from the old-upstream enumeration must have `old_exists` true, and every name from the new-upstream enumeration must have `new_exists` true. Only installed-only names may have both false. A violation means the `<rev>:<path>` probes are mangled rather than that the skills are missing. Stop here, report the failing ref, and leave `codex.lastUpdateHead` unchanged so a corrected run can retry.
+Before continuing, confirm the probes actually ran: every name from the old-upstream enumeration must have `old_exists` true, and every name from the new-upstream enumeration must have `new_exists` true. Only installed-only names may have both false. A violation means the flag computation is broken, not that the skills are missing. Stop here, report which of the two causes below applies, and leave `codex.lastUpdateHead` unchanged so a corrected run can retry.
+
+First, a mangled `<rev>:<path>` ref, per the bracing note at the top. Second, a loop that never iterated: zsh does not word-split unquoted parameter expansions at all, so `for n in $NAMES` runs once with the entire list as a single value and every probe fails against that one bogus name. Iterate with `for n in ${(f)NAMES}` to split on newlines, or capture the enumeration to a file and read it with `while IFS= read -r n; do ... done < "$file"`.
 
 ### Step 2: Resolve
 
@@ -291,20 +293,22 @@ For each skill in the audit matrix that is not excluded, execute the action dete
 
 | Category | Action |
 |---|---|
-| Modified, clean | `rm -rf ~/.agents/skills/<name>` then `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` |
-| Modified, customized + Merge | `rm -rf ~/.agents/skills/<name>` then `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` (Step 3 then re-applies the saved customizations) |
+| Modified, clean | `rm -rf ~/.agents/skills/<name>` && `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` |
+| Modified, customized + Merge | `rm -rf ~/.agents/skills/<name>` && `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` (Step 3 then re-applies the saved customizations) |
 | Modified, customized + Overwrite | same as Modified, clean |
 | Modified, customized + Skip | no action |
 | Removed upstream, clean | `rm -rf ~/.agents/skills/<name>`, warn the user |
 | Removed upstream, customized + Remove | `rm -rf ~/.agents/skills/<name>` |
 | Removed upstream, customized + Keep | no action |
-| Collision + Overwrite | `rm -rf ~/.agents/skills/<name>` then `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` |
+| Collision + Overwrite | `rm -rf ~/.agents/skills/<name>` && `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` |
 | Collision + Keep | no action |
-| Renamed, clean | `rm -rf ~/.agents/skills/<old-name>` then `cp -R ~/.turbo/repo/codex/skills/<new-name> ~/.agents/skills/<new-name>` |
-| Renamed, customized + Migrate | `rm -rf ~/.agents/skills/<old-name>` then `cp -R ~/.turbo/repo/codex/skills/<new-name> ~/.agents/skills/<new-name>` (Step 3 then re-applies the saved customizations to the new path) |
+| Renamed, clean | `rm -rf ~/.agents/skills/<old-name>` && `cp -R ~/.turbo/repo/codex/skills/<new-name> ~/.agents/skills/<new-name>` |
+| Renamed, customized + Migrate | `rm -rf ~/.agents/skills/<old-name>` && `cp -R ~/.turbo/repo/codex/skills/<new-name> ~/.agents/skills/<new-name>` (Step 3 then re-applies the saved customizations to the new path) |
 | Renamed, customized + Skip | no action |
 | New upstream | `cp -R ~/.turbo/repo/codex/skills/<name> ~/.agents/skills/<name>` |
 | User-local, User-uninstalled, Already gone, No-op | no action |
+
+A denied `rm -rf` exits non-zero and prints `Permission denied`, or `Operation not permitted` under a sandbox; `-f` suppresses only its nonexistent-path error. Chain each pair as `rm -rf <dest> && cp -R <src> <dest>` so a denied removal cannot be followed by a copy. An unchained `cp` after a failed removal copies into the surviving destination, leaving the old content at `<dest>` and the new content one level down at `<dest>/<name>`. Before retrying a failed apply, inspect the install for nested `<name>/<name>` directories and for skills whose content is still the old version.
 
 ### Step 3: Merge Customized Skills
 

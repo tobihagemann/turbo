@@ -22,5 +22,6 @@ This file holds Turbo conventions for the Codex edition. The Claude Code edition
 - Analysis review skills accept a standardized scope interface: a diff command or a file/directory list. In diff mode, only flag issues introduced by the changeset. In file scope mode, all issues in the reviewed files are in scope.
 - Skills should avoid side effects outside their domain. Leave cross-cutting concerns such as staging files to dedicated skills.
 - Steps that primarily run a skill use "Run `$skill-name` Skill" for headings and "Run the `$skill-name` skill" in plan entries.
+- A phrasing that recurs across many skills originates somewhere: a `codex/skills/create-skill/references/*.md` example, or a bullet in this file that mandates the exact string. Before changing such a phrasing across skills, grep the whole edition tree for the old form and fix every copy that is a source rather than an instance. Editing only the instances leaves the generator intact, and the next authored skill reintroduces the old form.
 - Run `$create-skill` when creating or editing Codex skills.
 - When adding a new Codex skill, update `codex/SKILL-INDEX.md` (add it to the appropriate category table) and update any relevant prose sections in the root README.

@@ -7,6 +7,7 @@ Sentence-level and section-level rules for the prose inside a skill.
 - Keep a Short Intro Paragraph
 - Use Consistent Terminology
 - Use Generic Examples
+- Keep ✓ Good Examples Identical to Shipped Text
 - Prefer Positive Phrasing
 - State Conditions Explicitly
 - Address Subagents Directly
@@ -48,6 +49,12 @@ Skills may be used across different projects. Avoid project-specific details in 
 If a skill is project-specific by design (lives in the project repo, not in a shared location), project-specific examples are acceptable. But skills intended for reuse across projects should use generic placeholders.
 
 Also consider whether inline examples are needed at all. Parenthetical examples like "(e.g. click the Submit button)" often add no value when the instruction is already clear. Prefer concise instructions without examples over instructions cluttered with obvious ones.
+
+## Keep ✓ Good Examples Identical to Shipped Text
+
+When a ✓ Good bullet supplies a phrasing that skills are expected to reproduce, update it in the same pass that changes that phrasing across skills. Authors copy such a bullet verbatim, so an example that drifts from what the collection's skills actually ship propagates the drift into every skill authored from it. Bullets that merely illustrate a rule have no shipped counterpart and need no such check.
+
+Confirm the match by grepping the shipped string and checking that the example reproduces it character for character. When the two disagree, treat the shipped text as the source of truth: the un-updated example is the outlier, even though its position in the reference makes it look canonical.
 
 ## Prefer Positive Phrasing
 
