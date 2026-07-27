@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: "Execute an implementation plan file produced by $draft-plan, $turboplan, or $expand-shell. Runs pre-implementation prep, then runs $implement to execute the steps and finalize. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
+description: "Execute an implementation plan file produced by $draft-plan, $turboplan, or $expand-shell. Runs pre-implementation prep, then runs $implement to execute the steps and finalize once they are all done. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
 ---
 
 # Implement Plan

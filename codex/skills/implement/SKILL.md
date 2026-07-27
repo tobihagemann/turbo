@@ -46,6 +46,8 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 ## Step 6: Run `$finalize` Skill
 
+When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary.
+
 Run the `$finalize` skill.
 
 If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
