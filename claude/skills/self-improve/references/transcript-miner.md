@@ -23,6 +23,8 @@ Each line is a record with `type`, `timestamp`, `sessionId`, and `isSidechain`. 
 
 Two filters matter. Records with `isSidechain: true` are subagent conversations where the user never speaks. Many user records hold harness-injected text that reads like user speech: slash command wrappers, bash I/O, system reminders, cross-session notifications, and skill-loading preambles. Those wrappers still carry the arguments the user typed after a slash command, so salvage the arguments instead of dropping the record whole.
 
+A message the user types while a tool call is in flight never becomes a `user` record. It persists as an `attachment` record whose `attachment.type` is `queued_command`, holding the text in `attachment.prompt` in the same string-or-parts shape. Take the ones whose `attachment.origin.kind` is `human`, which excludes the harness notifications queued the same way. The record sits at the point of delivery and carries the timestamp of the moment the user typed it.
+
 Print the real user turns:
 
 ```bash
@@ -53,32 +55,49 @@ def elide(text):
     return text[:4000] + "\n[...]\n" + text[-2000:]
 
 
+def flatten(content):
+    """Join the text of a payload that is either a string or a list of parts."""
+    if isinstance(content, str):
+        parts = [content]
+    else:
+        parts = [p.get("text", "") for p in content or []
+                 if isinstance(p, dict) and p.get("type") == "text"]
+    return "\n".join(p for p in parts if p).strip()
+
+
 seen = ()
 for line in open(sys.argv[1], encoding="utf-8"):
     try:
         rec = json.loads(line)
     except ValueError:
         continue
-    if rec.get("type") != "user" or rec.get("isSidechain"):
+    if rec.get("isSidechain"):
         continue
-    content = rec.get("message", {}).get("content")
-    if isinstance(content, str):
-        parts = [content]
+    kind = rec.get("type")
+    if kind == "user":
+        text = flatten(rec.get("message", {}).get("content"))
+    elif kind == "attachment":
+        att = rec.get("attachment") or {}
+        if att.get("type") != "queued_command":
+            continue
+        if (att.get("origin") or {}).get("kind") != "human":
+            continue
+        text = flatten(att.get("prompt"))
     else:
-        parts = [p.get("text", "") for p in content or []
-                 if isinstance(p, dict) and p.get("type") == "text"]
-    text = "\n".join(p for p in parts if p).strip()
+        continue
     if not text:
         continue
     typed = typed_text(text)
+    if not typed:
+        continue
     stamp = rec.get("timestamp", "")
-    if typed and (stamp, typed) != seen:
+    if (stamp, typed) != seen:
         seen = (stamp, typed)
         print(f"--- {stamp}\n{elide(typed)}\n")
 PY
 ```
 
-A session driven entirely by skill pipelines can yield no typed user turns at all. Then the evidence lives on the assistant side: rerun the extraction with the type check changed to `assistant`, keeping the same `text` parts.
+A session driven entirely by skill pipelines can yield no typed user turns at all. Then the evidence lives on the assistant side: rerun the extraction with the `user` branch's type check changed to `assistant`, keeping the same flattening.
 
 ### 3. Identify Evidence
 
@@ -90,7 +109,7 @@ Read the extracted turns in order and collect:
 - **Failure modes** — an approach that failed, with what replaced it
 - **Other** — anything else that stays true beyond this session
 
-A correction is ambiguous without the thing it corrected. For each one, locate its record with `grep -n "<timestamp>" "<transcript path>"` and read the preceding records with a line-range slice such as `sed -n '<start>,<end>p'` to see what prompted it, then state that in one line.
+A correction is ambiguous without the thing it corrected. For each one, locate its record with `grep -n "<timestamp>" "<transcript path>"` and read the preceding records with a line-range slice such as `sed -n '<start>,<end>p'` to see what prompted it, then state that in one line. Two hits mean a queued message: slice back from the earlier one, where the user was still watching the work that prompted it.
 
 Keep items that would still hold in a future session. Drop one-off instructions that only steer the task at hand.
 
