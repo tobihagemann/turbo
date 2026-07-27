@@ -8,11 +8,11 @@
 
 ### Verifying Pin Claims
 
-Before asserting that a behavior is unpinned, or that a new test pins one, verify it by mutation: in an isolated `git worktree` discarded afterward, invert or remove the line at issue, run the suite, and check whether a test fails. A test that passes against the mutation does not pin the behavior. Cite the mutation and its result as evidence in the finding's paragraph; the `**Failure scenario:**` line still reads trigger → consequence: the unguarded path and what shipping it lets through.
+Before asserting that a behavior is unpinned, or that a new test pins one, verify it by mutation: in an isolated `git worktree` created under `$TMPDIR`, invert or remove the line at issue, run the suite, and check whether a test fails. A test that passes against the mutation does not pin the behavior. After discarding the worktree, verify that `git worktree list` no longer shows it, that `git status --short` is clean, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Report damage you cannot repair, with the exact repair command, in place of findings. Cite the mutation and its result as evidence in the finding's paragraph; the `**Failure scenario:**` line still reads trigger → consequence: the unguarded path and what shipping it lets through.
 
 This covers any claim that a specific behavior is or is not guarded, including "tests exist but miss this path" — target the unguarded path. Settle "this module has no tests at all" by inspection.
 
-Skip the mutation when a fresh checkout cannot run the suite cheaply: it needs an install or build step, there is no runnable test command, or the suite depends on state outside the tree such as fixed ports, shared databases, caches, untracked local configuration, or external services. When skipping, say in the finding's paragraph that the claim rests on inspection alone.
+Skip the mutation when a fresh checkout cannot run the suite cheaply: it needs an install or build step, there is no runnable test command, or the suite depends on state outside the tree such as fixed ports, shared databases, caches, untracked local configuration, or external services. Needing an install is itself a skip trigger here, whether or not that install would succeed. Run the suite only against dependencies inside the worktree. Reaching the shared tree's install by any route, whether a link, a copy, a mount, or an environment variable redirecting resolution, is not a substitute, since removing a worktree deletes through symlinks and a redirected suite writes into the shared install. When skipping, say in the finding's paragraph that the claim rests on inspection alone.
 
 ## What to Review
 

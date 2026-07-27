@@ -101,7 +101,7 @@ At the start of Step 5, use `TaskCreate` to create a task for each remaining ste
 
 ## Step 5: Review the Skill
 
-After writing all files, spawn a subagent in the foreground (`model: "opus"`, no `name`) to review the skill. The subagent should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines.
+After writing all files, spawn a subagent in the foreground (`model: "opus"`, no `name`) to review the skill. The subagent should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines. Its prompt must direct it to treat the shared working tree and its git index as read-only and to review by reading and reasoning; fixes happen in Step 7.
 
 - **For new skills**, frame the review as open-ended: propose improvements, convention checks, writing quality.
 - **For modified skills** (simplification, restructuring, bug fix), frame the review as regression-focused: check whether the change broke anything. Tell the reviewer not to propose new features.

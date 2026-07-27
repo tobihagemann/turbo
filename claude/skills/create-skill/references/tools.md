@@ -10,6 +10,7 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
   - Hoist Conditional Opt-Out Checks Above Dispatch Logic
   - Skill Tool Calls Don't Parallelize with Agent Calls
   - Keep Parallel Review/Analysis Subagents Read-Only on the Shared Tree
+  - Keep Contended Test Tiers Out of the Fan-Out
 - Dispatching Bash Tool Calls
 - Using AskUserQuestion
   - Output Content as Text Before AskUserQuestion
@@ -72,12 +73,29 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 
 When a skill fans out parallel subagents that read the same working tree (reviewers, analyzers, mappers), direct each subagent's prompt to treat the shared working tree and its git index as read-only. Concurrent agents editing files or running git state-changing commands (`add`, `commit`, `checkout`, `restore`, `stash`, `reset`) on the tree they all share race each other and the orchestrator, and a botched restore can corrupt uncommitted work or poison the index.
 
-Give a sanctioned outlet rather than banning empirical work: a subagent that needs to verify a finding (such as a mutation experiment to confirm a test is non-vacuous) creates an isolated `git worktree`, experiments there, and discards it. Default to reading and reasoning; reach for a worktree only when empirical proof materially raises confidence.
+Give a sanctioned outlet rather than banning empirical work: a subagent that needs to verify a finding (such as a mutation experiment to confirm a test is non-vacuous) creates an isolated `git worktree` under the hygiene rules below, experiments there, and discards it. Default to reading and reasoning; reach for a worktree only when empirical proof materially raises confidence.
 
-Put the constraint in the per-subagent dispatch instruction — the text that reaches the subagent — not only in the orchestrator's Rules section. An orchestrator-level "does not modify" line governs the orchestrator, not the subagents it launches.
+Spell out that hygiene in the same instruction, because a subagent cannot repair what it breaks: the reinstall needs permissions it does not have. Removing a worktree deletes through symlinks, so a subagent that reaches the shared tree's dependency directory from inside its worktree destroys the shared install when it cleans up. Note also that `git status` never lists gitignored paths, so a destroyed install reads as a clean tree; a verification step that checks only git state will miss the damage entirely.
+
+Pair that with a damage-reporting rule. A subagent that breaks shared state it cannot repair reports the damage and the exact repair command in place of findings, so the orchestrator repairs before dispatching more work. Without it, siblings keep running against the broken state and return failures that look like defects in the code under review.
+
+Put the constraint in the per-subagent dispatch instruction, the text that reaches the subagent, not only in the orchestrator's Rules section. An orchestrator-level "does not modify" line governs the orchestrator, not the subagents it launches.
 
 - ✗ **Avoid**: A Rules line "Analysis-only: does not modify source code" with no read-only constraint in the subagent prompts.
-- ✓ **Good**: "Every agent's prompt directs it to treat the shared working tree and its git index as read-only; any empirical check runs in an isolated `git worktree` it discards afterward."
+- ✗ **Avoid**: "…any empirical check runs in an isolated `git worktree` it discards afterward." This sanctions the worktree without its hygiene, and reads as license to make the worktree runnable by any means.
+- ✓ **Good**: "Every agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the agent cannot repair is reported with the exact repair command in place of findings."
+
+### Keep Contended Test Tiers Out of the Fan-Out
+
+Parallel subagents that each run the project's test suite collide whenever a tier depends on a resource outside the tree (a shared database, a fixed port, a cache). Tiers that reset that resource between tests have no cross-process interlock, so concurrent runs wipe each other's state and produce failures that read exactly like defects in the code under review. Contention is a property of the fan-out rather than of any one subagent: a subagent running the tier cannot see that its siblings are running it too, so a per-subagent rule cannot prevent the collision.
+
+Resolve it in the orchestrator step, above the dispatch: have it read the project's test configuration and CI workflow, identify any tier that resets a shared external resource, and name that tier to every subagent as off-limits. Name the artifacts to consult, since an orchestrator that has only a file list cannot recognize a contended tier.
+
+Leave the tier unrun rather than having the orchestrator run it after the fan-out. A skill invoked as a child (a review skill running inside an audit, for example) would run it once per invocation, recreating the contention one level down, and an analysis-only skill has no step or output slot for the result.
+
+- ✗ **Avoid**: "Each agent runs the test suite to confirm its findings."
+- ✗ **Avoid**: "Name it to every agent as off-limits, and run it once after the fan-out returns." The trailing run fires again in every nested invocation.
+- ✓ **Good**: "Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so agents running them concurrently wipe each other's state and return failures indistinguishable from defects in the change. Name any such tier to every agent as off-limits."
 
 ## Dispatching Bash Tool Calls
 

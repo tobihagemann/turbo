@@ -18,7 +18,7 @@ State the task back in one sentence to confirm scope before searching.
 
 ## Step 2: Spawn Pattern Survey Sub-agent
 
-Spawn a single sub-agent (inherited model defaults). The sub-agent's prompt must include:
+Spawn a single sub-agent (inherited model defaults). Its prompt must direct it to treat the shared working tree and its git index as read-only and to survey by reading and reasoning. The sub-agent's prompt must include:
 
 1. The confirmed task description from Step 1
 2. An instruction to read [references/pattern-surveyor.md](references/pattern-surveyor.md) for survey guidelines, categories, and output format before searching

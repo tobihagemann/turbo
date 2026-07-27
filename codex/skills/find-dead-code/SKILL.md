@@ -54,7 +54,9 @@ If no CLI tool is installed, skip to Step 3. Do not ask the user to install anyt
 
 ## Step 3: Test-Only Analysis — Parallel Sub-agents (Core)
 
-This is the primary analysis. Launch one sub-agent per top-level source directory from Step 1 with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. State the count explicitly when emitting the calls. Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` the sub-agent discards afterward.
+Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so sub-agents running them concurrently wipe each other's state and return failures that look like real defects. Name any such tier to every sub-agent as off-limits.
+
+This is the primary analysis. Launch one sub-agent per top-level source directory from Step 1 with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. State the count explicitly when emitting the calls. Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the sub-agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the sub-agent cannot repair is reported with the exact repair command in place of findings.
 
 ### Sub-agent Strategy
 

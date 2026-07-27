@@ -17,7 +17,7 @@ Determine what to review:
 
 ## Step 2: Launch Two Review Agents in Parallel
 
-Launch both agents below with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. Pass the scope from Step 1 to each agent.
+Launch both agents below with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3.
 
 ### Agent 1: Code Comments Review
 

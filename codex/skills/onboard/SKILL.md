@@ -17,7 +17,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 
 ## Step 1: Launch All Agents
 
-Launch the 6 agents below in parallel. Each Composed Skills agent invokes its assigned skill by reading and following the installed skill instructions; each Inline Agent follows its exploration brief directly.
+Launch the 6 agents below in parallel. Each Composed Skills agent invokes its assigned skill by reading and following the installed skill instructions; each Inline Agent follows its exploration brief directly. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to explore by reading and reasoning, except that each Composed Skills sub-agent writes the report files its own skill defines.
 
 ### Composed Skills
 

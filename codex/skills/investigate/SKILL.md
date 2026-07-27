@@ -71,7 +71,9 @@ For complex problems with 3+ hypotheses and a non-obvious root cause, spawn para
 
 **Skip** when 1-2 hypotheses are obvious (e.g., stack trace points directly to the bug).
 
-Launch all investigation branches with `spawn_agent` / `wait_agent` using inherited model defaults. Expect one branch per hypothesis plus one Claude consultation branch.
+Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so branches running them concurrently wipe each other's state and return failures that look like real defects. Name any such tier to every branch as off-limits.
+
+Launch all investigation branches with `spawn_agent` / `wait_agent` using inherited model defaults. Expect one branch per hypothesis plus one Claude consultation branch. Every branch prompt must direct it to treat the shared working tree and its git index as read-only and to gather evidence by reading and reasoning; experiments that mutate code wait for Step 4, where they run one at a time.
 
 - **Hypothesis branch (one per hypothesis):** Each receives the hypothesis, relevant file paths, what evidence to look for, and instructions to report **confirmed** / **refuted** / **inconclusive** with evidence. Budget: max 5 tool calls per branch.
 - **Claude consultation branch:** Run `$consult-claude` with a focused prompt describing the problem, reproduction, and files examined. The external perspective can dig into patterns the hypothesis-driven branches miss. Run the `$evaluate-findings` skill on its output after the consultation returns.

@@ -19,7 +19,7 @@ For each item, collect whatever context is available: code snippets, diffs, surr
 
 ## Step 2: Run Two Interpretations in Parallel
 
-Run both interpretation branches independently. Launch them with `spawn_agent` / `wait_agent` using inherited model defaults.
+Run both interpretation branches independently. Launch them with `spawn_agent` / `wait_agent` using inherited model defaults. Both branch prompts must direct them to treat the shared working tree and its git index as read-only and to interpret by reading and reasoning.
 
 ### Internal Interpretation
 

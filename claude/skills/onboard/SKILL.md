@@ -17,7 +17,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 
 ## Step 1: Launch All Agents
 
-Use the Agent tool to launch all 6 agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Each Composed Skills agent invokes its assigned skill via the Skill tool; each Inline Agent follows its exploration brief directly.
+Use the Agent tool to launch all 6 agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Each Composed Skills agent invokes its assigned skill via the Skill tool; each Inline Agent follows its exploration brief directly. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to explore by reading and reasoning, except that each Composed Skills agent writes the report files its own skill defines.
 
 ### Composed Skills
 

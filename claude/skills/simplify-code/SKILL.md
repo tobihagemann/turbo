@@ -17,7 +17,7 @@ Determine what to review:
 
 ## Step 2: Launch Five Review Agents in Parallel
 
-Use the Agent tool to launch all five agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Pass the scope from Step 1 to each agent.
+Use the Agent tool to launch all five agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Pass the scope from Step 1 to each agent. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3.
 
 ### Agent 1: Code Reuse Review
 
