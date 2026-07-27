@@ -22,7 +22,7 @@ At the start of every invocation (including re-runs from Step 7), use `update_pl
 Loop state lives at `.turbo/loops/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. At the start of every invocation, read the ledger if it exists.
 
 - **Fresh loop** (no ledger, or its `Status:` line is `closed`): write a fresh ledger with `Status: active`, then attempt `create_goal` with the objective: "Run the `$polish-code` loop on <scope> until converged: a run with no changes, an in-place-only round, or remaining findings that do not justify another re-run. Loop state: `.turbo/loops/<slug>.md`; re-read it after any context compaction and do not re-adjudicate findings it records as rejected. Mark this goal complete when the loop converges." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
-- **Continuing loop** (`Status: active`): this invocation is the iteration after the last one the ledger records, whether a Step 7 re-run or a resumption after an interruption. Continue from the recorded state. If no unfinished goal exists, attempt `create_goal` with the same objective as a fresh loop.
+- **Continuing loop** (`Status: active`): this invocation is the iteration after the last one the ledger records, whether a Step 7 re-run or a resumption after an interruption. Continue from the recorded state. A `Pending smoke-test baseline` entry means a previous iteration was interrupted between delegating the smoke test and verifying the tree: reconcile the tree against that entry and clear it before Step 1, so Step 1 does not stage what the interrupted sub-agent left behind. If no unfinished goal exists, attempt `create_goal` with the same objective as a fresh loop.
 - **During each iteration:** have the ledger path in context when Step 4 runs so recorded verdicts are honored. After Step 7's classification, append the iteration number, the round's applied and rejected verdicts with reasons, and the classification.
 - **Convergence stop** (a run with no changes, an in-place-only round, or a further re-run judged pointless): set `Status: closed`; if this loop created the goal, mark it complete with `update_goal`. An inherited goal stays active for the outer workflow. A halt on an unresolved failure leaves `Status: active` and the goal untouched, so the next invocation resumes the recorded state.
 
@@ -59,7 +59,13 @@ Stage all changes made in this step before continuing.
 
 ## Step 6: Run `$smoke-test` Skill
 
-Run the `$smoke-test` skill to produce the smoke test plan. Delegate test execution to a Codex sub-agent with inherited model defaults. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context.
+Run the `$smoke-test` skill to produce the smoke test plan.
+
+Capture `git status --short` and `git diff HEAD | git hash-object --stdin` before spawning, and record both outputs in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
+
+Delegate test execution to a Codex sub-agent with inherited model defaults. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context.
+
+**Verify the tree:** re-run both commands when the sub-agent returns, including when it terminates early or reports incomplete results. Compare against `Pending smoke-test baseline`. Delete what the sub-agent created and revert what it modified or staged, leaving everything that baseline already showed untouched. Clear the entry once the tree matches.
 
 If any test fails, fix the issues and stage the fixes.
 
