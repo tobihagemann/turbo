@@ -42,6 +42,8 @@ ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p .turbo/oracle
 python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output ".turbo/oracle/$ORACLE_TAG.txt"
 ```
 
+Keep backticks and `$` out of `--prompt` even in text you wrote, since both stay live inside the quotes. Text you did not author — a diff, file contents, an error trace, command output — goes in a file passed with `--file`, written with `apply_patch`. This holds on follow-up turns too.
+
 If the run fails, retry the command once — same prompt, attachments, profile, and timeout — when the failure looks transient, such as a browser challenge or automation error while the signed-in session is otherwise healthy. Report an authentication, browser-challenge, or permission blocker only after the retry reproduces it, and cite the failing output. Do not broaden permissions when the current context already has the access the run needs.
 
 ## Step 4: Follow Up

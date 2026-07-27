@@ -70,10 +70,12 @@ Output the drafted title and description as text, alongside the original for com
 
 ## Step 8: Apply the Update
 
-After confirmation, write the drafted body to `.turbo/pr/<PR_NUMBER>-body.md` with `apply_patch`, then update the PR:
+After confirmation, write the drafted title to `.turbo/pr/<PR_NUMBER>-title.txt` and the drafted body to `.turbo/pr/<PR_NUMBER>-body.md` with `apply_patch`, then update the PR. The title goes through a file because it carries text fetched from the PR, where backticks and `$` would run inside a quoted argument:
 
 ```bash
-gh pr edit <PR_NUMBER> --title "<TITLE>" --body-file .turbo/pr/<PR_NUMBER>-body.md
+gh api --method PATCH "/repos/<owner>/<repo>/pulls/<PR_NUMBER>" \
+  -F title=@.turbo/pr/<PR_NUMBER>-title.txt \
+  -F body=@.turbo/pr/<PR_NUMBER>-body.md
 ```
 
 ## Diagrams

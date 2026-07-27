@@ -17,6 +17,8 @@ For large context, pipe it via stdin. The prompt stays as the argument, context 
 cat context.txt | codex exec "question about the context"
 ```
 
+Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with the Write tool so nothing is interpreted on the way in.
+
 ## Sandbox
 
 **All `codex` Bash calls require `dangerouslyDisableSandbox: true`** (network access to OpenAI API). Without it, codex crashes with an `Operation not permitted` panic from the `system-configuration` crate before the model runs.

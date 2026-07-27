@@ -23,7 +23,7 @@ Generate a random session tag at the start to keep files unique for parallel use
 
 ```bash
 CODEX_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p .turbo/codex
-codex exec -s read-only -o ".turbo/codex/$CODEX_TAG.txt" "<question with full context>" < /dev/null
+codex exec -s read-only -o ".turbo/codex/$CODEX_TAG.txt" "<question>" < /dev/null
 ```
 
 ### Prompt Shaping
@@ -49,14 +49,13 @@ For correctness-critical questions, add `<verification_loop>` asking Codex to ve
 
 Keep prompts compact, with tight output contracts. One clear task per Codex turn.
 
-For long context that won't fit inline, write a context file and pipe it via stdin. The prompt stays as the argument, context pipes in as `<stdin>` automatically:
+For context that does not belong in the argument, write a context file with the Write tool and pipe it via stdin. The prompt stays as the argument, context pipes in as `<stdin>` automatically:
 
 ```bash
-cat > ".turbo/codex/$CODEX_TAG-ctx.txt" << 'EOF'
-<long context here>
-EOF
 cat ".turbo/codex/$CODEX_TAG-ctx.txt" | codex exec -s read-only -o ".turbo/codex/$CODEX_TAG.txt" "<question>"
 ```
+
+Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with the Write tool so nothing is interpreted on the way in.
 
 Parse the `session id:` line from the CLI output. This UUID is needed for follow-up turns.
 
@@ -82,6 +81,14 @@ Resume the session with the parsed session ID (not `--last`, which is unsafe for
 ```bash
 codex exec resume <session-id> -o ".turbo/codex/$CODEX_TAG.txt" "<follow-up question>" < /dev/null
 ```
+
+When the follow-up carries text you did not author, write it to a file with the Write tool and pass `-` so the prompt is read from stdin instead:
+
+```bash
+cat ".turbo/codex/$CODEX_TAG-followup.txt" | codex exec resume <session-id> -o ".turbo/codex/$CODEX_TAG.txt" -
+```
+
+With `-`, stdin is the whole prompt rather than a `<stdin>` block appended to an argument, so instruction and context share the one file. Leave off `< /dev/null` here — the pipe supplies stdin, and `cat` sends EOF.
 
 The `-s` flag is not available for `resume`. It inherits sandbox settings from the original session.
 

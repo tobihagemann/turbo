@@ -37,9 +37,13 @@ git show -- <path>
 
 If Codex session files are available, search them for the commit SHA, touched file paths, branch name, and distinctive user request text:
 
+Write the patterns to a file with `apply_patch`, one per line, then match them literally:
+
 ```bash
-rg "<sha>|<file>|<branch>|<distinctive text>" ~/.codex/sessions
+rg -F -f <pattern-file> ~/.codex/sessions
 ```
+
+`-F` is required, not just safer: an unescaped `$` inside request text is a regex anchor and silently drops the match.
 
 Read only the smallest relevant transcript excerpts. Prefer sessions close to the commit time and sessions that mention both the file and the task.
 

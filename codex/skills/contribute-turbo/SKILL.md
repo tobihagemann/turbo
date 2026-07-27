@@ -161,10 +161,16 @@ Push and create a PR:
 git -C ~/.turbo/repo push -u origin improve/<skill-name>-<short-desc>
 ```
 
-Create the PR against the upstream repo:
+Create the PR against the upstream repo. Generate a random tag so the body file is unique across sessions:
 
 ```bash
-gh pr create --repo tobihagemann/turbo --head <user>:improve/<skill-name>-<short-desc> --title "..." --body "..."
+head -c 4 /dev/urandom | xxd -p
+```
+
+Write the body to `.turbo/pr/<tag>-body.md` (using the printed tag) with `apply_patch` and pass it by path, since backticks and `$` in a `--body` argument run before `gh` sees them:
+
+```bash
+gh pr create --repo tobihagemann/turbo --head <user>:improve/<skill-name>-<short-desc> --title "..." --body-file ".turbo/pr/<tag>-body.md"
 ```
 
 PR body format:
