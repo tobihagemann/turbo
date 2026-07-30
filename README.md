@@ -127,7 +127,7 @@ You then drive implementation one shell at a time. [`/pick-next-shell`](claude/s
 
 [`/self-improve`](claude/skills/self-improve/SKILL.md) makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](claude/skills/finalize/SKILL.md) Phase 4). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Over time, Turbo gets better at your specific project.
 
-[`/note-improvement`](claude/skills/note-improvement/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests. They're tracked in `.turbo/improvements.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
+[`/note-improvement`](claude/skills/note-improvement/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests, and deliberate simplifications that accept a known ceiling. They're tracked in `.turbo/improvements.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
 
 When you're ready to act, [`/implement-improvements`](claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
 

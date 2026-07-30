@@ -103,7 +103,7 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
-| [`/code-style`](skills/code-style/SKILL.md) | Enforce mirror, reuse, and symmetry principles | | [`/implement`](skills/implement/SKILL.md), [`/resolve-findings`](skills/resolve-findings/SKILL.md) |
+| [`/code-style`](skills/code-style/SKILL.md) | Enforce existence, reuse, mirror, and symmetry principles | | [`/implement`](skills/implement/SKILL.md), [`/resolve-findings`](skills/resolve-findings/SKILL.md) |
 | [`/frontend-design`](skills/frontend-design/SKILL.md) | Design guidelines for distinctive, production-grade frontend interfaces | | [`/audit`](skills/audit/SKILL.md), [`/onboard`](skills/onboard/SKILL.md), [`/map-codebase`](skills/map-codebase/SKILL.md), [`/assess-technical-debt`](skills/assess-technical-debt/SKILL.md) |
 | [`/user-experience`](skills/user-experience/SKILL.md) | UX lens: whether a change serves the user's goal and whether its flow holds together (Understanding, Bridging, Flowing) | | [`/exploratory-test`](skills/exploratory-test/SKILL.md) |
 | [`/github-voice`](skills/github-voice/SKILL.md) | Shared writing style rules for GitHub-facing output (PR comments, descriptions, titles, issues, proposals) | | [`/create-pr`](skills/create-pr/SKILL.md), [`/update-pr`](skills/update-pr/SKILL.md), [`/create-issue`](skills/create-issue/SKILL.md), [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md), [`/reply-to-pr-conversation`](skills/reply-to-pr-conversation/SKILL.md), [`/contribute-turbo`](skills/contribute-turbo/SKILL.md) |

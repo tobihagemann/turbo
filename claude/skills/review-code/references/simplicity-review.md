@@ -2,11 +2,19 @@
 
 ## Review Instructions
 
-Focus on single-file simplicity: reuse, quality, efficiency, and clarity issues that surface within an individual file or a small set of changes.
+Focus on single-file simplicity: scope, reuse, quality, efficiency, and clarity issues that surface within an individual file or a small set of changes.
+
+For scope, trace the callers of the code you propose deleting and confirm nothing depends on the behavior being removed. Judge "unrequested" against what the reviewed change set out to do; anything it was explicitly asked for is in scope by definition. Ground the finding in what the code does rather than in how much of it there is.
 
 For reuse, identify analogous utilities, helpers, or shared modules elsewhere in the project before suggesting a rewrite. Common locations are utility directories, shared modules, and files adjacent to the changed ones.
 
 ## What to Review
+
+### Scope
+
+- **Unrequested machinery** — an abstraction with one implementation, a configuration point with one caller, a factory for one product, a wrapper that only delegates, scaffolding for an anticipated requirement; delete it rather than simplify it
+- **Unreachable defensive code** — a branch, guard, retry, or fallback for a state the surrounding code's own constraints rule out; when the callers cannot produce the input, the handling for it is dead on arrival
+- **Reinvented standard library or platform feature** — hand-rolled logic the language's standard library or the target platform already ships, or a new dependency for what an already-installed one covers; name the replacement
 
 ### Reuse
 
@@ -35,10 +43,10 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 ### Clarity and Standards
 
 - **Project standards** — coding conventions not followed (import sorting, naming conventions, component patterns, error handling patterns, module style). Beyond the auto-loaded instruction files, read any `CLAUDE.md` in a directory that is an ancestor of a changed file — a directory's file governs only the files at or below it — and any file those instructions import. Flag a violation only when you can quote the exact rule and cite what breaks it: the offending line, or the location where a required element is missing. Name the file the rule came from
-- **Unnecessary complexity** — deep nesting, redundant abstractions, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
+- **Unnecessary complexity** — deep nesting, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 - **Unclear code** — overly compact one-liners that sacrifice readability; explicit code is better than clever code
 - **Over-simplification** — too many concerns combined into a single function or component, helpful abstractions removed that were aiding code organization, "fewer lines" prioritized over readability
-- **Dead weight** — redundant code, abstractions that add indirection without value
+- **Dead weight** — code no longer reached by any path, and variables, imports, or parameters the change orphaned
 
 ### Altitude and Fix-Depth
 
@@ -65,12 +73,12 @@ Flag an issue only when ALL of these hold:
 2. The issue is discrete and actionable
 3. A specific fix is obvious (reuse existing utility X, remove redundant state Y, collapse nested wrapper Z)
 4. The fix does not demand rigor beyond what exists in the rest of the codebase
-5. The author would likely accept the fix if aware of it
+5. The author would likely accept the fix if aware of it, OR the finding challenges a deliberate choice with evidence of a simpler alternative
 
 ## Priority Levels
 
 - **P0** — Severe efficiency problem on a hot path, or a reuse miss that duplicates a load-bearing utility
-- **P1** — Clear duplication, leaky abstraction, or efficiency issue with meaningful impact
+- **P1** — Clear duplication, leaky abstraction, unrequested machinery, or efficiency issue with meaningful impact
 - **P2** — Moderate clarity, efficiency, or reuse opportunity
 - **P3** — Minor style or readability nit
 
@@ -78,8 +86,9 @@ Flag an issue only when ALL of these hold:
 
 - Style-only differences that do not obscure meaning or violate documented standards
 - Micro-optimizations with no measurable impact
+- Input validation at trust boundaries, error handling that prevents data loss, security controls, and accessibility affordances; these outrank the Scope bullets when both apply to the same code
 - Comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader. Greenfield test: would you write this comment if the code had been greenfield from day one?
 
-**Extra metadata:** `**Category:** <reuse | quality | efficiency | clarity | altitude | documentation>`
+**Extra metadata:** `**Category:** <scope | reuse | quality | efficiency | clarity | altitude | documentation>`
 
 **Verdict label:** `Simplicity: <clean | issues found>`

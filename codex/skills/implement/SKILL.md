@@ -24,7 +24,7 @@ Then attempt `create_goal` with the objective: "Make this change: <one-line task
 
 ## Step 1: Run `$code-style` Skill
 
-Run the `$code-style` skill to load mirror, reuse, and symmetry rules before editing.
+Run the `$code-style` skill to load existence, reuse, mirror, and symmetry rules before editing.
 
 ## Step 2: Load Task-Specific Skills
 

@@ -28,6 +28,7 @@ Parse all entries, extracting for each:
 - **Category**
 - **Where** (file paths or areas)
 - **Why** (rationale)
+- **Ceiling** and **Revisit** (present when the entry records a deliberate simplification)
 - **Noted** (date)
 
 ## Step 2: Validate and Classify
@@ -40,10 +41,12 @@ For each entry, verify whether the specific problem or opportunity described sti
 
 1. **Files exist** — Do the referenced files/paths still exist? If not, the entry is stale.
 2. **Problem persists** — Read the relevant code sections. Is the exact issue or opportunity described in the entry still present? Check the specific claims: if the entry says a function is uncalled, verify it has no callers; if it says error handling is missing, check whether it was added.
+3. **Revisit condition met** — For an entry carrying a Revisit field, check whether the recorded condition now holds. The shipped simplification is present by construction, so its presence alone says nothing about whether the fuller version is worth building yet.
 
 Classify each entry as:
 
 - **Active** — The described problem or opportunity is confirmed present in the current code
+- **Deferred** — The entry carries a Revisit condition that does not yet hold; the shipped approach remains the right one
 - **Stale** — The referenced files no longer exist, or the specific issue has been resolved (cite evidence: what changed and where)
 - **Unclear** — Cannot determine from code alone, needs user input
 
@@ -77,6 +80,9 @@ Categories: refactor (N), performance (N), testing (N), docs (N)
 
 **Plan (N)**
 - [summary] (category) — [one-line reason it's still relevant]
+
+### Deferred (N)
+- [summary] — [the revisit condition, and what still has to happen]
 
 ### Stale (N)
 - [summary] — [one-line reason it's stale]

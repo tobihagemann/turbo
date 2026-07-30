@@ -12,7 +12,7 @@ Use `update_plan` to track each phase:
 
 ## Phase 1: Run `$code-style` Skill
 
-Run the `$code-style` skill to load mirror, reuse, and symmetry rules before editing.
+Run the `$code-style` skill to load existence, reuse, mirror, and symmetry rules before editing.
 
 ## Phase 2: Run `$apply-findings` Skill
 
