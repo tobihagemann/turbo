@@ -77,7 +77,7 @@ All values are multiples of 10 to align with draw.io's 10px grid.
 When deciding whether a sub-skill gets its own expansion swimlane or stays as a pill inside the parent:
 
 - **Single-call wrappers stay as pills.** A skill whose only job is a single `/codex-exec` invocation (e.g., `/peer-draft-plan`) should be shown as a pill inside the parent container, with a solid arrow to a sibling `/codex-exec` pill. Do NOT give it a separate expansion container — the expansion would add no information.
-- **Multi-step skills get their own container.** Skills with a meaningful internal flow (e.g., `/review-plan` with Internal review + /peer-review + /codex-exec, or `/refine-plan` with review → evaluate → apply → re-run) earn their own swimlane.
+- **Multi-step skills get their own container.** Skills with a meaningful internal flow (e.g., `/refine-plan` with review → evaluate → apply → re-run) earn their own swimlane.
 
 When encoding routing decisions (one step branches to multiple paths):
 

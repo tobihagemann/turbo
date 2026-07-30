@@ -1,8 +1,8 @@
-# Shells Review Reference
+# Shells Structure Review Reference
 
 ## Review Instructions
 
-Shells review focuses on structural wiring, not broad codebase patterns. Skip sweeping project-context reads — but spot-check any concrete codebase element a shell names (function, file, type, API surface) to verify it exists and can carry the contract the shell assigns to it. A shell whose Produces or Consumes cites a nonexistent or misdescribed seam is a structural wiring bug.
+Shells structure review covers wiring and coverage. Skip sweeping project-context reads — but spot-check any concrete codebase element a shell names (function, file, type, API surface) to verify it exists and can carry the contract the shell assigns to it. A shell whose Produces or Consumes cites a nonexistent or misdescribed seam is a structural wiring bug.
 
 ## What to Review
 

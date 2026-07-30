@@ -1,14 +1,13 @@
-# Plan Review Reference
+# Plan Structure Review Reference
 
 ## Review Instructions
 
-Read project context (AGENTS.md and files mentioned in the plan) to understand the codebase.
+Read project context (CLAUDE.md and files mentioned in the plan) to understand the codebase. Review whether the plan holds together and can be executed.
 
 ## What to Review
 
 - **Completeness** — Missing steps, undefined behavior, unaddressed requirements or edge cases
 - **Feasibility** — Technically unsound approaches, ignored constraints, missing dependencies
-- **Scope** — Requirements addressed without creep. No missing requirements from the original ask
 - **Ordering** — Step dependency issues, missing prerequisites, circular dependencies
 - **Buildability** — Steps specific enough to execute without getting stuck. No logical gaps between steps
 - **Concreteness** — Every step references a concrete anchor (file/line, function, symbol, or file to create), and named symbols/types are verifiable in the codebase. Flag vague directives or placeholder language
@@ -17,9 +16,7 @@ Read project context (AGENTS.md and files mentioned in the plan) to understand t
 - **Test efficacy** — When the plan proposes, keeps, or reshapes a test as a regression net, check that the test can fail when the behavior it guards breaks. Flag an assertion that reads a surface the code under test does not write, or a case where a mechanism other than the one under test produces the same observable
 - **Pattern Alignment** — Proposed approach follows existing codebase patterns where applicable. Deviations from established patterns are justified
 - **Side effects** — Other consumers, callers, or co-firing components affected by changes to shared surfaces (helpers, lifecycle hooks, globals)
-- **Design Direction** — Whether the chosen approach is the simplest safe option. Challenge assumptions the plan depends on and flag when a different approach would be safer or simpler
-- **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the plan and its spec describe: when they bound the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap, and machinery for it is a finding under Design Direction instead
-- **Proportionality** — Steps whose machinery (leases, locks, queues, versioning schemes, state machines, new persistent entities) exceeds the failure modes and scale the plan's Context or governing spec admits
+- **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the plan and its spec describe: when they bound the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap
 
 ## Determination Criteria
 

@@ -1,8 +1,10 @@
-# Spec Review Reference
+# Spec Structure Review Reference
 
 ## Review Instructions
 
-Read project context (AGENTS.md and any existing codebase) to understand constraints. For any concrete codebase claim the spec makes (named functions, file locations, API shapes, data-flow assertions), open the cited file and verify it. Wrong factual claims about current code pass text-only review and surface later as unimplementable plans.
+Read project context (CLAUDE.md and any existing codebase) to understand constraints. For any concrete codebase claim the spec makes (named functions, file locations, API shapes, data-flow assertions), open the cited file and verify it. Wrong factual claims about current code pass text-only review and surface later as unimplementable plans.
+
+Review whether the spec is complete, internally consistent, and accurate.
 
 ## What to Review
 
@@ -11,11 +13,7 @@ Read project context (AGENTS.md and any existing codebase) to understand constra
 - **Consistency** — Internal contradictions between sections (e.g., data model conflicts with API design, feature list conflicts with MVP scope)
 - **Clarity** — Ambiguous requirements that could lead to misinterpretation during implementation
 - **Codebase accuracy** — Concrete claims the spec makes about current code (named functions, file paths, type shapes, module boundaries, existing API surfaces) must match what is in the repo. Spot-check by opening the cited files. Flag wrong citations, misdescribed seams, and nonexistent-but-assumed APIs — these mislead planning the most.
-- **Scope** — Spec focuses on a coherent system. No unconnected components or features that serve no specified consumer
-- **YAGNI** — Unrequested features, over-engineering, or premature abstractions that add complexity without clear value
-- **Design Direction** — Whether the proposed system design is the simplest safe option. Challenge assumptions about users, environment, or dependencies and flag when a different approach would be safer or simpler
-- **Failure Modes** — Scenarios the spec does not account for: partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the spec describes: when the spec bounds the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap, and machinery for it is a YAGNI finding instead
-- **Proportionality** — Requirements or acceptance criteria whose machinery (leases, locks, queues, versioning schemes, state machines, new persistent entities) exceeds the failure modes and scale the spec's own stated bounds admit, wherever the spec states them (Overview, Users, or a requirement)
+- **Failure Modes** — Scenarios the spec does not account for: partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the spec describes: when the spec bounds the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap
 
 ## Determination Criteria
 
