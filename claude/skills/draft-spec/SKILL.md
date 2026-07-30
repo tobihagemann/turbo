@@ -55,7 +55,7 @@ Keep findings at the decision level: what tools can do, which approaches are idi
 
 ## Step 3: Deep-Dive Discussion
 
-Interview the user relentlessly about every aspect of the project until you reach shared understanding. Gather behavioral requirements (the "what") before architectural design (the "how"), so design decisions land against a concrete set of requirements instead of being taken in the abstract. Track coverage internally but do not present the list as a rigid checklist. When the user jumps to architecture early, engage briefly then circle back to confirm the behavioral picture is complete.
+Interview the user relentlessly until you reach shared understanding of the project. Gather behavioral requirements (the "what") before architectural design (the "how"), so design decisions land against a concrete set of requirements instead of being taken in the abstract. Track coverage internally but do not present the list as a rigid checklist. When the user jumps to architecture early, engage briefly then circle back to confirm the behavioral picture is complete.
 
 ### Requirements (gather first)
 
@@ -63,7 +63,7 @@ Interview the user relentlessly about every aspect of the project until you reac
 |---|---|
 | **Users and personas** | Who uses this? Goals, pain points, technical sophistication |
 | **Core behaviors** | Primary capabilities and user-facing workflows — the behaviors the system must exhibit |
-| **Non-functional requirements** | Performance, security, accessibility, i18n, compliance |
+| **Non-functional requirements** | Performance, security, accessibility, i18n, compliance — which of these do this project's users and deployment require? |
 | **Scale and operational rigor** | How many users and operators, now and realistically? Concurrent writers? Which rigor tier is proportionate — personal tool, small team, or business-critical — and what failure tolerance does that imply? |
 
 ### Design (gather after requirements are clear)
