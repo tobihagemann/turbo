@@ -32,6 +32,8 @@ Cover all three categories in one sweep. The searches overlap heavily: the same 
 
 After searching, form a short recommendation: should the new work follow the patterns you found, deviate from them, or blend approaches? Base the recommendation on what exists, not on speculation about what could exist.
 
+When the recommendation keeps the work inside the existing patterns, state what those patterns leave the work to handle.
+
 ## Output Format
 
 Return findings as a single structured markdown block:

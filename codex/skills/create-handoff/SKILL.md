@@ -38,6 +38,7 @@ Survey the conversation context for:
 - **Active artifact**: path to the plan, shell, spec, or other file at the center of the work, if one exists
 - **Open decisions**: questions raised but not resolved, choices the user is still weighing, escalations awaiting input
 - **In-flight changes**: staged or unstaged edits that are not yet committed; what each change is doing and what is missing
+- **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out
 - **Next step**: the first concrete action the new session should take
 
 When something is genuinely unclear and would leave a gap in the handoff, use `request_user_input` to resolve it. Default to inferring quietly when the conversation makes the answer clear.

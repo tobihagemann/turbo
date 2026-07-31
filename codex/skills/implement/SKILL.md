@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Load code-style and task-specific skills, make the change described by the current context, then run $finalize for QA and commit. Use for ad-hoc changes when no plan file or improvements backlog governs the work, and when the user asks to \"just implement\", \"implement directly\", \"implement without a plan\", or \"apply the change\"."
+description: "Load code-style and task-specific skills, make the change described by the current context, then run post-implementation QA. Use for ad-hoc changes when no plan file or improvements backlog governs the work, and when the user asks to \"just implement\", \"implement directly\", \"implement without a plan\", or \"apply the change\"."
 ---
 
 # Implement
@@ -20,7 +20,7 @@ At the start, use `update_plan` to track each step, restating any remaining step
 
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
-Then attempt `create_goal` with the objective: "Make this change: <one-line task summary>. Carry it through `$finalize`'s final step. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete when `$finalize` has finished." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+Then attempt `create_goal` with the objective: "Make this change: <one-line task summary>. Carry it through Step 6, which runs `$finalize` unless a lighter pass or stopping is chosen. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete when Step 6 has finished." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
 
 ## Step 1: Run `$code-style` Skill
 
@@ -46,9 +46,13 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 ## Step 6: Run `$finalize` Skill
 
-When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary.
+When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `$finalize` skill.
 
-Run the `$finalize` skill.
+When no plan file governs the work and this run did not create a goal, an outer workflow owns the work: run the `$finalize` skill. When this run created the goal, use `request_user_input` to offer three options:
+
+- **Full QA** — run the `$finalize` skill
+- **Lighter pass** — load the `$simplify-code` and `$simplify-docs` skills together, then run both their review agents before applying any fixes
+- **Stop here** — leave the change as-is
 
 If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

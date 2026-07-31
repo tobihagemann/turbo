@@ -99,6 +99,8 @@ Judge convergence by the trend across iterations: when rounds have stopped surfa
 
 Judge the kind of surviving defect as well as the trend. Once earlier rounds have drained the design- and requirement-level defects and a round's findings are dominated by claims that a named identifier does not exist or does not match its declaration, the artifact has passed the point where reviewing it as text pays, even when the count is rising and every finding is genuine. Implementation surfaces that class immediately; a further re-run is pointless. Expect any round that adds mechanism to seed defects at the seams it creates.
 
+When a round's findings turn on how a platform, framework, or dependency behaves and nobody has observed that behavior, prefer a cheap instrumented experiment to another review round. Run it in a temp directory outside the repo, and record what it shows in the artifact before judging whether another round is warranted.
+
 **When the same class of defect recurs across iterations**, stop patching the individual instance and instead write the root-cause invariant into the artifact itself, enumerating the worked failures it must prevent. In the same pass, re-read the whole artifact against the new invariant and fix every instance it catches, including text written before the invariant existed. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.

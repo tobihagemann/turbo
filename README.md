@@ -8,7 +8,7 @@ The Claude Code edition is production-tested. The Codex edition is currently exp
 
 1. **Plan** — Run [`/turboplan`](claude/skills/turboplan/SKILL.md) (or enter raw plan mode) and describe what you want to build
 2. **Implement** — Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) on the plan, or [`/implement`](claude/skills/implement/SKILL.md) for ad-hoc changes
-3. **Finalize** — [`/finalize`](claude/skills/finalize/SKILL.md) runs tests, code polishing, commit, and PR. It kicks in automatically after any `/implement*` skill; run it yourself if you built by hand.
+3. **Finalize** — [`/finalize`](claude/skills/finalize/SKILL.md) runs tests, code polishing, commit, and PR. It kicks in automatically after any `/implement*` skill, except on a standalone `/implement` where you're offered a lighter pass instead; run it yourself if you built by hand.
 
 This loop is the core. Two more pipelines run alongside it for work that does not fit the loop: [`/audit`](claude/skills/audit/SKILL.md) for project-wide health checks and [`/onboard`](claude/skills/onboard/SKILL.md) for ramping up on new projects. Beyond the four pipelines, Turbo ships [70+ skills](#all-skills) for debugging, reviewing, dependency upgrades, and self-improvement that makes each session teach the next. See the [prompt examples](#prompt-examples) for how they look in practice, or read on for the full picture.
 
@@ -111,7 +111,7 @@ You then drive implementation one shell at a time. [`/pick-next-shell`](claude/s
 
 ## The Finalize Pipeline
 
-[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
+[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically. A standalone `/implement` asks first, offering a lighter pass or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
 
 ![How Finalize Connects](assets/how-finalize-connects.svg)
 

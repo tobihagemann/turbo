@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Load code-style and task-specific skills, make the change described by the current context, then run /finalize for QA and commit. Use for ad-hoc changes when no plan file or improvements backlog governs the work, and when the user asks to \"just implement\", \"implement directly\", \"implement without a plan\", or \"apply the change\"."
+description: "Load code-style and task-specific skills, make the change described by the current context, then run post-implementation QA. Use for ad-hoc changes when no plan file or improvements backlog governs the work, and when the user asks to \"just implement\", \"implement directly\", \"implement without a plan\", or \"apply the change\"."
 ---
 
 # Implement
@@ -42,9 +42,13 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 ## Step 6: Run `/finalize` Skill
 
-When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary.
+When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `/finalize` skill.
 
-Run the `/finalize` skill.
+When no plan file governs the work, use the TaskList tool. When it holds entries beyond this skill's own steps, a parent workflow governs the work: run the `/finalize` skill. Otherwise use `AskUserQuestion` to offer three options:
+
+- **Full QA** — run the `/finalize` skill
+- **Lighter pass** — invoke the `/simplify-code` and `/simplify-docs` skills in a single message, then run both their review agents before applying any fixes
+- **Stop here** — leave the change as-is
 
 Then use the TaskList tool and proceed to any remaining task.
 

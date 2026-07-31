@@ -29,11 +29,12 @@ If a finding references code that has changed since it was generated (e.g., by a
 
 ## Step 3: Handle Escalated Findings
 
-For findings with Escalate verdict, use `request_user_input` to let the user decide. Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them.
+For findings with Escalate verdict, use `request_user_input` to let the user decide. Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them. When the choice is architectural rather than a matter of preference, offer the consultation option in place of whichever alternative fits the finding least, keeping the question at three options.
 
 - **Apply** — make the change
 - **Skip** — leave as-is
 - **Note for later** — run the `$note-improvement` skill to capture it
+- **Consult** — run the `$consult-claude` skill for a second opinion on the choice, or the `$consult-oracle` skill when standard approaches have already failed. Then apply, skip, or note the finding with that answer in hand
 
 ## Step 4: Report Results
 
