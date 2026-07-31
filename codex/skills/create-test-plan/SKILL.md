@@ -1,6 +1,6 @@
 ---
 name: create-test-plan
-description: "Analyze what changed and generate a structured test plan at .turbo/test-plan.md covering four escalating levels: basic functionality, complex operations, adversarial testing, and cross-cutting scenarios. Use when the user asks to \"create a test plan\", \"plan tests\", \"what should I test\", \"generate test scenarios\", \"test plan for this PR\", or \"what are the test cases\"."
+description: "Analyze what changed and generate a structured test plan at .turbo/test-plans/<slug>.md covering four escalating levels: basic functionality, complex operations, adversarial testing, and cross-cutting scenarios. Use when the user asks to \"create a test plan\", \"plan tests\", \"what should I test\", \"generate test scenarios\", \"test plan for this PR\", or \"what are the test cases\"."
 ---
 
 # Create Test Plan
@@ -80,9 +80,25 @@ If the change is small enough that a level has no meaningful scenarios (e.g., a 
 
 ## Step 5: Present and Write
 
+Pick a slug for the test plan from the change under test:
+
+- Lowercase
+- Replace non-alphanumeric characters with hyphens
+- Collapse consecutive hyphens
+- Trim leading and trailing hyphens
+- Truncate to 40 characters at a word boundary
+
+If the work is anchored to an existing artifact (a plan at `.turbo/plans/<slug>.md`, a shell at `.turbo/shells/<slug>.md`, or a spec at `.turbo/specs/<slug>.md`), reuse that artifact's slug verbatim.
+
+The user may pass an explicit slug or path; honor it.
+
+If `.turbo/test-plans/<slug>.md` already exists, use `request_user_input` to ask whether to overwrite, append a numeric suffix (`-2`, `-3`, ...), or pick a different slug. For a slug reused from an anchoring artifact, offer overwrite or a different slug only.
+
+State the chosen slug and the resulting test plan path before continuing.
+
 Output the plan as text. Then use `request_user_input` to ask for approval before writing.
 
-Create the `.turbo/` directory if it does not exist. Write the plan to `.turbo/test-plan.md` using this format:
+Create `.turbo/test-plans/` if it does not exist. Write the plan to `.turbo/test-plans/<slug>.md` using this format:
 
 ```markdown
 # Test Plan: <Feature/Change Name>
@@ -112,6 +128,8 @@ Create the `.turbo/` directory if it does not exist. Write the plan to `.turbo/t
 
 - [ ] **<Test name>** — <Steps to perform> → Expected: <expected outcome>
 ```
+
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

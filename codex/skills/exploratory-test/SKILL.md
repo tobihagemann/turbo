@@ -19,10 +19,19 @@ At the start, use `update_plan` to track each step, restating any remaining step
 
 ## Step 1: Load or Create Test Plan
 
-Check if `.turbo/test-plan.md` exists.
+Resolve the test plan using these rules in order:
 
-- **If it exists** — read the test plan and continue to Step 2. If the user specifies a narrower scope, filter the plan to relevant scenarios rather than executing all of them.
-- **If it does not exist** — run the `$create-test-plan` skill first, then continue.
+1. **Explicit path** — If the user passed a file path, use it
+2. **Explicit slug** — resolve to `.turbo/test-plans/<slug>.md`
+3. **Anchoring artifact** — If the work under test is anchored to a plan, shell, or spec, resolve to `.turbo/test-plans/<that-slug>.md` when that file exists
+4. **Single file** — Glob `.turbo/test-plans/*.md`. If exactly one file exists, use it
+5. **Most recent** — If multiple files exist, use the most recently modified
+6. **Legacy fallback** — `.turbo/test-plan.md` if `.turbo/test-plans/` does not exist
+7. **Nothing found** — run the `$create-test-plan` skill first, then use the plan it writes
+
+If multiple test plans exist and the most-recent choice is non-obvious, use `request_user_input` to let the user pick from the candidates.
+
+Read the resolved test plan and state its path. If the user specifies a narrower scope, filter the plan to relevant scenarios rather than executing all of them.
 
 ## Step 2: Determine Testing Approach
 
@@ -101,7 +110,7 @@ Report usability observations from the UX lens below the level results, separate
 
 For each failure, include the relevant screenshot, output, or state observation.
 
-Update `.turbo/test-plan.md` by checking off completed tests and annotating results.
+Update the resolved test plan file by checking off completed tests and annotating results.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

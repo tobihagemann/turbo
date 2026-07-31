@@ -45,7 +45,7 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
-| [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plan.md` with four escalating levels | | [`/exploratory-test`](skills/exploratory-test/SKILL.md) |
+| [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plans/<slug>.md` with four escalating levels | | [`/exploratory-test`](skills/exploratory-test/SKILL.md) |
 | [`/smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) | [`/polish-code`](skills/polish-code/SKILL.md) |
 | [`/preview`](skills/preview/SKILL.md) | Stand up the live app and hand it to the user to judge a UI/UX change firsthand | | [`/implement`](skills/implement/SKILL.md) |
 | [`/exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios, plus usability observations | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md), [`/user-experience`](skills/user-experience/SKILL.md) | |
