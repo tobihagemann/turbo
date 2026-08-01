@@ -16,6 +16,7 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, sub-agents, etc.). The recipient doesn't know about these tools.
 - Composing prose in the user's voice is not the same as posting it. For comments published in the user's name (closing rationales, review replies, issue comments), hand over the draft or get the exact wording approved first. Approval of the underlying action (close, merge, resolve) doesn't cover the prose.
 - Soften opinions when asking questions. Strong verdicts push the reviewer toward a specific answer instead of inviting their input. Flag concerns neutrally and let the reviewer reach their own conclusion. Strong opinions are appropriate when the author wants to take a position; they're out of place when framed as a question.
+- Cut hedges that add no information ("perhaps", "possibly", "I think"). Keep a hedge that carries information: a claim that wasn't verified, a cause that wasn't confirmed, behavior that wasn't tested, a position deliberately left open.
 
 ## Voice by Author Association
 
@@ -33,7 +34,7 @@ gh api repos/<owner>/<repo> --jq '.permissions.push'
 
 ### Insider (OWNER, MEMBER, COLLABORATOR)
 
-Write as a teammate. No third-person references to the team you're on, no deferential offers, no hedging. State things directly.
+Write as a teammate. No third-person references to the team you're on, no deferential offers. State things directly.
 
 Skip context the teammate already has. Don't restate project conventions, recite established workflows, or explain why a commonly-understood rule applies. A reply like "Fixed in <sha>." or "Reverted in <sha>." is often all that's needed. Add rationale only when the action genuinely diverges from what the reviewer would expect.
 

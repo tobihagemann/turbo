@@ -44,7 +44,7 @@ Fixed in <commit-sha>.
 
 Only add a brief sentence after the SHA when the fix meaningfully diverges from what the reviewer suggested. Otherwise the SHA alone is enough.
 
-**skip**: payload is the skip reasoning. State the reasoning directly. Do not apologize or hedge.
+**skip**: payload is the skip reasoning. State the reasoning directly. Do not apologize.
 
 **answer**: payload is raw answer text from `$answer-reviewer-questions`. Tighten to one or two sentences and apply `$github-voice` rules. Do not cite transcripts or mention Claude. The reply reads as the implementer's own explanation.
 
