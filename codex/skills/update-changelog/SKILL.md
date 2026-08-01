@@ -25,7 +25,7 @@ Determine what changed:
 
 ## Step 4: Assess Changelog-Worthiness
 
-Apply the `$changelog-rules` changelog-worthiness criteria. Also skip fixes to code introduced by the same branch/PR, as these are refinements of the in-progress feature, not separate changelog events.
+Apply the `$changelog-rules` changelog-worthiness and net-delta criteria. Skip fixes to code introduced by the same branch or PR.
 
 If no changes are changelog-worthy, skip this skill.
 

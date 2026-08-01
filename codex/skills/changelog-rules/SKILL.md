@@ -66,15 +66,17 @@ Not every change belongs in a changelog. Changelogs are for humans, not machines
 Entries describe what changed **for the user**. Focus on outcomes and impact.
 
 - Lead with a user-visible verb: "Add", "Fix", "Improve", "Allow", "Prevent", "Show", "Check". Avoid developer-centric verbs like "Enforce", "Implement", "Refactor", "Handle", "Register".
-- Describe the experience, not the mechanism.
+- Describe the experience, not the mechanism. "Show grouped notifications: the list buckets items by source before rendering" carries the mechanism after the colon; "Show notifications grouped by the app that sent them" states only what the user gets.
 - When a change prevents a problem or protects the user, say what it does for them.
 
 ### Net Delta from the Last Release
 
 Entries describe the change relative to the last released version.
 
-- Watch for entries that only make sense against an unreleased build, like "no longer does X" or "removed the Y glitch" where X or Y never shipped.
-- When finalizing a release, review every entry and rewrite or collapse anything a user of the previous release would not observe.
+- Judge each entry by whether a user of the previous release would observe the change. "No longer does X" or "removed the Y glitch" where X or Y never shipped is the obvious tell.
+- A positively-phrased entry hides the same trap. "Allow renaming saved filters straight from the list, so fixing a typo takes one click" reads like a real improvement, yet it belongs to the feature when saved filters themselves arrived in the same unreleased cycle.
+- When finalizing a release, compare the behavior at the last release tag against the behavior today: `git show <last-tag>:<path>`, plus `git log --follow -- <path>` when the file moved. A path that exists at the tag settles nothing on its own, since new behavior often lands in files that were already there.
+- When the behavior an entry describes arrived after the tag, rewrite the entry as the net capability, fold it into whatever introduced that behavior, or drop it.
 - Keep one entry per net user-visible change.
 
 ## PR and Issue References
