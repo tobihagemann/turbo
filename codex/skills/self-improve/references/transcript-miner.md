@@ -38,6 +38,8 @@ Each line is a record with `type` and `payload`. Submitted user turns are `event
 
 A submitted turn can open with a harness-injected block, such as an attachment manifest or captured browser context, followed by the user's own text in the same record. Strip the block and keep the remainder.
 
+An answer to a `request_user_input` gate produces no `user_message` event. It arrives as a `response_item` whose payload is a `function_call_output`, holding a JSON string in `payload.output` shaped `{"answers": {"<question id>": {"answers": ["<answer>"]}}}`. The question text sits in the preceding `function_call` record carrying the same `call_id`, whose `arguments` is a JSON string listing `questions` by `id`. Pair the two so each recovered turn carries the question it answers. Each entry holds the user's own words: the option label they selected, or the text they supplied.
+
 Print the real user turns:
 
 ```bash
@@ -46,6 +48,7 @@ import json, sys
 
 WRAPPERS = ("# Files mentioned by the user:", "# In app browser:",
             "# Context from my IDE setup:")
+GATE = "request_user_input"
 
 
 def strip_wrapper(text):
@@ -65,18 +68,49 @@ def elide(text):
     return text[:4000] + "\n[...]\n" + text[-2000:]
 
 
+def questions(arguments):
+    """Map question id to question text for one request_user_input call."""
+    try:
+        asked = json.loads(arguments or "{}")
+    except ValueError:
+        return {}
+    return {q.get("id"): q.get("question", "") for q in asked.get("questions") or []
+            if isinstance(q, dict)}
+
+
+def answers(output, asked):
+    """Render the answers of a request_user_input call as one user turn."""
+    try:
+        given = json.loads(output or "{}")
+    except ValueError:
+        return ""
+    pairs = []
+    for qid, val in (given.get("answers") or {}).items():
+        for answer in (val or {}).get("answers") or []:
+            pairs.append(f'"{asked.get(qid) or qid}"="{answer}"')
+    if not pairs:
+        return ""
+    return "The user answered: " + ", ".join(pairs)
+
+
+asked = {}
 seen = ()
 for line in open(sys.argv[1], encoding="utf-8"):
     try:
         rec = json.loads(line)
     except ValueError:
         continue
-    if rec.get("type") != "event_msg":
+    payload = rec.get("payload") or {}
+    kind = payload.get("type")
+    if rec.get("type") == "event_msg" and kind == "user_message":
+        text = strip_wrapper((payload.get("message") or "").strip())
+    elif kind == "function_call" and payload.get("name") == GATE:
+        asked[payload.get("call_id")] = questions(payload.get("arguments"))
         continue
-    payload = rec.get("payload", {})
-    if payload.get("type") != "user_message":
+    elif kind == "function_call_output" and payload.get("call_id") in asked:
+        text = answers(payload.get("output"), asked.pop(payload.get("call_id")))
+    else:
         continue
-    text = strip_wrapper((payload.get("message") or "").strip())
     stamp = rec.get("timestamp", "")
     if not text or (stamp, text) == seen:
         continue

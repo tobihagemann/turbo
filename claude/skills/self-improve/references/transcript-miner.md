@@ -25,6 +25,8 @@ Two filters matter. Records with `isSidechain: true` are subagent conversations 
 
 A message the user types while a tool call is in flight never becomes a `user` record. It persists as an `attachment` record whose `attachment.type` is `queued_command`, holding the text in `attachment.prompt` in the same string-or-parts shape. Take the ones whose `attachment.origin.kind` is `human`, which excludes the harness notifications queued the same way. The record sits at the point of delivery and carries the timestamp of the moment the user typed it.
 
+An answer given through `AskUserQuestion` produces no text part either. It arrives inside a `user` record as a `tool_result` part opening with `The user answered`, carrying one or more `"<question>"="<answer>"` pairs and a trailing harness sentence. Each answer is either an option label the user selected or the free text they typed instead of selecting one, so both are their own words. Match on the opening of the part, since recovered-evidence reports quote the marker mid-text. Strip the trailing sentence to keep it out of the quoted evidence.
+
 Print the real user turns:
 
 ```bash
@@ -38,6 +40,8 @@ NOISE = ("<command-message>", "<command-name>", "<local-command-stdout>",
          "(Re-invocation of", "Skill /", "Another Claude session sent")
 
 ARGS = re.compile(r"<command-args>(.*?)</command-args>|\nARGUMENTS:\s*(.*)\Z", re.S)
+ANSWER = "The user answered"
+TAIL = re.compile(r"\.\s*Read the answers carefully\b.*\Z", re.S)
 
 
 def typed_text(text):
@@ -65,6 +69,22 @@ def flatten(content):
     return "\n".join(p for p in parts if p).strip()
 
 
+def answered(content):
+    """Join the AskUserQuestion answers carried by a payload's tool_result parts."""
+    found = []
+    for part in content if isinstance(content, list) else []:
+        if not isinstance(part, dict) or part.get("type") != "tool_result":
+            continue
+        body = part.get("content")
+        if isinstance(body, list):
+            body = "\n".join(b.get("text", "") for b in body
+                             if isinstance(b, dict))
+        if not isinstance(body, str) or not body.strip().startswith(ANSWER):
+            continue
+        found.append(TAIL.sub("", body.strip()).strip())
+    return "\n".join(found)
+
+
 seen = ()
 for line in open(sys.argv[1], encoding="utf-8"):
     try:
@@ -75,7 +95,8 @@ for line in open(sys.argv[1], encoding="utf-8"):
         continue
     kind = rec.get("type")
     if kind == "user":
-        text = flatten(rec.get("message", {}).get("content"))
+        content = rec.get("message", {}).get("content")
+        text = "\n".join(t for t in (flatten(content), answered(content)) if t)
     elif kind == "attachment":
         att = rec.get("attachment") or {}
         if att.get("type") != "queued_command":
