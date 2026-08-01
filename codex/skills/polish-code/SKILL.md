@@ -55,6 +55,8 @@ Run the `$evaluate-findings` skill on the results from Step 3.
 
 Run the `$apply-findings` skill on the evaluated results.
 
+When a fix ships with a regression test, confirm the test fails with the fix reverted, then restore the fix. A test that cannot be made to fail does not pin the behavior; say so rather than counting it as coverage.
+
 Stage all changes made in this step before continuing.
 
 ## Step 6: Run `$smoke-test` Skill

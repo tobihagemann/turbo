@@ -133,7 +133,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 ## Rules
 
 - Always clean up: close only the browser sessions this run opened, by name, and stop the dev servers this skill started. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
-- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and use temporary directories for scratch state.
+- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test.
 - Never modify code. This skill is read-only verification. If a test fails, report the failure — do not attempt to fix it.
 - If the dev server fails to start, report the error and stop.
 - Keep tests focused on the determined scope.
