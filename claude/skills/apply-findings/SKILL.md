@@ -27,9 +27,13 @@ Group Apply findings by file path and apply in file order to minimize context sw
 
 If a finding references code that has changed since it was generated (e.g., by a prior fix in this same run), re-assess whether it still applies. Skip if the code has diverged.
 
+When an escalated finding's outcome would change what the other fixes should look like, settle it in Step 3 before applying them.
+
 ## Step 3: Handle Escalated Findings
 
-For findings with Escalate verdict, use `AskUserQuestion` to let the user decide. Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them. When the choice is architectural rather than a matter of preference, include the consultation option alongside the concrete alternatives.
+For findings with Escalate verdict, use `AskUserQuestion` to let the user decide. Output the finding's technical detail as text first, then state the question as the decision the user owns. When the finding is a disagreement between two artifacts, ask which behavior is wanted; reconciling the artifacts follows from that answer.
+
+Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them. When the choice is architectural rather than a matter of preference, include the consultation option alongside the concrete alternatives.
 
 - **Apply** — make the change
 - **Skip** — leave as-is
@@ -45,4 +49,4 @@ Then use the TaskList tool and proceed to any remaining task.
 ## Rules
 
 - Only edit files. Do not stage, build, or test.
-- If two Apply findings conflict (suggest opposite changes to the same code), surface the conflict with `AskUserQuestion`, recommend the genuinely best option on technical merit, and let the user choose, rather than applying either.
+- If two Apply findings conflict (suggest opposite changes to the same code), treat the conflict as Escalate (surface it in Step 3) rather than applying either.

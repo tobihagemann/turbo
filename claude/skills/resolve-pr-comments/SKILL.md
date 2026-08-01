@@ -98,7 +98,7 @@ Output all escalated items as a numbered list. For each item, show:
 - The competing interpretations or the reason for escalation
 - The file and line reference, when available
 
-Then use `AskUserQuestion` to ask how to handle them. Per item, the options are:
+Then use `AskUserQuestion` to ask how to handle them. State each question as the decision the user owns: what the code should do. Leave the reviewer's wording and code location to the numbered list above. Per item, the options are:
 
 - **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent. Step 7 picks it up as an accepted finding.
 - **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 10 (inline threads) or Step 11 (issue comments)
