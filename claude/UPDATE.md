@@ -140,12 +140,11 @@ Then use `AskUserQuestion` to ask whether to proceed with the update. If the use
 
 Detection runs over **every** skill in the union of installed, old upstream, and new upstream — independent of the changelog. Phase 3's destructive operations gate strictly on the matrix, so any deviation between an installed skill and its old upstream baseline surfaces here, not in Phase 3.
 
-Materialize the old upstream skill tree once:
+Materialize the old upstream skill tree once under your scratchpad directory. `<tmp>` below stands for that path.
 
 ```bash
-tmp=$(mktemp -d)
-git -C ~/.turbo/repo archive <lastUpdateHead> -- claude/skills/ 2>/dev/null | tar -x -C "$tmp"
-mkdir -p "$tmp/claude/skills"
+git -C ~/.turbo/repo archive <lastUpdateHead> -- claude/skills/ 2>/dev/null | tar -x -C "<tmp>"
+mkdir -p "<tmp>/claude/skills"
 ```
 
 The trailing `mkdir -p` handles the case where `<lastUpdateHead>` predates the `claude/skills/` path: the archive emits no entries and the directory wouldn't otherwise exist, which would cause the diff step below to error on a missing path. With an empty old-upstream tree, every installed skill routes into the **Collision** category (old absent, new present, installed present) and the user is asked once per skill whether to overwrite with the fresh upstream.
@@ -177,7 +176,7 @@ Build a map of `(old → new)` pairs. For names appearing as either side of a re
 
 | Sub-case | Detection | Default |
 |---|---|---|
-| **Renamed, clean** | `git diff --no-index --quiet -- "$tmp/claude/skills/<old-name>" ~/.claude/skills/<old-name>` exits 0 | Auto-migrate in Phase 3 |
+| **Renamed, clean** | `git diff --no-index --quiet -- "<tmp>/claude/skills/<old-name>" ~/.claude/skills/<old-name>` exits 0 | Auto-migrate in Phase 3 |
 | **Renamed, customized** | same diff exits 1 | Ask user (Migrate / Skip / Exclude) |
 
 If git's rename detection threshold isn't met (e.g., the rename also rewrote `SKILL.md` substantially), the rename falls through to the standard matrix as Removed-upstream + New-upstream — data is still safe (Removed-upstream prompts on customized installs); the UX just doesn't recognize the rename.
@@ -189,7 +188,7 @@ For each remaining `<name>` (i.e., names not paired in the rename map), compute 
 | `old_exists` | `git -C ~/.turbo/repo cat-file -e <lastUpdateHead>:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
 | `new_exists` | `git -C ~/.turbo/repo cat-file -e origin/main:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
 | `installed_exists` | `test -d ~/.claude/skills/<name>` |
-| `clean` | only when `old_exists` and `installed_exists` are both true: `git diff --no-index --quiet -- "$tmp/claude/skills/<name>" ~/.claude/skills/<name>` (exit 0 → clean, exit 1 → customized) |
+| `clean` | only when `old_exists` and `installed_exists` are both true: `git diff --no-index --quiet -- "<tmp>/claude/skills/<name>" ~/.claude/skills/<name>` (exit 0 → clean, exit 1 → customized) |
 
 Use `git diff --no-index` rather than POSIX `diff -rq`. Git diff understands file modes (regular vs executable), symlinks, and gitlinks; POSIX diff misses mode and symlink target changes.
 
@@ -274,12 +273,12 @@ Before proceeding to Phase 3, snapshot the entire installed directory of every s
 
 ```bash
 # For Modified-customized + Merge:
-saved="$tmp/saved/<name>"
+saved="<tmp>/saved/<name>"
 mkdir -p "$(dirname "$saved")"
 cp -r ~/.claude/skills/<name>/ "$saved"
 
 # For Renamed-customized + Migrate (key the snapshot under the NEW name so Phase 3 Step 3 finds it next to the fresh install):
-saved="$tmp/saved/<new-name>"
+saved="<tmp>/saved/<new-name>"
 mkdir -p "$(dirname "$saved")"
 cp -r ~/.claude/skills/<old-name>/ "$saved"
 ```
@@ -327,8 +326,8 @@ For each skill where the user chose **Merge** (Modified-customized) or **Migrate
 
    | User choice | Install path | Saved tree | Old upstream baseline |
    |---|---|---|---|
-   | Merge (Modified) | `~/.claude/skills/<name>/` | `$tmp/saved/<name>/` | `$tmp/claude/skills/<name>/` |
-   | Migrate (Renamed) | `~/.claude/skills/<new-name>/` | `$tmp/saved/<new-name>/` | `$tmp/claude/skills/<old-name>/` |
+   | Merge (Modified) | `~/.claude/skills/<name>/` | `<tmp>/saved/<name>/` | `<tmp>/claude/skills/<name>/` |
+   | Migrate (Renamed) | `~/.claude/skills/<new-name>/` | `<tmp>/saved/<new-name>/` | `<tmp>/claude/skills/<old-name>/` |
 
 2. Walk the saved customized tree. For each file path relative to the skill root:
    - **Present in saved, absent in fresh upstream** — net-new user file. Copy back to the install verbatim.
@@ -372,8 +371,7 @@ Write the new HEAD to `claude.lastUpdateHead`:
 
 ```bash
 head=$(git -C ~/.turbo/repo rev-parse HEAD)
-tmp=$(mktemp)
-jq --arg head "$head" '.claude.lastUpdateHead = $head' ~/.turbo/config.json > "$tmp" && mv "$tmp" ~/.turbo/config.json
+jq --arg head "$head" '.claude.lastUpdateHead = $head' ~/.turbo/config.json > "<tmp>/config.json" && mv "<tmp>/config.json" ~/.turbo/config.json
 ```
 
 If Phase 2 added new exclusions, merge them into `claude.excludeSkills` via Edit.
