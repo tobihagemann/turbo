@@ -1,20 +1,19 @@
 # Turboplan: Direct Mode
 
-Run `/implement`. Direct mode goes straight to implementation; `.turbo/plans/` stays untouched.
+Run `/discuss-change`. Direct mode aligns on the shape and implements it; `.turbo/plans/` stays untouched.
 
 ## Task Tracking
 
 Use `TaskCreate` to create a task for each phase:
 
-1. Run `/implement` skill
+1. Run `/discuss-change` skill
 
-## Phase 1: Run `/implement` Skill
+## Phase 1: Run `/discuss-change` Skill
 
-Run the `/implement` skill.
+Run the `/discuss-change` skill.
 
 Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Direct mode applies the change via `/implement` and leaves `.turbo/plans/` untouched.
-- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and re-route through plan mode.
+- Direct mode applies the change via `/discuss-change` and leaves `.turbo/plans/` untouched.

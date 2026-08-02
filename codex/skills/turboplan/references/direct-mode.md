@@ -1,20 +1,19 @@
 # Turboplan: Direct Mode
 
-Run `$implement`. Direct mode goes straight to implementation; `.turbo/plans/` stays untouched.
+Run `$discuss-change`. Direct mode aligns on the shape and implements it; `.turbo/plans/` stays untouched.
 
 ## Task Tracking
 
 Use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
 
-1. Run `$implement` skill
+1. Run `$discuss-change` skill
 
-## Phase 1: Run `$implement` Skill
+## Phase 1: Run `$discuss-change` Skill
 
-Run the `$implement` skill.
+Run the `$discuss-change` skill.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 
-- Direct mode applies the change via `$implement` and leaves `.turbo/plans/` untouched.
-- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and re-route through plan mode.
+- Direct mode applies the change via `$discuss-change` and leaves `.turbo/plans/` untouched.

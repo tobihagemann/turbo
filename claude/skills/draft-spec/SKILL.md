@@ -87,7 +87,6 @@ Interview the user relentlessly until you reach shared understanding of the proj
 - If a question can be answered by exploring the codebase, explore the codebase instead
 - Use `AskUserQuestion` to ask one question at a time. Use options with descriptions to frame trade-offs and offer concrete suggestions. Use `multiSelect` when choices are not mutually exclusive.
 - When the user gives a short answer, probe deeper before moving on
-- Offer concrete suggestions and trade-off analysis — be a collaborator, not an interviewer
 - For each question, recommend an answer with reasoning
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one
 - When all categories have sufficient depth or the user signals readiness, confirm before moving to drafting

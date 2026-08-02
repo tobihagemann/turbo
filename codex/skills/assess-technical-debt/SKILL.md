@@ -13,7 +13,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 
 1. Scope and partition
 2. Run debt analysis agents
-3. Run the `$evaluate-findings` skill
+3. Run `$evaluate-findings` skill
 4. Rank and write markdown report
 5. Generate HTML report
 

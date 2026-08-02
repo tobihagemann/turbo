@@ -49,7 +49,7 @@ Then use `request_user_input` to ask 1-3 focused opening questions targeting the
 Ground architecture and tech-stack choices in current reality before the deep-dive discussion.
 
 1. **Scan for matching skills.** Compare the vision and opening-question answers against available skill trigger descriptions. For each unambiguous match, run the skill by reading and following the installed skill instructions. This loads decision-level guidance (idiomatic patterns, known pitfalls, version constraints) before architectural choices are made. If unsure, do not load.
-2. **Look up library or framework docs.** For any library, framework, or platform the user mentioned or the project clearly needs, query documentation MCP tools (or WebSearch as a fallback) when the decision hinges on current capabilities, supported versions, or known constraints.
+2. **Look up library or framework docs.** For any library, framework, or platform the user mentioned or the project clearly needs, query documentation MCP tools (or web search as a fallback) when the decision hinges on current capabilities, supported versions, or known constraints.
 
 Keep findings at the decision level: what tools can do, which approaches are idiomatic, which versions to target. Do not embed specific API signatures or code snippets into the spec. Those belong in implementation-time skill loads.
 
@@ -87,7 +87,6 @@ Interview the user relentlessly until you reach shared understanding of the proj
 - If a question can be answered by exploring the codebase, explore the codebase instead
 - Use `request_user_input` to ask one question at a time. Use options with descriptions to frame trade-offs and offer concrete suggestions. When choices are not mutually exclusive, ask the user free-form which combination applies.
 - When the user gives a short answer, probe deeper before moving on
-- Offer concrete suggestions and trade-off analysis — be a collaborator, not an interviewer
 - For each question, recommend an answer with reasoning
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one
 - When all categories have sufficient depth or the user signals readiness, confirm before moving to drafting

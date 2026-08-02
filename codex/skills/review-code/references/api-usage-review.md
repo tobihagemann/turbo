@@ -3,7 +3,7 @@
 ## Review Instructions
 
 1. Identify external library/framework APIs in the code. Cross-reference with project dependency files to determine library versions in use. Filter out standard library and language built-ins. Focus on third-party dependencies. If no external library usage is found, report that and stop.
-2. For each identified library with non-trivial usage: resolve the library using documentation MCP tools or WebSearch, query for the specific APIs being used, and note the documented signatures, parameter types, return types, deprecation status, and version requirements.
+2. For each identified library with non-trivial usage: resolve the library using documentation MCP tools or web search, query for the specific APIs being used, and note the documented signatures, parameter types, return types, deprecation status, and version requirements.
 3. Check available skills for any relevant to the libraries or frameworks identified. Run matching skills to load domain-specific best practices as additional review context.
 
 ## What to Review

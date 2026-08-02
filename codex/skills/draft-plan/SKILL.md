@@ -60,7 +60,7 @@ Run the `$survey-patterns` skill with the confirmed task description. Keep the r
 Ground library and framework choices in current reality before escalating decisions.
 
 1. **Scan for matching skills.** Compare the task description against available skill trigger descriptions. For each unambiguous match, run the skill by reading and following the installed skill instructions. This loads decision-level guidance (idiomatic patterns, known pitfalls, version constraints) before product decisions are made. If unsure, do not load.
-2. **Look up library docs.** For libraries or frameworks the task clearly depends on, query documentation MCP tools (or WebSearch as a fallback) when the decision hinges on current library state such as whether a feature exists, which versions support it, or whether an API has been deprecated.
+2. **Look up library docs.** For libraries or frameworks the task clearly depends on, query documentation MCP tools (or web search as a fallback) when the decision hinges on current library state such as whether a feature exists, which versions support it, or whether an API has been deprecated.
 
 Keep findings at the decision level: what a library can do, which approach is idiomatic, which version to target. Do not embed specific API signatures or code snippets into the plan. Those belong at execution time, where the same skills are re-loaded.
 
@@ -99,7 +99,7 @@ Interview the user relentlessly about every aspect of the implementation shape u
 ### Discussion Guidelines
 
 - If a question can be answered by exploring the codebase, explore the codebase instead.
-- Make recommendations with reasoning, not just questions. Be a collaborator, not an interviewer.
+- Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.

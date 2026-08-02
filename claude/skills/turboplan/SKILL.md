@@ -17,8 +17,8 @@ Modes are named by what they produce: no plan, a plan file, or a spec plus shell
 
 | Mode | Criteria | Route |
 |---|---|---|
-| **Direct** | Clear scope and a known approach, ready to implement. Goes straight to `/implement`. | Read [references/direct-mode.md](references/direct-mode.md) and follow its steps. |
-| **Plan** | The approach warrants writing down before implementing — to survey patterns, align with the user, or survive a fresh session. Fits a single implementation session and touches one or two related subsystems. Produces a plan file. | Read [references/plan-mode.md](references/plan-mode.md) and follow its steps. |
+| **Direct** | Clear scope, with any remaining decisions small enough to settle in conversation rather than write down. Aligns on the shape, then implements. | Read [references/direct-mode.md](references/direct-mode.md) and follow its steps. |
+| **Plan** | The approach warrants writing down before implementing — to survey patterns or survive a fresh session. Fits a single implementation session and touches one or two related subsystems. Produces a plan file. | Read [references/plan-mode.md](references/plan-mode.md) and follow its steps. |
 | **Spec** | Spans multiple subsystems, requires multiple implementation sessions, or has architectural decisions that need a spec-level discussion before planning begins. Produces a spec plus shells. | Read [references/spec-mode.md](references/spec-mode.md) and follow its steps. |
 
 ## Recommend and Confirm the Route

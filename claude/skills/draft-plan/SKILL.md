@@ -99,7 +99,7 @@ Interview the user relentlessly about every aspect of the implementation shape u
 ### Discussion Guidelines
 
 - If a question can be answered by exploring the codebase, explore the codebase instead.
-- Make recommendations with reasoning, not just questions. Be a collaborator, not an interviewer.
+- Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.
