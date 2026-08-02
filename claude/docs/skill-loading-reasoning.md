@@ -20,7 +20,9 @@ Failure modes observed fall into two categories: **skip** (a step doesn't run) a
 
 6. **Turn ends when a child skill finishes**: Workflow skills like `/finalize` and `/turboplan` chain multiple sub-skill invocations. After a child skill completed its own steps — especially with a clean "nothing to do" result like `/evaluate-findings` returning zero findings — Claude treated that as a turn boundary and stopped, even with a non-empty parent task list still in view.
 
-7. **Stops cascade within a session**: Once Claude has ended a turn at one skill boundary — typically after composing a prose "completion" summary — it tends to repeat the pattern at subsequent skill boundaries, even when those downstream skills are well-behaved. A single unmitigated stall can trigger a chain. Continuation framing at the earliest leaf skill in a chain therefore tends to prevent stalls downstream.
+7. **Stops cascade within a session**: Once Claude has ended a turn at one skill boundary — typically after composing a prose "completion" summary — it tends to repeat the pattern at subsequent skill boundaries, even when those downstream skills are well-behaved. A single unmitigated stall can trigger a chain. Continuation framing at the earliest leaf skill in a chain therefore tends to prevent stalls downstream. Transcript review bears this out: in two separate sessions a stalled `/apply-findings` was followed by a stall at a downstream skill that does not stall on its own.
+
+8. **Long runs stall where short ones don't**: `/apply-findings` stalls only after heavy runs. Across 306 recorded runs, none under 60 tool calls stalled (0/283), while 4 of 23 longer runs did. Stalled runs had a median of 142 tool calls against 12 for clean ones. The work itself was irreducible — applying dozens of findings across dozens of files — so the run length was not a symptom of the skill doing anything wrong.
 
 This is structurally distinct from skipping. Skipping is "step didn't run"; stopping is "the workflow terminated early". Both manifest as missing work, but their root causes and fixes differ.
 
@@ -41,6 +43,10 @@ The budget-driven, argument-bypass, and branch-merging modes share a root cause:
 ### Stop problem
 
 Every skill load partially displaces continuation context: the child's instructions and output dominate the window, while the parent's unfinished task list fades into the background. When the child reaches the end of its own steps, there is no strong cue that the parent workflow still has work queued. The agent takes the path of least resistance and ends the turn.
+
+Two separate displacements are at work. A skill load displaces the parent's task list, as above. A long run additionally displaces the child's own continuation line: by the time execution reaches the last step, that instruction sits hundreds of intervening tool results back. The two compound, which is why a long child skill is the most reliable place to observe a stall.
+
+What the agent emits at that moment matters as much as what it can still see. Where the last step calls for a prose summary, the agent composes a formatted report, and that block becomes its final output — occupying the same position the continuation cue needs. Item 7's observation that stalls follow a prose "completion" summary is this effect seen from the outside.
 
 Task tracking in the parent workflow is meant to counteract this, but it only helps if the agent actually re-reads the task list before responding. Web research at the time confirmed this is a widespread emergent behavior with no reliable prompt-level fix — only mitigations.
 
@@ -78,5 +84,6 @@ The task-list-check rule alone turned out to be insufficient. After it shipped, 
 - **Global rule in CLAUDE.md** — the task-list-check baseline applies to every skill completion, anywhere in the conversation.
 - **Per-skill continuation line** — child skills with explicit numbered steps end their last step with: *"Then use the TaskList tool and proceed to any remaining task."* Placing the cue at the exact moment execution ends (not buried in a trailing Rules section) puts it where the stop-decision gets made. The tool call is a concrete required action that breaks the end-of-turn pull more reliably than the earlier prose phrasing *"check your task list for remaining tasks and proceed"* — with the prose form, the stop problem still occurred even when the rule was in context and the task list was visible. See the corresponding convention in `SKILL-CONVENTIONS.md`.
 - **Continuation framing in child skills** — child skills frame the body in second-person, agent-facing voice: the same agent continuing through more prompting. Third-party framing like *"Return findings to the caller"* or *"Return results for the main agent to act on"* reads as an end-of-turn signal — "caller" and "main agent" are themselves part of the problem, since there is no caller in a function-call sense, only the same agent continuing.
+- **Bounded terminal output** — where the last step produces a report, it specifies a table with stated row and cell bounds rather than a prose summary. A large prose deliverable reads as the turn's product and competes for the position the continuation cue occupies; a bounded table does not. `/evaluate-findings` and `/apply-findings` both end their last step this way. This layer addresses what the agent emits; the other three address where the cue sits.
 
 Removing any one layer regresses the behavior. The global rule was briefly removed in favor of the per-skill line alone, then restored — flakiness persisted without it.

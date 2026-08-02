@@ -40,13 +40,23 @@ Recommend the genuinely best option: place it first and append `(Recommended)` t
 - **Note for later** — run the `/note-improvement` skill to capture it
 - **Consult** — run the `/consult-codex` skill for a second opinion on the choice, or the `/consult-oracle` skill when standard approaches have already failed. Then apply, skip, or note the finding with that answer in hand
 
-## Step 4: Report Results
+## Step 4: Format Output
 
-Summarize what was applied, what was escalated, and what was skipped.
+Report the outcome as a table, one row per finding, keeping every cell to a single line:
+
+| File | Finding | Outcome |
+|------|---------|---------|
+
+Where Outcome is one of:
+
+- **Applied** — the fix was made
+- **Escalated** — name the resolution the user chose: applied, skipped, or noted for later
+- **Skipped** — name the reason
+
+Keep the report to the table. Add prose only where an escalation's resolution changed what the other fixes look like.
 
 Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
 - Only edit files. Do not stage, build, or test.
-- If two Apply findings conflict (suggest opposite changes to the same code), treat the conflict as Escalate (surface it in Step 3) rather than applying either.
