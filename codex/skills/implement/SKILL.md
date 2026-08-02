@@ -16,7 +16,7 @@ At the start, use `update_plan` to track each step, restating any remaining step
 3. Make the change
 4. Run verification
 5. Run `$preview` skill for UI/UX changes
-6. Run `$finalize` skill
+6. Post-implementation QA
 
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
@@ -44,14 +44,14 @@ If a Verification section is in conversation context (e.g., from a plan file), e
 
 If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `$preview` skill so the user can try it firsthand before QA. When it is unclear whether the change is user-facing, use `request_user_input` to ask whether to preview rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
 
-## Step 6: Run `$finalize` Skill
+## Step 6: Post-Implementation QA
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `$finalize` skill.
 
 When no plan file governs the work and this run did not create a goal, an outer workflow owns the work: run the `$finalize` skill. When this run created the goal, use `request_user_input` to offer three options:
 
 - **Full QA** — run the `$finalize` skill
-- **Lighter pass** — load the `$simplify-code` and `$simplify-docs` skills together, then run both their review agents before applying any fixes
+- **Lighter pass** — run the `$simplify-all` skill
 - **Stop here** — leave the change as-is
 
 If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

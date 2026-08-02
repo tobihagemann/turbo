@@ -6,7 +6,7 @@ How skills depend on, invoke, and fan out to other skills.
 
 - Cross-Skill Dependencies
 - Explicitly Invoke Skills When the Verb Matches a Skill Name
-- Bundle Parallel Fan-Out Inside One Skill, Not Across Siblings
+- Keep One Concern's Fan-Out Inside One Skill
 
 ## Cross-Skill Dependencies
 
@@ -38,11 +38,15 @@ When a step body uses an action verb that is also the name of an existing skill,
 
 This complements the explicit numbered-step rule above by covering verb collisions inside step bodies.
 
-## Bundle Parallel Fan-Out Inside One Skill, Not Across Siblings
+## Keep One Concern's Fan-Out Inside One Skill
 
-When a workflow needs N parallel reviewers/dimensions/perspectives (e.g., internal review + peer review, or multiple review types in one pass), put the fan-out inside one skill body rather than asking a parent to mention several sibling skills "in parallel". The parent's "load A and B" pattern can't actually parallelize the sibling skills' work, and it leaks the siblings' implementation details into the parent step.
+When a workflow needs N parallel reviewers/dimensions/perspectives (e.g., internal review + peer review, or multiple review types in one pass), put the fan-out inside one skill body rather than splitting it across sibling skills that a parent mentions "in parallel". Splitting one fan-out across siblings leaks their implementation details into the parent step.
 
 The right shape is a single skill that emits N+1 `spawn_agent` calls and joins them with `wait_agent`. Add an opt-out (e.g., "skip peer review") for runs that want only the internal pass.
 
-- ✗ **Avoid**: Parent skill step says "Run `$<review-skill>` and `$<peer-review-skill>` skills concurrently" and tries to batch two skill mentions.
+- ✗ **Avoid**: Parent skill step says "Run `$<review-skill>` and `$<peer-review-skill>` skills concurrently", leaving neither sibling able to cover the concern alone.
 - ✓ **Good**: `$<review-skill>` internally spawns both internal reviewer sub-agents and a peer reviewer sub-agent; the parent just runs `$<review-skill>`.
+
+A parent may follow two siblings together when each already fans out on its own and covers a distinct concern. Running a skill only reads its instructions into the current context, so following two lands both bodies in the same agent, which then spawns every sibling's sub-agent before joining any of them. Keep such a parent to the scope it resolves and the ordering it imposes, and leave each sibling's criteria in the sibling.
+
+- ✓ **Good**: `$<combined-skill>` follows `$<code-skill>` and `$<docs-skill>` together, spawns every sub-agent both define before joining any, then applies a single round of fixes.

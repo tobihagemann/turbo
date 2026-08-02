@@ -47,9 +47,9 @@ When a step has a conditional opt-out (e.g., "skip peer review" reduces N+1 to N
 
 ### Skill Mentions Don't Fan Out on Their Own
 
-Mentioning `$skill-name` injects the skill's SKILL.md as a contextual fragment for the current turn — it does not spawn a sub-agent. The actual work happens in the same conversation, sequentially. To truly parallelize a skill's work, wrap each branch in a `spawn_agent` call whose prompt tells the sub-agent to read and follow the target skill.
+Mentioning `$skill-name` injects the skill's SKILL.md as a contextual fragment for the current turn; it does not spawn a sub-agent. The actual work happens afterward, in the same conversation. To run several skills' work in parallel, wrap each branch in a `spawn_agent` call whose prompt tells the sub-agent to read and follow the target skill.
 
-- ✗ **Avoid**: Mentioning `$skill-A` and `$skill-B` in the same step expecting both to do work concurrently.
+- ✗ **Avoid**: Mentioning `$skill-A` and `$skill-B` in the same step expecting the mentions themselves to spawn sub-agents.
 - ✓ **Good**: Issuing two `spawn_agent` calls, each instructing its sub-agent to read and follow its respective skill.
 
 ### Keep Parallel Review/Analysis Sub-Agents Read-Only on the Shared Tree

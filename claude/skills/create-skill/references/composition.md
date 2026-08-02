@@ -6,7 +6,7 @@ How skills depend on, invoke, and fan out to other skills.
 
 - Cross-Skill Dependencies
 - Explicitly Invoke Skills When the Verb Matches a Skill Name
-- Bundle Parallel Fan-Out Inside One Skill, Not Across Siblings
+- Keep One Concern's Fan-Out Inside One Skill
 
 ## Cross-Skill Dependencies
 
@@ -38,11 +38,15 @@ When a step body uses an action verb that is also the name of an existing skill,
 
 This complements the explicit numbered-step rule above by covering verb collisions inside step bodies.
 
-## Bundle Parallel Fan-Out Inside One Skill, Not Across Siblings
+## Keep One Concern's Fan-Out Inside One Skill
 
-When a workflow needs N parallel reviewers/dimensions/perspectives (e.g., internal review + peer review, or multiple review types in one pass), put the fan-out inside one skill body rather than asking a parent to load several sibling skills "in parallel" via the Skill tool. The parent's "load A and B" pattern can't actually parallelize the sibling skills' work, and it leaks the siblings' implementation details into the parent step.
+When a workflow needs N parallel reviewers/dimensions/perspectives (e.g., internal review + peer review, or multiple review types in one pass), put the fan-out inside one skill body rather than splitting it across sibling skills that a parent loads "in parallel" via the Skill tool. Splitting one fan-out across siblings leaks their implementation details into the parent step.
 
 The right shape is a single skill that emits N+1 Agent tool calls in one message. Add an opt-out (e.g., "skip peer review") for runs that want only the internal pass.
 
-- ✗ **Avoid**: Parent skill Step says "Run `/<review-skill>` and `/<peer-review-skill>` skills concurrently" and tries to batch two Skill calls.
+- ✗ **Avoid**: Parent skill Step says "Run `/<review-skill>` and `/<peer-review-skill>` skills concurrently", leaving neither sibling able to cover the concern alone.
 - ✓ **Good**: `/<review-skill>` internally launches both internal reviewer Agents and a peer reviewer Agent in one message; the parent just calls `/<review-skill>`.
+
+A parent may batch Skill calls when each sibling already fans out on its own and covers a distinct concern. A Skill call only loads instructions into the current context, so batching two lands both bodies in the same agent, which then emits every sibling's Agent call in one message. Keep such a parent to the scope it resolves and the ordering it imposes, and leave each sibling's criteria in the sibling.
+
+- ✓ **Good**: `/<combined-skill>` batches the Skill calls for `/<code-skill>` and `/<docs-skill>`, launches every agent both define in one message, then applies a single round of fixes.

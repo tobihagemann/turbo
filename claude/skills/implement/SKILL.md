@@ -16,7 +16,7 @@ At the start, use `TaskCreate` to create a task for each step:
 3. Make the change
 4. Run verification
 5. Run `/preview` skill for UI/UX changes
-6. Run `/finalize` skill
+6. Post-implementation QA
 
 ## Step 1: Run `/code-style` Skill
 
@@ -40,14 +40,14 @@ If a Verification section is in conversation context (e.g., from a plan file), e
 
 If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `/preview` skill so the user can try it firsthand before QA. When it is unclear whether the change is user-facing, use `AskUserQuestion` to ask whether to preview rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
 
-## Step 6: Run `/finalize` Skill
+## Step 6: Post-Implementation QA
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `/finalize` skill.
 
 When no plan file governs the work, use the TaskList tool. When it holds entries beyond this skill's own steps, a parent workflow governs the work: run the `/finalize` skill. Otherwise use `AskUserQuestion` to offer three options:
 
 - **Full QA** — run the `/finalize` skill
-- **Lighter pass** — invoke the `/simplify-code` and `/simplify-docs` skills in a single message, then run both their review agents before applying any fixes
+- **Lighter pass** — run the `/simplify-all` skill
 - **Stop here** — leave the change as-is
 
 Then use the TaskList tool and proceed to any remaining task.

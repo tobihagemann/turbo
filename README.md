@@ -111,7 +111,7 @@ You then drive implementation one shell at a time. [`/pick-next-shell`](claude/s
 
 ## The Finalize Pipeline
 
-[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically. A standalone `/implement` asks first, offering a lighter pass or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
+[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically. A standalone `/implement` asks first, offering [`/simplify-all`](claude/skills/simplify-all/SKILL.md) as a lighter pass or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
 
 ![How Finalize Connects](assets/how-finalize-connects.svg)
 
