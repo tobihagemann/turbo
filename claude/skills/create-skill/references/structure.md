@@ -36,10 +36,10 @@ The SKILL.md frontmatter requires two fields:
 
 ```yaml
 # Bad — colon-space breaks YAML parsing
-description: Adapts to repo mode: fork creates a PR
+description: Handles two modes: draft and final
 
 # Good — quoted value
-description: "Adapts to repo mode: fork creates a PR"
+description: "Handles two modes: draft and final"
 ```
 
 ## Naming Conventions

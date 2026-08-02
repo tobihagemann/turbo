@@ -8,29 +8,38 @@ Every `<rev>:<path>` argument below is a hazard when a shell variable holds the 
 
 ### Step 1: Fetch
 
-Read `~/.turbo/config.json` for `repoMode` (top-level: `"clone"`, `"fork"`, or `"source"`).
-
-Determine the upstream remote based on `repoMode`:
-
-- Clone or source: `origin`
-- Fork: `upstream`
+Confirm the clone tracks upstream:
 
 ```bash
-git -C ~/.turbo/repo fetch <remote>
+git -C ~/.turbo/repo remote get-url origin
+```
+
+If it prints anything other than `https://github.com/tobihagemann/turbo.git`, the clone points at a fork left over from an earlier setup. Stop, and tell the user to move any local work into a checkout outside `~/.turbo/repo` and replace the clone before re-running:
+
+```bash
+git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+```
+
+Installed skills live outside this clone, so replacing it loses no customizations.
+
+Then fetch:
+
+```bash
+git -C ~/.turbo/repo fetch origin
 ```
 
 ### Step 2: Run Migrations
 
-**Current version: 3**
+**Current version: 4**
 
 Read `configVersion` from `~/.turbo/config.json`, looking at `claude.configVersion` first and falling back to top-level `configVersion` for legacy installs (default: `0` if missing). Migrations run before any head comparison so legacy users on a current commit still pick up schema migrations.
 
 If `configVersion` equals the current version, skip to Step 3.
 
-Otherwise, read `MIGRATION.md` from the fetched remote:
+Otherwise, read `MIGRATION.md` from `origin`:
 
 ```bash
-git -C ~/.turbo/repo show <remote>/main:claude/MIGRATION.md
+git -C ~/.turbo/repo show origin/main:claude/MIGRATION.md
 ```
 
 For each migration where the version number is greater than `configVersion`, in ascending order:
@@ -53,7 +62,7 @@ Read from `~/.turbo/config.json`:
 Compare `claude.lastUpdateHead` with the fetched main HEAD:
 
 ```bash
-git -C ~/.turbo/repo rev-parse <remote>/main
+git -C ~/.turbo/repo rev-parse origin/main
 ```
 
 If they match, report that Turbo is already up to date and stop.
@@ -62,14 +71,14 @@ If they match, report that Turbo is already up to date and stop.
 
 The changelog is for user-facing display only. Destructive behavior in Phase 3 is driven by Phase 2's audit matrix, not by these categories.
 
-Use local git commands to detect changes since `claude.lastUpdateHead`. Use the upstream remote determined in Step 1. The angle-bracket `<lastUpdateHead>` in the snippets below is the shell placeholder for that value.
+Use local git commands to detect changes since `claude.lastUpdateHead`. The angle-bracket `<lastUpdateHead>` in the snippets below is the shell placeholder for that value.
 
 ```bash
 # Changed skill files
-git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..<remote>/main -- claude/skills/
+git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..origin/main -- claude/skills/
 
 # Commit history for context
-git -C ~/.turbo/repo log --oneline <lastUpdateHead>..<remote>/main -- claude/skills/
+git -C ~/.turbo/repo log --oneline <lastUpdateHead>..origin/main -- claude/skills/
 ```
 
 From the `--name-status` output, each entry has a status (`A` added, `D` deleted, `M` modified, `R` renamed with old path). Group by skill name (extract from `claude/skills/<name>/...`).
@@ -81,7 +90,7 @@ For each modified or renamed skill, read both versions of the SKILL.md:
 git -C ~/.turbo/repo show <lastUpdateHead>:claude/skills/<name>/SKILL.md
 
 # New version
-git -C ~/.turbo/repo show <remote>/main:claude/skills/<name>/SKILL.md
+git -C ~/.turbo/repo show origin/main:claude/skills/<name>/SKILL.md
 ```
 
 Read both versions and write a concise, plain-language summary of what changed. Focus on what the change means for the user: new capabilities, changed behavior, renamed commands, removed features. Flag anything that could be a breaking change (renamed skills that other skills reference, removed steps, changed interfaces).
@@ -91,7 +100,7 @@ For added skills, read their new SKILL.md and summarize what they do.
 Also check for changes to `claude/ADDITIONS.md`:
 
 ```bash
-git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..<remote>/main -- claude/ADDITIONS.md
+git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..origin/main -- claude/ADDITIONS.md
 ```
 
 If modified, read both versions and summarize what changed: new sections added, existing sections updated, or sections removed.
@@ -147,7 +156,7 @@ Enumerate the union of skill names from three sources, deduplicated:
 # Old upstream
 git -C ~/.turbo/repo ls-tree -d --name-only <lastUpdateHead> -- claude/skills/ | xargs -n1 basename
 # New upstream
-git -C ~/.turbo/repo ls-tree -d --name-only <remote>/main -- claude/skills/ | xargs -n1 basename
+git -C ~/.turbo/repo ls-tree -d --name-only origin/main -- claude/skills/ | xargs -n1 basename
 # Installed
 ls -1 ~/.claude/skills/ 2>/dev/null
 ```
@@ -155,7 +164,7 @@ ls -1 ~/.claude/skills/ 2>/dev/null
 **Detect skill renames** before flag computation. A skill rename is signaled when `git diff --name-status -M` reports an `R` status on a `SKILL.md` between two skill directories:
 
 ```bash
-git -C ~/.turbo/repo diff --name-status -M <lastUpdateHead>..<remote>/main -- claude/skills/ |
+git -C ~/.turbo/repo diff --name-status -M <lastUpdateHead>..origin/main -- claude/skills/ |
   awk -F'\t' '/^R/ && $2 ~ "^claude/skills/[^/]+/SKILL\\.md$" && $3 ~ "^claude/skills/[^/]+/SKILL\\.md$" {
     old=$2; new=$3
     sub("claude/skills/", "", old); sub("/SKILL.md", "", old)
@@ -173,12 +182,12 @@ Build a map of `(old → new)` pairs. For names appearing as either side of a re
 
 If git's rename detection threshold isn't met (e.g., the rename also rewrote `SKILL.md` substantially), the rename falls through to the standard matrix as Removed-upstream + New-upstream — data is still safe (Removed-upstream prompts on customized installs); the UX just doesn't recognize the rename.
 
-For each remaining `<name>` (i.e., names not paired in the rename map), compute four flags. Brace any rev variable in the `cat-file` probes below: their errors are suppressed, so an unbraced rev makes every flag come back false and routes every installed skill into **User-local**.
+For each remaining `<name>` (i.e., names not paired in the rename map), compute four flags. Brace any rev variable in the `cat-file` probes below: their errors are suppressed, so an unbraced rev makes `old_exists` come back false for every skill and routes each one into **Collision**.
 
 | Flag | How |
 |---|---|
 | `old_exists` | `git -C ~/.turbo/repo cat-file -e <lastUpdateHead>:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
-| `new_exists` | `git -C ~/.turbo/repo cat-file -e <remote>/main:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
+| `new_exists` | `git -C ~/.turbo/repo cat-file -e origin/main:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
 | `installed_exists` | `test -d ~/.claude/skills/<name>` |
 | `clean` | only when `old_exists` and `installed_exists` are both true: `git diff --no-index --quiet -- "$tmp/claude/skills/<name>" ~/.claude/skills/<name>` (exit 0 → clean, exit 1 → customized) |
 
@@ -198,7 +207,7 @@ Combine the flags into one of these categories:
 | ✓ | ✓ | ✗ | — | **User-uninstalled** |
 | ✓ | ✗ | ✗ | — | **Already gone** |
 
-When `old_exists` and `new_exists` are both true and the upstream content is identical between `<lastUpdateHead>` and `<remote>/main` for that skill, mark the entry as **No-op** regardless of the `clean` flag — the skill didn't actually change upstream.
+When `old_exists` and `new_exists` are both true and the upstream content is identical between `<lastUpdateHead>` and `origin/main` for that skill, mark the entry as **No-op** regardless of the `clean` flag — the skill didn't actually change upstream.
 
 Before continuing, confirm the probes actually ran: every name from the old-upstream enumeration must have `old_exists` true, and every name from the new-upstream enumeration must have `new_exists` true. Only installed-only names may have both false. A violation means the flag computation is broken, not that the skills are missing. Stop here, report which of the two causes below applies, and leave `claude.lastUpdateHead` unchanged so a corrected run can retry.
 
@@ -281,8 +290,9 @@ cp -r ~/.claude/skills/<old-name>/ "$saved"
 
 Pull the latest changes into the local repo:
 
-- Clone or source: `git -C ~/.turbo/repo pull origin main`
-- Fork: `git -C ~/.turbo/repo pull upstream main`, then `git -C ~/.turbo/repo push origin main` to sync the fork
+```bash
+git -C ~/.turbo/repo pull origin main
+```
 
 ### Step 2: Apply Matrix Actions
 

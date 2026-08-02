@@ -19,8 +19,6 @@ Discover the project AGENTS.md files (the root file and any nested ones in subdi
 
 ### Turbo Skill Detection
 
-Read `~/.turbo/config.json` for `repoMode`. If `repoMode` is `"fork"` or `"source"`, turbo skill improvements can be contributed upstream.
-
 If `~/.turbo/repo/` exists, identify which installed skills are turbo skills:
 
 - List directories in `~/.turbo/repo/codex/skills/`
@@ -93,7 +91,7 @@ Assign each surviving lesson to exactly one destination.
 | **Project AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. Also factual corrections to AGENTS.md content (wrong commands, outdated paths, incorrect conventions) — fix these directly, do not defer to Project improvements. When the lesson applies only to one subtree, route it to the nearest enclosing AGENTS.md; reserve the root file for project-wide decisions. |
 | **Existing user/project skill** | Lesson would improve a skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any skill whose *domain* covers the lesson — not just the skill worked on in this session. Changes go to the skill file directly. No contribution flow. |
 | **New skill** | A cohesive body of knowledge emerged that deserves its own on-demand context. The test: would this knowledge be too large for an AGENTS.md section, and should it only be loaded when relevant? See the skill categories table below. |
-| **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, run `test -d ~/.turbo/repo/codex/skills/<name>`; if the directory does not exist, route to the Existing user/project skill destination instead.** Changes go to the installed copy at `~/.agents/skills/`. If `repoMode` is `"fork"` or `"source"`, flag for contribution (see Step 6). |
+| **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, run `test -d ~/.turbo/repo/codex/skills/<name>`; if the directory does not exist, route to the Existing user/project skill destination instead.** Changes go to the installed copy at `~/.agents/skills/`, and are flagged for contribution (see Step 6). |
 | **No destination** | Does not clearly fit any destination. Drop it. Routing a weak lesson is worse than losing it. |
 
 **Skill categories:**
@@ -146,7 +144,8 @@ Apply approved changes in order:
 6. **Updates to turbo skills** — For each lesson routed to a turbo skill:
    1. Read `~/.turbo/repo/codex/SKILL-CONVENTIONS.md` so turbo-specific conventions are in context before any editing.
    2. Run `$create-skill` to update the installed copy at `~/.agents/skills/<name>/`.
-   3. After the edit is in place and reviewed, if `repoMode` is `"fork"` or `"source"`, use `request_user_input` to ask "These turbo skill improvements could benefit other users. Submit them upstream?" When the user confirms, run `$contribute-turbo`.
+
+   Once every turbo skill edit is in place and reviewed, use `request_user_input` to ask "These turbo skill improvements could benefit other users. Propose them upstream?" When the user confirms, run `$contribute-turbo` once for all of them.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

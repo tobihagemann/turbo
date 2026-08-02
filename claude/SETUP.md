@@ -16,36 +16,13 @@ At the start, use `TaskCreate` to create a task for each step:
 
 ## Step 1: Install Turbo Skills
 
-### Clone, Fork, or Source
-
-Ask the user their relationship to Turbo:
-
-1. **Consume only** (clone) — read-only, pull updates
-2. **Contribute** (fork) — submit improvements back via PRs
-3. **Maintain** (source) — push directly to the upstream repo
-
-#### Clone
+### Clone the Repo
 
 ```bash
 git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
 ```
 
-#### Fork
-
-The user forks [tobihagemann/turbo](https://github.com/tobihagemann/turbo) on GitHub first, then:
-
-```bash
-git clone https://github.com/<user>/turbo.git ~/.turbo/repo
-cd ~/.turbo/repo && git remote add upstream https://github.com/tobihagemann/turbo.git
-```
-
-#### Source
-
-```bash
-git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
-```
-
-Same as clone, but the user has push access to origin.
+Clone the upstream URL: `/update-turbo` pulls from `origin`. Keep any fork or development checkout of Turbo outside `~/.turbo/repo`.
 
 ### Excluded Skills
 
@@ -58,8 +35,6 @@ Read `~/.turbo/config.json` and check for a `claude.excludeSkills` array. If it 
   }
 }
 ```
-
-For clone mode, add `contribute-turbo` to `claude.excludeSkills` since it requires a fork or source access.
 
 ### Copy Skills
 
@@ -89,22 +64,20 @@ mkdir -p ~/.turbo
 ```
 
 Set:
-- `repoMode` (top-level) to `"clone"`, `"fork"`, or `"source"` based on the user's choice
 - `claude.excludeSkills` to the exclusion list
 - `claude.lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
 - `claude.configVersion` to the highest version number in `~/.turbo/repo/claude/MIGRATION.md`
 
-Preserve any existing config values (`repoMode`, `oracle`, `codex` if the Codex edition is also installed).
+Preserve any existing config values (`oracle`, `codex` if the Codex edition is also installed).
 
 Example shape:
 
 ```json
 {
-  "repoMode": "clone",
   "claude": {
     "excludeSkills": [],
     "lastUpdateHead": "<HEAD>",
-    "configVersion": 3
+    "configVersion": 4
   }
 }
 ```

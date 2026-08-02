@@ -9,18 +9,13 @@ Read the latest update instructions from the local repo and follow them.
 
 ## Step 1: Read Instructions
 
-Read `~/.turbo/config.json` to determine `repoMode`. Determine the upstream remote:
-
-- Clone or source: `origin`
-- Fork: `upstream`
-
-Fetch the remote, then read the latest UPDATE.md:
+Fetch `origin`, then read the latest UPDATE.md:
 
 ```bash
-git -C ~/.turbo/repo fetch <remote>
-git -C ~/.turbo/repo show <remote>/main:claude/UPDATE.md
+git -C ~/.turbo/repo fetch origin
+git -C ~/.turbo/repo show origin/main:claude/UPDATE.md
 ```
 
 ## Step 2: Follow Instructions
 
-Follow the fetched UPDATE.md instructions from start to finish. The fetch from Step 1 satisfies Phase 1 Step 1's fetch requirement.
+Follow the fetched UPDATE.md instructions from start to finish.

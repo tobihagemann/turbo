@@ -25,8 +25,8 @@ Each skill is self-contained. Skills compose other skills to any depth via `/ski
 
 ## Key Files
 
-- `~/.turbo/config.json` — User-level configuration. Top-level `repoMode` and `oracle` are shared. Per-edition state lives under `claude.{excludeSkills, lastUpdateHead, configVersion}`; the parallel `codex.*` object is present when the Codex edition is also installed.
-- `~/.turbo/repo/` — Local clone or fork of the turbo repo (skill source for install/update)
+- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared. Per-edition state lives under `claude.{excludeSkills, lastUpdateHead, configVersion}`; the parallel `codex.*` object is present when the Codex edition is also installed.
+- `~/.turbo/repo/` — Local clone of the upstream turbo repo (skill source for install/update)
 - `~/.claude/skills/` — Installed Claude Code skills
 
 When working inside `claude/`, also see [`claude/CLAUDE.md`](claude/CLAUDE.md) for edition-specific rules.

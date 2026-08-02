@@ -12,16 +12,15 @@ Migrations are executed in ascending order. After all applicable migrations comp
 
 ### Steps
 
-1. Ask the user: consume only (clone), contribute (fork), or maintain (source)?
-2. Clone the repo to `~/.turbo/repo/` (see SETUP.md Step 1 for the exact commands per mode)
-3. For each Turbo skill (where `~/.claude/skills/<name>` is a symlink into `~/.agents/skills/` and has a matching directory in `~/.turbo/repo/claude/skills/`):
+1. Clone the repo to `~/.turbo/repo/` (see SETUP.md Step 1)
+2. For each Turbo skill (where `~/.claude/skills/<name>` is a symlink into `~/.agents/skills/` and has a matching directory in `~/.turbo/repo/claude/skills/`):
    - Read the installed file at `~/.claude/skills/<name>/SKILL.md` (resolve symlink first)
    - Read the upstream version at `~/.turbo/repo/claude/skills/<name>/SKILL.md`
    - Note whether the user has customized this skill (contents differ)
-4. Remove old installations: `npx skills remove -g -y <name>` for each Turbo skill
-5. Copy skills from the repo. For customized skills, copy the user's version instead
-6. Initialize `~/.turbo/config.json` with `repoMode`, `excludeSkills: []`, and `lastUpdateHead` set to `git -C ~/.turbo/repo rev-parse HEAD`
-7. Report migration complete
+3. Remove old installations: `npx skills remove -g -y <name>` for each Turbo skill
+4. Copy skills from the repo. For customized skills, copy the user's version instead
+5. Initialize `~/.turbo/config.json` with `excludeSkills: []` and `lastUpdateHead` set to `git -C ~/.turbo/repo rev-parse HEAD`
+6. Report migration complete
 
 ## Version 2: Remove Skill Permissions
 
@@ -52,3 +51,16 @@ The Claude edition's config keys move from the top level into a `claude` object 
 5. Write the file back.
 
 Example: `jq '. + {claude: {lastUpdateHead, excludeSkills: (.excludeSkills // []), configVersion: (.configVersion // 0)}} | del(.lastUpdateHead, .excludeSkills, .configVersion)' ~/.turbo/config.json` (then move the result into place).
+
+## Version 4: Remove `repoMode`
+
+**Condition:** `~/.turbo/config.json` has a top-level `repoMode` key.
+
+**Skip if:** The key does not exist.
+
+### Steps
+
+Turbo no longer distinguishes clone, fork, and source installs. `~/.turbo/repo` tracks upstream through `origin` (Phase 1 Step 1 of UPDATE.md repoints a clone that still points at a fork), and skill improvements are proposed upstream as issues instead of pushed or PR'd from this clone.
+
+1. Read `~/.turbo/config.json`.
+2. Delete the top-level `repoMode` key, preserve every other key, and write the file back.

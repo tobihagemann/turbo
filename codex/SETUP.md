@@ -17,36 +17,13 @@ Track these setup phases with the Codex plan tool:
 
 ## Step 1: Install Turbo Codex Skills
 
-### Clone, Fork, or Source
-
-Ask the user their relationship to Turbo:
-
-1. **Consume only** (clone) — read-only, pull updates
-2. **Contribute** (fork) — submit improvements back via PRs
-3. **Maintain** (source) — push directly to the upstream repo
-
-#### Clone
+### Clone the Repo
 
 ```bash
 git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
 ```
 
-#### Fork
-
-The user forks [tobihagemann/turbo](https://github.com/tobihagemann/turbo) on GitHub first, then:
-
-```bash
-git clone https://github.com/<user>/turbo.git ~/.turbo/repo
-cd ~/.turbo/repo && git remote add upstream https://github.com/tobihagemann/turbo.git
-```
-
-#### Source
-
-```bash
-git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
-```
-
-Same as clone, but the user has push access to origin.
+Clone the upstream URL: `$update-turbo` pulls from `origin`. Keep any fork or development checkout of Turbo outside `~/.turbo/repo`.
 
 ### Excluded Skills
 
@@ -59,8 +36,6 @@ Read `~/.turbo/config.json` and check for a `codex.excludeSkills` array. If it e
   }
 }
 ```
-
-For clone mode, add `contribute-turbo` to `codex.excludeSkills` since it requires a fork or source access.
 
 ### Install Skills
 
@@ -91,22 +66,20 @@ mkdir -p ~/.turbo
 
 Set:
 
-- `repoMode` (top-level) to `"clone"`, `"fork"`, or `"source"` based on the user's choice
 - `codex.excludeSkills` to any excluded Codex skill names
 - `codex.lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
 - `codex.configVersion` to the highest version number in `~/.turbo/repo/codex/MIGRATION.md`
 
-Preserve any existing config values (`repoMode`, `oracle`, `claude` if the Claude edition is also installed).
+Preserve any existing config values (`oracle`, `claude` if the Claude edition is also installed).
 
 Example shape:
 
 ```json
 {
-  "repoMode": "clone",
   "codex": {
     "excludeSkills": [],
     "lastUpdateHead": "<HEAD>",
-    "configVersion": 1
+    "configVersion": 2
   }
 }
 ```

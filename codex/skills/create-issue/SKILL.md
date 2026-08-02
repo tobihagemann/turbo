@@ -47,6 +47,8 @@ gh issue create --title "<TITLE>" --body-file .turbo/issue/<tag>-body.md --label
 
 Repeat `--label` when the template sets several. Drop `--label` when no existing label fits. Do not set `--assignee` or `--milestone` unless the user explicitly asks.
 
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+
 ## Rules
 
 - Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
