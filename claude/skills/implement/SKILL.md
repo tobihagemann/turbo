@@ -44,7 +44,7 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `/finalize` skill.
 
-When no plan file governs the work, use the TaskList tool. When it holds entries beyond this skill's own steps, a parent workflow governs the work: run the `/finalize` skill. Otherwise use `AskUserQuestion` to offer three options:
+When no plan file governs the work, use `AskUserQuestion` to offer three options:
 
 - **Full QA** — run the `/finalize` skill
 - **Lighter pass** — run the `/simplify-all` skill

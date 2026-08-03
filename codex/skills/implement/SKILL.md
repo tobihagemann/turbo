@@ -48,7 +48,7 @@ If the change touches a user-facing surface (UI components, styles, templates, m
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `$finalize` skill.
 
-When no plan file governs the work and this run did not create a goal, an outer workflow owns the work: run the `$finalize` skill. When this run created the goal, use `request_user_input` to offer three options:
+When no plan file governs the work, use `request_user_input` to offer three options:
 
 - **Full QA** — run the `$finalize` skill
 - **Lighter pass** — run the `$simplify-all` skill
