@@ -24,6 +24,7 @@ Group Apply findings by file path and apply in file order to minimize context sw
 5. Check what the fix you are about to make changes about the inputs the code accepts. When the change in accepted inputs is exactly the defect the finding names, apply it normally. When it turns away or newly admits anything beyond that defect — a value or path a legitimate caller could send — that is a behavior change: treat the finding as Escalate (surface it in Step 3) and name the input class that changes.
 6. Make the fix
 7. If the finding renames an identifier, search the file for all occurrences of the old name before marking the fix complete. The cited location is often only one of several references.
+8. When the fix adds or edits a comment stating a contract — what is handled, what is excluded, what callers may rely on — verify the code enforces that contract before marking the fix complete. When it does not, add the enforcement rather than narrowing the comment.
 
 If a finding references code that has changed since it was generated (e.g., by a prior fix in this same run), re-assess whether it still applies. Skip if the code has diverged.
 
@@ -35,7 +36,7 @@ For findings with Escalate verdict, use `request_user_input` to let the user dec
 
 Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them. When the choice is architectural rather than a matter of preference, offer the consultation option in place of whichever alternative fits the finding least, keeping the question at three options.
 
-- **Apply** — make the change
+- **Apply** — make the change, then run Step 2's post-fix checks (items 7 and 8) against it
 - **Skip** — leave as-is
 - **Note for later** — run the `$note-improvement` skill to capture it
 - **Consult** — run the `$consult-claude` skill for a second opinion on the choice, or the `$consult-oracle` skill when standard approaches have already failed. Then apply, skip, or note the finding with that answer in hand

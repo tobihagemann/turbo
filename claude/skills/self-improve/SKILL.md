@@ -1,21 +1,21 @@
 ---
 name: self-improve
-description: "Extract lessons from the current session and route them to the appropriate knowledge layer (project AGENTS.md, auto memory, existing skills, or new skills). Use when the user asks to \"self-improve\", \"distill this session\", \"save learnings\", \"update CLAUDE.md with what we learned\", \"capture session insights\", \"remember this for next time\", \"extract lessons\", \"update skills from session\", or \"what did we learn\"."
+description: "Extract lessons from the current session, or sweep the project's past sessions when asked, and route them to the appropriate knowledge layer (project AGENTS.md, auto memory, existing skills, or new skills). Use when the user asks to \"self-improve\", \"distill this session\", \"distill past sessions\", \"sweep past sessions\", \"extract lessons from all sessions\", \"save learnings\", \"update CLAUDE.md with what we learned\", \"capture session insights\", \"remember this for next time\", \"extract lessons\", \"update skills from session\", or \"what did we learn\"."
 ---
 
 # Self-Improve
 
-Review the current conversation to extract durable lessons and route each one to the right knowledge layer.
+Review the current conversation, or the project's past sessions when asked, to extract durable lessons and route each one to the right knowledge layer.
 
 ## Step 1: Detect Context
 
 Available destinations:
 
 - **Project CLAUDE.md / AGENTS.md** — The root `.claude/CLAUDE.md` (may be a symlink to `../AGENTS.md` — resolve it), plus any nested `CLAUDE.md` / `AGENTS.md` files in subdirectories. Claude Code loads a subdirectory's file on demand when files in that subtree are accessed, so a lesson scoped to one subtree belongs in the nearest enclosing file, with the root reserved for project-wide rules.
-- **Auto memory** — The project-specific memory directory at `~/.claude/projects/<project-hash>/memory/`. Read `MEMORY.md` there if it exists.
+- **Auto memory** — The project-specific memory directory at `~/.claude/projects/<encoded project root>/memory/`, where the encoding replaces both `/` and `.` with `-`. List the directory and read `MEMORY.md` if it exists.
 - **Skills** — Project skills at `skills/` or `.claude/skills/` (resolve symlinks)
 
-Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
+Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
 
 ### Turbo Skill Detection
 
@@ -43,6 +43,20 @@ When it starts from a summary of earlier work instead, recover the compacted tur
 
 Treat the returned items as raw evidence for the scan below.
 
+### Sweep Past Sessions
+
+**Run** when asked to distill sessions beyond the current one. **Skip** otherwise.
+
+Propose a cutoff first: take the newest modification time in the memory directory from Step 1, state it, then use `AskUserQuestion` to confirm sweeping from it or sweeping the whole history. A memory file's timestamp records a write rather than a completed sweep, so it bounds the work without settling what a previous run covered. When the directory is absent or empty, sweep the whole history without asking.
+
+Spawn a single subagent in the foreground (`model: "opus"`, no `name`). The subagent's prompt must include:
+
+1. The absolute path of the project root
+2. The confirmed cutoff as an ISO-8601 timestamp, or that there is none
+3. An instruction to read [references/transcript-miner.md](references/transcript-miner.md) and follow its sweep process
+
+Treat the returned items as raw evidence for the scan below.
+
 ### Identify Session Skills
 
 Before scanning for lessons, identify which skills were loaded during this session:
@@ -56,7 +70,7 @@ Before scanning for lessons, identify which skills were loaded during this sessi
 Scan the full conversation with this priority:
 
 1. **Corrections** — Where the user interrupted, said "no", "actually", "stop", "not like that", redirected, or manually fixed something Claude did wrong. Highest-value lessons.
-2. **Repeated guidance** — Instructions the user gave more than once.
+2. **Repeated guidance** — Instructions the user gave more than once. Across separate sessions this counts even where each instance reads as ordinary steering on its own.
 3. **Skill-shaped knowledge** — Domain expertise that was needed repeatedly, tool/API integration details that had to be looked up, decision frameworks that emerged for evaluating options, content templates or writing conventions that were refined, and multi-step workflows where ordering mattered (as reusable domain knowledge, not the workflow itself — see #4).
 4. **New workflows** — Did this session establish a novel multi-step procedure, coordination pattern, or automation that worked? A successful workflow that would need to be repeated is a prime skill candidate — even if it ran fine this time. Distinct from #3: this captures the procedure itself as a repeatable artifact, not knowledge about how to do it. Flag it.
 5. **Preferences** — Formatting, naming, style, or tool choices the user expressed.
@@ -73,8 +87,8 @@ Keep only lessons that are:
 - **Stable** — likely to remain true across future sessions
 - **Non-obvious** — Claude would not already know this
 - **Actionable** — can be expressed as a rule or instruction
-- **Not already documented** — absent from the files read in Step 1. A lesson documented only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as undocumented for the subtree it actually applies to.
-- **Still a concern** — the issue is not already fixed by changes made in this session. If a bug was found and fixed, or a missing feature was added, future sessions will see the corrected code — they don't need a reminder about the old problem. **Exception: successful workflows and procedures are not "resolved" — they're skill candidates precisely because they worked and will need to be repeated.**
+- **Not already documented** — absent from the files read in Steps 1 and 2, the project's own knowledge stores included. Search those for each candidate's keywords rather than assuming. A lesson documented only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as undocumented for the subtree it actually applies to.
+- **Still a concern** — the issue is not already fixed by changes made in this session. If a bug was found and fixed, or a missing feature was added, future sessions will see the corrected code — they don't need a reminder about the old problem. **Exception: successful workflows and procedures are not "resolved" — they're skill candidates precisely because they worked and will need to be repeated.** When sweeping past sessions, judge this against the current state of the code and docs rather than against this session's changes.
 
 Discard anything session-specific, speculative, one-off, or already resolved by code changes in this session (but not successful workflows — see exception above). If no lessons survive filtering, tell the user and stop.
 
@@ -160,3 +174,4 @@ Then use the TaskList tool and proceed to any remaining task.
 - For AGENTS.md: write as agent documentation — project rules any AI agent on this repo should follow
 - For auto memory: write as personal Claude notes — concise, operational, organized by topic
 - For skills: follow the conventions in the existing skill collection
+- For files that live in the repo (CLAUDE.md / AGENTS.md and project skills): name only mechanisms that live in the repo too; describe an installed skill's behavior generically

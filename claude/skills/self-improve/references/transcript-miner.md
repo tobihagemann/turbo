@@ -134,6 +134,62 @@ A correction is ambiguous without the thing it corrected. For each one, locate i
 
 Keep items that would still hold in a future session. Drop one-off instructions that only steer the task at hand.
 
+## Sweep Process
+
+Follow this instead of the Mining Process when mining the project's whole history rather than one session.
+
+### 1. List Every Transcript
+
+Keep every Mining Process filter except the distinctive-phrase match, and add one the sweep needs on its own: the prefix glob also matches sibling projects whose encoded name extends the root's, so filter on the `cwd` the records carry. Take the matches oldest first:
+
+```bash
+python3 - "<project root>" <<'PY'
+import glob, json, os, sys
+
+root = sys.argv[1].rstrip("/")
+enc = "".join("-" if c in "/." else c for c in root)
+paths = glob.glob(os.path.expanduser(f"~/.claude/projects/{enc}*/*.jsonl"))
+for path in sorted(paths, key=os.path.getmtime):
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            try:
+                cwd = json.loads(line).get("cwd")
+            except ValueError:
+                continue
+            if cwd:
+                if cwd == root or cwd.startswith(root + "/"):
+                    print(path)
+                break
+PY
+```
+
+Drop the most recently modified match: that is the live session, already covered by the scan that dispatched you. When no file matches, or none remains after that drop, report it in one line and stop.
+
+Drop what a previous run already distilled: files older than the cutoff you were given, and the turns preceding the last `/self-improve` invocation in any file that holds one. That invocation is a `<command-name>/self-improve</command-name>` record, which the extraction below discards as a harness wrapper, so find it in the raw file and slice from there, resolving each transcript to the path the next step reads:
+
+```bash
+LINE=$(grep -n 'command-name>/self-improve<' "<transcript>" | tail -1 | cut -d: -f1)
+INPUT="<transcript>"
+if [ -n "$LINE" ]; then
+  INPUT="<scratch>/<session-id>.jsonl"
+  tail -n +$((LINE + 1)) "<transcript>" > "$INPUT"
+fi
+```
+
+Match that record shape rather than the bare string `/self-improve`, which also matches the installed skill path and ordinary prose.
+
+### 2. Extract Each One
+
+Run the Mining Process extraction script unchanged over each resolved input path rather than writing a fresh one. Without its `NOISE` filter the output is mostly injected skill preambles and the typed turns are buried.
+
+Loop over those paths in a single Bash call, printing each transcript's own path as a header before its extraction and appending both to one scratch file outside the repo. Read that file rather than the extraction output, in oldest-first slices when it is large, carrying the candidate items from each slice forward into the next.
+
+### 3. Identify Evidence Across Sessions
+
+Collect per the Mining Process categories, tracing the context of a correction only for items that survive as candidates. Note where the same guidance appears in more than one session: repetition across sessions is the signal that separates a documentation gap from one-off steering.
+
+Report per the Output Format below, adding a `**Sessions**` line to each entry naming the transcripts it came from.
+
 ## Output Format
 
 ```
@@ -143,6 +199,7 @@ Keep items that would still hold in a future session. Drop one-off instructions 
 - **Quote**: "<verbatim user words>"
 - **Context**: <what prompted it>
 - **When**: <timestamp>
+- **Sessions**: <transcript paths — sweep only>
 ```
 
 Order the entries by the category order above. When nothing durable survives, say so in one line.

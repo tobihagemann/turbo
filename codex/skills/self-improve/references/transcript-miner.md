@@ -6,7 +6,7 @@ Recover session evidence that context compaction dropped, from the rollout file 
 
 ### 1. Locate the Rollout File
 
-Codex writes every session to `~/.codex/sessions/<yyyy>/<mm>/<dd>/rollout-<timestamp>-<session-id>.jsonl`. The path carries no working directory, and sub-agent threads write their own rollout files under the same directories, carrying a copy of the parent's turns from the fork point. Match on the first record of each file, which is `session_meta`: keep the files whose payload `cwd` is the project root or a directory beneath it, and which have no `parent_thread_id`.
+Codex writes every session to `~/.codex/sessions/<yyyy>/<mm>/<dd>/rollout-<timestamp>-<session-id>.jsonl`. The path carries no working directory, and sub-agent threads write their own rollout files under the same directories, carrying a copy of the parent's turns from the fork point. Match on the first record of each file, which is `session_meta`: keep the files whose payload `cwd` is the project root or a directory beneath it, and which carry no parent link. The parent link takes three shapes, and a file carrying any of them is a copy: `parent_thread_id`, `forked_from_id`, and a `source` object holding a `subagent` key.
 
 ```bash
 python3 - "<project root>" <<'PY'
@@ -21,8 +21,14 @@ for path in glob.glob(os.path.expanduser("~/.codex/sessions/*/*/*/rollout-*.json
         continue
     cwd = meta.get("cwd") or ""
     root = sys.argv[1].rstrip("/")
-    if (cwd == root or cwd.startswith(root + "/")) and not meta.get("parent_thread_id"):
-        hits.append(path)
+    if not (cwd == root or cwd.startswith(root + "/")):
+        continue
+    if meta.get("parent_thread_id") or meta.get("forked_from_id"):
+        continue
+    src = meta.get("source")
+    if isinstance(src, dict) and "subagent" in src:
+        continue
+    hits.append(path)
 for path in sorted(hits, key=os.path.getmtime, reverse=True)[:5]:
     print(path)
 PY
@@ -135,6 +141,73 @@ A correction is ambiguous without the thing it corrected. For each one, locate i
 
 Keep items that would still hold in a future session. Drop one-off instructions that only steer the task at hand.
 
+## Sweep Process
+
+Follow this instead of the Mining Process when mining the project's whole history rather than one session.
+
+### 1. List Every Rollout File
+
+Keep every Mining Process filter except the distinctive-phrase match. Take every match for the project, oldest first, applying the cutoff you were given:
+
+```bash
+python3 - "<project root>" "<cutoff ISO-8601, or empty>" <<'PY'
+import datetime, glob, json, os, sys
+
+root = sys.argv[1].rstrip("/")
+cutoff = 0.0
+if len(sys.argv) > 2 and sys.argv[2]:
+    cutoff = datetime.datetime.fromisoformat(sys.argv[2]).timestamp()
+
+hits = []
+for path in glob.glob(os.path.expanduser("~/.codex/sessions/*/*/*/rollout-*.jsonl")):
+    try:
+        with open(path, encoding="utf-8") as fh:
+            meta = json.loads(fh.readline()).get("payload", {})
+    except Exception:
+        continue
+    cwd = meta.get("cwd") or ""
+    if not (cwd == root or cwd.startswith(root + "/")):
+        continue
+    if meta.get("parent_thread_id") or meta.get("forked_from_id"):
+        continue
+    src = meta.get("source")
+    if isinstance(src, dict) and "subagent" in src:
+        continue
+    if os.path.getmtime(path) < cutoff:
+        continue
+    hits.append(path)
+for path in sorted(hits, key=os.path.getmtime):
+    print(path)
+PY
+```
+
+Drop the most recently modified match: that is the live session, already covered by the scan that dispatched you. When no file matches, or none remains after that drop, report it in one line and stop.
+
+Drop what a previous run already distilled: the records preceding the last `$self-improve` invocation in any file that holds one. Codex injects a loaded skill as a `<skill><name>…</name>` block inside a `response_item`, which the extraction below skips in favor of `event_msg`, so find it in the raw file and slice from there, resolving each rollout file to the path the next step reads:
+
+```bash
+LINE=$(grep -n '<name>self-improve</name>' "<rollout path>" | tail -1 | cut -d: -f1)
+INPUT="<rollout path>"
+if [ -n "$LINE" ]; then
+  INPUT="<scratch>/<session-id>.jsonl"
+  sed -n "$((LINE + 1)),\$p" "<rollout path>" > "$INPUT"
+fi
+```
+
+Match that block rather than the bare string `$self-improve`, which also matches file reads, diffs, and prose that merely names the skill.
+
+### 2. Extract Each One
+
+Run the Mining Process extraction script unchanged over each resolved input path rather than writing a fresh one. Its `event_msg` targeting is what keeps the output readable, since the `response_item` copies are wrapped in plugin and skill-injection blocks that bury the typed turns, and its `request_user_input` pairing recovers answers that produce no `user_message` at all.
+
+Loop over those paths in a single command, printing each rollout file's own path as a header before its extraction and appending both to one scratch file outside the repo. Read that file rather than the extraction output, in oldest-first slices when it is large, carrying the candidate items from each slice forward into the next.
+
+### 3. Identify Evidence Across Sessions
+
+Collect per the Mining Process categories, tracing the context of a correction only for items that survive as candidates. Note where the same guidance appears in more than one session: repetition across sessions is the signal that separates a documentation gap from one-off steering.
+
+Report per the Output Format below, adding a `**Sessions**` line to each entry naming the rollout files it came from.
+
 ## Output Format
 
 ```
@@ -144,6 +217,7 @@ Keep items that would still hold in a future session. Drop one-off instructions 
 - **Quote**: "<verbatim user words>"
 - **Context**: <what prompted it>
 - **When**: <timestamp>
+- **Sessions**: <rollout paths — sweep only>
 ```
 
 Order the entries by the category order above. When nothing durable survives, say so in one line.

@@ -11,6 +11,8 @@ Assess external feedback (code reviews, AI suggestions, PR comments) with advers
 
 If you already assessed a finding earlier in this session and recorded a verdict of Skip or Escalate — for example when an iterating loop re-runs review and the same finding resurfaces — do not re-adjudicate it from scratch. When the re-reported finding matches one you already judged (same location and substance) and presents no new evidence beyond what your recorded reason already accounts for, keep that verdict and reason without re-reading the code, re-verifying, or routing it to the Devil's Advocate in Step 2. Assess fresh only when the finding raises materially new evidence, or when you have not judged it before in this session.
 
+When several findings rest on a shared premise — for example a source-of-truth choice — verify that premise once before adjudicating them individually. Findings whose premise holds proceed through normal per-finding verification; when it fails, they are all Skip, citing the refuted premise.
+
 For each finding:
 
 1. **Read the referenced code** at the mentioned location — include the full function or logical block, not just the flagged line
@@ -18,7 +20,7 @@ For each finding:
 3. **Determine scope** — clarify whether the issue was introduced by the PR/changeset or is pre-existing.
    - Pre-existing issues in earlier commits on the same feature branch are in-scope by default — the entire branch is one coherent unit of work. Judge these on their merits like any in-scope finding.
    - Findings genuinely outside the branch's work are the user's call to include. Assign Escalate so the user decides whether to widen the changeset. Reserve Skip for changes whose cost wildly dwarfs the benefit.
-4. **Verify the claim** against the actual code — does the issue genuinely exist?
+4. **Verify the claim** against the actual code — does the issue genuinely exist? When the finding offers a concrete example as evidence — a claimed mishandled input, a claimed wrong output — verify that example independently: a finding can hold in substance while its example does not. Keep the finding and record the correction beside it; drop it only when the claim rests on that example alone.
 5. **Assess severity:**
 
    | Severity | Meaning |
