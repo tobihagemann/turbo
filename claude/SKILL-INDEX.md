@@ -116,7 +116,7 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
-| [`/self-improve`](skills/self-improve/SKILL.md) | Extract session learnings to CLAUDE.md/AGENTS.md, memory, or skills | | [`/turboplan`](skills/turboplan/SKILL.md), [`/finalize`](skills/finalize/SKILL.md), [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) |
+| [`/self-improve`](skills/self-improve/SKILL.md) | Extract learnings from the current session, or sweep past sessions, to CLAUDE.md/AGENTS.md, memory, or skills | | [`/turboplan`](skills/turboplan/SKILL.md), [`/finalize`](skills/finalize/SKILL.md), [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) |
 | [`/note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/improvements.md` | | [`/apply-findings`](skills/apply-findings/SKILL.md) |
 | [`/implement-improvements`](skills/implement-improvements/SKILL.md) | Validate improvements and run one lane per session (direct, investigate, or plan) | [`/implement`](skills/implement/SKILL.md), [`/investigate`](skills/investigate/SKILL.md), [`/turboplan`](skills/turboplan/SKILL.md) | |
 | [`/recall-reasoning`](skills/recall-reasoning/SKILL.md) | Recall implementation reasoning from past Claude Code transcripts for a commit or file location | | [`/answer-reviewer-questions`](skills/answer-reviewer-questions/SKILL.md) |

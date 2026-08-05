@@ -87,7 +87,7 @@ Keep only lessons that are:
 - **Stable** — likely to remain true across future sessions
 - **Non-obvious** — Claude would not already know this
 - **Actionable** — can be expressed as a rule or instruction
-- **Not already documented** — absent from the files read in Steps 1 and 2, the project's own knowledge stores included. Search those for each candidate's keywords rather than assuming. A lesson documented only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as undocumented for the subtree it actually applies to.
+- **Not already documented** — absent from the files read in Steps 1 and 2, from each skill's `references/` and other supporting files, and from the project's own knowledge stores. Search all of those for each candidate's keywords rather than assuming. A lesson documented only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as undocumented for the subtree it actually applies to.
 - **Still a concern** — the issue is not already fixed by changes made in this session. If a bug was found and fixed, or a missing feature was added, future sessions will see the corrected code — they don't need a reminder about the old problem. **Exception: successful workflows and procedures are not "resolved" — they're skill candidates precisely because they worked and will need to be repeated.** When sweeping past sessions, judge this against the current state of the code and docs rather than against this session's changes.
 
 Discard anything session-specific, speculative, one-off, or already resolved by code changes in this session (but not successful workflows — see exception above). If no lessons survive filtering, tell the user and stop.
