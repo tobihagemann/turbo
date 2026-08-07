@@ -34,7 +34,9 @@ If unsure, do not load.
 
 ## Step 3: Make the Change
 
-Apply the change described by the current context — the user request, a prior skill's task description, or an improvement entry. Keep the edit scoped to what the context describes. If the scope balloons beyond what the context specified, stop and confirm scope before continuing.
+Apply the change described by the current context — the user request, a prior skill's task description, or an improvement entry. Keep the edit scoped to what the context describes.
+
+When the fix changes how a value is constructed, grep for every other site that constructs it and fix the ones carrying the same defect; treat these siblings as part of the same change. If the scope balloons beyond what the context specified, stop and confirm scope before continuing.
 
 ## Step 4: Run Verification
 

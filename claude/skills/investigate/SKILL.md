@@ -51,6 +51,8 @@ If a known-good state exists (e.g., "this worked yesterday"), consider `git bise
 - **Build errors**: Read the config file and the referenced source
 - **Unexpected behavior**: Trace the data flow from input to the unexpected output
 
+Before treating a record, file, or build artifact as evidence of the system's behavior, confirm the system under test produced it: check creator, source metadata, or generation time. Suspect imported, seeded, hand-edited, and leftover data from an earlier run, which reads identically to generated output.
+
 ## Step 3: Hypothesize
 
 Generate 2-4 hypotheses ranked by likelihood. Each hypothesis must be **falsifiable** — specify what evidence would confirm or refute it.
@@ -62,6 +64,8 @@ H1 (most likely): [description] — confirmed if [X], refuted if [Y]
 H2: [description] — confirmed if [X], refuted if [Y]
 H3: [description] — confirmed if [X], refuted if [Y]
 ```
+
+Check that the observed case can discriminate: when confirming and refuting evidence would look identical in it, the case is degenerate and any verdict drawn from it is inconclusive. Degenerate cases hide the difference they are supposed to reveal, such as a scaling factor of 1, a single-element collection, or an identity transform. Find a non-degenerate case, or construct one as a Step 4 experiment.
 
 ### Parallel Investigation
 
@@ -92,6 +96,9 @@ Verify each hypothesis with minimal, targeted actions:
 | Run isolated test | Bash (specific test command) |
 | Check dependency version | Bash (`npm ls`, `pip3 show`, etc.) |
 | Inspect runtime state | Bash (add temporary logging, run, check output) |
+| Vary one suspected variable | Bash (construct a throwaway fixture, run, compare) |
+
+When read-only evidence cannot discriminate, construct minimal throwaway fixtures that vary one suspected variable at a time. Exercise the system's inputs, and leave the working tree and its git index unchanged. Label each fixture clearly, delete them once the experiment concludes, and report anything that could not be deleted. Write to an external or live system only after explicit user approval via `AskUserQuestion`, stating the target system, the write, and the cleanup plan.
 
 Record each result:
 
