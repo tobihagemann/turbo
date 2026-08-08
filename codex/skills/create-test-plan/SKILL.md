@@ -16,7 +16,34 @@ Resolve scope using the first match:
 3. **Conversation context** — prior conversation contains recent work (a feature, fix, or refactor). Extract what changed, where it lives, and expected behavior.
 4. **App-level discovery** — fresh context with no prior work. Examine the project (entry points, routes, commands, README) to identify the app's core user-facing flows.
 
-## Step 2: Analyze the Change
+## Step 2: Determine Testing Approach
+
+Always check for project-specific testing skills or MCP tools first. Use the fallbacks below when nothing project-specific is available:
+
+- **Web app** → `$agent-browser` skill if available, otherwise Codex browser automation
+- **UI/native app** → `computer-use` MCP
+- **CLI tool** → direct terminal execution
+- **Library with no entry point** → report that interactive testing is not applicable and stop
+
+## Step 3: Resolve the Output Path
+
+Pick a slug for the test plan from the change under test:
+
+- Lowercase
+- Replace non-alphanumeric characters with hyphens
+- Collapse consecutive hyphens
+- Trim leading and trailing hyphens
+- Truncate to 40 characters at a word boundary
+
+If the work is anchored to an existing artifact (a plan at `.turbo/plans/<slug>.md`, a shell at `.turbo/shells/<slug>.md`, or a spec at `.turbo/specs/<slug>.md`), reuse that artifact's slug verbatim.
+
+The user may pass an explicit slug or path; honor it.
+
+If `.turbo/test-plans/<slug>.md` already exists, use `request_user_input` to ask whether to overwrite, append a numeric suffix (`-2`, `-3`, ...), or pick a different slug. For a slug reused from an anchoring artifact, offer overwrite or a different slug only.
+
+State the chosen slug and the resulting test plan path before continuing.
+
+## Step 4: Analyze the Change
 
 After identifying scope, read the actual code in depth to understand:
 
@@ -26,16 +53,7 @@ After identifying scope, read the actual code in depth to understand:
 - Error paths and edge cases
 - Other features or components that could be affected
 
-## Step 3: Determine Testing Approach
-
-Always check for project-specific testing skills or MCP tools first. Use the fallbacks below when nothing project-specific is available:
-
-- **Web app** → `$agent-browser` skill if available, otherwise Codex browser automation
-- **UI/native app** → `computer-use` MCP
-- **CLI tool** → direct terminal execution
-- **Library with no entry point** → report that interactive testing is not applicable and stop
-
-## Step 4: Generate the Test Plan
+## Step 5: Generate the Test Plan
 
 For each level, generate specific, actionable test scenarios tailored to the actual change. Each scenario needs exact steps and an expected outcome.
 
@@ -78,23 +96,7 @@ Explore state interactions across system boundaries. These surface the hardest b
 
 If the change is small enough that a level has no meaningful scenarios (e.g., a typo fix has no cross-cutting scenarios), note "N/A for this change" with a brief explanation.
 
-## Step 5: Present and Write
-
-Pick a slug for the test plan from the change under test:
-
-- Lowercase
-- Replace non-alphanumeric characters with hyphens
-- Collapse consecutive hyphens
-- Trim leading and trailing hyphens
-- Truncate to 40 characters at a word boundary
-
-If the work is anchored to an existing artifact (a plan at `.turbo/plans/<slug>.md`, a shell at `.turbo/shells/<slug>.md`, or a spec at `.turbo/specs/<slug>.md`), reuse that artifact's slug verbatim.
-
-The user may pass an explicit slug or path; honor it.
-
-If `.turbo/test-plans/<slug>.md` already exists, use `request_user_input` to ask whether to overwrite, append a numeric suffix (`-2`, `-3`, ...), or pick a different slug. For a slug reused from an anchoring artifact, offer overwrite or a different slug only.
-
-State the chosen slug and the resulting test plan path before continuing.
+## Step 6: Present and Write
 
 Output the plan as text. Then use `request_user_input` to ask for approval before writing.
 

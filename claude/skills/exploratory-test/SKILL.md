@@ -35,7 +35,7 @@ Read the resolved test plan and state its path. If the user specifies a narrower
 
 ## Step 2: Determine Testing Approach
 
-Use the approach specified in the test plan. If the plan does not specify one, determine it using the same logic as `/create-test-plan` Step 3.
+Use the approach specified in the test plan. If the plan does not specify one, determine it using the same logic as `/create-test-plan` Step 2.
 
 ## Step 3: Run `/user-experience` Skill (When User-Facing)
 

@@ -9,7 +9,7 @@ Update the Unreleased section of the changelog based on the current changes.
 
 ## Step 1: Run `$changelog-rules` Skill
 
-Run `$changelog-rules` to load shared changelog conventions.
+Run the `$changelog-rules` skill to load shared changelog conventions.
 
 ## Step 2: Check for Changelog
 

@@ -9,9 +9,13 @@ Create a changelog backfilled with version history.
 
 ## Step 1: Run `$changelog-rules` Skill
 
-Run `$changelog-rules` to load shared changelog conventions.
+Run the `$changelog-rules` skill to load shared changelog conventions.
 
-## Step 2: Backfill Version History
+## Step 2: Check for Existing Changelog
+
+Use `git rev-parse --show-toplevel` to find the repository root. Look for the changelog file per `$changelog-rules`. If it already exists, use `request_user_input` to confirm overwriting it. If the user declines (chooses the free-form "Other" option or asks to abort), stop without running the remaining steps.
+
+## Step 3: Backfill Version History
 
 Collect release history from the most authoritative source available:
 
@@ -19,10 +23,6 @@ Collect release history from the most authoritative source available:
 2. **Git tags** (fallback): If no GitHub releases exist, run `git tag --sort=-v:refname` to list tags. For each consecutive tag pair, run `git log <older-tag>..<newer-tag> --oneline` to collect commit summaries.
 
 For each version, classify entries into the standard change types and apply the changelog-worthiness criteria per `$changelog-rules`.
-
-## Step 3: Check for Existing Changelog
-
-If the changelog file already exists, warn the user and confirm before overwriting.
 
 ## Step 4: Write Changelog
 

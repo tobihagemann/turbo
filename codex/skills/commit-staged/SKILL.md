@@ -7,7 +7,7 @@ description: "Commit already-staged changes with a message matching existing com
 
 ## Step 1: Run `$commit-rules` Skill
 
-Run `$commit-rules` to load commit message rules and technical constraints.
+Run the `$commit-rules` skill to load commit message rules and technical constraints.
 
 ## Step 2: Commit
 

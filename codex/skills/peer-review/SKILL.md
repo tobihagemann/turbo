@@ -34,7 +34,7 @@ Assemble a prompt for Claude:
 
 ## Step 3: Run `$claude-print` Skill
 
-Run `$claude-print` in read-only mode with the assembled prompt.
+Run the `$claude-print` skill in read-only mode with the assembled prompt.
 
 ## Step 4: Validate Output
 

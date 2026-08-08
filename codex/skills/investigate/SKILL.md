@@ -80,7 +80,7 @@ Before dispatching, read the project's test configuration and CI workflow to ide
 Launch all investigation branches with `spawn_agent` / `wait_agent` using inherited model defaults. Expect one branch per hypothesis plus one Claude consultation branch. Every branch prompt must direct it to treat the shared working tree and its git index as read-only and to gather evidence by reading and reasoning; experiments that mutate code wait for Step 4, where they run one at a time.
 
 - **Hypothesis branch (one per hypothesis):** Each receives the hypothesis, relevant file paths, what evidence to look for, and instructions to report **confirmed** / **refuted** / **inconclusive** with evidence. Budget: max 5 tool calls per branch.
-- **Claude consultation branch:** Run `$consult-claude` with a focused prompt describing the problem, reproduction, and files examined. The external perspective can dig into patterns the hypothesis-driven branches miss. Run the `$evaluate-findings` skill on its output after the consultation returns.
+- **Claude consultation branch:** Run the `$consult-claude` skill with a focused prompt describing the problem, reproduction, and files examined. The external perspective can dig into patterns the hypothesis-driven branches miss. Run the `$evaluate-findings` skill on its output after the consultation returns.
 
 After all investigators complete, merge results. Claude findings that overlap with a confirmed hypothesis reinforce confidence. Novel Claude findings become additional hypotheses to test in Step 4.
 

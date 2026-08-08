@@ -150,16 +150,16 @@ Then use `request_user_input` with these options: **Approve** or **Reject**.
 
 Apply approved changes in order:
 
-1. **Improvements** — For items routed to project improvements, run `$note-improvement` with the summary, location, and rationale for each.
+1. **Improvements** — For items routed to project improvements, run the `$note-improvement` skill with the summary, location, and rationale for each.
 2. **Updates to auto memory** — Read the target, find the right section, append or update in place, following the memory system conventions from the system prompt.
 3. **Updates to AGENTS.md** — Read the target file selected in Step 4 (the root file or a nested subtree file), find the right section, append or update in place. Match the tone and format already present.
-4. **Updates to user/project skills** — Run `$create-skill` to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
-5. **New skills** — Run `$create-skill` for each new skill. Provide the trigger conditions and relevant context from the session.
+4. **Updates to user/project skills** — Run the `$create-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
+5. **New skills** — Run the `$create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
 6. **Updates to turbo skills** — For each lesson routed to a turbo skill:
    1. Read `~/.turbo/repo/codex/SKILL-CONVENTIONS.md` so turbo-specific conventions are in context before any editing.
-   2. Run `$create-skill` to update the installed copy at `~/.agents/skills/<name>/`.
+   2. Run the `$create-skill` skill to update the installed copy at `~/.agents/skills/<name>/`.
 
-   Once every turbo skill edit is in place and reviewed, use `request_user_input` to ask "These turbo skill improvements could benefit other users. Propose them upstream?" When the user confirms, run `$contribute-turbo` once for all of them.
+   Once every turbo skill edit is in place and reviewed, use `request_user_input` to ask "These turbo skill improvements could benefit other users. Propose them upstream?" When the user confirms, run the `$contribute-turbo` skill once for all of them.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
