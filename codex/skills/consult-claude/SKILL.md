@@ -13,14 +13,19 @@ State:
 
 - What problem needs input
 - What has already been tried
+- What constraints the answer must respect
 - What files, commands, plans, or error messages matter
 - What kind of answer is useful: hypotheses, tradeoffs, concrete fix, or review
+
+When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
 ## Step 2: Run `$claude-print` Skill
 
 Run the `$claude-print` skill with the assembled question. Default to read-only permissions.
 
 For follow-up questions, include Claude's previous answer and the new evidence gathered since then.
+
+When the recommendation would violate a documented constraint, follow up rather than discarding or adopting it. Quote the constraint back and ask Claude to argue it out: whether the constraint is sound or was set without the problem Claude identified in view, whether that problem is reachable given code Claude may not have accounted for, and what the best fix that respects the constraint is. Ask it to quantify the exposure rather than assert it, and say that reversing its prior recommendation is acceptable.
 
 ## Step 3: Synthesize
 

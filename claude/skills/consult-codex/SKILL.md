@@ -36,6 +36,7 @@ Structure the question using XML tags for clearer Codex responses:
 - `<grounding_rules>`: When claims must be evidence-based (review, research, root-cause analysis).
 - `<dig_deeper_nudge>`: Push past surface-level findings to check for second-order failures.
 - `<verification_loop>`: When correctness matters — ask Codex to verify before finalizing.
+- `<merit_only>`: When a recommendation is wanted, bar answers that appeal to scope.
 
 Example prompt for a diagnosis question:
 
@@ -46,6 +47,8 @@ Example prompt for a diagnosis question:
 ```
 
 For correctness-critical questions, add `<verification_loop>` asking Codex to verify its answer before finalizing.
+
+When a recommendation is wanted, add `<merit_only>`: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Pair it with `<compact_output_contract>` demanding one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
 Keep prompts compact, with tight output contracts. One clear task per Codex turn.
 
@@ -71,6 +74,7 @@ Assess whether:
 - The answer is sufficient and actionable
 - Follow-up questions would improve the answer
 - The response contradicts known project facts (verify before accepting)
+- The recommendation would violate a documented constraint (follow up rather than discarding or adopting it)
 
 If no follow-up is needed, skip to the Synthesize step.
 
@@ -91,6 +95,8 @@ cat ".turbo/codex/$CODEX_TAG-followup.txt" | codex exec resume <session-id> -o "
 With `-`, stdin is the whole prompt rather than a `<stdin>` block appended to an argument, so instruction and context share the one file. Leave off `< /dev/null` here — the pipe supplies stdin, and `cat` sends EOF.
 
 The `-s` flag is not available for `resume`. It inherits sandbox settings from the original session.
+
+When the recommendation would violate a documented constraint, quote the constraint back and ask Codex to argue it out: whether the constraint is sound or was set without the problem Codex identified in view, whether that problem is reachable given code Codex may not have accounted for, and what the best fix that respects the constraint is. Ask it to quantify the exposure rather than assert it, and say that reversing its prior recommendation is acceptable.
 
 Return to Step 3. Cap at 5 turns to prevent runaway conversations.
 
