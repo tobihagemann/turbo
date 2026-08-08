@@ -27,6 +27,8 @@ Form a recommended route from the dimensions and criteria above. Output the reco
 
 Then use `AskUserQuestion` to have the user set the final route. Offer the recommended mode first, marked "(Recommended)", alongside the other two modes; the auto-appended "Other" lets the user describe a different path.
 
+Add a fourth **Get a second opinion** option whenever committing to the wrong mode would cost a session of rework, and whenever the recommended mode does not earn "(Recommended)" with conviction. It runs the `/consult-codex` skill for the soundest route given the task's scope, stakes, and unknowns. Then resolve the route with that answer in hand, re-asking when the choice stays the user's.
+
 Carry the confirmed route into its reference file from the table above and follow its steps.
 
 ## Rules

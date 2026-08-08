@@ -20,13 +20,15 @@ Present a summary showing:
 - Count of minor updates
 - Count of patch updates
 
-Use `request_user_input` for upgrade strategy (Codex `request_user_input` allows up to 3 options per question, so the four strategies are split across two questions):
+Use `request_user_input` for upgrade strategy (Codex `request_user_input` allows up to 3 options per question, so the strategies are split across two questions):
 
 **Question 1 — Header**: "Approach"
 **Options**:
 - **Cautious** — Upgrade minor/patch first, then major one-by-one with research
 - **All at once** — Research all major changes, then upgrade everything together
 - **Major handling** — Defer the major decision (Skip-major or Interactive)
+
+When a major upgrade would force a migration that is costly to reverse, present a **Get a second opinion** option in place of **All at once**, keeping Question 1 at three options and leaving **Major handling** in place so Question 2 stays reachable. It runs the `$consult-claude` skill for which strategy the breaking changes warrant. Then resolve the strategy with that answer in hand, re-asking when the choice stays the user's. A freeform answer asking to upgrade everything together selects the All-at-once strategy.
 
 If the user picks **Major handling**, ask a follow-up:
 

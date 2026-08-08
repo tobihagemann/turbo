@@ -77,7 +77,7 @@ Output the full proposal as text first, not inside `request_user_input`. For eac
 
 After all candidates are listed, use `request_user_input` to confirm the proposal with these options: "Approve all", "Make edits", "Cancel". If the user selects "Make edits", continue in conversation so the user can specify which candidates to drop, merge, or rename before returning here.
 
-For each Rename conflict candidate, use a separate `request_user_input` asking whether to update the existing skill, create the new one alongside it, or skip.
+For each Rename conflict candidate, use a separate `request_user_input` asking whether to update the existing skill, create the new one alongside it, or skip. Since creating alongside always establishes a second skill covering the same conventions, present a **Get a second opinion** option in place of **skip**, keeping the question at three options. It runs the `$consult-claude` skill for which resolution leaves the skill set coherent. Then resolve the conflict with that answer in hand, re-asking when the choice stays the user's. A freeform answer that declines the candidate skips it.
 
 ## Step 5: Run `$create-skill` Skill
 

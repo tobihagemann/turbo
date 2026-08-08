@@ -97,3 +97,5 @@ Return to Step 3. Cap at 5 turns to prevent runaway conversations.
 ## Step 5: Synthesize
 
 Summarize the key insights from the consultation. Cross-reference suggestions with project documentation and conventions before applying. Codex suggestions are starting points, not guaranteed solutions.
+
+When the consultation was opened from a pending question, resolve that question with the answer in hand, re-asking the user when the choice stays theirs. Then use the TaskList tool and proceed to any remaining task.

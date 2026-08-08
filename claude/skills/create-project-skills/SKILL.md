@@ -77,7 +77,7 @@ Output the full proposal as text first, not inside `AskUserQuestion`. For each c
 
 After all candidates are listed, use `AskUserQuestion` to confirm the proposal with these options: "Approve all", "Make edits", "Cancel". If the user selects "Make edits", continue in conversation so the user can specify which candidates to drop, merge, or rename before returning here.
 
-For each Rename conflict candidate, use a separate `AskUserQuestion` asking whether to update the existing skill, create the new one alongside it, or skip.
+For each Rename conflict candidate, use a separate `AskUserQuestion` asking whether to update the existing skill, create the new one alongside it, or skip. Add a **Get a second opinion** option as a fourth choice, since creating alongside always establishes a second skill covering the same conventions. It runs the `/consult-codex` skill for which resolution leaves the skill set coherent. Then resolve the conflict with that answer in hand, re-asking when the choice stays the user's.
 
 ## Step 5: Run `/create-skill` Skill
 

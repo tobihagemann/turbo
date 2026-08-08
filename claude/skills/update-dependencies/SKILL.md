@@ -29,6 +29,8 @@ Use AskUserQuestion for upgrade strategy:
 - **Skip major** — Only upgrade minor and patch versions
 - **Interactive** — Ask for each major update individually
 
+When a major upgrade would force a migration that is costly to reverse, present a **Get a second opinion** option in place of **Interactive**, keeping the question at four options. It runs the `/consult-codex` skill for which strategy the breaking changes warrant. Then resolve the strategy with that answer in hand, re-asking when the choice stays the user's. A freeform answer asking to decide each major update individually selects the Interactive strategy.
+
 ## Phase 3: Research Breaking Changes
 
 For **each package with a major version update**:

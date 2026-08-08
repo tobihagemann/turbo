@@ -78,6 +78,8 @@ This scopes the survey to the shell's concern area instead of a generic sweep. K
 
 For each entry in the shell's `Open Questions` field, present it via `AskUserQuestion` and collect the answer. Frame each question with enough context from the shell for the user to decide.
 
+Where a question offers discrete options, mark the strongest "(Recommended)" and place it first. Offer a **Get a second opinion** option whenever the question is costly to reverse (it establishes a pattern others will follow, defines an interface, or commits to a data shape), and whenever no option earns "(Recommended)" with conviction. It runs the `/consult-codex` skill for the soundest option on technical merit alone, independent of the task's original scope, naming any scope cost with the answer. On a question of product intent, run it for what each option commits to, what reversing it costs, and what the prevailing convention is. Hold the concrete options to three so the question stays within the four-option limit. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
+
 Do **not** escalate other questions. If you identify a new question while reading the codebase, note it as a risk in the drafted plan's Verification or Context Files sections.
 
 If the shell's Open Questions field is empty or contains "None," skip this step entirely and proceed to Step 4.

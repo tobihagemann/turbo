@@ -85,6 +85,7 @@ Interview the user relentlessly until you reach shared understanding of the proj
 ### Discussion Guidelines
 
 - If a question can be answered by exploring the codebase, explore the codebase instead
+- When a question defines a boundary, contract, or data shape, add a **Get a second opinion** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/consult-codex` skill for the soundest answer on technical merit alone, independent of the task's original scope; on a question of product intent, run it for what each answer commits to and what reversing it costs. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
 - Use `AskUserQuestion` to ask one question at a time. Use options with descriptions to frame trade-offs and offer concrete suggestions. Use `multiSelect` when choices are not mutually exclusive.
 - When the user gives a short answer, probe deeper before moving on
 - For each question, recommend an answer with reasoning
@@ -167,7 +168,7 @@ If the spec's Open Questions section is empty, contains "None," or does not exis
 For each open question:
 
 1. Analyze the question against the spec, prior discussion, and consulted-docs context from Step 2. State the trade-offs of the leading options in plain text so the user can see the reasoning.
-2. Use `AskUserQuestion` to offer 2-3 concrete resolution options with short descriptions, plus a **Defer to implementation** option (leaves the question in Open Questions to be surfaced again when shells are expanded). Mark the strongest option "(Recommended)" and place it first.
+2. Use `AskUserQuestion` to offer 2-3 concrete resolution options with short descriptions, plus a **Defer to implementation** option (leaves the question in Open Questions to be surfaced again when shells are expanded). Mark the strongest option "(Recommended)" and place it first. Offer a **Get a second opinion** option whenever the question is costly to reverse (it establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever no option earns "(Recommended)" with conviction; hold the resolution options to 2 so the question stays within the four-option limit. It runs the `/consult-codex` skill for the soundest option on technical merit alone, independent of the task's original scope, naming any scope cost with the answer. On a question of product intent, run it for what each option commits to, what reversing it costs, and what the prevailing convention is. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
 3. Fold the chosen answer into the relevant spec section and remove the question from Open Questions.
 
 If the user selects "Other" and provides a freeform answer, accept it and proceed.

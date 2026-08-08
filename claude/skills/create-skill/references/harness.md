@@ -5,7 +5,7 @@ Quick reference for the Claude Code harness: canonical tool names, limits, and d
 **Tools (canonical names):**
 
 - `TaskCreate` / `TaskUpdate` / `TaskList` / `TaskGet` — task tracking. Statuses: `pending`, `in_progress`, `completed`, plus `deleted` for removal. Tasks support `owner`, `blocks` / `blockedBy`, and arbitrary `metadata`.
-- `AskUserQuestion` — structured user prompts with option lists.
+- `AskUserQuestion` — structured user prompts. 1-4 questions per call, 2-4 options per question, "Other" free-form option appended automatically.
 - `Edit` / `Write` / `Read` / `NotebookEdit` — file operations. `Edit` requires the file to be read first.
 - `Bash` — shell execution; supports `run_in_background` for long-running commands.
 - `Skill tool` — invoke an installed skill by name.

@@ -104,6 +104,8 @@ Then use `request_user_input` to ask how to handle them. State each question as 
 - **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 10 (inline threads) or Step 11 (issue comments)
 - **Skip**: Remove from processing
 
+Whenever the item is costly to reverse (its resolution establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever you cannot recommend one of the three with conviction, present a **Get a second opinion** option in place of **Skip**, keeping the question at three options. It runs the `$consult-claude` skill for the soundest resolution on technical merit alone, independent of the changeset's original scope, naming any scope cost with the answer. On an item that turns on product intent, run it for what each resolution commits to, what reversing it costs, and what the prevailing convention is. Then resolve the item with that answer in hand, re-asking when the choice stays the user's. A freeform answer that declines the item removes it from processing.
+
 ## Step 7: Run `$resolve-findings` Skill
 
 If there are no accepted findings to implement, skip to Step 9.

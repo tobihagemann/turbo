@@ -23,6 +23,8 @@ Present a summary of accepted findings (Apply verdict): count by complexity (mec
 
 Suggest Plan when findings include complex or architectural changes. Suggest Direct when all findings are mechanical fixes.
 
+Add a **Get a second opinion** option whenever the findings would establish a pattern others will follow, change an interface, or commit to a data shape, and whenever neither path earns the suggestion with conviction. It runs the `/consult-codex` skill for which path the findings warrant on technical merit. Then resolve the path with that answer in hand, re-asking when the choice stays the user's.
+
 ## Step 2: Run the Chosen Path
 
 Read the reference file for the confirmed path and follow its phases:

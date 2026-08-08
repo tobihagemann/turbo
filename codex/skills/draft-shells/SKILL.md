@@ -108,10 +108,10 @@ If no open questions emerged during decomposition or carried over from the spec,
 For each open question:
 
 1. Analyze the question against the spec, decomposition context, and any consulted references. State the trade-offs of the leading options in plain text so the user can see the reasoning.
-2. Use `request_user_input` to offer up to 2 concrete resolution options with short descriptions, plus a **Defer to expansion** option (leaves the question on the relevant shell's Open Questions list). Mark the strongest option "(Recommended)" and place it first. The auto-appended "Other" lets the user supply a freeform answer.
+2. Use `request_user_input` to offer up to 2 concrete resolution options with short descriptions, plus a **Defer to expansion** option (leaves the question on the relevant shell's Open Questions list). Mark the strongest option "(Recommended)" and place it first. The auto-appended "Other" lets the user supply a freeform answer. Offer a **Get a second opinion** option whenever the question is costly to reverse (it establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever no option earns "(Recommended)" with conviction. Keeping the question at three options, present it in place of **Defer to expansion** when the question is answerable from what already exists, and in place of the weaker resolution option when the answer needs code or survey context that expansion will produce. It runs the `$consult-claude` skill for the soundest option on technical merit alone, independent of the task's original scope, naming any scope cost with the answer. On a question of product intent, run it for what each option commits to, what reversing it costs, and what the prevailing convention is. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
 3. If resolved, update the in-memory decomposition (Produces, Consumes, Covers, Implementation Steps) to reflect the answer. If deferred, record it against the relevant shell in the in-memory decomposition.
 
-If the user selects "Other" and provides a freeform answer, accept it and proceed.
+If the user selects "Other" and provides a freeform answer, accept it and proceed. When that answer defers the question rather than resolving it, record it against the relevant shell as item 3 describes.
 
 Default to resolving. Defer only when the answer genuinely needs codebase or pattern-survey context that is not yet available.
 

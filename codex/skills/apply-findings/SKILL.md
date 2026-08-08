@@ -34,12 +34,12 @@ When an escalated finding's outcome would change what the other fixes should loo
 
 For findings with Escalate verdict, use `request_user_input` to let the user decide. Output the finding's technical detail as text first, then state the question as the decision the user owns. When the finding is a disagreement between two artifacts, ask which behavior is wanted; reconciling the artifacts follows from that answer.
 
-Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them. When the choice is architectural rather than a matter of preference, offer the consultation option in place of whichever alternative fits the finding least, keeping the question at three options.
+Recommend the genuinely best option: place it first and append `(Recommended)` to its label, judging "best" on technical merit alone (the soundest engineering outcome), independent of how closely the option conforms to the task's original scope. When the choice hinges on product intent or domain knowledge you lack and merit cannot settle it, say so instead of forcing a pick. Give each option a plain-language description that carries the trade-off: its concrete effect and what it costs. When the recommended option also widens the changeset's scope, name both its merit and that scope cost so the user can weigh them. When the choice is costly to reverse — it establishes a pattern others will follow, defines an interface, or commits to a data shape — offer the consultation option in place of whichever alternative fits the finding least, labeled "Get a second opinion", keeping the question at three options. Offer it as well whenever no option earns `(Recommended)` with conviction.
 
 - **Apply** — make the change, then run Step 2's post-fix checks (items 7 and 8) against it
 - **Skip** — leave as-is
 - **Note for later** — run the `$note-improvement` skill to capture it
-- **Consult** — run the `$consult-claude` skill for a second opinion on the choice, or the `$consult-oracle` skill when standard approaches have already failed. Then apply, skip, or note the finding with that answer in hand
+- **Get a second opinion** — run the `$consult-claude` skill for a second opinion on the choice, or the `$consult-oracle` skill when standard approaches have already failed. Then apply, skip, or note the finding with that answer in hand
 
 ## Step 4: Format Output
 
