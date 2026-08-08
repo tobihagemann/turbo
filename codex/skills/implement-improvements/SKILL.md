@@ -42,6 +42,7 @@ For each entry, verify whether the specific problem or opportunity described sti
 1. **Files exist** — Do the referenced files/paths still exist? If not, the entry is stale.
 2. **Problem persists** — Read the relevant code sections. Is the exact issue or opportunity described in the entry still present? Check the specific claims: if the entry says a function is uncalled, verify it has no callers; if it says error handling is missing, check whether it was added.
 3. **Revisit condition met** — For an entry carrying a Revisit field, check whether the recorded condition now holds. The shipped simplification is present by construction, so its presence alone says nothing about whether the fuller version is worth building yet.
+4. **Stated scope matches the real gap** — For an entry claiming missing coverage, read what existing tests already pin before accepting its scope: a test that substitutes a test double at a boundary pins the behavior on one side of it and leaves the boundary itself unpinned, so a request to cover several variants often reduces to the single boundary they share. Restate such an entry at its real scope, classify it Active, and use the restatement as its summary in Step 3.
 
 Classify each entry as:
 
