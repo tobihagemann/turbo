@@ -13,6 +13,8 @@ If you already assessed a finding earlier in this session and recorded a verdict
 
 When several findings rest on a shared premise — for example a source-of-truth choice — verify that premise once before adjudicating them individually. Findings whose premise holds proceed through normal per-finding verification; when it fails, they are all Skip, citing the refuted premise.
 
+When a plan, spec, or shell file governs the work, re-read the decisions it records before adjudicating. Having read it earlier in the session does not count: once it falls out of context, a recorded decision is indistinguishable from no decision at all.
+
 For each finding:
 
 1. **Read the referenced code** at the mentioned location — include the full function or logical block, not just the flagged line

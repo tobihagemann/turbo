@@ -40,6 +40,7 @@ Output as text:
 - The access point — the local URL and port for a web app, or confirmation that the window is open for a native app
 - What changed and where to look
 - Any specific interaction worth checking
+- When a verification pass preceded this hand-over, what it could not cover: paths needing real credentials, external services, or state unavailable in this session
 
 ## Step 5: Verdict Gate
 

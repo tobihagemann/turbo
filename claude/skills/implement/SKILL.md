@@ -15,8 +15,9 @@ At the start, use `TaskCreate` to create a task for each step:
 2. Load task-specific skills
 3. Make the change
 4. Run verification
-5. Run `/preview` skill for UI/UX changes
-6. Post-implementation QA
+5. Run `/smoke-test` skill for UI/UX changes
+6. Run `/preview` skill for UI/UX changes
+7. Post-implementation QA
 
 ## Step 1: Run `/code-style` Skill
 
@@ -38,11 +39,17 @@ When the fix changes how a value is constructed, grep for every other site that 
 
 If a Verification section is in conversation context (e.g., from a plan file), execute the commands, smoke checks, or MCP tool invocations it specifies. If a check fails, run the `/investigate` skill. If a check is blocked by a dependency, unclear requirement, or environmental issue, use `AskUserQuestion` to surface the blocker and let the user choose how to proceed. If no Verification section is in context, skip this step.
 
-## Step 5: Run `/preview` Skill for UI/UX Changes
+## Step 5: Run `/smoke-test` Skill for UI/UX Changes
 
-If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `/preview` skill so the user can try it firsthand before QA. When it is unclear whether the change is user-facing, use `AskUserQuestion` to ask whether to preview rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
+If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `/smoke-test` skill. When that is unclear, use `AskUserQuestion` to ask whether the change is user-facing rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
 
-## Step 6: Post-Implementation QA
+`/smoke-test` verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `/investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it into Step 6 rather than treating it as a failure.
+
+## Step 6: Run `/preview` Skill for UI/UX Changes
+
+If Step 5 determined the change is user-facing, run the `/preview` skill so the user can try it firsthand before QA. Skip this step otherwise. Pass along any blocker Step 5 could not clear, so the hand-over names the cases still left to the user.
+
+## Step 7: Post-Implementation QA
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `/finalize` skill.
 
@@ -56,5 +63,5 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Defer `git commit`, `git push`, and PR creation to Step 6.
+- Defer `git commit`, `git push`, and PR creation to Step 7.
 - Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in code or comments. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

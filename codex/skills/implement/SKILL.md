@@ -15,12 +15,13 @@ At the start, use `update_plan` to track each step, restating any remaining step
 2. Load task-specific skills
 3. Make the change
 4. Run verification
-5. Run `$preview` skill for UI/UX changes
-6. Post-implementation QA
+5. Run `$smoke-test` skill for UI/UX changes
+6. Run `$preview` skill for UI/UX changes
+7. Post-implementation QA
 
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the governing plan when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
-Then attempt `create_goal` with the objective: "Make this change: <one-line task summary>. Carry it through Step 6, which runs `$finalize` unless a lighter pass or stopping is chosen. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete when Step 6 has finished." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+Then attempt `create_goal` with the objective: "Make this change: <one-line task summary>. Carry it through Step 7, which runs `$finalize` unless a lighter pass or stopping is chosen. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete when Step 7 has finished." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
 
 ## Step 1: Run `$code-style` Skill
 
@@ -42,11 +43,17 @@ When the fix changes how a value is constructed, grep for every other site that 
 
 If a Verification section is in conversation context (e.g., from a plan file), execute the commands, smoke checks, or MCP tool invocations it specifies. If a check fails, run the `$investigate` skill. If a check is blocked by a dependency, unclear requirement, or environmental issue, use `request_user_input` to surface the blocker and let the user choose how to proceed. If no Verification section is in context, skip this step.
 
-## Step 5: Run `$preview` Skill for UI/UX Changes
+## Step 5: Run `$smoke-test` Skill for UI/UX Changes
 
-If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `$preview` skill so the user can try it firsthand before QA. When it is unclear whether the change is user-facing, use `request_user_input` to ask whether to preview rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
+If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `$smoke-test` skill. When that is unclear, use `request_user_input` to ask whether the change is user-facing rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
 
-## Step 6: Post-Implementation QA
+`$smoke-test` verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `$investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it into Step 6 rather than treating it as a failure.
+
+## Step 6: Run `$preview` Skill for UI/UX Changes
+
+If Step 5 determined the change is user-facing, run the `$preview` skill so the user can try it firsthand before QA. Skip this step otherwise. Pass along any blocker Step 5 could not clear, so the hand-over names the cases still left to the user.
+
+## Step 7: Post-Implementation QA
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary. Then run the `$finalize` skill.
 
@@ -60,5 +67,5 @@ If this run created a goal, mark it complete with `update_goal`. Then call `upda
 
 ## Rules
 
-- Defer `git commit`, `git push`, and PR creation to Step 6.
+- Defer `git commit`, `git push`, and PR creation to Step 7.
 - Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in code or comments. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

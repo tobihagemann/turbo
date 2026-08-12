@@ -17,6 +17,7 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - Composing prose in the user's voice is not the same as posting it. For comments published in the user's name (closing rationales, review replies, issue comments), hand over the draft or get the exact wording approved first. Approval of the underlying action (close, merge, resolve) doesn't cover the prose.
 - Soften opinions when asking questions. Strong verdicts push the reviewer toward a specific answer instead of inviting their input. Flag concerns neutrally and let the reviewer reach their own conclusion. Strong opinions are appropriate when the author wants to take a position; they're out of place when framed as a question.
 - Cut hedges that add no information ("perhaps", "possibly", "I think"). Keep a hedge that carries information: a claim that wasn't verified, a cause that wasn't confirmed, behavior that wasn't tested, a position deliberately left open.
+- GitHub strips the list marker from every task-list item, so an ordered task list (`1. [ ]`) renders exactly like `- [ ]` with no visible numbers. Use `- [ ]` for checklists and let item order carry the sequence. When the reader needs the numbers, write them into the item text.
 
 ## Voice by Author Association
 

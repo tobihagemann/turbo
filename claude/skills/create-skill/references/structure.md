@@ -107,11 +107,12 @@ skill-name/
     └── validate.py       # Validation script
 ```
 
-Three patterns cover most cases:
+Four patterns cover most cases:
 
 - **High-level guide with references** — SKILL.md carries a quick-start path inline and links out to one file per advanced topic. Claude loads a linked file only when the task reaches that topic.
 - **Domain-specific organization** — for Skills spanning multiple domains, give each domain its own reference file so a question about one domain never loads the others. Pair this with a grep hint in SKILL.md when the files are large enough that Claude should search rather than read them whole.
 - **Conditional details** — keep the common path inline and link out only the branches, so the rare or heavyweight branch costs nothing on a typical run.
+- **Frequency of need** — content read once at setup (installation, provisioning, credentials, permission and role setup) or only on failure (troubleshooting tables, error-code references) belongs in a reference file, even when it is topically core to the skill. Ask whether Claude doing this skill's normal job would read it every time, or once at setup and again when something breaks.
 
 ## Avoid Deeply Nested References
 
@@ -130,6 +131,8 @@ When SKILL.md links to sub-files, each layer must own exactly one concern:
 - **Sub-files (leaves)**: Self-contained instructions for one mode or topic. Assumes the routing decision is already made. Does not contain cross-mode routing tables.
 
 Routing tables, decision logic, and shared config belong in SKILL.md only. Sub-files should never route back to siblings, and SKILL.md should not summarize sub-file commands. When other skills reference a sub-file, they should point to the skill and name the sub-file: "Run `/skill-name` skill and consult sub-file.md to ..."
+
+When removing content from a router because a sub-file already covers it, check whether the router loses a warning the sub-file cannot deliver. A sub-file reaches only a reader who already decided to look, so a caution against a wrong inference has to survive in the router. Merge such a line into the surrounding routing prose rather than deleting it.
 
 ## Use Forward Slashes in Paths
 
