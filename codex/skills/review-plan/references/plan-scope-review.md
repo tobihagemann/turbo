@@ -12,6 +12,7 @@ Identify the plan's requirements and its stated bounds (Context, governing spec,
 - **YAGNI** — Steps that build something no requirement asks for: unrequested features, premature abstractions, or scaffolding for anticipated work
 - **Design Direction** — Whether the chosen approach is the simplest safe option. Challenge assumptions the plan depends on and flag when a different approach would be safer or simpler
 - **Proportionality** — Steps whose machinery (leases, locks, queues, versioning schemes, state machines, new persistent entities) exceeds the failure modes and scale the plan's Context or governing spec admits
+- **Self-Referential Justification** — Mechanism justified by a failure mode that exists only because that mechanism is present. Trace each justification back to a requirement or bound; when the chain closes on itself, test whether cutting the mechanism removes its dependents rather than judging each link alone
 
 ## Determination Criteria
 
@@ -33,5 +34,5 @@ A deliberate design choice is in range here: name the choice and the evidence ag
 ## What to Ignore
 
 - Alternative approaches without evidence of concrete advantages over the chosen one
-- A step the dependency chain or a stated constraint requires, even when folding it into a neighbor would shorten the plan
+- A step the dependency chain or a stated constraint requires, even when folding it into a neighbor would shorten the plan; a dependency the reviewed mechanism itself creates does not count as such a requirement
 - Input validation at trust boundaries, error handling that prevents data loss, security controls, and accessibility affordances; these stay even when the requirements do not name them

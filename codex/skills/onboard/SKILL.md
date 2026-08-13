@@ -17,7 +17,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 
 ## Step 1: Launch All Agents
 
-Launch the 6 agents below in parallel. Each Composed Skills agent invokes its assigned skill by reading and following the installed skill instructions; each Inline Agent follows its exploration brief directly. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to explore by reading and reasoning, except that each Composed Skills sub-agent writes the report files its own skill defines.
+Issue all 6 `spawn_agent` calls below in one batch, then collect their results with `wait_agent`. Do not issue one and await its result before issuing the rest. Each sub-agent inherits the parent model. Each Composed Skills agent invokes its assigned skill by reading and following the installed skill instructions; each Inline Agent follows its exploration brief directly. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to explore by reading and reasoning, except that each Composed Skills sub-agent writes the report files its own skill defines. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
 ### Composed Skills
 

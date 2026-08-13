@@ -24,7 +24,7 @@ When a skill spawns sub-agents, use `spawn_agent` to launch each branch and `wai
 
 - ✗ **Avoid**: "Launch all four agents concurrently."
 - ✗ **Avoid**: "Spawn a sub-agent to review the output."
-- ✓ **Good**: "Issue four `spawn_agent` calls (one per role described below), then join with `wait_agent`."
+- ✓ **Good**: "Issue all four `spawn_agent` calls (one per role described below) in one batch, then collect their results with `wait_agent`. Do not issue one and await its result before issuing the rest."
 
 ### Phrase Multi-Agent Parallel Dispatch Imperatively
 
@@ -32,7 +32,9 @@ To fan out N sub-agents in parallel, issue N `spawn_agent` calls in one batch an
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted sub-agent roles:
 
-> Issue all <N> `spawn_agent` calls below in one batch so they run concurrently, then collect their results with `wait_agent`. Each sub-agent inherits the parent model.
+> Issue all <N> `spawn_agent` calls below in one batch, then collect their results with `wait_agent`. Do not issue one and await its result before issuing the rest. Each sub-agent inherits the parent model.
+
+Constrain the batch rather than naming the outcome. "So they run concurrently" states a goal the agent can believe it is meeting while issuing one call at a time; "do not issue one and await its result" names the behavior that would violate it, which is checkable against what the batch actually contains.
 
 State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one sub-agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
 
@@ -56,6 +58,8 @@ Mentioning `$skill-name` injects the skill's SKILL.md as a contextual fragment f
 
 When a skill fans out parallel sub-agents that read the same working tree (reviewers, analyzers, mappers), direct each sub-agent's prompt to treat the shared working tree and its git index as read-only. Concurrent sub-agents editing files or running git state-changing commands (`add`, `commit`, `checkout`, `restore`, `stash`, `reset`) on the tree they all share race each other and the orchestrator, and a botched restore can corrupt uncommitted work or poison the index.
 
+Name the HEAD constraint in the shipped prompt rather than relying on "read-only" to imply it. A sub-agent that runs `git checkout` or `git switch` to inspect another ref leaves the working tree and index clean, so a verification checking only `git status` and a diff hash passes while the orchestrator sits on the wrong branch. Direct sub-agents to read other refs with `git show <ref>:<path>`, and have the orchestrator capture the branch before spawning and re-check it afterward.
+
 Give a sanctioned outlet rather than banning empirical work: a sub-agent that needs to verify a finding (such as a mutation experiment to confirm a test is non-vacuous) creates an isolated `git worktree` under the hygiene rules below, experiments there, and discards it. Default to reading and reasoning; reach for a worktree only when empirical proof materially raises confidence.
 
 Spell out that hygiene in the same instruction, because a sub-agent cannot repair what it breaks: the reinstall needs permissions it does not have. Removing a worktree deletes through symlinks, so a sub-agent that reaches the shared tree's dependency directory from inside its worktree destroys the shared install when it cleans up. Note also that `git status` never lists gitignored paths, so a destroyed install reads as a clean tree; a verification step that checks only git state will miss the damage entirely.
@@ -66,7 +70,7 @@ Put the constraint in the per-sub-agent dispatch instruction, the text that reac
 
 - ✗ **Avoid**: A Rules line "Analysis-only: does not modify source code" with no read-only constraint in the sub-agent prompts.
 - ✗ **Avoid**: "…any empirical check runs in an isolated `git worktree` it discards afterward." This sanctions the worktree without its hygiene, and reads as license to make the worktree runnable by any means.
-- ✓ **Good**: "Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the sub-agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the sub-agent cannot repair is reported with the exact repair command in place of findings."
+- ✓ **Good**: "Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the sub-agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the sub-agent cannot repair is reported with the exact repair command in place of findings."
 
 ### Keep Contended Test Tiers Out of the Fan-Out
 

@@ -98,15 +98,16 @@ At the start of Step 5, use `TaskCreate` to create a task for each remaining ste
 - "Review the skill" for Step 5
 - "Run /evaluate-findings skill" for Step 6
 - "Run /apply-findings skill" for Step 7
+- "Verify" for Step 8
 
 ## Step 5: Review the Skill
 
-After writing all files, spawn a subagent in the foreground (`model: "opus"`, no `name`) to review the skill. The subagent should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines. Its prompt must direct it to treat the shared working tree and its git index as read-only and to review by reading and reasoning; fixes happen in Step 7.
+After writing all files, spawn a subagent in the foreground (`model: "opus"`, no `name`) to review the skill. The subagent should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines. Its prompt must direct it to treat the shared working tree and its git index as read-only and to review by reading and reasoning; fixes happen in Step 7. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
 - **For new skills**, frame the review as open-ended: propose improvements, convention checks, writing quality.
 - **For modified skills** (simplification, restructuring, bug fix), frame the review as regression-focused: check whether the change broke anything. Tell the reviewer not to propose new features.
 - **For same-session iteration** (re-reviewing a skill after applying findings from a previous review in the same session), treat as modified: the review is checking whether the fixes broke anything.
-- **For batch changes** (multiple skills created or modified in the same session), group the work by distinct change rather than by skill. Two skills received the same change when the edited text is identical; otherwise each is a distinct change. Launch one review subagent per distinct change, plus one subagent covering every site of a change applied identically across several skills. Give that subagent the full site list, and have it check each site in its own local context and flag any comparable location in the batch that should have received the change but did not. Use the Agent tool to launch them all in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. State the total count and which sites map to which subagent when emitting the calls.
+- **For batch changes** (multiple skills created or modified in the same session), group the work by distinct change rather than by skill. Two skills received the same change when the edited text is identical; otherwise each is a distinct change. Launch one review subagent per distinct change, plus one subagent covering every site of a change applied identically across several skills. Give that subagent the full site list, and have it check each site in its own local context and flag any comparable location in the batch that should have received the change but did not. Emit all of those Agent tool calls in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. State the total count and which sites map to which subagent when emitting the calls.
 
 ## Step 6: Run `/evaluate-findings` Skill
 
@@ -115,5 +116,9 @@ Run the `/evaluate-findings` skill on the review findings.
 ## Step 7: Run `/apply-findings` Skill
 
 Run the `/apply-findings` skill on the evaluated findings.
+
+## Step 8: Verify
+
+When the skill bundles executable code, run the project's test suite and report the result: state pass or fail with the failing output, rather than closing the workflow on an assumption that the suite still passes. When the skill bundles none, or the project has no suite to run, say so.
 
 Then use the TaskList tool and proceed to any remaining task.

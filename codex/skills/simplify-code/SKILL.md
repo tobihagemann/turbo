@@ -17,7 +17,7 @@ Determine what to review:
 
 ## Step 2: Launch Six Review Agents in Parallel
 
-Launch all six agents below with `spawn_agent` / `wait_agent` using inherited model defaults so they run concurrently. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3.
+Launch all six agents below with `spawn_agent` / `wait_agent` using inherited model defaults, issuing every call in one batch. Do not issue one and await its result before issuing the rest. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
 ### Agent 1: Scope Review
 

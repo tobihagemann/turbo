@@ -9,7 +9,7 @@ description: "Run the code and documentation simplification passes together over
 
 Run the `$simplify-code` and `$simplify-docs` skills together, passing along any scope that was provided so both passes cover identical files.
 
-Spawn every review sub-agent the two skills define before joining any of them so they all run concurrently. Hold every fix for Step 2 in place of each skill's own fix step.
+Issue the `spawn_agent` calls for every review sub-agent the two skills define in one batch. Do not issue one and await its result before issuing the rest. Hold every fix for Step 2 in place of each skill's own fix step.
 
 ## Step 2: Fix Issues
 

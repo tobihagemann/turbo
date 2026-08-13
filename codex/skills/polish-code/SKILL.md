@@ -63,11 +63,11 @@ Stage all changes made in this step before continuing.
 
 Run the `$smoke-test` skill to produce the smoke test plan.
 
-Capture `git status --short` and `git diff HEAD | git hash-object --stdin` before spawning, and record both outputs in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
+Capture `git status --short`, `git diff HEAD | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning, and record all three outputs in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
 
 Delegate test execution to a Codex sub-agent with inherited model defaults. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context.
 
-**Verify the tree:** re-run both commands when the sub-agent returns, including when it terminates early or reports incomplete results. Compare against `Pending smoke-test baseline`. Delete what the sub-agent created and revert what it modified or staged, leaving everything that baseline already showed untouched. Clear the entry once the tree matches.
+**Verify the tree:** re-run all three commands when the sub-agent returns, including when it terminates early or reports incomplete results. Compare against `Pending smoke-test baseline`. Delete what the sub-agent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything that baseline already showed untouched. Clear the entry once the tree matches.
 
 If any test fails, fix the issues and stage the fixes.
 

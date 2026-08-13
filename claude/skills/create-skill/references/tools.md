@@ -29,7 +29,7 @@ Multiple Agent tool calls in a single message run in parallel. Prefer foreground
 
 - ✗ **Avoid**: "Launch all four agents concurrently in a single message."
 - ✗ **Avoid**: "Spawn a subagent to review the output."
-- ✓ **Good**: "Launch all four agents in a single message. Run them in the foreground so all results return in this turn (`model: "opus"`, no `name`)."
+- ✓ **Good**: "Emit all four Agent tool calls in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all results return in this turn (`model: "opus"`, no `name`)."
 
 ### Never Name a Spawned Agent
 
@@ -49,7 +49,9 @@ Tool calls within a single assistant message run concurrently. Tool calls across
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
 
-> Use the Agent tool to launch all <N> agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`.
+> Emit all <N> Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`.
+
+Constrain the message rather than naming the outcome. "So they run concurrently" states a goal the agent can believe it is meeting while emitting one call per message; "do not send one and await its result" names the behavior that would violate it, which is checkable against what the message actually contains.
 
 State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one Agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
 
@@ -73,6 +75,8 @@ The Skill tool loads instructions and returns immediately — the actual work (B
 
 When a skill fans out parallel subagents that read the same working tree (reviewers, analyzers, mappers), direct each subagent's prompt to treat the shared working tree and its git index as read-only. Concurrent agents editing files or running git state-changing commands (`add`, `commit`, `checkout`, `restore`, `stash`, `reset`) on the tree they all share race each other and the orchestrator, and a botched restore can corrupt uncommitted work or poison the index.
 
+Name the HEAD constraint in the shipped prompt rather than relying on "read-only" to imply it. A subagent that runs `git checkout` or `git switch` to inspect another ref leaves the working tree and index clean, so a verification checking only `git status` and a diff hash passes while the orchestrator sits on the wrong branch. Direct subagents to read other refs with `git show <ref>:<path>`, and have the orchestrator capture the branch before spawning and re-check it afterward.
+
 Give a sanctioned outlet rather than banning empirical work: a subagent that needs to verify a finding (such as a mutation experiment to confirm a test is non-vacuous) creates an isolated `git worktree` under the hygiene rules below, experiments there, and discards it. Default to reading and reasoning; reach for a worktree only when empirical proof materially raises confidence.
 
 Spell out that hygiene in the same instruction, because a subagent cannot repair what it breaks: the reinstall needs permissions it does not have. Removing a worktree deletes through symlinks, so a subagent that reaches the shared tree's dependency directory from inside its worktree destroys the shared install when it cleans up. Note also that `git status` never lists gitignored paths, so a destroyed install reads as a clean tree; a verification step that checks only git state will miss the damage entirely.
@@ -83,7 +87,7 @@ Put the constraint in the per-subagent dispatch instruction, the text that reach
 
 - ✗ **Avoid**: A Rules line "Analysis-only: does not modify source code" with no read-only constraint in the subagent prompts.
 - ✗ **Avoid**: "…any empirical check runs in an isolated `git worktree` it discards afterward." This sanctions the worktree without its hygiene, and reads as license to make the worktree runnable by any means.
-- ✓ **Good**: "Every agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the agent cannot repair is reported with the exact repair command in place of findings."
+- ✓ **Good**: "Every agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the agent cannot repair is reported with the exact repair command in place of findings."
 
 ### Keep Contended Test Tiers Out of the Fan-Out
 

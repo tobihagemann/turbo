@@ -17,7 +17,13 @@ Determine what to review:
 
 ## Step 2: Launch Two Review Agents in Parallel
 
-Use the Agent tool to launch both agents below in a single assistant message so they run concurrently. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Pass the scope from Step 1 to each agent. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3.
+Emit both Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Pass the scope from Step 1 to each agent. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
+
+Both agent prompts must also carry the readability criteria below, applied to the prose that survives that agent's own list:
+
+1. **Clause stacking** — a sentence carrying more than one idea. Split it.
+2. **Punctuation chains** — a second em dash, colon, or semicolon continuing the thought. Split the sentence. A `- **Term** — description` label separator is not a chain.
+3. **Dense paragraphs** — facts running together past the point a reader can hold them apart. Break into shorter sentences, keeping the passage as prose rather than converting it to a bullet list.
 
 ### Agent 1: Code Comments Review
 
@@ -33,7 +39,7 @@ Review code files in scope. Flag a comment when it adds no information beyond wh
 
 **Keep these:** comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. Greenfield test: would you write this comment if the code had been greenfield from day one?
 
-For each finding, propose: delete it, compress to the load-bearing WHY, or flag a refactor that would make the comment unnecessary.
+For each finding, propose: delete it, compress to the load-bearing WHY, restructure it for readability, or flag a refactor that would make the comment unnecessary.
 
 ### Agent 2: Markdown Documentation Review
 
@@ -48,7 +54,7 @@ Review markdown files in scope (READMEs, AGENTS.md, CLAUDE.md, docs/, contributo
 
 **Keep these:** passages that explain motivation, capture constraints or tradeoffs the code can't express, document interfaces meant for outside readers, or record decisions whose rationale would otherwise be lost.
 
-For each flagged passage, propose: delete it, tighten it, or rewrite it as timeless current-state prose.
+For each flagged passage, propose: delete it, tighten it, restructure it for readability, or rewrite it as timeless current-state prose.
 
 ## Step 3: Fix Issues
 

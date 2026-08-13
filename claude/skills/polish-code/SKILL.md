@@ -54,11 +54,11 @@ Stage all changes made in this step before continuing.
 
 Run the `/smoke-test` skill to produce the smoke test plan.
 
-Capture `git status --short` and `git diff HEAD | git hash-object --stdin` before spawning.
+Capture `git status --short`, `git diff HEAD | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning.
 
 Delegate test execution to a subagent using the Agent tool in the foreground (`model: "opus"`, no `name`). Pass the plan and the diff command (`git diff --cached`) to the subagent.
 
-**Verify the tree:** re-run both commands when the subagent returns, including when it terminates early or reports incomplete results. Delete what the subagent created and revert what it modified or staged, leaving everything the pre-spawn capture already showed untouched.
+**Verify the tree:** re-run all three commands when the subagent returns, including when it terminates early or reports incomplete results. Delete what the subagent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything the pre-spawn capture already showed untouched.
 
 If any test fails, fix the issues and stage the fixes.
 

@@ -103,6 +103,8 @@ When a round's findings turn on how a platform, framework, or dependency behaves
 
 **When the same class of defect recurs across iterations**, stop patching the individual instance and instead write the root-cause invariant into the artifact itself, enumerating the worked failures it must prevent. In the same pass, re-read the whole artifact against the new invariant and fix every instance it catches, including text written before the invariant existed. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 
+**When a round has adopted a scope narrowing to limit blast radius**, check that the narrowing is derivable. The narrow case is implementable only when the fact distinguishing it from the broad case is available to the implementation at the point the rule runs, whether from persisted state, the request, configuration, or data already at hand; when nothing supplies that fact, the two cases are indistinguishable at runtime and the rule silently strands whatever it excludes. Widen back to the broad case rather than carrying a rule nothing can evaluate, unless the user chose the narrowing: then surface it as Escalate, naming the original decision and this evidence beside it.
+
 The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

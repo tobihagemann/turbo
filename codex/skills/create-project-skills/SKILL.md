@@ -37,7 +37,7 @@ Output a short text summary of detected stack, top-level layout, chosen target d
 
 Read [references/pattern-extractor.md](references/pattern-extractor.md) to see the full taxonomy of pattern categories. Decide which categories apply to the detected stack (e.g., drop "Styling and UI" for a backend service, drop "State management" for a static-analysis tool).
 
-Launch one extraction sub-agent per applicable category in parallel. State the total count explicitly before emitting the batch. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to extract by reading and reasoning. Each agent's prompt must:
+Issue one extraction `spawn_agent` call per applicable category, all in one batch, then collect their results with `wait_agent`. Do not issue one and await its result before issuing the rest. Each sub-agent inherits the parent model. State the total count explicitly before emitting the batch. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to extract by reading and reasoning. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Each agent's prompt must:
 
 - Name its assigned category
 - Include the stack summary and directory map from Step 1
