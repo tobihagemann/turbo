@@ -46,7 +46,7 @@ Run the `/evaluate-findings` skill on the results from Step 3.
 
 Run the `/apply-findings` skill on the evaluated results.
 
-When a fix ships with a regression test, confirm the test fails with the fix reverted, then restore the fix. A test that cannot be made to fail does not pin the behavior; say so rather than counting it as coverage. When the fix guards against an unbounded loop or wait, bound the test itself so that reverting the fix fails rather than hangs: cap the iteration count for a loop; enforce a deadline for a wait.
+When a fix ships with a regression test, confirm the test fails with the fix reverted, then restore the fix. A test that cannot be made to fail does not pin the behavior; say so rather than counting it as coverage. When the fixed code combines several signals, also apply the plausible rewrites a maintainer might reach for — reordering the signals, substituting a fallback chain for a conjunction, dropping a term that looks redundant — and confirm each fails at least one test, then restore the fixed code. A rewrite that passes every test while changing behavior on some input means the tests pin the examples rather than the invariant; add the test that distinguishes it. When the fix guards against an unbounded loop or wait, bound the test itself so that reverting the fix fails rather than hangs: cap the iteration count for a loop; enforce a deadline for a wait.
 
 Stage all changes made in this step before continuing.
 
