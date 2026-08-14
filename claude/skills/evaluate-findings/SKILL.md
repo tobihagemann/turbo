@@ -50,12 +50,13 @@ Also assign an internal confidence level — **High**, **Medium**, or **Low** �
 
 **Conflict guidance:** When two findings contradict each other (they suggest opposite changes to the same code), treat the conflict as input, not a reason to skip. Verify each against the code and judge each on its merits as usual. If both are defensible and the choice is a genuine trade-off, assign Escalate to both, naming the opposing options so the user can decide.
 
-An affirmation that something is correct is not a finding and carries no evidentiary weight; agreement among reviewers, or a reviewer's authority, does not settle whether a problem exists. When reviewers disagree on whether something is a problem at all — including one asserting it is fine while another flags it — treat the question as unresolved and verify it against the code, without letting the affirmation substitute for verification.
+An affirmation that something is correct is not a finding and carries no evidentiary weight; agreement among reviewers, or a reviewer's authority, does not settle whether a problem exists, nor whether a remedy the reviewers converged on works. When reviewers disagree on whether something is a problem at all — including one asserting it is fine while another flags it — treat the question as unresolved and verify it against the code, without letting the affirmation substitute for verification.
 
 A reviewer's report that it could not verify something is a claim to check, not a fact to accept. Attempt the check independently, especially when the reported inability is what justifies skipping a verification step.
 
 **Verdict guidance:**
 
+- A verdict records whether the finding is real: genuine defect, in scope, at what severity. A finding can hold while the remedy proposed for it does not, so a verdict never certifies the remedy. Judge the remedy's cost and scope where the bullets below call for that, and leave whether it works to be checked when it is applied. Where naming the likely direction helps the user, put it in the Issue cell flagged as unverified.
 - Never auto-dismiss findings about security defaults, permission escalation, or fail-open vs fail-closed behavior. Always surface these even if the behavior appears intentional.
 - Readability and clarity improvements that genuinely make code cleaner are valid. Do not auto-classify cosmetic changes as subjective.
 - Removing a comment that adds no information beyond the code is a valid Apply, not a subjective preference. Keep only comments that capture a constraint the code cannot express.

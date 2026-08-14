@@ -98,7 +98,7 @@ Verify each hypothesis with minimal, targeted actions:
 | Inspect runtime state | Bash (add temporary logging, run, check output) |
 | Vary one suspected variable | Bash (construct a throwaway fixture, run, compare) |
 
-When read-only evidence cannot discriminate, construct minimal throwaway fixtures that vary one suspected variable at a time. Exercise the system's inputs, and leave the working tree and its git index unchanged. Label each fixture clearly, delete them once the experiment concludes, and report anything that could not be deleted. Write to an external or live system only after explicit user approval via `AskUserQuestion`, stating the target system, the write, and the cleanup plan.
+When read-only evidence cannot discriminate, construct minimal throwaway fixtures that vary one suspected variable at a time. Exercise the system's inputs, and leave the working tree and its git index unchanged. Label each fixture clearly, delete them once the experiment concludes, and report anything that could not be deleted. When a check edits a tracked file instead, such as adding temporary logging, remove the edit once the check concludes and confirm with `git diff -- <file>` that the file is back to its pre-check state before recording the result. Write to an external or live system only after explicit user approval via `AskUserQuestion`, stating the target system, the write, and the cleanup plan.
 
 Record each result:
 

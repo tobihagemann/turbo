@@ -24,6 +24,7 @@ Assemble a prompt for Claude:
 
 - State that Claude is acting as an independent peer reviewer for Codex.
 - Identify the exact material and scope. Pass text you did not author as file paths and diff commands rather than pasted content.
+- When the review revisits material an earlier round already covered, rebuild the review subject from the material's current content and state that any earlier version of it is superseded.
 - Instruct Claude to read referenced criteria files directly.
 - Bound Claude's reads to the material under review, the sources needed to verify claims about it, and the criteria identified in Step 1. Exclude documents unrelated to those three.
 - Preserve independent dimensions. If multiple dimensions are requested and Codex sub-agent fan-out is unavailable, ask Claude to review each dimension in a separately labeled section. When the request instead asks explicitly for a single-pass review covering all dimensions, keep it to one pass with each dimension in its own labeled section rather than fanning out.
