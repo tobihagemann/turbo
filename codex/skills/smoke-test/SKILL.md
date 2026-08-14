@@ -61,6 +61,8 @@ When another agent will execute this plan, append a **Setup contract** capturing
 
 Include an item only when the executor would otherwise derive it from application source; omit anything the running app makes self-evident. Require these details when the chosen testing approach prohibits reading application source as setup documentation.
 
+Write each precondition as an observation the executor makes rather than a fact it can rely on, and say what to do when it does not hold: name the substitute setup, or direct the executor to report the precondition as wrong rather than the scenario as failed.
+
 **When the scope's happy path writes to a shared external system and those writes are not cleanly undoable**, scope the plan to a path that provably cannot write: choose fixture data with nothing to act on, so the run still exercises wiring, auth, queries, guards, and failure isolation while writing nothing. Treat writes as not cleanly undoable whenever restoring the records leaves downstream effects the writes triggered in place. State that scoping choice in the plan so the executor does not widen it back. When the writing path must run, use `request_user_input` to confirm first, then capture a pre-run manifest and write an ordered revert procedure; when another agent will execute the plan, carry both in the Setup contract's **Seed/reset** item.
 
 ## Step 4: Execute
