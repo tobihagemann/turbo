@@ -20,7 +20,7 @@ Group Apply findings by file path and apply in file order to minimize context sw
 1. Read the full function or logical block at the referenced location
 2. Verify the finding still applies to the current code
 3. When the finding carries a suggested fix, treat the fix as a separate claim from the finding and verify it independently before applying it — trace it against the failure modes the finding names. When the fix encodes, escapes, quotes, or otherwise sanitizes untrusted input, enumerate the character classes the target interpreter treats specially and name the construct in the fix that blocks each one; a class with no blocker means the fix is incomplete, including when it reproduces the finding's suggested wording. If the fix does not hold up, treat the finding as Escalate (surface it in Step 3) and record why the remedy fails, rather than applying an unsound fix on the finding's authority.
-4. When the fix would reverse a decision the user made earlier — in discussion or recorded in the artifact — treat the finding as Escalate (surface it in Step 3) and name the original decision.
+4. When the fix would reverse a decision the user made earlier — in discussion or recorded in the artifact — treat the finding as Escalate (surface it in Step 3) and name the original decision. Judge by the outcome rather than the wording of the option the user chose: a reversal leaves the user with something materially different from what they chose. When the finding refutes only the factual premise the user's choice rested on and the fix leaves the chosen outcome intact, that is a premise correction: confirm the refutation against whichever of the code, the governing artifact, or authoritative documentation the premise turns on, and when none settles it, treat the finding as Escalate. Otherwise continue with the remaining checks, and state both the corrected premise and the chosen outcome it leaves standing in Step 4.
 5. Check what the fix you are about to make changes about the inputs the code accepts. When the change in accepted inputs is exactly the defect the finding names, apply it normally. When it turns away or newly admits anything beyond that defect — a value or path a legitimate caller could send — that is a behavior change: treat the finding as Escalate (surface it in Step 3) and name the input class that changes.
 6. Make the fix
 7. If the finding renames an identifier, search the file for all occurrences of the old name before marking the fix complete. The cited location is often only one of several references.
@@ -54,7 +54,7 @@ Where Outcome is one of:
 - **Escalated** — name the resolution the user chose: applied, skipped, or noted for later
 - **Skipped** — name the reason
 
-Keep the report to the table. Add prose only where an escalation's resolution changed what the other fixes look like.
+Keep the report to the table. Add prose only where an escalation's resolution changed what the other fixes look like, or where a fix corrected the factual premise a user's choice rested on.
 
 Then use the TaskList tool and proceed to any remaining task.
 
