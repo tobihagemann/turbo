@@ -1,11 +1,11 @@
 ---
 name: survey-patterns
-description: "Survey the codebase for analogous features, reusable utilities, and existing patterns relevant to a proposed change. Returns structured findings without writing code. Use when the user asks to \"survey patterns\", \"find existing patterns\", \"look for analogous features\", \"check how similar things are done\", \"find prior art for this change\", or needs pattern context before planning a change."
+description: "Survey the codebase for analogous features, reusable utilities, and existing patterns relevant to a proposed change, reading any source the task names outside this repo. Returns structured findings without writing code. Use when the user asks to \"survey patterns\", \"find existing patterns\", \"look for analogous features\", \"check how similar things are done\", \"find prior art for this change\", or needs pattern context before planning a change."
 ---
 
 # Survey Patterns
 
-Search the codebase for analogous features and reusable building blocks before planning a change. Returns structured findings. Does not write code or plans.
+Search the codebase for analogous features and reusable building blocks before planning a change, and read any source the task names outside this repo. Returns structured findings. Does not write code or plans.
 
 ## Step 1: Identify the Task
 
@@ -23,7 +23,7 @@ Spawn a single subagent in the foreground (`model: "opus"`, no `name`). Its prom
 1. The confirmed task description from Step 1
 2. An instruction to read [references/pattern-surveyor.md](references/pattern-surveyor.md) for survey guidelines, categories, and output format before searching
 
-The subagent covers all three categories (Analogous Features, Reusable Utilities, Convention Anchors) in one sweep and returns a single structured report.
+The subagent covers all three categories (Analogous Features, Reusable Utilities, Convention Anchors) in one sweep, reads any external source the task names, and returns a single structured report.
 
 ## Step 3: Output Findings
 

@@ -1,6 +1,6 @@
 # Pattern Surveyor Guidelines
 
-Search the codebase for analogous features, reusable utilities, and convention anchors relevant to a proposed change. Return a single structured report. Do not write code, propose implementation steps, or write files.
+Search the codebase for analogous features, reusable utilities, and convention anchors relevant to a proposed change, together with any source the task names outside this repo. Return a single structured report. Do not write code, propose implementation steps, or write files.
 
 ## Survey Process
 
@@ -10,6 +10,7 @@ Read the task description from the prompt. Identify:
 
 - What kind of change is being proposed (new feature, refactor, bug fix)
 - What domain or subsystem it touches
+- Any source the task names outside this repo: another repo, a branch, a stash, a shelved experiment
 
 ### 2. Search All Three Categories
 
@@ -28,11 +29,19 @@ Cover all three categories in one sweep. The searches overlap heavily: the same 
 - Target the search by keyword and file type. Avoid reading entire directories.
 - When counting occurrences of a target (symbol, route, URL, identifier) to size a change's blast radius, enumerate it across all its syntactic forms — named reference, bare string literal, value passed into a helper where the assertion lives elsewhere — rather than trusting a single search pattern's count.
 
-### 4. Decide on Alignment
+### 4. Read Named External Sources
+
+A description of a source the task names outside this repo is a claim to verify, like a `file:line` citation about local code. Read the source and report what it holds, or state plainly that it could not be reached. A summary carried in a task description, a backlog entry, or an earlier artifact is never a finding on its own.
+
+Read the source without changing it, leaving any repository it lives in as you found it. Before reporting a source as empty or thin, confirm the view you used shows everything it holds: shelved and unpublished work is often absent from the default listing.
+
+### 5. Decide on Alignment
 
 After searching, form a short recommendation: should the new work follow the patterns you found, deviate from them, or blend approaches? Base the recommendation on what exists, not on speculation about what could exist.
 
 When the recommendation keeps the work inside the existing patterns, state what those patterns leave the work to handle.
+
+When the recommendation carries a design from a named external source into this codebase, name the assumptions its original environment supplied, report which of them this codebase provides, and separate what the task asks for from what the design carried along.
 
 ## Output Format
 
@@ -59,9 +68,11 @@ Return findings as a single structured markdown block:
 
 If a category has no findings, write "None found" under the header rather than omitting the section. If no analogous features exist at all, state that explicitly in Proposed Alignment rather than forcing a comparison.
 
+Report what a named external source holds in whichever of the three categories it belongs to. Cite it so the source and the exact view are identifiable and the entry cannot be read as a local path, and say whether it is available in this codebase or is design-only material to carry over. When a named source could not be reached, state that in Proposed Alignment.
+
 ## Rules
 
 - Do not write files.
 - Do not propose implementation steps.
-- Do not speculate. Report only patterns that exist in the codebase right now.
+- Do not speculate. Report only patterns that exist right now, in the codebase or in a named external source you read.
 - Flag only patterns that affect architecture, data flow, or where new code should live. Report naming and file placement as structural conventions, not cosmetic preferences.

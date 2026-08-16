@@ -25,7 +25,7 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 | [`/implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-implementation prep, hand off to `/implement` | [`/implement`](skills/implement/SKILL.md) | [`/turboplan`](skills/turboplan/SKILL.md) |
 | [`/pick-next-shell`](skills/pick-next-shell/SKILL.md) | Pick the next shell and carry it through planning: expand, refine, self-improve, halt | [`/expand-shell`](skills/expand-shell/SKILL.md), [`/refine-plan`](skills/refine-plan/SKILL.md), [`/self-improve`](skills/self-improve/SKILL.md) | |
 | [`/pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it | [`/turboplan`](skills/turboplan/SKILL.md) | |
-| [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase for analogous features, reusable utilities, and convention anchors | | [`/draft-plan`](skills/draft-plan/SKILL.md), [`/expand-shell`](skills/expand-shell/SKILL.md) |
+| [`/survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase and any named external source for analogous features, reusable utilities, and convention anchors | | [`/draft-plan`](skills/draft-plan/SKILL.md), [`/expand-shell`](skills/expand-shell/SKILL.md) |
 
 ## Code
 
