@@ -30,7 +30,7 @@ Always check for project-specific testing skills or MCP tools first. Use the fal
 Before drafting tests, check whether there is something to exercise:
 
 - **No user-visible change in the resolved scope** — look for an existing integration test target that covers the change and is not part of the default test suite (so it hasn't already run in this session). If one exists, run it via the Integration Test Path in Step 4. If nothing exists, report that there is no interactive surface to verify and no separate integration suite to fall back on, then stop.
-- **Required infrastructure cannot be stood up in this session** (backend service, auth provider, seed data, external dependency) — report blocked, naming what is missing, then stop.
+- **Required infrastructure cannot be stood up in this session** (backend service, auth provider, seed data, external dependency) — look for a stub before reporting blocked. When the dependency is reached through a client whose endpoint is runtime configuration, repoint that endpoint at a local stub; the same interception yields an artifact the system emits rather than provides (a token, a session identifier, a single-use link). Confine this to runtime configuration and leave the working tree unchanged. When a stub works, record it in the Setup contract's **Mock boundaries** item and carry on with the plan. Report blocked when no stub applies or the ones that do fail, naming what is missing and what was tried, then stop.
 
 Otherwise, design targeted smoke tests. Each test should:
 
@@ -54,7 +54,7 @@ When another agent will execute this plan, append a **Setup contract** capturing
 
 - **Start environment** — commands and variables to bring up each service in isolation
 - **Test identity** — the account or credentials the run authenticates as
-- **Seed/reset** — operations that establish or restore baseline data
+- **Seed/reset** — operations that establish or restore baseline data, plus the enumerated write set when the plan authorizes writes
 - **Required state** — fixtures or preconditions each scenario depends on
 - **Mock boundaries** — external services stubbed, with the response shapes and state transitions to return
 - **Owned cleanup** — named sessions, ports, and scratch resources this run creates and must release
@@ -63,7 +63,7 @@ Include an item only when the executor would otherwise derive it from applicatio
 
 Write each precondition as an observation the executor makes rather than a fact it can rely on, and say what to do when it does not hold: name the substitute setup, or direct the executor to report the precondition as wrong rather than the scenario as failed.
 
-**When the scope's happy path writes to a shared external system and those writes are not cleanly undoable**, scope the plan to a path that provably cannot write: choose fixture data with nothing to act on, so the run still exercises wiring, auth, queries, guards, and failure isolation while writing nothing. Treat writes as not cleanly undoable whenever restoring the records leaves downstream effects the writes triggered in place. State that scoping choice in the plan so the executor does not widen it back. When the writing path must run, use `request_user_input` to confirm first, then capture a pre-run manifest and write an ordered revert procedure; when another agent will execute the plan, carry both in the Setup contract's **Seed/reset** item.
+**When the scope's happy path writes to a shared external system and those writes are not cleanly undoable**, scope the plan to a path that provably cannot write: choose fixture data with nothing to act on, so the run still exercises wiring, auth, queries, guards, and failure isolation while writing nothing. Treat writes as not cleanly undoable whenever restoring the records leaves downstream effects the writes triggered in place. State that scoping choice in the plan so the executor does not widen it back. When the writing path must run, work through it in order. Determine the full write set without executing it: use a dry-run mode when one exists, otherwise trace the code path and enumerate every record it writes, including those reached through triggers, cascades, and hooks. State what the enumeration cannot settle rather than presenting it as complete. Pick the target whose writes are incidental to what the run verifies, weighing each candidate's write set against the coverage it adds. Then request approval via `request_user_input`, presenting the enumeration as what is being consented to, and request it again whenever the enumeration changes. When `request_user_input` does not reach the user, write nothing and report the approval as unresolved. Capture a pre-run manifest and write an ordered revert procedure; when another agent will execute the plan, carry the enumeration, the manifest, and the revert procedure in the Setup contract's **Seed/reset** item.
 
 ## Step 4: Execute
 
@@ -136,9 +136,9 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Always clean up: close only the browser sessions this run opened, by name, and stop the dev servers this skill started. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
+- Always clean up: close only the browser sessions this run opened, by name, stop the dev servers and stubs this skill started, and restore any configuration it repointed. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
 - Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test.
-- Never modify code. This skill is read-only verification. If a test fails, report the failure — do not attempt to fix it.
+- Never modify code. This skill is read-only verification, with one exception: a stub reached through runtime configuration, restored on cleanup. If a test fails, report the failure — do not attempt to fix it.
 - If the dev server fails to start, report the error and stop.
 - Keep tests focused on the determined scope.
 - When the scope has an interactive surface, drive that surface directly — a CLI command, HTTP request, or UI interaction — rather than importing an internal function to print its result or re-running the unit test suite. The Integration Test Path is the only sanctioned non-interactive fallback.

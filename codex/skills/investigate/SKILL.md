@@ -55,6 +55,8 @@ Before treating a record, file, or build artifact as evidence of the system's be
 
 ## Step 3: Hypothesize
 
+Before forming a hypothesis about the machinery around a failure, such as a toolchain version, a configuration policy, or an environment difference, read the failing line, identify every path, package, symbol, or resource it names, and confirm each one resolves. Error text often names the site that consumed a missing input rather than the input itself, so the surrounding machinery looks responsible when it is not. Rank a machinery hypothesis only after every named reference checks out.
+
 Generate 2-4 hypotheses ranked by likelihood. Each hypothesis must be **falsifiable** — specify what evidence would confirm or refute it.
 
 Format:
@@ -98,7 +100,7 @@ Verify each hypothesis with minimal, targeted actions:
 | Inspect runtime state | Bash (add temporary logging, run, check output) |
 | Vary one suspected variable | Bash (construct a throwaway fixture, run, compare) |
 
-When read-only evidence cannot discriminate, construct minimal throwaway fixtures that vary one suspected variable at a time. Exercise the system's inputs, and leave the working tree and its git index unchanged. Label each fixture clearly, delete them once the experiment concludes, and report anything that could not be deleted. When a check edits a tracked file instead, such as adding temporary logging, remove the edit once the check concludes and confirm with `git diff -- <file>` that the file is back to its pre-check state before recording the result. Write to an external or live system only after explicit user approval via `request_user_input`, stating the target system, the write, and the cleanup plan.
+When read-only evidence cannot discriminate, construct minimal throwaway fixtures that vary one suspected variable at a time. Exercise the system's inputs, and leave the working tree and its git index unchanged. Label each fixture clearly, delete them once the experiment concludes, and report anything that could not be deleted. When a check edits a tracked file instead, such as adding temporary logging, remove the edit once the check concludes and confirm with `git diff -- <file>` that the file is back to its pre-check state before recording the result. Write to an external or live system only after explicit user approval via `request_user_input`, stating the target system, every record the write will touch including those reached through triggers, cascades, and hooks, and the cleanup plan. When `request_user_input` does not reach the user, write nothing and report the approval as unresolved.
 
 Record each result:
 
@@ -160,5 +162,5 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- If the problem turns out to be environmental (wrong Node version, missing dependency, OS-specific), report that clearly — it may not require a code fix.
+- If the problem turns out to be environmental (wrong language runtime version, a declared dependency not installed locally, OS-specific), report that clearly — it may not require a code fix. A dependency the project never declared is a manifest defect, so report that as a code fix instead.
 - If the problem is in a dependency (not the project's code), document the dependency issue and suggest workaround options rather than patching the dependency.
