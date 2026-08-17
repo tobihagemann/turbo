@@ -35,7 +35,7 @@ Pick a slug for the test plan from the change under test:
 - Trim leading and trailing hyphens
 - Truncate to 40 characters at a word boundary
 
-If the work is anchored to an existing artifact (a plan at `.turbo/plans/<slug>.md`, a shell at `.turbo/shells/<slug>.md`, or a spec at `.turbo/specs/<slug>.md`), reuse that artifact's slug verbatim.
+If the work is anchored to an existing plan at `.turbo/plans/<slug>.md`, reuse that plan's slug verbatim.
 
 The user may pass an explicit slug or path; honor it.
 

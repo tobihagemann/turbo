@@ -14,7 +14,7 @@ Use `TaskCreate` to create a task for each phase:
 
 ## Phase 1: Run `/draft-plan` Skill
 
-Run the `/draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a spec path. Capture the resolved plan path from `/draft-plan`'s output for the next phases.
+Run the `/draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a path to a background document. Capture the resolved plan path from `/draft-plan`'s output for the next phases.
 
 ## Phase 2: Run `/refine-plan` Skill
 

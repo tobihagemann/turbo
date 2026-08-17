@@ -35,21 +35,23 @@ Example: "Add a caching layer to the image pipeline" → `add-a-caching-layer-to
 
 If `.turbo/plans/<slug>.md` already exists, append `-2`, `-3`, etc. until the path is free. Do not overwrite.
 
-The user may pass an explicit slug or path in their request (e.g., "draft plan as `auth-rewrite`"). If so, honor it. If `.turbo/plans/<slug>.md` exists in that case, use `AskUserQuestion` to ask whether to overwrite, append a numeric suffix, or pick a different slug.
+The user may pass an explicit slug or output path in their request (e.g., "draft plan as `auth-rewrite`"). If so, honor it. If `.turbo/plans/<slug>.md` exists in that case, use `AskUserQuestion` to ask whether to overwrite, append a numeric suffix, or pick a different slug.
+
+A path to a file that already exists is background input rather than an output destination. Treat it as the output path only when the request says so explicitly.
 
 State the chosen slug and the resulting plan path before continuing.
 
-### Spec-Derived Input
+### Background Document as Input
 
-If the task references an existing spec at `.turbo/specs/<slug>.md` (when a spec path is passed as input), treat the spec as the source of truth for product decisions and discussion areas. Read the spec, then:
+If a path to a background document is passed as input (a design doc, an issue, a written proposal), treat it as the source of truth for product decisions and discussion areas. Read it, then:
 
-- In Step 4, skip escalation for any product decision the spec resolves. Only escalate questions the spec did not answer.
-- In Step 5, skip deep-dive areas the spec covers. Only discuss areas the spec did not address.
-- Forward the spec's slug as the plan slug so the plan and spec share a slug. If `.turbo/plans/<spec-slug>.md` already exists, do not auto-suffix (that would break the shared-slug invariant). Use `AskUserQuestion` to ask whether to overwrite or pick a different slug, mirroring Step 1's explicit-slug collision handling.
+- In Step 4, skip escalation for any product decision the document resolves. Only escalate questions it did not answer.
+- In Step 5, skip deep-dive areas the document covers. Only discuss areas it did not address.
+- Confirm the deployment's bounds with the user even when the document states them, rather than carrying them over as settled.
 
-A question is resolved by the spec only when the spec makes a definitive statement that answers it. Mentions without a chosen direction, open questions in the spec, and deferred decisions do not count as resolved; escalate those normally.
+A question is resolved only when the document makes a definitive statement that answers it. Mentions without a chosen direction, open questions, and deferred decisions do not count as resolved; escalate those normally.
 
-Step 2 (pattern survey) and Step 3 (consult skills and docs) still run in full. The spec describes what; `/draft-plan` still surveys how.
+Step 2 (pattern survey) and Step 3 (consult skills and docs) still run in full. The document describes what; `/draft-plan` still surveys how.
 
 ## Step 2: Run `/survey-patterns` Skill
 
@@ -75,7 +77,7 @@ Identify product or design decisions the user's request did not resolve. Escalat
 - Design trade-offs affect UX or product direction rather than technical implementation
 - Multiple valid approaches exist and the choice is a matter of product preference, not technical merit
 - The plan would introduce a pattern not yet established in this codebase, or follow one sourced from outside it
-- The plan adds consistency or durability machinery (a lease, lock, queue, versioning scheme, or new persistent entity) that no stated requirement or spec bound demands; carrying that machinery is itself a product decision
+- The plan adds consistency or durability machinery (a lease, lock, queue, versioning scheme, or new persistent entity) that no stated requirement or deployment bound demands; carrying that machinery is itself a product decision
 
 **Do not escalate** technical decisions the agent can make autonomously: which data structure, which existing pattern to follow, internal implementation approach. The boundary is product intent.
 
@@ -87,10 +89,15 @@ Offer a **Get a second opinion** option whenever the decision is costly to rever
 
 ## Step 5: Deep-Dive Discussion
 
-Interview the user relentlessly about every aspect of the implementation shape until you reach shared understanding. Use `AskUserQuestion`, one question at a time. Use the pattern survey findings to frame choices. Cover whichever of these matter for the task. Do not present a rigid checklist:
+Interview the user relentlessly about every aspect of the implementation shape until you reach shared understanding. Use `AskUserQuestion`, one question at a time. Use the pattern survey findings to frame choices. Cover whichever of these matter for the task. Do not present a rigid checklist.
+
+Settle the first two rows before the rest, so implementation choices land against concrete outcomes and bounds instead of being taken in the abstract. When the user jumps to implementation shape early, engage briefly then circle back.
 
 | Area | What to explore |
 |---|---|
+| **Outcomes** | What must be true when this is done? The observable behaviors that decide whether it worked, and the acceptance criteria that pin each one. |
+| **Bounds** | How many users and operators, now and realistically? Concurrent writers? Which rigor tier is proportionate — personal tool, small team, or business-critical — and what failure tolerance does that imply? |
+| **Constraints** | Which non-functional requirements apply: performance, security, accessibility, i18n, compliance? Which tech-stack, hosting, or integration choices does the work commit to? |
 | **Reuse vs new** | Which survey findings should the new work build on? Which should it deliberately not follow, and why? |
 | **File placement** | Where do new files live? Which existing files are modified? |
 | **Data flow** | How does data move through the change? Any new boundaries or contracts? |
@@ -125,6 +132,16 @@ status: draft
 
 <Why this change is being made — the problem or need it addresses, what prompted it, the intended outcome. One or two paragraphs.>
 
+<The deployment's bounds: user and operator count, concurrency, the rigor tier, and the failure tolerance it implies. One or two sentences.>
+
+## Acceptance Criteria
+
+What must be true when this is done:
+
+- When <trigger or condition>, the system shall <expected behavior>.
+- As a <persona>, I want <capability> so that <outcome>.
+  - Acceptance: <criterion>
+
 ## Pattern Survey
 
 <Insert the structured findings from `/survey-patterns`: Analogous Features, Reusable Utilities, Convention Anchors, Proposed Alignment. Use the same format the survey returned.>
@@ -157,6 +174,8 @@ Files to read in full before starting implementation:
 
 ### Content Rules for the Plan
 
+- **Context**: State the deployment's bounds explicitly. Downstream review judges whether the plan's machinery is proportionate against these bounds, so a plan that omits them leaves that judgment ungrounded.
+- **Acceptance Criteria**: State observable outcomes, not implementation steps. Use the behavioral form or the user-story form per criterion; both can appear in one plan. Every criterion with observable behavior must be exercised by the Verification section. Omit this section only when the change has no observable behavior, which the Verification section already records.
 - **Implementation Steps**: Use concrete `file_path` references and named functions or symbols. Reference existing functions and utilities from the Pattern Survey instead of reinventing them. Each step describes a discrete unit of work that can be tracked independently during execution.
 - **Verification**: Describe how to know the change actually works. Prefer specific test commands, named test files, or named smoke checks over vague phrases like "run the tests." If the change has no observable behavior, say so explicitly. When citing an existing test as proof that a behavior is already pinned, first confirm the test asserts the real value or behavior at issue rather than a fixture or the pass-through of a fabricated argument.
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
@@ -176,6 +195,6 @@ Then use the TaskList tool and proceed to any remaining task.
 ## Rules
 
 - Never skip the pattern survey.
-- Never skip decision escalation for questions left unanswered. When entering from a Spec-Derived Input, questions the spec already resolves are considered answered and may be skipped.
+- Never skip decision escalation for questions left unanswered. When entering from a Background Document as Input, questions the document already resolves are considered answered and may be skipped.
 - The plan file is the only output. Do not write code, scaffolding, or other project files.
 - Do not run `/review-plan` or any review skills here.

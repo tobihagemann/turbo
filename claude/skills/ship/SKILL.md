@@ -79,4 +79,4 @@ Then use the TaskList tool and proceed to any remaining task.
 
 - Run the `/commit-rules` skill before every commit; do not commit without loading it first.
 - Never stage or commit files containing secrets (`.env`, credentials, API keys). Warn if detected.
-- Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
+- Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

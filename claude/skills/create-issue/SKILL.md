@@ -51,5 +51,5 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
+- Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
 - Create labels only when the user asks.

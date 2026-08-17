@@ -124,4 +124,4 @@ stateDiagram-v2
 - If the existing body is empty or minimal, infer a style from the title and commit messages
 - Keep titles under 72 characters
 - Preserve any existing sections the user clearly cares about (test plans, checklists, links)
-- Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
+- Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

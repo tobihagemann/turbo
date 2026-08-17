@@ -1,6 +1,6 @@
 # Implement Improvements: Plan Lane
 
-Run `$turboplan` with the working-set entries.
+Run `$turboplan` with the working-set entries. The user runs `$implement-plan` in a fresh session afterward.
 
 The working set is the entries the user confirmed in SKILL.md Step 3.
 

@@ -23,7 +23,7 @@ Resolve the test plan using these rules in order:
 
 1. **Explicit path** — If the user passed a file path, use it
 2. **Explicit slug** — resolve to `.turbo/test-plans/<slug>.md`
-3. **Anchoring artifact** — If the work under test is anchored to a plan, shell, or spec, resolve to `.turbo/test-plans/<that-slug>.md` when that file exists
+3. **Anchoring artifact** — If the work under test is anchored to a plan, resolve to `.turbo/test-plans/<that-slug>.md` when that file exists
 4. **Single file** — Glob `.turbo/test-plans/*.md`. If exactly one file exists, use it
 5. **Most recent** — If multiple files exist, use the most recently modified
 6. **Legacy fallback** — `.turbo/test-plan.md` if `.turbo/test-plans/` does not exist

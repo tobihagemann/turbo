@@ -108,4 +108,4 @@ Then use the TaskList tool and proceed to any remaining task.
 - Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report any stashed file that no group shipped, rather than discarding it. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery.
 - Stacked PRs target the previous group's branch. Independent PRs target the default branch.
 - For stacked groups, the PR description should note the dependency chain.
-- Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
+- Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

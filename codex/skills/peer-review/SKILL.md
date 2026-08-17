@@ -1,6 +1,6 @@
 ---
 name: peer-review
-description: "Run an independent peer review via Claude. Use when the user asks to \"peer review\", \"peer review my code\", \"peer review my plan\", \"peer review my spec\", \"peer review my shells\", \"get a second opinion\", or \"independent review\"."
+description: "Run an independent peer review via Claude. Use when the user asks to \"peer review\", \"peer review my code\", \"peer review my plan\", \"get a second opinion\", or \"independent review\"."
 ---
 
 # Peer Review
@@ -11,8 +11,8 @@ Independent peer review via Claude. Translates a natural-language review request
 
 Extract from the current context:
 
-- **Material** — code diff, files, plan, spec, shells, feedback, or other artifact to review
-- **Review dimensions** — correctness, security, API usage, consistency, simplicity, coverage, plan readiness, spec quality, feedback interpretation, or explicit user criteria
+- **Material** — code diff, files, plan, feedback, or other artifact to review
+- **Review dimensions** — correctness, security, API usage, consistency, simplicity, coverage, plan readiness, feedback interpretation, or explicit user criteria
 - **Criteria** — reference file paths Claude should read directly, inline criteria text, or the material's own domain conventions
 - **Output format** — findings schema, verdict labels, priority scale, and any required metadata fields
 

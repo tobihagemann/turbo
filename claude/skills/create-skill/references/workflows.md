@@ -95,7 +95,7 @@ Phrasing like "Present this message: <factual summary>. Then use the TaskList to
 
 Blocker gates (covered in [tools.md](tools.md) under "Using AskUserQuestion") handle a different case: when the agent needs the user to choose between recoveries. Use neutral exit signals when the work simply terminates earlier than the full path.
 
-- ✗ **Avoid**: "Halt and tell the user 'no shells produced — run `/draft-plan` instead.'"
+- ✗ **Avoid**: "Halt and tell the user 'nothing produced — run `/skill-name` instead.'"
 - ✓ **Good**: "Present this message: '<factual summary>'. Then use the TaskList tool and proceed to any remaining task."
 
 ## Template Pattern

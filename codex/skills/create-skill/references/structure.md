@@ -149,8 +149,8 @@ When a skill file references another file in the same skill, the relative path r
 
 Use markdown links rather than inline code for cross-references. `[bar.md](bar.md)` matches how `SKILL.md` links to its references and how skills link to each other; inline `` `bar.md` `` reads as a path mention but loses the click-through and the convention.
 
-- ✗ **Avoid**: From `skills/X/references/spec-mode.md`: "follow `references/plan-mode.md`" — broken path; not a link.
-- ✓ **Good**: From `skills/X/references/spec-mode.md`: "follow [plan-mode.md](plan-mode.md)".
+- ✗ **Avoid**: From `skills/X/references/foo.md`: "follow `references/bar.md`" — broken path; not a link.
+- ✓ **Good**: From `skills/X/references/foo.md`: "follow [bar.md](bar.md)".
 
 ## Structure Longer Reference Files with Table of Contents
 

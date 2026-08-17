@@ -66,9 +66,11 @@ All values are multiples of 10 to align with draw.io's 10px grid.
 
 ## Arrows
 
-- Exit toward target: exitX=0 (left) or exitX=1 (right)
-- Enter from source direction: entryY=0 (top) or entryY=1 (bottom)
-- No labels on 1:1 pill-to-container arrows or /peer-review → /codex
+- Cross-container arrows use orthogonal auto-routing. Leave exit/entry anchors off; draw.io strips them whenever an endpoint is dragged, so a layout pass silently undoes them
+- Route around any container standing between source and target rather than crossing it. Force the detour with waypoints through an inter-container corridor, since auto-routing alone will cut through
+- Leave the waypoints draw.io writes when an edge is hand-routed, including pairs that repeat the same point. They are the tool's own routing state and it regenerates them on the next drag; removing them discards the route and re-runs auto-routing
+- After a layout pass, re-check that no arrow crosses a container. Fix a crossing by adding waypoints, not by removing them
+- No labels on 1:1 pill-to-container arrows, or on a pill's arrow to the tool it wraps
 - Keep labels on non-obvious connections (test failures, stuck after 2 cycles, routing labels)
 - Container labels use skill name only (e.g., "/finalize"), no sublabels
 
@@ -76,17 +78,17 @@ All values are multiples of 10 to align with draw.io's 10px grid.
 
 When deciding whether a sub-skill gets its own expansion swimlane or stays as a pill inside the parent:
 
-- **Single-call wrappers stay as pills.** A skill whose only job is a single `/codex-exec` invocation (e.g., `/peer-draft-plan`) should be shown as a pill inside the parent container, with a solid arrow to a sibling `/codex-exec` pill. Do NOT give it a separate expansion container — the expansion would add no information.
+- **Single-call wrappers stay as pills.** A skill whose only job is a single `/codex-exec` invocation should be shown as a pill inside the parent container, with a solid arrow to a sibling `/codex-exec` pill. Do NOT give it a separate expansion container — the expansion would add no information.
 - **Multi-step skills get their own container.** Skills with a meaningful internal flow (e.g., `/refine-plan` with review → evaluate → apply → re-run) earn their own swimlane.
 
 When encoding routing decisions (one step branches to multiple paths):
 
-- **Use dashed labeled arrows, not label pills.** From the branching step, draw a dashed arrow to each target pill, with the branch label as the edge value (e.g., `small-task / shell`, `complex`, `ship`, `split`). Do NOT insert intermediate label pills — they add a box without a corresponding step.
-- Match the style from existing examples: `/finalize`'s Analyze → /ship / /split-and-ship pattern and `/turboplan`'s Analyze complexity → /draft-plan / /create-spec pattern both use this convention.
+- **Use dashed labeled arrows, not label pills.** From the branching step, draw a dashed arrow to each target pill, with the branch label as the edge value (e.g., `direct`, `plan`, `ship`, `split`). Do NOT insert intermediate label pills — they add a box without a corresponding step.
+- Match the style from existing examples: `/finalize`'s Analyze → /ship / /split-and-ship pattern and `/turboplan`'s Analyze complexity → /discuss-change / /draft-plan pattern both use this convention.
 
 When an arrow crosses a container boundary to invoke another skill:
 
-- **Originate from a named invocation pill, not an unrelated prior step.** If container A calls `/foo` at the end of its flow, add a `/foo` pill as the final step inside A and draw the cross-container arrow from that pill, not from the step that happened to come before the invocation. Example: `/pick-next-prompt`'s final step is a `/turboplan` pill, not `Mark in-progress`; the loopback arrow to `/turboplan` originates from the `/turboplan` pill so the semantics match the label ("shell mode").
+- **Originate from a named invocation pill, not an unrelated prior step.** If container A calls `/foo` at the end of its flow, add a `/foo` pill as the final step inside A and draw the cross-container arrow from that pill, not from the step that happened to come before the invocation. Example: `/discuss-change`'s final step is an `/implement` pill, not `Confirm shape`; the arrow to the `/implement` container originates from that pill so the semantics match the invocation.
 
 ## Colors (Tailwind)
 

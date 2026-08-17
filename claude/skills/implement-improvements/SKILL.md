@@ -99,8 +99,8 @@ Pick one specific working set tailored to the active entries. Read the entries a
 - **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
 - **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger direct batch.
 - **Impact vs effort** — A reliability or correctness entry often outweighs lower-stakes cleanups even when it's a single entry.
-- **Lane shape** — Each lane batches a cluster, just in different shapes. Direct groups clear-scope fixes into one `/implement` run. Investigate dispatches `/investigate` per symptom, then shares one `/implement` for the concluded fixes. Plan hands a cohesive cluster to `/turboplan`, whose complexity routing decides whether it becomes one plan or a multi-shell spec.
-- **Unit of work size** — Right-size the session. Prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves session-sized work; picking 1–2 entries off a cluster of 7 wastes the slot. Route any entry that turns out to be a clear-scope direct fix to the direct lane instead.
+- **Lane shape** — Each lane batches a cluster, just in different shapes. Direct groups clear-scope fixes into one `/implement` run. Investigate dispatches `/investigate` per symptom, then shares one `/implement` for the concluded fixes. Plan hands a cohesive cluster to `/turboplan`, which routes it to a plan file.
+- **Unit of work size** — Right-size the session. Prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves a coherent unit of work; picking 1–2 entries off a cluster of 7 wastes the slot. Route any entry that turns out to be a clear-scope direct fix to the direct lane instead.
 - **Backlog state** — Heavy direct concentration calls for clearing the cluster; a long-deferred symptom often deserves the slot.
 
 State the recommendation as: lane + concrete working set (specific entries or a category-scoped subset) + one or two sentences on why this beats the alternatives. Then list 1–3 honest alternatives, each named with the actual entry or subset (e.g., "investigate the flaky presence test", "plan lane on persist-before-send"). When only one lane has active entries, recommend that lane and skip alternatives.
@@ -133,7 +133,7 @@ Edit `.turbo/improvements.md` to delete the working-set entries that the lane pr
 
 - **Direct lane** — entries whose fixes were applied
 - **Investigate lane** — entries whose concluded fixes were applied
-- **Plan lane** — entries now captured in the plan or spec produced by `/turboplan`. If `/turboplan` routed to spec mode, the entries are tracked across the resulting shells; treat them as processed once the spec and shells are written.
+- **Plan lane** — entries now captured in the plan produced by `/turboplan`; treat them as processed once the plan is written.
 
 Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
 

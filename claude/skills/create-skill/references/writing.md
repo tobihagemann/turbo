@@ -88,10 +88,10 @@ Skills are loaded by the subagent itself when it invokes the skill via the Skill
 
 When a skill describes a threshold the agent must judge (when something is too large, when to split, when to combine), prefer qualitative descriptions over numeric heuristics. Numbers like "more than 15 files" or "3+ subsystems" feel precise but encourage box-ticking — agents tally and cross the threshold without engaging the underlying judgment. Qualitative descriptions ("the work would exhaust a session", "too many distinct conventions to absorb") force the agent to evaluate the actual situation.
 
-- ✗ **Avoid**: "Split when a shell would touch more than 15-20 files or span 3+ unrelated subsystems."
+- ✗ **Avoid**: "Split when a step would touch more than 15-20 files or span 3+ unrelated subsystems."
 - ✓ **Good**: "Split when the combined work would exhaust a single session: too much code to read in full, or too many distinct conventions to absorb."
 
-Use numbers only when the threshold is mechanically verifiable and the count is the actual signal (e.g., "cap at 3 retries", "every R-id must appear in at least one Covers field").
+Use numbers only when the threshold is mechanically verifiable and the count is the actual signal (e.g., "cap at 3 retries", "every acceptance criterion must appear in at least one verification step").
 
 ## Avoid Time-Sensitive Information
 

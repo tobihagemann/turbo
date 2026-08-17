@@ -19,7 +19,7 @@ Pick a slug for the current task:
 - Trim leading and trailing hyphens
 - Truncate to 40 characters at a word boundary
 
-If the work is anchored to an existing artifact (a plan at `.turbo/plans/<slug>.md`, a shell at `.turbo/shells/<slug>.md`, or a spec at `.turbo/specs/<slug>.md`), reuse that artifact's slug verbatim.
+If the work is anchored to an existing plan at `.turbo/plans/<slug>.md`, reuse that plan's slug verbatim.
 
 The user may pass an explicit slug or path; honor it.
 
@@ -35,7 +35,7 @@ Survey the conversation context for:
 
 - **Current task**: what is being worked on, in one or two sentences
 - **Workflow status**: where in the workflow this session is (drafting, refining iteration N, applying findings, implementing step M of K, investigating, blocked on Q, etc.)
-- **Active artifact**: path to the plan, shell, spec, or other file at the center of the work, if one exists
+- **Active artifact**: path to the plan or other file at the center of the work, if one exists
 - **Open decisions**: questions raised but not resolved, choices the user is still weighing, escalations awaiting input
 - **In-flight changes**: staged or unstaged edits that are not yet committed; what each change is doing and what is missing
 - **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out

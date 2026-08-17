@@ -1,6 +1,6 @@
 ---
 name: turboplan
-description: "Analyze task complexity and route to a mode by artifact: direct fix for clear-scope changes, plan file when the approach needs to be written down, or spec and shells for multi-session projects. Use when the user asks to \"turboplan\", \"run turboplan\", \"plan this task\", \"turbo plan mode\", \"plan and implement\", or \"use turboplan instead of plan mode\"."
+description: "Analyze task complexity and route to a mode by artifact: direct fix for clear-scope changes, or a plan file when the approach needs to be written down. Use when the user asks to \"turboplan\", \"run turboplan\", \"plan this task\", \"turbo plan mode\", \"plan and implement\", or \"use turboplan instead of plan mode\"."
 ---
 
 # Turboplan
@@ -13,25 +13,24 @@ Categorize the user-supplied task along these dimensions using subjective judgme
 - **Stakes**: one-off change vs long-lived project with architectural implications
 - **Unknowns**: clear approach vs needs exploration and product decisions
 
-Modes are named by what they produce: no plan, a plan file, or a spec plus shells.
+Modes are named by what they produce: no plan, or a plan file.
 
 | Mode | Criteria | Route |
 |---|---|---|
 | **Direct** | Clear scope, with any remaining decisions small enough to settle in conversation rather than write down. Aligns on the shape, then implements. | Read [references/direct-mode.md](references/direct-mode.md) and follow its steps. |
-| **Plan** | The approach warrants writing down before implementing — to survey patterns or survive a fresh session. Fits a single implementation session and touches one or two related subsystems. Produces a plan file. | Read [references/plan-mode.md](references/plan-mode.md) and follow its steps. |
-| **Spec** | Spans multiple subsystems, requires multiple implementation sessions, or has architectural decisions that need a spec-level discussion before planning begins. Produces a spec plus shells. | Read [references/spec-mode.md](references/spec-mode.md) and follow its steps. |
+| **Plan** | The approach warrants writing down before implementing — to survey patterns, settle architectural decisions, or survive a fresh session. Produces a plan file, however large the work turns out to be. | Read [references/plan-mode.md](references/plan-mode.md) and follow its steps. |
 
 ## Recommend and Confirm the Route
 
-Form a recommended route from the dimensions and criteria above. Output the recommendation as text: the recommended mode and a line or two on why it fits over its neighbors.
+Form a recommended route from the dimensions and criteria above. Output the recommendation as text: the recommended mode and a line or two on why it fits over its neighbor.
 
-Then use `request_user_input` to have the user set the final route. Offer the recommended mode first, marked "(Recommended)", alongside the other two modes; the auto-appended "Other" lets the user describe a different path.
+Then use `request_user_input` to have the user set the final route. Offer the recommended mode first, marked "(Recommended)", alongside the other mode; the auto-appended "Other" lets the user describe a different path.
 
-Whenever committing to the wrong mode would cost a session of rework, and whenever the recommended mode does not earn "(Recommended)" with conviction, present a **Get a second opinion** option in place of the least-fitting mode, keeping the question at three options. It runs the `$consult-claude` skill for the soundest route given the task's scope, stakes, and unknowns. Then resolve the route with that answer in hand, re-asking when the choice stays the user's.
+Add a third **Get a second opinion** option whenever committing to the wrong mode would cost a session of rework, and whenever the recommended mode does not earn "(Recommended)" with conviction. It runs the `$consult-claude` skill for the soundest route given the task's scope, stakes, and unknowns. Then resolve the route with that answer in hand, re-asking when the choice stays the user's.
 
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the task summary (lowercased, non-alphanumerics to hyphens, truncated to 40 characters at a word boundary). It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus the confirmed route's step list from its reference file as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
-Attempt `create_goal` with the objective: "Carry the task '<task summary>' through the confirmed <route> route's final step; for plan and spec routes that is the route's designed summarize-and-halt, and if the route re-routes, the new route's final step applies. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete at the route's final step, before any designed halt message." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
+Attempt `create_goal` with the objective: "Carry the task '<task summary>' through the confirmed <route> route's final step; for the plan route that is the route's designed summarize-and-halt, and if the confirmed route changes, the new route's final step applies. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and any active ledger, and continue from the first unfinished entry. Mark this goal complete at the route's final step, before any designed halt message." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
 
 Carry the confirmed route into its reference file from the table above and follow its steps. If this run created the goal, resolve it inside the route's own flow rather than after it: mark it complete with `update_goal` when the route's final step is reached, before emitting any designed halt message.
 

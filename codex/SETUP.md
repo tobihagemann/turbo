@@ -86,7 +86,7 @@ Example shape:
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
-Some skills store project-level files in a `.turbo/` directory (specs, plans, improvements). Add it to the user's global gitignore to keep project repos clean:
+Some skills store project-level files in a `.turbo/` directory (plans, improvements, reports). Add it to the user's global gitignore to keep project repos clean:
 
 First, check if the user has `core.excludesfile` configured:
 
@@ -193,10 +193,10 @@ Present the user with a summary of how to get started:
 
 1. **The main workflow:** Run `$turboplan` to draft and refine a plan, implement changes, then run `$finalize` to test, review, commit, and create a PR. `$turboplan` can also chain into implementation automatically.
 2. **All available skills:** See [`SKILL-INDEX.md`](SKILL-INDEX.md) for the full Codex skill list with descriptions; the [root README](../README.md#all-skills) has the same skills indexed for the Claude edition.
-3. **The turboplan pipeline:** For larger projects, `$turboplan` routes to a spec + shell decomposition. See [The Turboplan Pipeline](../README.md#the-turboplan-pipeline).
+3. **The turboplan pipeline:** For anything beyond a clear-scope change, `$turboplan` routes to plan mode and produces a plan file. See [The Turboplan Pipeline](../README.md#the-turboplan-pipeline).
 4. **Peer review:** Codex uses Claude as the independent reviewer through `$peer-review`.
 5. **Self-improvement:** Run `$self-improve` before context runs out to capture lessons for future sessions.
 6. **Track improvements:** When noticing something out of scope, run `$note-improvement` so it doesn't get lost.
-7. **Artifacts:** Plans, specs, shells, audit reports, and improvements live under `.turbo/`.
+7. **Artifacts:** Plans, audit reports, and improvements live under `.turbo/`.
 8. **Updating:** Run `$update-turbo` to update installed Codex skills from the local repo with conflict detection and changelog.
 9. **Browser and UI testing:** For web app testing, enable the `browser-use@openai-bundled` plugin. For desktop UI testing, enable the `computer-use@openai-bundled` plugin. Both are bundled in Codex's `openai-bundled` marketplace. See [Browser and UI Testing](../README.md#browser-and-ui-testing) for details.

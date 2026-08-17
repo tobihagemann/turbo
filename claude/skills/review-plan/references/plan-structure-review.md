@@ -6,17 +6,19 @@ Read project context (CLAUDE.md and files mentioned in the plan) to understand t
 
 ## What to Review
 
-- **Completeness** — Missing steps, undefined behavior, unaddressed requirements or edge cases
+- **Structural completeness** — Context states the deployment's bounds, and the plan carries acceptance criteria (or Verification records that the change has no observable behavior). Every acceptance criterion with observable behavior is exercised by the Verification section
+- **Completeness** — Missing steps, undefined behavior, unaddressed acceptance criteria or edge cases
 - **Feasibility** — Technically unsound approaches, ignored constraints, missing dependencies
 - **Ordering** — Step dependency issues, missing prerequisites, circular dependencies
 - **Buildability** — Steps specific enough to execute without getting stuck. No logical gaps between steps
 - **Concreteness** — Every step references a concrete anchor (file/line, function, symbol, or file to create), and named symbols/types are verifiable in the codebase. Flag vague directives or placeholder language
+- **Codebase accuracy** — Concrete claims the plan makes about current code (named functions, file paths, type shapes, module boundaries, existing API surfaces) must match what is in the repo. Spot-check by opening the cited files. Flag wrong citations, misdescribed seams, and nonexistent-but-assumed APIs — these mislead implementation the most
 - **Consistency** — Internal contradictions between sections (e.g., Implementation Steps disagree with Verification, two steps describe the same call differently)
 - **Verification** — The plan has a verification section that describes how to confirm the change works. Flag if missing, or if it is vague ("run tests" without naming which tests or what to look for)
 - **Test efficacy** — When the plan proposes, keeps, or reshapes a test as a regression net, check that the test can fail when the behavior it guards breaks. Flag an assertion that reads a surface the code under test does not write, or a case where a mechanism other than the one under test produces the same observable
 - **Pattern Alignment** — Proposed approach follows existing codebase patterns where applicable. Deviations from established patterns are justified
 - **Side effects** — Other consumers, callers, or co-firing components affected by changes to shared surfaces (helpers, lifecycle hooks, globals)
-- **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the plan and its spec describe: when they bound the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap
+- **Failure Modes** — How the design handles partial failure, race conditions, stale state, rollback, data loss, and degraded dependencies. Limit this to scenarios reachable in the deployment the plan's Context describes: when it bounds the system (a single operator, no concurrent writers, a handful of invited users), a scenario that bound rules out is not a gap
 
 ## Determination Criteria
 
@@ -29,7 +31,7 @@ Flag an issue only when ALL of these hold:
 
 ## Priority Levels
 
-- **P0** — Plan is fundamentally flawed. Wrong approach or missing core requirement
+- **P0** — Plan is fundamentally flawed. Wrong approach or missing core acceptance criterion
 - **P1** — Significant gap that will likely cause implementation problems
 - **P2** — Moderate issue that should be addressed before implementation
 - **P3** — Minor improvement

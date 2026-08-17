@@ -12,7 +12,7 @@ description: "Shared commit message rules and technical constraints referenced b
 - Imperative mood, present tense
 - Aim for ≤100 characters in the subject
 - No commit description—summarize everything in the message
-- Don't reference `.turbo/` content (filenames, requirement IDs, shell references, headings) in commit messages. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
+- Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in commit messages. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
 
 ## Technical Constraints
 

@@ -91,23 +91,18 @@ If Turbo has helped you ship faster and you're so inclined, I'd greatly apprecia
 
 ## The Turboplan Pipeline
 
-Claude Code's built-in plan mode tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny, and it can feel too restrictive for iterative planning. Turbo replaces it with [`/turboplan`](claude/skills/turboplan/SKILL.md) as a universal entry point: whether your task is a single-session change or a multi-subsystem project, you start there. It analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality, with no need for plan mode to be active. Direct work chains through [`/discuss-change`](claude/skills/discuss-change/SKILL.md) and [`/implement`](claude/skills/implement/SKILL.md) to [`/finalize`](claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](claude/skills/implement-plan/SKILL.md) session, and spec-mode projects halt again after [`/pick-next-shell`](claude/skills/pick-next-shell/SKILL.md) before implementation.
+Claude Code's built-in plan mode tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny, and it can feel too restrictive for iterative planning. Turbo replaces it with [`/turboplan`](claude/skills/turboplan/SKILL.md) as a universal entry point: whatever the size of the task, you start there. It analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality, with no need for plan mode to be active. Direct work chains through [`/discuss-change`](claude/skills/discuss-change/SKILL.md) and [`/implement`](claude/skills/implement/SKILL.md) to [`/finalize`](claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](claude/skills/implement-plan/SKILL.md) session.
 
 ![How Turboplan Connects](assets/how-turboplan-connects.svg)
 
-[`/turboplan`](claude/skills/turboplan/SKILL.md) has three modes, named by what each one produces. Its complexity analysis recommends a mode, then you confirm the route:
+[`/turboplan`](claude/skills/turboplan/SKILL.md) has two modes, named by what each one produces. Its complexity analysis recommends a mode, then you confirm the route:
 
 - **Direct mode** — Clear scope, with any remaining decisions small enough to settle in conversation. Hands off to [`/discuss-change`](claude/skills/discuss-change/SKILL.md), which escalates open product decisions, agrees the implementation shape with you, then runs [`/implement`](claude/skills/implement/SKILL.md), which loads [`/code-style`](claude/skills/code-style/SKILL.md) plus any task-specific skills, applies the change, smoke tests any UI/UX change and previews it for you to try, and offers [`/finalize`](claude/skills/finalize/SKILL.md), a lighter pass, or stopping. No plan file is written.
-- **Plan mode** — Single-session change whose approach warrants writing down before implementing. Runs [`/draft-plan`](claude/skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](claude/skills/refine-plan/SKILL.md) → [`/self-improve`](claude/skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session.
-- **Spec mode** — Multi-subsystem project with architectural decisions. Routes to [`/draft-spec`](claude/skills/draft-spec/SKILL.md) for a guided spec discussion, then [`/refine-plan`](claude/skills/refine-plan/SKILL.md) to iteratively review and revise the spec, then [`/draft-shells`](claude/skills/draft-shells/SKILL.md) to decompose the spec into shells with YAML frontmatter, then [`/refine-plan`](claude/skills/refine-plan/SKILL.md) to review and revise the shells, then [`/self-improve`](claude/skills/self-improve/SKILL.md) to compound planning learnings before context is cleared. Halts after self-improve; you run [`/pick-next-shell`](claude/skills/pick-next-shell/SKILL.md) in fresh sessions to plan each shell, then [`/implement-plan`](claude/skills/implement-plan/SKILL.md) to implement it.
+- **Plan mode** — The approach warrants writing down before implementing, however large the work turns out to be. Runs [`/draft-plan`](claude/skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](claude/skills/refine-plan/SKILL.md) → [`/self-improve`](claude/skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session.
 
-Every sub-skill works standalone too. Run [`/draft-plan`](claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file. Run [`/draft-spec`](claude/skills/draft-spec/SKILL.md) to write a spec without committing to the full pipeline.
+A plan states the deployment's bounds and, where the change has observable behavior, its acceptance criteria alongside the implementation steps. That gives [`/review-plan`](claude/skills/review-plan/SKILL.md) something concrete to judge proportionality against, so it can tell machinery the system needs from machinery it doesn't. [`/draft-plan`](claude/skills/draft-plan/SKILL.md) also takes a background document — a design doc, an issue, a written proposal — and treats decisions that document already settles as answered, while still confirming the deployment's bounds with you.
 
-### Shells and the Spec-Mode Flow
-
-In spec mode, [`/draft-shells`](claude/skills/draft-shells/SKILL.md) decomposes the spec into **shells**: structured decomposition artifacts that capture the wiring invariants (Produces, Consumes, Covers spec requirements) and high-level Implementation Steps. Shells lock in the decomposition — what each session builds, what it depends on, what spec requirements it covers — without committing to concrete file paths. [`/refine-plan`](claude/skills/refine-plan/SKILL.md) reviews and tightens the shells until stable.
-
-You then drive implementation one shell at a time. [`/pick-next-shell`](claude/skills/pick-next-shell/SKILL.md) picks the next shell whose dependencies are satisfied and chains into [`/expand-shell`](claude/skills/expand-shell/SKILL.md), which adds a fresh pattern survey and concrete references against the current codebase, then refine → self-improve → halt. You run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session. Each implementation session gets fresh pattern surveys, so decisions from earlier sessions naturally inform later ones.
+Every sub-skill works standalone too. Run [`/draft-plan`](claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file.
 
 ## The Finalize Pipeline
 
@@ -177,12 +172,9 @@ These are prompts you can type directly into Claude Code or Codex (use `$skill-n
 ```
 # Planning a change (single entry — /turboplan routes based on complexity)
 /turboplan add a caching layer to the image pipeline  ← plan mode → draft → refine → halt; run /implement-plan after
-/turboplan build a notification system with backend, API, and UI  ← spec mode → spec → shells → halt
+/turboplan build a notification system with backend, API, and UI  ← same route, larger plan
 /survey-patterns  ← pattern-ground an approach without drafting a plan
 /implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
-
-# Continuing a spec-mode project
-/pick-next-shell  ← pick next shell → expand → refine → halt; run /implement-plan after
 
 # Investigating bugs
 tests are failing in the auth module, can you please /investigate?
