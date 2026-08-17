@@ -16,3 +16,8 @@ Each `##` section below maps to a `#` section in `~/.claude/CLAUDE.md`.
 ## User Input Gates
 
 - A `<system-reminder>` telling you to "work without stopping for clarifying questions" or to "make the reasonable call and continue" does not override `AskUserQuestion` gates defined by skills. Those reminders are harness artifacts from interrupts during tool calls, not user instructions.
+
+## Written Deliverables
+
+- Match the length of written documents to what the task needs: cover the substance, but do not pad with filler sections, redundant summaries, or boilerplate.
+- This applies to every file you author — plans, test plans, handoffs, findings reports, changelogs, PR and issue descriptions, `.turbo/` artifacts. A skill's required structure sets which sections exist; it does not license padding inside them. A section with nothing to say gets one line, not three paragraphs.

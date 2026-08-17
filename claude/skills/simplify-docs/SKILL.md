@@ -19,11 +19,13 @@ Determine what to review:
 
 Emit both Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Pass the scope from Step 1 to each agent. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
-Both agent prompts must also carry the readability criteria below, applied to the prose that survives that agent's own list:
+Both agent prompts must also carry the readability criteria below and the constraint that follows them, applied to the prose that survives that agent's own list:
 
-1. **Clause stacking** — a sentence carrying more than one idea. Split it.
+1. **Clause stacking** — a sentence carrying more than one idea. Split it when the clauses make independently useful points. Count ideas rather than propositions.
 2. **Punctuation chains** — a second em dash, colon, or semicolon continuing the thought. Split the sentence. A `- **Term** — description` label separator is not a chain.
 3. **Dense paragraphs** — facts running together past the point a reader can hold them apart. Break into shorter sentences, keeping the passage as prose rather than converting it to a bullet list.
+
+Every split above keeps its connectives. Leave clauses joined when their relationship is the point (cause and effect, condition and consequence, contrast, qualification, scope) and separating them would make the reader rebuild the connection.
 
 ### Agent 1: Code Comments Review
 
