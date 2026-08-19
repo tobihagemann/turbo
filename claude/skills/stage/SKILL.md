@@ -19,7 +19,7 @@ Stage only the files relevant to the current task:
 git add <file1> <file2> ...
 ```
 
-- Do not use `git add -A` or `git add .`
+- Do not use `git add -A`, `git add .`, or `git add -u` — all three sweep in unrelated changes
 - If a file contains both relevant and unrelated changes, use `git add -p <file>` to stage only the relevant hunks
 - Never stage files containing secrets (`.env`, credentials, API keys). Warn if detected.
 

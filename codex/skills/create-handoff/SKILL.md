@@ -41,6 +41,8 @@ Survey the conversation context for:
 - **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out
 - **Next step**: the first concrete action the new session should take
 
+Read `.turbo/improvements.md` if it exists and note any entry this handoff takes over. When no entry clearly matches, leave the backlog alone.
+
 When something is genuinely unclear and would leave a gap in the handoff, use `request_user_input` to resolve it. Default to inferring quietly when the conversation makes the answer clear.
 
 ## Step 3: Write the Handoff File
@@ -53,6 +55,8 @@ Keep it dense. Omit anything that has no real content.
 
 ## Step 4: Confirm
 
-Tell the user where the handoff was written and quote the next-step statement so the path forward is visible at a glance.
+Once the handoff file exists, delete any `.turbo/improvements.md` entry it takes over, as noted in Step 2. Delete the file if no entries remain.
+
+Tell the user where the handoff was written, name any backlog entry deleted, and quote the next-step statement so the path forward is visible at a glance.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

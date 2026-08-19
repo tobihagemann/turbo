@@ -19,6 +19,8 @@ Determine what to review:
 
 Launch all six agents below with `spawn_agent` / `wait_agent` using inherited model defaults, issuing every call in one batch. Do not issue one and await its result before issuing the rest. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
+Confine the sub-agent's prompt to what to review, plus the conventions and factual properties that bear on it. Pass a property of the existing code as a fact the sub-agent weighs, such as "the retry loop guards a dependency known to fail intermittently". Leave out any statement that tells the sub-agent what verdict to reach about that property, such as "the duplication here is intentional for readability, judge against that", because it binds the sub-agent to accept the very property the review exists to assess.
+
 ### Agent 1: Scope Review
 
 Review the changes for code that should not exist:

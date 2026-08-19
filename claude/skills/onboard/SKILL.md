@@ -17,7 +17,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 
 ## Step 1: Launch All Agents
 
-Emit all 6 Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Each Composed Skills agent invokes its assigned skill via the Skill tool; each Inline Agent follows its exploration brief directly. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to explore by reading and reasoning, except that each Composed Skills agent writes the report files its own skill defines. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
+Emit all 6 Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Each Composed Skills agent invokes its assigned skill via the Skill tool; each Inline Agent follows its exploration brief directly. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to explore by reading and reasoning, except that each Composed Skills agent writes the report files its own skill defines. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
 ### Composed Skills
 
@@ -109,7 +109,7 @@ Convert the markdown report into a styled, interactive HTML page.
 
 ## Rules
 
-- If any skill or agent fails, proceed with the remaining results and note the failure in the report.
+- If any skill or agent reports a failure, proceed with the remaining results and note the failure in the report. An agent that has not yet reported is not a failure; wait for it.
 - The `/map-codebase` skill produces its own full report at `.turbo/codebase-map.md`. The onboarding guide includes a condensed summary and links to the full report.
 - Reframe review findings as documentation. The onboarding guide describes what exists and how to use it. Gaps from review skills can appear as brief recommendations, not as a findings list.
 - Does not modify source code, stage files, or commit.

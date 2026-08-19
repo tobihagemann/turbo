@@ -48,7 +48,7 @@ If the chosen option creates a PR and the current branch is the default branch:
 
 ## Step 3: Check for Unstaged Changes
 
-Run `git status` to check for unstaged changes. If any exist, stage them. This catches files modified by auto-formatters that were not re-staged.
+Run `git status` to check for unstaged changes. Stage by path the files that belong to the current changeset, using `git add -p <file>` for one that also carries unrelated changes. This catches files modified by auto-formatters that were not re-staged.
 
 ## Step 4: Run `$commit-rules` Skill
 
@@ -58,7 +58,7 @@ Run the `$commit-rules` skill to load commit message rules and technical constra
 
 Commit the already-staged changes (do not stage additional files) with a message following the loaded rules.
 
-If the commit fails due to a pre-commit hook (formatter, linter), fix the issues — or run the project's format/lint script to auto-fix — then **re-stage all modified files** before retrying. Pre-commit hooks may modify files in the working tree without updating the staging area.
+If the commit fails due to a pre-commit hook (formatter, linter), fix the issues — or run the project's format/lint script to auto-fix — then **re-stage by path the files the hook modified** before retrying. Pre-commit hooks may modify files in the working tree without updating the staging area.
 
 ## Step 6: Push (if Requested)
 

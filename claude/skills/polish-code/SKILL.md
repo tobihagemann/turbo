@@ -46,7 +46,11 @@ Run the `/evaluate-findings` skill on the results from Step 3.
 
 Run the `/apply-findings` skill on the evaluated results.
 
-When a fix ships with a regression test, confirm the test fails with the fix reverted, then restore the fix. Stage the fix before mutating it; `git checkout -- <file>` then restores it exactly from the index. When the test still passes with the fix reverted, suspect the mutation before the test: confirm it reaches the branch under test and reproduces the original behavior rather than a third one. A test that genuinely cannot be made to fail does not pin the behavior; say so rather than counting it as coverage. When the fixed code combines several signals, also apply the plausible rewrites a maintainer might reach for — reordering the signals, substituting a fallback chain for a conjunction, dropping a term that looks redundant — and confirm each fails at least one test, then restore the fixed code. A rewrite that passes every test while changing behavior on some input means the tests pin the examples rather than the invariant; add the test that distinguishes it. When the fix guards against an unbounded loop or wait, bound the test itself so that reverting the fix fails rather than hangs: cap the iteration count for a loop; enforce a deadline for a wait.
+When a fix ships with a regression test, confirm the test fails with the fix reverted, then restore the fix.
+
+Stage the fix before mutating it (`git add <file>`), so `git checkout -- <file>` restores it exactly from the index. Stage only the files about to be mutated, and reach for `git add -p <file>` when one also carries unrelated changes: a broader restore point sweeps in working-tree changes the project may require stay uncommitted.
+
+When the test still passes with the fix reverted, suspect the mutation before the test: confirm it reaches the branch under test and reproduces the original behavior rather than a third one. A test that genuinely cannot be made to fail does not pin the behavior; say so rather than counting it as coverage. When the fixed code combines several signals, also apply the plausible rewrites a maintainer might reach for — reordering the signals, substituting a fallback chain for a conjunction, dropping a term that looks redundant — and confirm each fails at least one test, then restore the fixed code. A rewrite that passes every test while changing behavior on some input means the tests pin the examples rather than the invariant; add the test that distinguishes it. When the fix guards against an unbounded loop or wait, bound the test itself so that reverting the fix fails rather than hangs: cap the iteration count for a loop; enforce a deadline for a wait.
 
 After every mutation in this step, re-run the test and confirm it passes again before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
 
@@ -58,7 +62,7 @@ Run the `/smoke-test` skill to produce the smoke test plan.
 
 Capture `git status --short`, `git diff HEAD | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning.
 
-Delegate test execution to a subagent using the Agent tool in the foreground (`model: "opus"`, no `name`). Pass the plan and the diff command (`git diff --cached`) to the subagent.
+Delegate test execution to a subagent using the Agent tool in the foreground (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Pass the plan and the diff command (`git diff --cached`) to the subagent.
 
 **Verify the tree:** re-run all three commands when the subagent returns, including when it terminates early or reports incomplete results. Delete what the subagent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything the pre-spawn capture already showed untouched.
 

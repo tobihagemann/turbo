@@ -1,6 +1,6 @@
 ---
 name: simplify-docs
-description: "Run a multi-agent review of code comments and markdown documentation for unnecessary content, then fix the issues. Covers what-restating comments, name-mirroring doc comments, status-update prose, and other documentation noise. Use when the user asks to \"simplify docs\", \"simplify documentation\", \"clean up comments\", \"clean up docs\", \"review documentation\", \"strip unnecessary comments\", \"reduce doc noise\", or \"run simplify-docs\"."
+description: "Run a multi-agent review of code comments and markdown documentation for unnecessary content, then fix the issues. Covers comments that misdescribe the code, what-restating comments, name-mirroring doc comments, status-update prose, and other documentation noise. Use when the user asks to \"simplify docs\", \"simplify documentation\", \"clean up comments\", \"clean up docs\", \"review documentation\", \"strip unnecessary comments\", \"fix stale comments\", \"reduce doc noise\", or \"run simplify-docs\"."
 ---
 
 # Simplify Docs
@@ -19,6 +19,8 @@ Determine what to review:
 
 Launch both agents below with `spawn_agent` / `wait_agent` using inherited model defaults, issuing every call in one batch. Do not issue one and await its result before issuing the rest. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
+Confine the sub-agent's prompt to what to review, plus the conventions and factual properties that bear on it. Pass a property of the existing prose as a fact the sub-agent weighs, such as "the file documents non-obvious third-party behavior". Leave out any statement that tells the sub-agent what verdict to reach about that property, such as "the file is deliberately comment-dense, judge against that established bar", because it binds the sub-agent to accept the very property the review exists to assess.
+
 Both sub-agent prompts must also carry the readability criteria below and the constraint that follows them, applied to the prose that survives that agent's own list:
 
 1. **Clause stacking** — a sentence carrying more than one idea. Split it when the clauses make independently useful points. Count ideas rather than propositions.
@@ -29,17 +31,18 @@ Every split above keeps its connectives. Leave clauses joined when their relatio
 
 ### Agent 1: Code Comments Review
 
-Review code files in scope. Flag a comment when it adds no information beyond what the code already says:
+Review code files in scope. Flag a comment when it misdescribes the code, or when it adds no information beyond what the code already says:
 
-1. **Restates code, signature, or name** — paraphrases the immediately-following statement, a multi-statement block, a declaration's name, or the parameter/return shape. Includes doc blocks above a declaration whose prose elaborates the name and signature without adding rationale, and Parameters/Returns/Throws enumerations that only echo names and types. Flag only the redundant entries; non-obvious constraints (size, units, ranges, preconditions) stay. Drop the wrapping enumeration when no entries survive trimming.
-2. **Narrates history or change** — references PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"). State the current invariant; past behavior belongs in git history, and session-derived lessons about tooling belong in memories or AGENTS.md.
-3. **Cross-references that decay** — names the caller ("used by X", "called from Y"), or task/flow/feature-flag context the code was added for ("added for the Y flow", "for the rollout"). Delete: caller relationships belong in the call graph, feature context in the PR description.
-4. **Explains language or framework constructs** — describes what a stdlib feature, language keyword, or well-known framework call does. Assume a competent reader.
-5. **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys. Idiomatic structural markers around a real section stay.
-6. **Overgrown rationale** — a comment that captures real WHY but in more lines or concerns than the rationale requires. Tighten to one sentence per concern, split bundled concerns to their decision points, or lift shared rationale to a design doc or commit message.
-7. **Compensates for unclear code** — a comment that exists because the code is hard to read. Flag the underlying code as a refactor opportunity (rename, extract, restructure) rather than tightening the comment.
+1. **Asserts a contract the code does not enforce** — states what is handled, excluded, guaranteed, or left untouched, where the code beneath it does something else. Verify each such claim against the code rather than reading it as intent. Propose correcting the comment, or flag the missing enforcement when the stated contract is the desired one. Check this before the redundancy criteria below.
+2. **Restates code, signature, or name** — paraphrases the immediately-following statement, a multi-statement block, a declaration's name, or the parameter/return shape. Includes doc blocks above a declaration whose prose elaborates the name and signature without adding rationale, and Parameters/Returns/Throws enumerations that only echo names and types. Flag only the redundant entries; non-obvious constraints (size, units, ranges, preconditions) stay. Drop the wrapping enumeration when no entries survive trimming.
+3. **Narrates history or change** — references PRs, tickets, prior behavior, recent changes, "fixed by"/"previously did X"/"no longer Y" framing, or session-narrative voice ("turns out", "discovered", "we found that"). State the current invariant; past behavior belongs in git history, and session-derived lessons about tooling belong in memories or AGENTS.md.
+4. **Cross-references that decay** — names the caller ("used by X", "called from Y"), or task/flow/feature-flag context the code was added for ("added for the Y flow", "for the rollout"). Delete: caller relationships belong in the call graph, feature context in the PR description.
+5. **Explains language or framework constructs** — describes what a stdlib feature, language keyword, or well-known framework call does. Assume a competent reader.
+6. **Low-value section banners** — banners that don't section anything, or that restate what an access modifier or naming convention already conveys. Idiomatic structural markers around a real section stay.
+7. **Overgrown rationale** — a comment that captures real WHY but in more lines or concerns than the rationale requires. Tighten to one sentence per concern, split bundled concerns to their decision points, or lift shared rationale to a design doc or commit message.
+8. **Compensates for unclear code** — a comment that exists because the code is hard to read. Flag the underlying code as a refactor opportunity (rename, extract, restructure) rather than tightening the comment.
 
-**Keep these:** comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. Greenfield test: would you write this comment if the code had been greenfield from day one?
+**Keep these:** comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. Greenfield test: would you write this comment if the code had been greenfield from day one? Keeping a comment and finding it accurate are separate judgments: a comment that captures a real constraint still gets corrected when it describes that constraint wrongly.
 
 For each finding, propose: delete it, compress to the load-bearing WHY, restructure it for readability, or flag a refactor that would make the comment unnecessary.
 

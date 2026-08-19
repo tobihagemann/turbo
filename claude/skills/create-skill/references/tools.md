@@ -24,12 +24,12 @@ When a skill spawns subagents, make foreground execution a salient, standalone i
 
 Multiple Agent tool calls in a single message run in parallel. Prefer foreground agents over background agents:
 
-- **Foreground parallel** (recommended): Multiple Agent calls in one message run concurrently and return all results in the same turn. A standalone "run them in the foreground" directive is what reliably keeps them foreground; tying it to needing the results inline ("so all results return in this turn") reinforces it.
+- **Foreground parallel** (recommended): Multiple Agent calls in one message run concurrently and return all results in the same turn. A standalone "run them in the foreground" directive is the strongest available lever, and tying it to needing the results inline ("so all results return in this turn") reinforces it. Treat it as a mitigation rather than a guarantee: the harness backgrounds the agents anyway in some runs, returning `agentId`s and delivering results as later notifications. Pair it with the wait instruction below so the skill stays correct under either behavior.
 - **Background**: The parent is notified as each subagent finishes and collects results then, across turns. Only use background agents when the main thread has genuinely independent work and does not need the agents' output to proceed.
 
 - ✗ **Avoid**: "Launch all four agents concurrently in a single message."
 - ✗ **Avoid**: "Spawn a subagent to review the output."
-- ✓ **Good**: "Emit all four Agent tool calls in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all results return in this turn (`model: "opus"`, no `name`)."
+- ✓ **Good**: "Emit all four Agent tool calls in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all results return in this turn (`model: "opus"`, no `name`). Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported."
 
 ### Never Name a Spawned Agent
 
@@ -41,7 +41,7 @@ Do not add file-based delivery fallbacks (having each agent `Write` its report t
 
 - ✗ **Avoid**: `Agent(name: "internal-reviewer", run_in_background: false, ...)` then nudging it when it idles.
 - ✓ **Good** (fan-out): "Each Agent call uses `model: "opus"` and no `name`."
-- ✓ **Good** (single agent): "Spawn a single subagent in the foreground (`model: "opus"`, no `name`)."
+- ✓ **Good** (single agent): "Spawn a single subagent in the foreground (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported."
 
 ### Phrase Multi-Agent Parallel Dispatch Imperatively
 
@@ -49,7 +49,7 @@ Tool calls within a single assistant message run concurrently. Tool calls across
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
 
-> Emit all <N> Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`.
+> Emit all <N> Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported.
 
 Constrain the message rather than naming the outcome. "So they run concurrently" states a goal the agent can believe it is meeting while emitting one call per message; "do not send one and await its result" names the behavior that would violate it, which is checkable against what the message actually contains.
 
