@@ -22,12 +22,12 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
 
 Subagents run in the background and report as they finish. Constrain the message and the wait: emit the calls together, then wait for every agent to report. Keep the parenthetical to parameter values (`model`, and `no name` per Never Name a Spawned Agent below).
 
-Multiple Agent tool calls in a single message run in parallel.
+A spawn returns immediately, so Agent calls emitted later in the same turn still overlap. One message keeps the fan-out whole.
 
 - ✗ **Avoid**: "Launch all four agents concurrently in a single message."
 - ✗ **Avoid**: "Spawn a subagent to review the output."
 - ✗ **Avoid**: "Run them in the foreground so all results return in this turn." The Agent schema carries no `run_in_background` in an interactive session, so foreground cannot be requested.
-- ✓ **Good**: "Emit all four Agent tool calls in one assistant message. Do not send one and await its result before sending the rest. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported."
+- ✓ **Good**: "Emit all four Agent tool calls in one assistant message. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported."
 
 ### Never Name a Spawned Agent
 
@@ -43,13 +43,13 @@ Do not add file-based delivery fallbacks (having each agent `Write` its report t
 
 ### Phrase Multi-Agent Parallel Dispatch Imperatively
 
-Tool calls within a single assistant message run concurrently. Tool calls across separate messages run sequentially. To fan out N Agents in parallel, emit one assistant message containing N Agent tool calls.
+To fan out N Agents, emit one assistant message containing N Agent tool calls.
 
 Write the dispatch step as one imperative sentence followed by uniform bulleted Agent roles:
 
-> Emit all <N> Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported.
+> Emit all <N> Agent tool calls below in one assistant message. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported.
 
-Constrain the message rather than naming the outcome. "So they run concurrently" states a goal the agent can believe it is meeting while emitting one call per message; "do not send one and await its result" names the behavior that would violate it, which is checkable against what the message actually contains.
+Constrain the message rather than naming the outcome. "So they run concurrently" states a goal the agent can believe it is meeting while dispatching one call per turn; "emit all <N> Agent tool calls below in one assistant message" names the count and the container, which is checkable against what the message actually contains.
 
 State the total call count as a number, even when a single bullet expands to multiple calls (e.g., "one Agent per active type, expect <N> total"). The number anchors the fan-out so the full set goes out in one batch.
 
@@ -64,7 +64,7 @@ When a step has a conditional opt-out (e.g., "skip peer review" reduces N+1 to N
 
 ### Skill Tool Calls Don't Parallelize with Agent Calls
 
-The Skill tool loads instructions and returns immediately — the actual work (Bash calls, agent spawns, etc.) happens in subsequent turns, after any parallel Agent calls have already completed. To truly parallelize a skill's work with other agents, wrap it in an Agent that loads and executes the skill internally.
+The Skill tool loads instructions and returns immediately — the actual work (Bash calls, agent spawns, etc.) happens in subsequent turns. To truly parallelize a skill's work with other agents, wrap it in an Agent that loads and executes the skill internally.
 
 - ✗ **Avoid**: Launching Agent + Agent + Skill in one message expecting all three to do work concurrently.
 - ✓ **Good**: Launching three Agents in one message, each running its respective skill.
