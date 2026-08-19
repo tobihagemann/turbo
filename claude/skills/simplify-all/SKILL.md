@@ -9,7 +9,7 @@ description: "Run the code and documentation simplification passes together over
 
 Run the `/simplify-code` and `/simplify-docs` skills via the Skill tool in one assistant message, passing along any scope that was provided so both passes cover identical files.
 
-Emit the Agent tool calls for every review agent the two skills define in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Hold every fix for Step 2 in place of each skill's own fix step.
+Emit the Agent tool calls for every review agent the two skills define in one assistant message. Do not send one and await its result before sending the rest. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Hold every fix for Step 2 in place of each skill's own fix step.
 
 ## Step 2: Fix Issues
 

@@ -64,3 +64,16 @@ Turbo no longer distinguishes clone, fork, and source installs. `~/.turbo/repo` 
 
 1. Read `~/.turbo/config.json`.
 2. Delete the top-level `repoMode` key, preserve every other key, and write the file back.
+
+## Version 5: Enable Task Tracking Tools
+
+**Condition:** `~/.claude/settings.json` has no `env.CLAUDE_CODE_ENABLE_TODO_TOOLS` key.
+
+**Skip if:** The key is already set.
+
+### Steps
+
+Claude Code leaves the task tools out on newer models unless this environment variable is set, so the phase-tracking Turbo skills rely on silently does nothing without it.
+
+1. Read `~/.claude/settings.json`, set `env.CLAUDE_CODE_ENABLE_TODO_TOOLS` to the string `"1"`, preserve every other key, and write the file back. Create the file with just that key when it does not exist.
+2. Tell the user to restart Claude Code before the tools appear.

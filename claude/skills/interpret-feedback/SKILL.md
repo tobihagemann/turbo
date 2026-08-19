@@ -19,7 +19,7 @@ For each item, collect whatever context is available: code snippets, diffs, surr
 
 ## Step 2: Run Two Interpretations in Parallel
 
-Emit both Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Run them in the foreground so all their results return in this turn. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. That is two Agent tool calls total. Both agents' prompts must direct them to treat the shared working tree and its git index as read-only and to interpret by reading and reasoning. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
+Emit both Agent tool calls below in one assistant message. Do not send one and await its result before sending the rest. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. That is two Agent tool calls total. Both agents' prompts must direct them to treat the shared working tree and its git index as read-only and to interpret by reading and reasoning. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
 ### Internal Interpretation
 

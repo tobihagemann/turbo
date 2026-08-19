@@ -2,18 +2,6 @@
 
 Walk the user through setting up Turbo step by step. Use `AskUserQuestion` to confirm each step before proceeding.
 
-## Task Tracking
-
-At the start, use `TaskCreate` to create a task for each step:
-
-1. Install Turbo skills
-2. Add `.turbo` to global gitignore
-3. Install prerequisites
-4. Configure context tracking
-5. Add CLAUDE.md additions
-6. Oracle setup
-7. Quick onboarding
-
 ## Step 1: Install Turbo Skills
 
 ### Clone the Repo
@@ -77,7 +65,7 @@ Example shape:
   "claude": {
     "excludeSkills": [],
     "lastUpdateHead": "<HEAD>",
-    "configVersion": 4
+    "configVersion": 5
   }
 }
 ```
@@ -136,11 +124,13 @@ Use `AskUserQuestion` to ask whether the user wants to install agent-browser for
 npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser --agent claude-code -y -g
 ```
 
-## Step 4: Configure Context Tracking
+## Step 4: Configure Claude Code Settings
+
+Add both keys below to `~/.claude/settings.json`, merging each into the existing JSON when the file already has other settings.
+
+### Context Tracking
 
 Turbo workflows like `/finalize` consume significant context. Knowing how much context is left prevents unexpected compaction mid-workflow.
-
-Add this to `~/.claude/settings.json`:
 
 ```json
 {
@@ -153,7 +143,19 @@ Add this to `~/.claude/settings.json`:
 
 The user should now see something like `92% context left` at the bottom of the Claude Code terminal.
 
-> **Tip:** If there are already other settings in this file, merge the `statusLine` key into the existing JSON.
+### Task Tracking Tools
+
+Turbo workflows track their phases with `TaskCreate`. Claude Code leaves the task tools out on newer models unless this environment variable is set, so tracking silently does nothing without it.
+
+```json
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1"
+  }
+}
+```
+
+The user needs to restart Claude Code before the tools appear.
 
 ## Step 5: Add CLAUDE.md Additions
 

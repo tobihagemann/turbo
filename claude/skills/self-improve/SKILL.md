@@ -35,7 +35,7 @@ If `~/.turbo/repo/` exists, identify which installed skills are turbo skills:
 
 **Skip** when the conversation is visible in full from the user's own first message.
 
-When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk transcript. Spawn a single subagent in the foreground (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
+When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk transcript. Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
 
 1. The absolute path of the project root
 2. A distinctive phrase from the visible conversation, for confirming which transcript belongs to this session
@@ -49,7 +49,7 @@ Treat the returned items as raw evidence for the scan below.
 
 Propose a cutoff first: take the newest modification time in the memory directory from Step 1, state it, then use `AskUserQuestion` to confirm sweeping from it or sweeping the whole history. A memory file's timestamp records a write rather than a completed sweep, so it bounds the work without settling what a previous run covered. When the directory is absent or empty, sweep the whole history without asking.
 
-Spawn a single subagent in the foreground (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
+Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
 
 1. The absolute path of the project root
 2. The confirmed cutoff as an ISO-8601 timestamp, or that there is none

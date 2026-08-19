@@ -30,7 +30,7 @@ git -C ~/.turbo/repo fetch origin
 
 ### Step 2: Run Migrations
 
-**Current version: 4**
+**Current version: 5**
 
 Read `configVersion` from `~/.turbo/config.json`, looking at `claude.configVersion` first and falling back to top-level `configVersion` for legacy installs (default: `0` if missing). Migrations run before any head comparison so legacy users on a current commit still pick up schema migrations.
 
