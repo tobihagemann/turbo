@@ -65,7 +65,7 @@ If a project-specific testing skill or MCP tool was identified in Step 2, use th
 
 ### Web App Path
 
-Start the dev server if not already running. Wait for it to be ready. Use the `browser-use@openai-bundled` plugin to interact with the app.
+Reuse a running dev server only when this session started it. Otherwise start one on a port this run selected and wait for it to be ready. Confirm it bound to that port before sending it traffic — a failed bind leaves another agent's service answering. Move to another port when the port is taken; report the error and stop when the server itself failed to start. Use the `browser-use@openai-bundled` plugin to interact with the app.
 
 ### UI/Native App Path
 
@@ -116,8 +116,8 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Always clean up: close browser sessions, stop dev servers started by this skill.
-- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test.
+- Always clean up: close only the browser sessions this run opened, by name, and stop the dev servers this skill started. Capture the PID of each dev server this run starts and stop it by that PID rather than by a name or command-line pattern, which also matches an identically named process a concurrent agent is running. Stop the process group rather than the captured PID alone — a server started behind a wrapper outlives its parent — and confirm the port released before reporting cleanup complete. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
+- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test. A port picked as unique may already be held by a concurrent agent, so check it before binding and move to another when it is taken, leaving the incumbent running.
 - Never modify application code. This skill is read-only verification. Report failures without attempting to fix them.
 - If the dev server fails to start, report the error and stop.
 - Tail app logs in a background shell for errors or warnings while running tests, so backend failures surface alongside test observations.

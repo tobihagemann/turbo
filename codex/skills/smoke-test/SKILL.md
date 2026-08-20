@@ -65,13 +65,15 @@ Write each precondition as an observation the executor makes rather than a fact 
 
 **When the scope's happy path writes to a shared external system and those writes are not cleanly undoable**, scope the plan to a path that provably cannot write: choose fixture data with nothing to act on, so the run still exercises wiring, auth, queries, guards, and failure isolation while writing nothing. Treat writes as not cleanly undoable whenever restoring the records leaves downstream effects the writes triggered in place. State that scoping choice in the plan so the executor does not widen it back. When the writing path must run, work through it in order. Determine the full write set without executing it: use a dry-run mode when one exists, otherwise trace the code path and enumerate every record it writes, including those reached through triggers, cascades, and hooks. State what the enumeration cannot settle rather than presenting it as complete. Pick the target whose writes are incidental to what the run verifies, weighing each candidate's write set against the coverage it adds. Then request approval via `request_user_input`, presenting the enumeration as what is being consented to, and request it again whenever the enumeration changes. When `request_user_input` does not reach the user, write nothing and report the approval as unresolved. Capture a pre-run manifest and write an ordered revert procedure; when another agent will execute the plan, carry the enumeration, the manifest, and the revert procedure in the Setup contract's **Seed/reset** item.
 
+**When a scenario's pass condition is that nothing happens** — no write, no call, no state change — pair it with a control that differs only in the dimension under test and whose expected outcome is that the effect does occur. A lone negative scenario cannot distinguish the behavior under test from a harness that never reached it. Run the control through a stub that intercepts the mechanism, introducing one when the negative scenario was scoped by fixture data alone, so observing the effect there establishes that the interception point is reached. When no stub can intercept the mechanism, carry the control through the write enumeration and approval sequence above, and record it in the plan as authorized scope rather than a widening. When neither control can run, plan the negative scenario as inconclusive and say so. Pair each guard separately.
+
 ## Step 4: Execute
 
 If a project-specific testing skill or MCP tool was identified in Step 2, use that. The paths below are fallbacks.
 
 ### Web App Path
 
-Start the dev server if not already running. Wait for it to be ready. Use the `browser-use@openai-bundled` plugin to interact with the app.
+Reuse a running dev server only when this session started it. Otherwise start one on a port this run selected and wait for it to be ready. Confirm it bound to that port before sending it traffic — a failed bind leaves another agent's service answering. Move to another port when the port is taken; report the error and stop when the server itself failed to start. Use the `browser-use@openai-bundled` plugin to interact with the app.
 
 Core verification loop per test:
 
@@ -119,15 +121,20 @@ Do not invent a target if none was found in Step 3 — that gate already stopped
 
 ## Step 5: Report
 
+Before reporting a planned test as unverified, retry its setup with the Step 3 techniques for blocked infrastructure, unless Step 3 already tried them and they failed. When the setup succeeds, run the test and record its result. Report a test as unverified only after that attempt, naming what was tried and what blocked it. Treat an existing unit test over the same behavior as no substitute: it leaves the interactive path unexercised.
+
+Report a negative test and its control together: the negative reads as passed only when its control produced the effect, and as inconclusive otherwise.
+
 Present a summary:
 
 ```
 Smoke Test Results:
 - [PASS] Test 1: description
 - [FAIL] Test 2: description — [what went wrong]
-- [PASS] Test 3: description
+- [UNVERIFIED] Test 3: description — [what was tried, what blocked it]
+- [INCONCLUSIVE] Test 4: description — [why the result cannot be read]
 
-Overall: X/Y passed
+Overall: X/Y passed, Z unverified, W inconclusive
 ```
 
 If any test failed, include the relevant snapshot, screenshot, or output showing the failure.
@@ -136,8 +143,8 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Always clean up: close only the browser sessions this run opened, by name, stop the dev servers and stubs this skill started, and restore any configuration it repointed. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
-- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test.
+- Always clean up: close only the browser sessions this run opened, by name, stop the dev servers and stubs this skill started, and restore any configuration it repointed. Capture the PID of each dev server and stub this run starts and stop it by that PID rather than by a name or command-line pattern, which also matches an identically named process a concurrent agent is running. Stop the process group rather than the captured PID alone — a server started behind a wrapper outlives its parent — and confirm the port released before reporting cleanup complete. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
+- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test. A port picked as unique may already be held by a concurrent agent, so check it before binding and move to another when it is taken, leaving the incumbent running.
 - Never modify code. This skill is read-only verification, with one exception: a stub reached through runtime configuration, restored on cleanup. If a test fails, report the failure — do not attempt to fix it.
 - If the dev server fails to start, report the error and stop.
 - Keep tests focused on the determined scope.
