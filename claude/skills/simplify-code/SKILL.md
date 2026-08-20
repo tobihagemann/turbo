@@ -1,6 +1,6 @@
 ---
 name: simplify-code
-description: "Run a multi-agent review of changed files for scope, reuse, quality, efficiency, clarity, and altitude issues followed by automated fixes. Use when the user asks to \"simplify code\", \"review changed code\", \"check for code reuse\", \"review code quality\", \"review efficiency\", \"simplify changes\", \"clean up code\", \"refactor changes\", or \"run simplify\"."
+description: "Run a multi-agent review of changed files for scope, reuse, quality, efficiency, clarity, and altitude issues followed by fixes. Use when the user asks to \"simplify code\", \"review changed code\", \"check for code reuse\", \"review code quality\", \"review efficiency\", \"simplify changes\", \"clean up code\", \"refactor changes\", or \"run simplify\"."
 ---
 
 # Simplify Code
@@ -83,7 +83,14 @@ Review the same changes for whether each is implemented at the right depth:
 
 ## Step 3: Fix Issues
 
-Aggregate the agents' findings, then apply each fix directly, skipping false positives. When a deletion recommendation and a refactor recommendation land on the same code, the deletion wins.
+Aggregate the agents' findings, then apply each fix directly, skipping only findings that are wrong. When a deletion recommendation and a refactor recommendation land on the same code, the deletion wins.
+
+A finding that would revise an interface or shape the user already approved is not a false positive. Output its technical detail as text, then use `AskUserQuestion` to let the user decide, naming what the revision would change and what reversing the earlier decision costs. Place the genuinely best option first and append `(Recommended)` to its label, judging "best" on technical merit alone, independent of how closely it conforms to the earlier decision. When merit cannot settle it, say so instead of forcing a pick:
+
+- **Apply** — make the change
+- **Keep the approved shape** — leave as-is
+- **Note for later** — run the `/note-improvement` skill to capture it
+- **Get a second opinion** — run the `/consult-codex` skill for the soundest shape on technical merit alone, independent of the earlier decision, carrying back what changing it costs. Then apply, keep, or note the finding with that answer in hand
 
 When done, briefly summarize what was fixed (or confirm the code was already clean).
 

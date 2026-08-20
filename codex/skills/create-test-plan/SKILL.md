@@ -16,6 +16,8 @@ Resolve scope using the first match:
 3. **Conversation context** — prior conversation contains recent work (a feature, fix, or refactor). Extract what changed, where it lives, and expected behavior.
 4. **App-level discovery** — fresh context with no prior work. Examine the project (entry points, routes, commands, README) to identify the app's core user-facing flows.
 
+If the resolved scope spans more than one git branch and the user named no single branch, cover each of them instead of only the branch currently checked out. Include scenarios that exercise them together where the branches can be combined in the working tree the plan's executor will have, and state the required branch state in each such scenario's steps.
+
 ## Step 2: Determine Testing Approach
 
 Always check for project-specific testing skills or MCP tools first. Use the fallbacks below when nothing project-specific is available:

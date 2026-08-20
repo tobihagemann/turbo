@@ -19,11 +19,16 @@ Run `codex exec` with `-o` to capture the response cleanly. Default to `-s read-
 
 **Non-piped `codex exec` invocations require `< /dev/null`** to avoid hanging on stdin. Codex reads from stdin whenever stdin is non-TTY, and in subprocess contexts the harness leaves stdin connected to a pipe that never EOFs — codex blocks forever, printing only `Reading additional input from stdin...`. The piped form (`cat file | codex exec "..."`) is safe — `cat` closes the pipe after the file.
 
-Generate a random session tag at the start to keep files unique for parallel use:
+Generate a random session tag at the start to keep files unique for parallel use, and print the absolute path prefix it produces:
 
 ```bash
-CODEX_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p .turbo/codex
-codex exec -s read-only -o ".turbo/codex/$CODEX_TAG.txt" "<question>" < /dev/null
+CODEX_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p "$PWD/.turbo/codex" && echo "$PWD/.turbo/codex/$CODEX_TAG"
+```
+
+Substitute the printed value for `<prefix>` in every later command of this consultation. Shell variables do not survive between Bash tool calls, and an earlier `cd` in a compound command leaves the session in a different directory, so a relative path resolves against that directory instead.
+
+```bash
+codex exec -s read-only -o "<prefix>.txt" "<question>" < /dev/null
 ```
 
 ### Prompt Shaping
@@ -55,8 +60,10 @@ Keep prompts compact, with tight output contracts. One clear task per Codex turn
 For context that does not belong in the argument, write a context file with the Write tool and pipe it via stdin. The prompt stays as the argument, context pipes in as `<stdin>` automatically:
 
 ```bash
-cat ".turbo/codex/$CODEX_TAG-ctx.txt" | codex exec -s read-only -o ".turbo/codex/$CODEX_TAG.txt" "<question>"
+cat "<prefix>-ctx.txt" | codex exec -s read-only -o "<prefix>.txt" "<question>"
 ```
+
+A `cat` that fails does not stop the run: codex executes on the bare prompt, burns the full timeout, and returns nothing. Read the stderr chrome for the `cat` error rather than waiting on the `-o` file.
 
 Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with the Write tool so nothing is interpreted on the way in.
 
@@ -68,7 +75,7 @@ Run via the Bash tool as a foreground call (`timeout: 600000`, the Bash maximum;
 
 ## Step 3: Read and Evaluate Response
 
-The `-o` file contains only Codex's response (cleaner than stdout, which includes CLI chrome and tool-use logs). Read from `.turbo/codex/$CODEX_TAG.txt`. If the output is too large for the Read tool, read stdout from the Bash tool result instead.
+The `-o` file contains only Codex's response (cleaner than stdout, which includes CLI chrome and tool-use logs). Read from `<prefix>.txt`. If the output is too large for the Read tool, read stdout from the Bash tool result instead.
 
 Assess whether:
 - The answer is sufficient and actionable
@@ -83,13 +90,13 @@ If no follow-up is needed, skip to the Synthesize step.
 Resume the session with the parsed session ID (not `--last`, which is unsafe for parallel use):
 
 ```bash
-codex exec resume <session-id> -o ".turbo/codex/$CODEX_TAG.txt" "<follow-up question>" < /dev/null
+codex exec resume <session-id> -o "<prefix>.txt" "<follow-up question>" < /dev/null
 ```
 
 When the follow-up carries text you did not author, write it to a file with the Write tool and pass `-` so the prompt is read from stdin instead:
 
 ```bash
-cat ".turbo/codex/$CODEX_TAG-followup.txt" | codex exec resume <session-id> -o ".turbo/codex/$CODEX_TAG.txt" -
+cat "<prefix>-followup.txt" | codex exec resume <session-id> -o "<prefix>.txt" -
 ```
 
 With `-`, stdin is the whole prompt rather than a `<stdin>` block appended to an argument, so instruction and context share the one file. Leave off `< /dev/null` here — the pipe supplies stdin, and `cat` sends EOF.
@@ -103,5 +110,7 @@ Return to Step 3. Cap at 5 turns to prevent runaway conversations.
 ## Step 5: Synthesize
 
 Summarize the key insights from the consultation. Cross-reference suggestions with project documentation and conventions before applying. Codex suggestions are starting points, not guaranteed solutions.
+
+When the consultation rewrote prose rather than answering a question, check the rewrite for meaning drift before adopting it: a tense change promotes a capability into an event, and a compression promotes a hedge into a fact or flattens out the reasoning that made a sentence worth keeping. Take the plainer sentences and keep the load-bearing why.
 
 When the consultation was opened from a pending question, resolve that question with the answer in hand, re-asking the user when the choice stays theirs. Then use the TaskList tool and proceed to any remaining task.

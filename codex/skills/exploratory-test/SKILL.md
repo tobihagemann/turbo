@@ -51,12 +51,14 @@ Work through each level sequentially. Complete all tests in a level before movin
 2. Perform the exact steps
 3. Capture the result (screenshot, output, or state observation)
 4. Compare against the expected outcome
-5. Record **PASS** or **FAIL** with details
-6. When the UX lens is loaded, note any usability observation it surfaces, kept separate from the PASS/FAIL verdict
+5. Record **PASS**, **FAIL**, or **PARTIAL** with details
+6. When the UX lens is loaded, note any usability observation it surfaces, kept separate from the verdict
+
+When the scenario's output is consumed by another system, withhold PASS until that system accepts it. Decoding a token, reading a response body, or confirming a row exists shows only that the artifact was produced. Stand up the consumer under the same isolation and cleanup rules as any other service this run starts, and exercise its own flow. When standing it up is not possible, record **PARTIAL** and name which half is unproven. PARTIAL counts as not passed everywhere a verdict is tallied or gated.
 
 ### Level Progression
 
-1. **Level 1: Basic Functionality** — If any Level 1 test fails, report early and use `request_user_input` to ask whether to continue. Basic failures may indicate the feature is too broken for deeper testing.
+1. **Level 1: Basic Functionality** — If any Level 1 test does not pass, report early and use `request_user_input` to ask whether to continue. Basic failures may indicate the feature is too broken for deeper testing.
 2. **Level 2: Complex Operations** — Execute all tests regardless of individual failures.
 3. **Level 3: Adversarial Testing** — Execute all tests. Failures here are expected and valuable.
 4. **Level 4: Cross-Cutting Scenarios** — Execute all tests.
@@ -85,23 +87,27 @@ Exploratory Test Results:
 ## Level 1: Basic Functionality (X/Y passed)
 - [PASS] Test name: description
 - [FAIL] Test name: description — [what went wrong]
+- [PARTIAL] Test name: description — [which half is unproven]
 
 ## Level 2: Complex Operations (X/Y passed)
 - [PASS] Test name: description
 - [FAIL] Test name: description — [what went wrong]
+- [PARTIAL] Test name: description — [which half is unproven]
 
 ## Level 3: Adversarial Testing (X/Y passed)
 - [PASS] Test name: description
 - [FAIL] Test name: description — [what went wrong]
+- [PARTIAL] Test name: description — [which half is unproven]
 
 ## Level 4: Cross-Cutting Scenarios (X/Y passed)
 - [PASS] Test name: description
 - [FAIL] Test name: description — [what went wrong]
+- [PARTIAL] Test name: description — [which half is unproven]
 
 Overall: X/Y passed across all levels
 ```
 
-Report usability observations from the UX lens below the level results, separately from the PASS/FAIL defects. A scenario can pass every functional check and still surface a usability concern.
+Report usability observations from the UX lens below the level results, separately from the defects. A scenario can pass every functional check and still surface a usability concern.
 
 ```
 ## Usability Observations
@@ -110,13 +116,16 @@ Report usability observations from the UX lens below the level results, separate
 
 For each failure, include the relevant screenshot, output, or state observation.
 
+When the change under test spans several repositories, add a per-repo view of the findings below the usability observations, naming a suggested fix site for each.
+
 Update the resolved test plan file by checking off completed tests and annotating results.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 
-- Always clean up: close only the browser sessions this run opened, by name, and stop the dev servers this skill started. Capture the PID of each dev server this run starts and stop it by that PID rather than by a name or command-line pattern, which also matches an identically named process a concurrent agent is running. Stop the process group rather than the captured PID alone — a server started behind a wrapper outlives its parent — and confirm the port released before reporting cleanup complete. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
+- Always clean up: close only the browser sessions this run opened, by name, and stop the dev servers and other services this run started. Capture the PID of each server or service this run starts and stop it by that PID rather than by a name or command-line pattern, which also matches an identically named process a concurrent agent is running. Stop the process group rather than the captured PID alone — a server started behind a wrapper outlives its parent — and confirm the port released before reporting cleanup complete. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
+- Treat a permission or scope granted mid-run to unblock a scenario as something this run created: before reporting cleanup complete, verify the production code never needs it, then ask for it to be revoked in the report. Name the call sites checked there too.
 - Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test. A port picked as unique may already be held by a concurrent agent, so check it before binding and move to another when it is taken, leaving the incumbent running.
 - Never modify application code. This skill is read-only verification. Report failures without attempting to fix them.
 - If the dev server fails to start, report the error and stop.

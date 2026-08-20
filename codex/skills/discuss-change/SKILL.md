@@ -38,7 +38,7 @@ Identify product or design decisions the request did not resolve. Escalate these
 
 **Confirm external constraints before escalating.** When an option depends on a third-party API, service, or platform behaving a particular way, query documentation MCP tools (or web search as a fallback) and drop the option unless current documentation confirms that behavior.
 
-Present each decision as a concise trade-off with options. Mark the strongest option "(Recommended)" and place it first.
+Output what is at stake as text first, even when the reading it came from is fresh in this conversation. When the decision turns on a failure or misuse scenario, that means the invariant the change would protect and what makes that scenario reachable given the existing guards. Then use `request_user_input` to present the decision as a concise trade-off with options. Mark the strongest option "(Recommended)" and place it first.
 
 Offer a **Get a second opinion** option whenever the decision is costly to reverse (it establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever no option earns "(Recommended)" with conviction. It runs the `$consult-claude` skill for what each option commits to, what reversing it costs, and what the prevailing convention is. Hold the concrete options to two so the question stays within the three-option limit. Then resolve the decision with that answer in hand, re-asking when the choice stays the user's.
 

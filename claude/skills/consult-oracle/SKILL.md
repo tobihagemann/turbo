@@ -38,8 +38,13 @@ Write a clear, specific problem description. Include what has already been tried
 Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`). The script loads `chatgptUrl` and `chromeProfile` from `~/.turbo/config.json` automatically and reuses the signed-in ChatGPT session from that Chrome profile. Generate a random tag and persist the response:
 
 ```bash
-ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p .turbo/oracle
-python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output ".turbo/oracle/$ORACLE_TAG.txt"
+ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p "$PWD/.turbo/oracle" && echo "$PWD/.turbo/oracle/$ORACLE_TAG.txt"
+```
+
+Substitute the printed value for `<printed-path>` in the command below and on every follow-up turn. Shell variables do not survive between Bash tool calls, and an earlier `cd` in a compound command leaves the session in a different directory, so a relative path resolves against that directory instead.
+
+```bash
+python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output "<printed-path>"
 ```
 
 Keep backticks and `$` out of `--prompt` even in text you wrote, since both stay live inside the quotes. Text you did not author — a diff, file contents, an error trace, command output — goes in a file passed with `--file`, written with the Write tool. This holds on follow-up turns too.
@@ -51,7 +56,7 @@ If the run fails, retry the command once — same prompt, attachments, profile, 
 Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Run via the Bash tool with the same settings as Step 3 (`timeout: 600000`, do not set `run_in_background`):
 
 ```bash
-python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output ".turbo/oracle/$ORACLE_TAG.txt"
+python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output "<printed-path>"
 ```
 
 Find the slug with `python3 scripts/run_oracle.py status` (the Slug column; follow-ups nest under their parent session) or from the directory names under `~/.oracle/sessions/`.
@@ -62,4 +67,4 @@ When the reviewed code changed since the prior turn, re-attach the changed files
 
 ## Step 5: Synthesize
 
-Read the response from `.turbo/oracle/$ORACLE_TAG.txt`. Summarize the key insights from the consultation. Cross-reference suggestions with official docs and peer open-source implementations before applying. Oracle suggestions are starting points, not guaranteed solutions.
+Read the response from `<printed-path>`. Summarize the key insights from the consultation. Cross-reference suggestions with official docs and peer open-source implementations before applying. Oracle suggestions are starting points, not guaranteed solutions.

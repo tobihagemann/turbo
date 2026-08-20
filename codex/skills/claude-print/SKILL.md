@@ -27,14 +27,21 @@ Keep the prompt compact and explicit:
 - Tell Claude to verify codebase claims by reading files before reporting findings.
 - Tell Claude not to modify files unless the current task explicitly requests write-capable work.
 
-For large context, write the context to `.turbo/claude/<tag>-ctx.txt` and pipe it:
+For large context, print the absolute path of the context file first:
 
 ```bash
-mkdir -p .turbo/claude
-cat .turbo/claude/<tag>-ctx.txt | claude -p --permission-mode dontAsk --allowedTools="Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)" "<prompt>"
+mkdir -p "$PWD/.turbo/claude" && echo "$PWD/.turbo/claude/<tag>-ctx.txt"
 ```
 
-Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with `apply_patch` so nothing is interpreted on the way in.
+Write the context file to the printed path with `apply_patch` so nothing is interpreted on the way in, then substitute that same printed value for `<printed-path>` below. An earlier `cd` in a compound command leaves the session in a different directory, so a relative path resolves against that directory instead:
+
+```bash
+cat "<printed-path>" | claude -p --permission-mode dontAsk --allowedTools="Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)" "<prompt>"
+```
+
+A `cat` that fails does not stop the run: Claude executes on the bare prompt, burns the full wait, and returns nothing. Read the stderr for the `cat` error rather than waiting on the output.
+
+Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it.
 
 ## Step 3: Run Synchronously
 
