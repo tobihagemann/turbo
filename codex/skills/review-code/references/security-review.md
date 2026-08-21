@@ -2,7 +2,7 @@
 
 ## Review Instructions
 
-Check if `.turbo/threat-model.md` exists at the repository root. If it does, read sections 2 (Trust Boundaries and Assumptions) and 3 (Attack Surface, Mitigations and Attacker Stories) to understand assets at risk, identified attack surfaces with existing mitigations, and attacker stories. Treat the entry points, sinks, and hot files listed by surfaces that intersect the reviewed scope as read targets, and use the attacker stories to prioritize findings. If no threat model exists, proceed without it.
+Check if `.turbo/threat-model.md` exists at the repository root. If it does, read sections 2 (Trust Boundaries and Assumptions) and 3 (Attack Surface, Mitigations and Attacker Stories) to understand assets at risk, identified attack surfaces with existing mitigations, and attacker stories. Treat the entry points, sinks, and hot files listed by surfaces that intersect the reviewed scope as read targets, and use the attacker stories to prioritize findings. Treat the threat model as absent when a surface has no cited path that still resolves, ignoring any `:line` suffix. If no threat model exists, proceed without it.
 
 ### Review Mindset
 

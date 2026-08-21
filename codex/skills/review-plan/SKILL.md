@@ -17,6 +17,10 @@ Review a plan against structure and scope criteria. Runs internal reviews and `$
 6. **Legacy fallback** — `.turbo/plan.md` if `.turbo/plans/` does not exist
 7. **Nothing found** — stop and state that no plan was found to review
 
+When the plan came from a file, state the resolved path before continuing.
+
+Unless the plan came from conversation text, or an explicit path or slug was passed, check whether the resolved plan still describes work that remains to be done. Report a frontmatter `status:` of `done` alongside the path.
+
 ## Step 2: Run Reviews in Parallel
 
 Two reference files carry the criteria, one per internal review:

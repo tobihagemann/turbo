@@ -30,6 +30,16 @@ If multiple candidates exist and the choice is non-obvious, use `request_user_in
 
 State the resolved path before continuing.
 
+Unless an explicit path or slug was passed, or `.turbo/loops/<slug>.md` exists with `Status: active`, confirm the resolved plan still describes work that remains to be done. The signal is a frontmatter `status:` of `done`.
+
+When the signal fires, output it as text. Then use `request_user_input` to offer:
+
+- **Refine anyway** — the marker is stale
+- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against this same signal
+- **Leave the plan alone** — skip refining
+
+On **Leave the plan alone**, call `update_plan` to drop the remaining refine steps, restating any remaining steps of a parent workflow, then continue with the next step of the active workflow.
+
 ## Loop State
 
 Loop state lives at `.turbo/loops/<slug>.md` — slug from the resolved plan; for a legacy single-file fallback, use the file's basename. At the start of every invocation, read the ledger if it exists.

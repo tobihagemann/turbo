@@ -30,6 +30,16 @@ If multiple candidates exist and the choice is non-obvious, use `AskUserQuestion
 
 State the resolved path before continuing.
 
+Unless an explicit path or slug was passed, confirm the resolved plan still describes work that remains to be done. The signal is a frontmatter `status:` of `done`.
+
+When the signal fires, output it as text. Then use `AskUserQuestion` to offer:
+
+- **Refine anyway** — the marker is stale
+- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against this same signal
+- **Leave the plan alone** — skip refining
+
+On **Leave the plan alone**, mark the remaining refine steps deleted, then use the TaskList tool and proceed to any remaining task.
+
 ## Step 2: Run `/review-plan` Skill
 
 Run the `/review-plan` skill on the resolved plan.
@@ -71,7 +81,7 @@ When a round's findings turn on how a platform, framework, or dependency behaves
 
 **When a round has adopted a scope narrowing to limit blast radius**, check that the narrowing is derivable. The narrow case is implementable only when the fact distinguishing it from the broad case is available to the implementation at the point the rule runs, whether from persisted state, the request, configuration, or data already at hand; when nothing supplies that fact, the two cases are indistinguishable at runtime and the rule silently strands whatever it excludes. Widen back to the broad case rather than carrying a rule nothing can evaluate, unless the user chose the narrowing: then surface it as Escalate, naming the original decision and this evidence beside it.
 
-The re-invocation is a full, fresh run of this skill. Every step (1-5) executes with its own task tracking and skill invocations.
+The re-invocation is a full, fresh run of this skill, always passing the resolved path. Every step (1-5) executes with its own task tracking and skill invocations.
 
 Then use the TaskList tool and proceed to any remaining task.
 

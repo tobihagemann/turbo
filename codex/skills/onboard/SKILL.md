@@ -45,7 +45,7 @@ Each agent writes its findings as structured markdown.
 
 After all agents complete:
 
-1. Read all agent reports. Check if `.turbo/threat-model.md` exists; if so, read it for the Security Considerations section.
+1. Read all agent reports. Check if `.turbo/threat-model.md` exists; if so, read it for the Security Considerations section. Collect each surface's cited paths from **Entry points and sinks** and **Hot files**, ignoring any `:line` suffix. Treat the threat model as superseded when a surface has no cited path that still resolves. In place of a superseded threat model's content, name its path and state that it predates the current code.
 2. Reframe review skill outputs as documentation. `$review-tooling` findings become "Development Workflow" (what tools are used and how to run them). `$review-agentic-setup` findings become "AI-Assisted Development" (what's set up and how to use it). Focus on what exists, not what's missing. Strip severity labels, findings numbering, and gap framing from review skill outputs. Present detected tools and configurations as project conventions the new developer should know.
 3. Write a brief welcome summary (3-5 sentences) capturing what the project is, who it's for, and the fastest path to a first contribution.
 4. Write `.turbo/onboarding.md` using the report template. Output the welcome summary as text before writing the file.
@@ -80,7 +80,7 @@ After all agents complete:
 
 ## Security Considerations
 
-<from .turbo/threat-model.md if present: key trust boundaries, security-sensitive areas, and what to be careful with — or omit this section if no threat model exists>
+<from .turbo/threat-model.md if present: key trust boundaries, security-sensitive areas, and what to be careful with, or, when it is superseded, its path and a note that it predates the current code. Omit this section when no threat model exists>
 
 ## Troubleshooting
 

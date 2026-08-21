@@ -35,9 +35,9 @@ Once scope is determined:
 
 ## Step 2: Threat Model
 
-Check if `.turbo/threat-model.md` exists. If it does, continue to Step 3.
+Check whether `.turbo/threat-model.md` exists. When it exists, collect each surface's cited paths from **Entry points and sinks** and **Hot files**, ignoring any `:line` suffix. Treat the model as superseded when a surface has no cited path that still resolves. When it exists and is not superseded, continue to Step 3.
 
-If missing, use `request_user_input` to ask whether to create one before proceeding. The security review benefits from threat model context, but creating one adds time.
+If missing or superseded, use `request_user_input` to ask whether to create one before proceeding. The security review benefits from threat model context, but creating one adds time.
 
 - **Yes** — launch a Codex sub-agent call (inherited model defaults) whose prompt instructs it to invoke the `$create-threat-model` skill by reading and following the installed skill instructions. Wait for completion before continuing.
 - **No** — continue without a threat model.
@@ -79,7 +79,7 @@ Aggregate all findings from all agents. Run the `$evaluate-findings` skill once 
 
 ## Step 5: Generate Markdown Report
 
-Write `.turbo/audit.md` using the template below. Populate the dashboard by counting findings per category and applying health thresholds. Output the dashboard as text before writing the file.
+Write `.turbo/audit.md` using the template below. Populate the dashboard by counting findings per category and applying health thresholds. The Threat Model row records the Step 2 outcome. Output the dashboard as text before writing the file.
 
 ### Report Template
 
@@ -103,7 +103,7 @@ Write `.turbo/audit.md` using the template below. Populate the dashboard by coun
 | Tooling | <Pass/Warn/Fail> | <N> | <N> |
 | Dead Code | <Pass/Warn/Fail> | <N> | <N> |
 | Agentic Setup | <Pass/Warn/Fail> | <N> | <N> |
-| Threat Model | <Present/Missing> | — | — |
+| Threat Model | <Present/Superseded/Missing> | — | — |
 
 ### Health Thresholds
 
@@ -144,7 +144,7 @@ Write `.turbo/audit.md` using the template below. Populate the dashboard by coun
 <findings from $review-agentic-setup>
 
 ### Threat Model
-<status and summary>
+<status and summary; when superseded, name the model's path and state that it predates the current code>
 ```
 
 ## Step 6: Generate HTML Report

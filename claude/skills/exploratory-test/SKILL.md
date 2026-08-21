@@ -21,7 +21,7 @@ At the start, use `TaskCreate` to create a task for each step:
 
 Resolve the test plan using these rules in order:
 
-1. **Explicit path** — If the user passed a file path, use it
+1. **Explicit path** — If a file path was passed, use it
 2. **Explicit slug** — resolve to `.turbo/test-plans/<slug>.md`
 3. **Anchoring artifact** — If the work under test is anchored to a plan, resolve to `.turbo/test-plans/<that-slug>.md` when that file exists
 4. **Single file** — Glob `.turbo/test-plans/*.md`. If exactly one file exists, use it
@@ -31,7 +31,21 @@ Resolve the test plan using these rules in order:
 
 If multiple test plans exist and the most-recent choice is non-obvious, use `AskUserQuestion` to let the user pick from the candidates.
 
-Read the resolved test plan and state its path. If the user specifies a narrower scope, filter the plan to relevant scenarios rather than executing all of them.
+Read the resolved test plan and state its path.
+
+Unless an explicit path or slug was passed, confirm the resolved plan still describes the work under test:
+
+- **Unavailable branch state** — a scenario's steps require a branch that no longer resolves in the repository
+- **Completed prior run** — every checkbox is already ticked and no recorded result is FAIL or PARTIAL
+- **Superseded context** — the plan's Context section names work that changes merged since the plan was written have reversed or removed
+
+When a signal fires, output the signal and the scenarios it affects as text. For a superseded Context, name the scenarios that exercise the reversed or removed work. Then use `AskUserQuestion` to offer:
+
+- **Regenerate** — run the `/create-test-plan` skill with the resolved path, and use the plan it writes
+- **Execute anyway** — the signal is a false positive
+- **Pick another plan** — resolve to a different test plan file, then confirm that plan against these same signals
+
+If the user specifies a narrower scope, filter the plan to relevant scenarios rather than executing all of them. Reserve filtering for that case: a superseded plan keeps scenarios that each look plausible alone, so trimming it preserves the wrong ones.
 
 ## Step 2: Determine Testing Approach
 

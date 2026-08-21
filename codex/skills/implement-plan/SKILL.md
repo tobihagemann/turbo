@@ -31,6 +31,18 @@ If multiple plans exist and the most-recent choice is non-obvious (e.g., several
 
 State the resolved plan path before continuing, then read the file.
 
+Unless an explicit path or slug was passed, confirm the resolved plan still describes work that remains to be done:
+
+- **Already implemented** — the frontmatter `status:` is `done`
+
+When the signal fires, output it as text. Then use `request_user_input` to offer:
+
+- **Implement anyway** — the marker is stale
+- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against this same signal
+- **Leave it unimplemented** — the plan needs revising first
+
+On **Leave it unimplemented**, tell the user to bring the plan current with `$refine-plan` and run this skill again. Call `update_plan` to drop the remaining implement steps, restating any remaining steps of a parent workflow, then continue with the next step of the active workflow.
+
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the resolved plan's basename. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
 Attempt `create_goal` with the objective: "Execute the implementation plan at <plan path> through `$implement`, then set the plan's frontmatter status to done when it has frontmatter. Workflow state: `.turbo/workflows/<slug>.md`; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the plan file, the workflow file, and any active ledger, and continue from the first unfinished entry. Mark this goal complete only after that status update, or after `$implement` completes for a plan without frontmatter." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
