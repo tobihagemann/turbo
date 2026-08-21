@@ -66,7 +66,7 @@ Review the same changes for efficiency:
 
 Review the same changes for clarity, standards, and balance:
 
-1. **Project standards**: coding conventions not followed — import sorting, naming conventions, component patterns, error handling patterns, module style. Beyond the auto-loaded instruction files, read any `CLAUDE.md` in a directory that is an ancestor of a changed file — a directory's file governs only the files at or below it — and any file those instructions import. Flag a violation only when you can quote the exact rule and cite what breaks it: the offending line, or the location where a required element is missing. Name the file the rule came from
+1. **Project standards**: coding conventions not followed — import sorting, naming conventions, component patterns, error handling patterns, module style. Beyond the auto-loaded instruction files, walk each directory that is an ancestor of a changed file, from the project root down, and read its `CLAUDE.md` and any file those instructions import — a directory's file governs only the files at or below it. Flag a violation only when you can quote the exact rule and cite what breaks it: the offending line, or the location where a required element is missing. Name the file the rule came from
 2. **Unnecessary complexity**: deep nesting, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 3. **Unclear code**: choose clarity over brevity — explicit code is better than overly compact code. Consolidate related logic, but not at the cost of readability
 4. **Over-simplification**: overly clever solutions that are hard to understand, too many concerns combined into single functions or components, "fewer lines" prioritized over readability (dense one-liners), helpful abstractions removed that were aiding code organization
@@ -92,6 +92,17 @@ A finding that would revise an interface or shape the user already approved is n
 - **Note for later** — run the `/note-improvement` skill to capture it
 - **Get a second opinion** — run the `/consult-codex` skill for the soundest shape on technical merit alone, independent of the earlier decision, carrying back what changing it costs. Then apply, keep, or note the finding with that answer in hand
 
-When done, briefly summarize what was fixed (or confirm the code was already clean).
+Report the outcome as a table, one row per finding, keeping every cell to a single line:
+
+| File | Finding | Outcome |
+|------|---------|---------|
+
+Where Outcome is one of:
+
+- **Fixed** — the fix was made
+- **Escalated** — name the resolution the user chose: fixed, kept, or noted for later
+- **Skipped** — name the reason
+
+Keep the report to the table. Add prose only where an escalation's resolution changed what the other fixes look like. When the table would be empty, report one line stating the code was already clean instead.
 
 Then use the TaskList tool and proceed to any remaining task.

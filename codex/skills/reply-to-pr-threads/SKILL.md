@@ -80,7 +80,19 @@ mutation($threadId: ID!, $body: String!) {
 }' -f threadId='<thread-id>' -F body=@.turbo/pr/thread-<thread-id>.md
 ```
 
-Substitute `<thread-id>` with the thread's id for each post. Report what was posted and what was skipped (due to auto-resolution between re-fetch and posting).
+Substitute `<thread-id>` with the thread's id for each post.
+
+Report the outcome as a table, one row per thread, keeping every cell to a single line:
+
+| Thread | Category | Outcome |
+|--------|----------|---------|
+
+Where Outcome is one of:
+
+- **Posted** — the reply was posted
+- **Skipped** — name the reason, such as auto-resolution between the re-fetch and the post
+
+Keep the report to the table. When the table would be empty, report one line stating that no replies were posted and why instead.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

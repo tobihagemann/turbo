@@ -31,7 +31,7 @@ Every split above keeps its connectives. Leave clauses joined when their relatio
 
 ### Agent 1: Code Comments Review
 
-Review code files in scope. Beyond the auto-loaded instruction files, read any `CLAUDE.md` in a directory that is an ancestor of a reviewed file — a directory's file governs only the files at or below it — and any file those instructions import. Flag a comment when it misdescribes the code, or when it adds no information beyond what the code already says:
+Review code files in scope. Beyond the auto-loaded instruction files, walk each directory that is an ancestor of a reviewed file, from the project root down, and read its `CLAUDE.md` and any file those instructions import — a directory's file governs only the files at or below it. Flag a comment when it misdescribes the code, or when it adds no information beyond what the code already says:
 
 1. **Asserts a contract the code does not enforce** — states what is handled, excluded, guaranteed, or left untouched, where the code beneath it does something else. Verify each such claim against the code rather than reading it as intent. Propose correcting the comment, or flag the missing enforcement when the stated contract is the desired one. Check this before the redundancy criteria below.
 2. **Restates code, signature, or name** — paraphrases the immediately-following statement, a multi-statement block, a declaration's name, or the parameter/return shape. Includes doc blocks above a declaration whose prose elaborates the name and signature without adding rationale, and Parameters/Returns/Throws enumerations that only echo names and types. Flag only the redundant entries; non-obvious constraints (size, units, ranges, preconditions) stay. Drop the wrapping enumeration when no entries survive trimming. Where an instruction file or the documentation tooling's configuration requires that declaration to carry documentation, keep what the requirement covers and flag only entries that describe the code wrongly.
@@ -44,7 +44,7 @@ Review code files in scope. Beyond the auto-loaded instruction files, read any `
 
 **Keep these:** comments that capture a load-bearing constraint the code itself cannot express — a hidden constraint or invariant, a workaround for a specific bug (ideally with a reference), a non-obvious performance characteristic, a pointer to a spec or RFC section, or behavior that would surprise a future reader and lead them to "fix" working code. Greenfield test: would you write this comment if the code had been greenfield from day one? Keeping a comment and finding it accurate are separate judgments: a comment that captures a real constraint still gets corrected when it describes that constraint wrongly.
 
-For each finding, propose: delete it, compress to the load-bearing WHY, restructure it for readability, or flag a refactor that would make the comment unnecessary.
+For each finding, propose: delete it, tighten to the load-bearing WHY, restructure it for readability, or flag a refactor that would make the comment unnecessary.
 
 ### Agent 2: Markdown Documentation Review
 
@@ -65,6 +65,17 @@ For each flagged passage, propose: delete it, tighten it, restructure it for rea
 
 Aggregate the agents' findings, then apply each fix directly, skipping false positives. When uncertain whether a comment captures a non-obvious WHY, keep it.
 
-When done, briefly summarize what was removed or rewritten (or confirm the docs were already clean).
+Report the outcome as a table, one row per finding, keeping every cell to a single line:
+
+| File | Finding | Outcome |
+|------|---------|---------|
+
+Where Outcome is one of:
+
+- **Deleted**, **Tightened**, **Restructured**, or **Rewritten** — the fix that was applied
+- **Flagged** — the fix belongs in the code: a refactor that would make the comment unnecessary, or a missing enforcement of a stated contract
+- **Skipped** — name the reason
+
+Keep the report to the table. When the table would be empty, report one line stating the docs were already clean instead.
 
 Then use the TaskList tool and proceed to any remaining task.

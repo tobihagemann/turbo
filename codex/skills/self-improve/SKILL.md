@@ -11,11 +11,11 @@ Review the current conversation, or the project's past sessions when asked, to e
 
 Available destinations:
 
-- **Project AGENTS.md** — `AGENTS.md` in the project root, plus any nested `AGENTS.md` files in subdirectories. A nested file scopes its guidance to that subtree, so a lesson scoped to one subtree belongs in the nearest enclosing file, with the root reserved for project-wide rules.
+- **Project AGENTS.md** — the instruction file in the project root, plus any nested ones in subdirectories. At each level use `AGENTS.override.md` when one is present, otherwise `AGENTS.md`: an override replaces that directory's `AGENTS.md` rather than adding to it, so a lesson written to a shadowed file never loads. A nested file scopes its guidance to that subtree, so a lesson scoped to one subtree belongs in the nearest enclosing file, with the root reserved for project-wide rules.
 - **Auto memory** — Codex memory, if the active harness exposes a project-specific memory file. If no memory location is available, skip this destination.
 - **Skills** — Project skills at `.agents/skills/` (walked from project root down to cwd) and user-installed skills at `~/.agents/skills/` (resolve symlinks)
 
-Discover the project AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read any available Codex memory. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
+Discover the project instruction files (the root file and any nested ones in subdirectories, resolved through the override rule above) and read them, then read any available Codex memory. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
 
 ### Turbo Skill Detection
 
@@ -152,7 +152,7 @@ Apply approved changes in order:
 
 1. **Improvements** — For items routed to project improvements, run the `$note-improvement` skill with the summary, location, and rationale for each.
 2. **Updates to auto memory** — Read the target, find the right section, append or update in place, following the memory system conventions from the system prompt.
-3. **Updates to AGENTS.md** — Read the target file selected in Step 4 (the root file or a nested subtree file), find the right section, append or update in place. Match the tone and format already present.
+3. **Updates to AGENTS.md** — Read the target file selected in Step 4 (the root file or a nested subtree file, resolved through the override rule in Step 1), find the right section, append or update in place. Match the tone and format already present.
 4. **Updates to user/project skills** — Run the `$create-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
 5. **New skills** — Run the `$create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
 6. **Updates to turbo skills** — For each lesson routed to a turbo skill:

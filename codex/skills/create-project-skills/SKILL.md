@@ -25,7 +25,7 @@ Build the extraction context:
 
 1. Detect primary languages and frameworks from manifest files (`package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `Package.swift`, `pom.xml`, `Gemfile`, and others appropriate to the stack).
 2. Map the top-level source directory structure and note test directory conventions.
-3. Read `AGENTS.md`, nested `AGENTS.md` files, and any `.cursor/rules` or `.cursorrules`. Note the conventions already documented there. The generated skills must not duplicate them.
+3. Read the project's instruction files (at each level `AGENTS.override.md` when one is present, otherwise `AGENTS.md`, including nested ones) and any `.cursor/rules` or `.cursorrules`. Note the conventions already documented there. The generated skills must not duplicate them.
 4. Determine the target skill directory:
    - Check candidate paths `.agents/skills/`, `.claude/skills/`, and a top-level `skills/` directory (match case-insensitively so `Skills/` or similar non-standard casing is detected too). Resolve symlinks so co-linked paths are treated as one logical location.
    - Use `request_user_input` to confirm where generated skills should live. Offer up to 3 options: the most likely target directory first, the next-most-likely if there is one, and a free-form path option. Note any symlink alias in the option description. If no Codex skill directory is detected, default the first option to `~/.agents/skills`. The user can specify a custom path such as a project-specific directory via the free-form option.
