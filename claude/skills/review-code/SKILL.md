@@ -15,7 +15,7 @@ With a type argument, runs a single-concern internal review plus the peer review
 
 Determine what to review:
 
-- If a specific **diff command** was provided (e.g., `git diff --cached`, `git diff main...HEAD`), use that.
+- If a specific **diff command** was provided (e.g., `git diff --cached`, `git diff origin/main...HEAD`), use that.
 - If a **file list or directory** was provided, review those files directly (read the full files, not a diff).
 - If **neither** was provided, default to diffing against the repository's default branch (detect via `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`). If there are no changes against the default branch, stop and state that there is nothing to review.
 

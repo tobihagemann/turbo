@@ -13,6 +13,8 @@ If git is in a feature branch, examine all commit messages and the full diff to 
 
 Source every claim about prior behavior from the base branch itself, by reading its code with `git show origin/<base>:<path>`. A long session leaves the working tree carrying intermediate states that were never the state this PR is measured against, and describing one of those as the prior behavior misleads the reviewer.
 
+Before writing that two pull requests must land together, check whether the consumer uses what changed: `git grep <symbol>` in its checkout, or the other repository's working copy when the dependency crosses repositories. When it does, name the actual cause. When it does not, drop the landing-order claim and keep any reference to the related pull request as plain context. State the claim as unverified when the consumer is not reachable.
+
 ## Step 2: Run `/github-voice` Skill
 
 Run the `/github-voice` skill to load writing style rules.

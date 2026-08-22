@@ -13,7 +13,9 @@ Determine what to review:
 
 - If a specific **diff command** was provided (e.g., `git diff --cached`), use that.
 - If a **file list or directory** was provided, review those files directly (read the full files, not a diff).
-- If **neither** was provided, determine the appropriate diff command (e.g., `git diff`, `git diff --cached`, `git diff HEAD`) based on the current git state. If there are no git changes, review the most recently modified files mentioned in the conversation.
+- If **neither** was provided, determine the appropriate diff command (e.g., `git diff`, `git diff --cached`, `git diff HEAD`) based on the current git state. When the branch is an open pull request, resolve its base with `gh pr view --json baseRefName --jq '.baseRefName'`, run `git fetch origin <base-branch>`, and diff against `origin/<base-branch>...HEAD`: a local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the scope. If there are no git changes, review the most recently modified files mentioned in the conversation.
+
+State the resolved file list before launching the agents: add `--name-only` to a diff command, or list the files for a file or directory scope.
 
 ## Step 2: Launch Six Review Agents in Parallel
 

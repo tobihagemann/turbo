@@ -10,9 +10,10 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - No em dashes (`—`) or double hyphens (`--`) used as dashes. Use periods, commas, colons, or restructure the sentence.
 - Write in a natural, human tone. Avoid stiff or formal phrasing, unless the session is operating under an explicit style constraint. That constraint governs GitHub text too, and the destination does not relax it.
 - Don't over-explain. Say what needs saying, then stop. Answer a question with exactly what it asked, in the vocabulary it used.
-- Leave a Verification section and test-count lines out of a PR body when CI runs the suite.
+- Leave evidence of correctness out of a PR body: a Verification section and test-count lines when CI runs the suite, and figures from a survey of live data. A statistic offered as reassurance reads as an open question rather than a finished change. Keep a measurement the change exists to produce.
 - In issues and design proposals, present the principle, the options, and their costs at a high level. Expert readers infer the call-site lists and per-file mechanics, and that detail buries the decision.
 - When explaining how the code works, describe its current behavior. Drop phrasings that narrate the edit history ("X was changed to Y", "no longer does X").
+- When the user has stated their reasoning in the conversation, mine it and write from that reasoning. A cleaner argument constructed afterwards reads as someone else's, however sound it is.
 - Sound like the author, not like an AI assistant.
 - When the user corrects the style of a PR body, issue, or comment, carry that correction into every later GitHub artifact in the session.
 - Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, sub-agents, etc.). The recipient doesn't know about these tools.

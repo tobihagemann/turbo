@@ -31,7 +31,17 @@ When the recommendation would violate a documented constraint, follow up rather 
 
 Summarize the useful parts of Claude's response. Cross-reference suggestions with the repository before acting.
 
-When the consultation rewrote prose rather than answering a question, check the rewrite for meaning drift before adopting it: a tense change promotes a capability into an event, and a compression promotes a hedge into a fact or flattens out the reasoning that made a sentence worth keeping. Take the plainer sentences and keep the load-bearing why.
+When the consultation rewrote prose rather than answering a question, check the rewrite against the source yourself before adopting it. Treat its own report that the rewrite is faithful as a claim awaiting verification. Read for these drift shapes:
+
+- a tense change that promotes a capability into an event
+- a compression that promotes a hedge into a fact, or flattens out the reasoning that made a sentence worth keeping
+- a rule promoted into an enforcement claim
+- an inverted direction in a described mapping
+- dropped markup or function words, articles included
+- a split that separates clauses whose relationship is the point
+- a split that strands a pronoun on the wrong noun
+
+Take the plainer sentences and keep the load-bearing why.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

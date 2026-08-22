@@ -13,7 +13,9 @@ Determine what to review:
 
 - If a specific **diff command** was provided (e.g., `git diff --cached`), use that.
 - If a **file list or directory** was provided, review those files directly (read the full files, not a diff).
-- If **neither** was provided, determine the appropriate diff command (e.g., `git diff`, `git diff --cached`, `git diff HEAD`) based on the current git state. If there are no git changes, default to a full-tree sweep of source files plus top-level markdown.
+- If **neither** was provided, determine the appropriate diff command (e.g., `git diff`, `git diff --cached`, `git diff HEAD`) based on the current git state. When the branch is an open pull request, resolve its base with `gh pr view --json baseRefName --jq '.baseRefName'`, run `git fetch origin <base-branch>`, and diff against `origin/<base-branch>...HEAD`: a local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the scope. If there are no git changes, default to a full-tree sweep of source files plus top-level markdown.
+
+State the resolved file list before launching the agents: add `--name-only` to a diff command, or list the files for a file or directory scope.
 
 ## Step 2: Launch Two Review Agents in Parallel
 
@@ -64,6 +66,8 @@ For each flagged passage, propose: delete it, tighten it, restructure it for rea
 ## Step 3: Fix Issues
 
 Aggregate the agents' findings, then apply each fix directly, skipping false positives. When uncertain whether a comment captures a non-obvious WHY, keep it.
+
+When the scope is a diff, confine fixes to prose the changeset authored or falsified. Prose the change left both untouched and accurate stays as it is, however badly it reads.
 
 Report the outcome as a table, one row per finding, keeping every cell to a single line:
 

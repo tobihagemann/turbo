@@ -68,3 +68,5 @@ When the reviewed code changed since the prior turn, re-attach the changed files
 ## Step 5: Synthesize
 
 Read the response from `<printed-path>`. Summarize the key insights from the consultation. Cross-reference suggestions with official docs and peer open-source implementations before applying. Oracle suggestions are starting points, not guaranteed solutions.
+
+Then use the TaskList tool and proceed to any remaining task.

@@ -12,7 +12,7 @@ Fetch PR context, run a comprehensive code review, evaluate findings, and dispat
 At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
 1. Run `$fetch-pr-comments` skill
-2. Detect base branch
+2. Resolve base branch
 3. Run `$review-code` skill
 4. Run `$evaluate-findings` skill
 5. Run `$resolve-findings` skill
@@ -21,13 +21,13 @@ At the start, use `update_plan` to track each step, restating any remaining step
 
 Run the `$fetch-pr-comments` skill to get unresolved review comments.
 
-## Step 2: Detect Base Branch
+## Step 2: Resolve Base Branch
 
-Detect the PR's base branch via `gh pr view --json baseRefName --jq '.baseRefName'`.
+Detect the PR's base branch via `gh pr view --json baseRefName --jq '.baseRefName'`, then run `git fetch origin <base-branch>` to bring the remote ref up to date.
 
 ## Step 3: Run `$review-code` Skill
 
-Run the `$review-code` skill. The diff command is `git diff <base-branch>...HEAD`.
+Run the `$review-code` skill. The diff command is `git diff origin/<base-branch>...HEAD`. Take the base from `origin/`: a local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the review as if it were new.
 
 ## Step 4: Run `$evaluate-findings` Skill
 

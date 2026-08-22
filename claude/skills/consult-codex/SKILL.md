@@ -111,6 +111,16 @@ Return to Step 3. Cap at 5 turns to prevent runaway conversations.
 
 Summarize the key insights from the consultation. Cross-reference suggestions with project documentation and conventions before applying. Codex suggestions are starting points, not guaranteed solutions.
 
-When the consultation rewrote prose rather than answering a question, check the rewrite for meaning drift before adopting it: a tense change promotes a capability into an event, and a compression promotes a hedge into a fact or flattens out the reasoning that made a sentence worth keeping. Take the plainer sentences and keep the load-bearing why.
+When the consultation rewrote prose rather than answering a question, check the rewrite against the source yourself before adopting it. Treat its own report that the rewrite is faithful as a claim awaiting verification. Read for these drift shapes:
+
+- a tense change that promotes a capability into an event
+- a compression that promotes a hedge into a fact, or flattens out the reasoning that made a sentence worth keeping
+- a rule promoted into an enforcement claim
+- an inverted direction in a described mapping
+- dropped markup or function words, articles included
+- a split that separates clauses whose relationship is the point
+- a split that strands a pronoun on the wrong noun
+
+Take the plainer sentences and keep the load-bearing why.
 
 When the consultation was opened from a pending question, resolve that question with the answer in hand, re-asking the user when the choice stays theirs. Then use the TaskList tool and proceed to any remaining task.

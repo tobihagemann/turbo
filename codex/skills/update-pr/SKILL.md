@@ -33,6 +33,8 @@ Use the PR's `updatedAt` field and commit timestamps to determine whether new co
 
 If `commits_since_body_change` is empty, the description is already up to date — say so and stop.
 
+Run `git fetch origin <base>` so the remote ref is current before any diff below. A local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the description.
+
 If there are commits since the last body change, check the incremental diff to assess significance:
 
 ```bash

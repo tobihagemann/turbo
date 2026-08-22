@@ -25,6 +25,8 @@ The user may pass an explicit slug or path; honor it.
 
 The target path is `.turbo/handoff/<YYYY-MM-DD>-<slug>.md`. If the path already exists, append `-2`, `-3`, etc. until the path is free.
 
+When an open decision will outlive the rest of the session's state, still unresolved while the work around it is finished, give it its own handoff. Everything else stays in a single file. Slug the split handoff for that decision rather than appending a collision suffix, and write it to stand alone.
+
 State the chosen path before continuing.
 
 ## Step 2: Gather Session State
@@ -53,10 +55,12 @@ Lead with `# Handoff: <Task Title>`. Cover the items gathered in Step 2 in whate
 
 Keep it dense. Omit anything that has no real content.
 
+When this handoff splits an open decision out of an existing one, add a line to that existing handoff pointing at the new path, and remove the content the new file now carries.
+
 ## Step 4: Confirm
 
 Once the handoff file exists, delete any `.turbo/improvements.md` entry it takes over, as noted in Step 2. Delete the file if no entries remain.
 
-Tell the user where the handoff was written, name any backlog entry deleted, and quote the next-step statement so the path forward is visible at a glance.
+Tell the user where the handoff was written, name any backlog entry deleted and any existing handoff edited to point at a split, and quote the next-step statement so the path forward is visible at a glance.
 
 Then use the TaskList tool and proceed to any remaining task.
