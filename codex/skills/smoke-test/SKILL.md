@@ -30,7 +30,7 @@ Always check for project-specific testing skills or MCP tools first. Use the fal
 Before drafting tests, check whether there is something to exercise:
 
 - **No user-visible change in the resolved scope** — look for an existing integration test target that covers the change and is not part of the default test suite (so it hasn't already run in this session). If one exists, run it via the Integration Test Path in Step 4. If nothing exists, report that there is no interactive surface to verify and no separate integration suite to fall back on, then stop.
-- **Required infrastructure cannot be stood up in this session** (backend service, auth provider, seed data, external dependency) — look for a stub before reporting blocked. When the dependency is reached through a client whose endpoint is runtime configuration, repoint that endpoint at a local stub; the same interception yields an artifact the system emits rather than provides (a token, a session identifier, a single-use link). Confine this to runtime configuration and leave the working tree unchanged. When a stub works, record it in the Setup contract's **Mock boundaries** item and carry on with the plan. Report blocked when no stub applies or the ones that do fail, naming what is missing and what was tried, then stop.
+- **Required infrastructure cannot be stood up in this session** (backend service, auth provider, seed data, external dependency) — look for a stub before reporting blocked. When the dependency is reached through a client whose endpoint is runtime configuration, repoint that endpoint at a local stub; the same interception yields an artifact the system emits rather than provides (a token, a session identifier, a single-use link). Confine this to runtime configuration and leave the working tree unchanged. When a stub works, record its response shapes and state transitions in the Setup contract's **Mock boundaries** item, and its PID and port in **Owned cleanup**, then carry on with the plan. Report blocked when no stub applies or the ones that do fail, naming what is missing and what was tried, then stop.
 
 Otherwise, design targeted smoke tests. Each test should:
 
@@ -57,9 +57,9 @@ When another agent will execute this plan, append a **Setup contract** capturing
 - **Seed/reset** — operations that establish or restore baseline data, plus the enumerated write set when the plan authorizes writes
 - **Required state** — fixtures or preconditions each scenario depends on
 - **Mock boundaries** — external services stubbed, with the response shapes and state transitions to return
-- **Owned cleanup** — named sessions, ports, and scratch resources this run creates and must release
+- **Owned cleanup** — named sessions, ports, PIDs, and scratch resources this run creates and must release
 
-Include an item only when the executor would otherwise derive it from application source; omit anything the running app makes self-evident. Require these details when the chosen testing approach prohibits reading application source as setup documentation.
+Include an item when the executor would otherwise derive it from application source, or when it is state this run generated that the executor cannot rediscover safely; omit anything the running app makes self-evident. Require these details when the chosen testing approach prohibits reading application source as setup documentation.
 
 Write each precondition as an observation the executor makes rather than a fact it can rely on, and say what to do when it does not hold: name the substitute setup, or direct the executor to report the precondition as wrong rather than the scenario as failed.
 
