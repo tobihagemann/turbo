@@ -38,7 +38,7 @@ Run `git fetch origin <base>` so the remote ref is current before any diff below
 If there are commits since the last body change, check the incremental diff to assess significance:
 
 ```bash
-git diff origin/<base>...HEAD --diff-filter=d --stat -- $(git diff --name-only --since="<body_last_changed>" origin/<base>..HEAD)
+git diff origin/<base>...HEAD --diff-filter=d --stat -- $(git log --since="<body_last_changed>" --name-only --pretty=format: origin/<base>..HEAD | sort -u)
 ```
 
 Skip the update if the incremental changes are trivial (formatting, typos, config-only). Proceed if they add, remove, or modify meaningful behavior.
