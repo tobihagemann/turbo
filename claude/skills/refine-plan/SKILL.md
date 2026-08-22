@@ -81,7 +81,7 @@ When a round's findings turn on how a platform, framework, or dependency behaves
 
 **When a round has adopted a scope narrowing to limit blast radius**, check that the narrowing is derivable. The narrow case is implementable only when the fact distinguishing it from the broad case is available to the implementation at the point the rule runs, whether from persisted state, the request, configuration, or data already at hand; when nothing supplies that fact, the two cases are indistinguishable at runtime and the rule silently strands whatever it excludes. Widen back to the broad case rather than carrying a rule nothing can evaluate, unless the user chose the narrowing: then surface it as Escalate, naming the original decision and this evidence beside it.
 
-The re-invocation is a full, fresh run of this skill, always passing the resolved path. Every step (1-5) executes with its own task tracking and skill invocations.
+The re-invocation is a full, fresh run of this skill, always passing the resolved path. Every step (1-5) executes with its own task tracking and skill invocations. Whichever gate above sends the run into another iteration, supply that iteration with every Skip and Escalate verdict recorded so far, across this run and earlier iterations, as the already-adjudicated list for `/review-plan`, one line each: the finding, its verdict, and the recorded reason. Fresh task tracking leaves that list intact. A finding that re-proposes a design an earlier round left behind stays in scope regardless of the list: the alternatives having since failed on their own grounds is evidence the earlier reason did not account for, and it is the signal the rule above depends on.
 
 Then use the TaskList tool and proceed to any remaining task.
 

@@ -14,6 +14,7 @@ Extract from the current context:
 - **Material** — code diff, files, plan, feedback, or other artifact to review
 - **Review dimensions** — correctness, security, API usage, consistency, simplicity, coverage, plan readiness, feedback interpretation, or explicit user criteria
 - **Criteria** — reference file paths Claude should read directly, inline criteria text, or the material's own domain conventions
+- **Prior adjudications** — findings already judged, one line each with its verdict and the recorded reason; optional
 - **Output format** — findings schema, verdict labels, priority scale, and any required metadata fields
 
 If no reviewable material is available, stop and state that material is required.
@@ -26,6 +27,7 @@ Assemble a prompt for Claude:
 - Identify the exact material and scope. Pass text you did not author as file paths and diff commands rather than pasted content.
 - When the review revisits material an earlier round already covered, rebuild the review subject from the material's current content and state that any earlier version of it is superseded.
 - Instruct Claude to read referenced criteria files directly.
+- When prior adjudications were identified in Step 1, state them inline in the prompt, labeled as decisions already reached on proposed changes rather than as established properties of the material, and state that a listed finding is raised again only on evidence its recorded reason does not already account for.
 - Bound Claude's reads to the material under review, the sources needed to verify claims about it, and the criteria identified in Step 1. Exclude documents unrelated to those three.
 - Preserve independent dimensions. If multiple dimensions are requested and Codex sub-agent fan-out is unavailable, ask Claude to review each dimension in a separately labeled section. When the request instead asks explicitly for a single-pass review covering all dimensions, keep it to one pass with each dimension in its own labeled section rather than fanning out.
 - Require the exact output format expected by the calling skill.
