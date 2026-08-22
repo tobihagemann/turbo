@@ -24,6 +24,12 @@ Never hand-edit the SVG. Even for trivial string replacements, update the `.draw
 
 All values are multiples of 10 to align with draw.io's 10px grid.
 
+## Overall Layout
+
+Lay each diagram out landscape. GitHub renders a wide diagram at a readable size, while a tall one shrinks to fit the column. `how-finalize-connects.drawio` carries the proportions to aim for.
+
+Put the pipeline the diagram is about at the center and arrange what it connects to around it: some containers to its left, some to its right, some below. `how-turboplan-connects.drawio` centers `/turboplan` this way.
+
 ## Shapes
 
 - **Pills** (skill references, steps): **150x40**, arcSize=50

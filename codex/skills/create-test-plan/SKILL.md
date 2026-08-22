@@ -39,9 +39,9 @@ Pick a slug for the test plan from the change under test:
 
 If the work is anchored to an existing plan at `.turbo/plans/<slug>.md`, reuse that plan's slug verbatim.
 
-The user may pass an explicit slug or path; honor it.
+The user may pass an explicit slug or output path; honor it.
 
-If `.turbo/test-plans/<slug>.md` already exists, use `request_user_input` to ask whether to overwrite, append a numeric suffix (`-2`, `-3`, ...), or pick a different slug. For a slug reused from an anchoring artifact, offer overwrite or a different slug only.
+Resolve a collision at `.turbo/test-plans/<slug>.md` by how the slug was chosen. A slug generated from the change under test takes `-2`, `-3`, and so on until the path is free; do not overwrite. For a slug reused from an anchoring artifact, use `request_user_input` to offer overwrite or a different slug, since a numeric suffix would break its pairing with that artifact. For a slug or path the user supplied, use `request_user_input` to offer overwrite, a numeric suffix, or a different slug.
 
 State the chosen slug and the resulting test plan path before continuing.
 

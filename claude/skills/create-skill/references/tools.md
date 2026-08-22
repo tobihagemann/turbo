@@ -14,6 +14,7 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
 - Dispatching Bash Tool Calls
 - Using AskUserQuestion
   - Output Content as Text Before AskUserQuestion
+  - Ask in the Reader's Vocabulary
   - Prefer AskUserQuestion Gates over Anti-Skip Prose Rules
   - AskUserQuestion Doesn't Work in Sub-Agents
 - Referencing MCP Tools
@@ -123,6 +124,17 @@ When a skill presents structured content (tables, plans, reports) before asking 
 - ✗ **Avoid**: "Present the test plan to the user with `AskUserQuestion` before executing."
 - ✗ **Avoid**: "Show the drafted context to the user via `AskUserQuestion` for approval."
 - ✓ **Good**: "Output the plan as text. Then use `AskUserQuestion` to ask for approval."
+
+### Ask in the Reader's Vocabulary
+
+A gate question has to be answerable by someone who has not read the skill. Terms the skill defines for its own use — role names, artifact shorthand, phase labels, criteria names — arrive at the gate as jargon, and options whose wording has to be decoded first cannot be weighed against each other.
+
+State the concrete problem in plain language as text before the gate, naming what goes wrong if nothing changes. Then write each option's label and description as an observable effect: what is different afterward, and what that costs.
+
+- ✗ **Avoid**: Options named for the internal criterion or artifact they act on.
+- ✓ **Good**: Options named for what is different afterward when the user picks them.
+
+When the user answers with a question instead of picking an option, answer it, then re-ask. Treat the question as evidence about the gate: one asking what a term or an option means says the wording was unreadable, so restate the problem plainly before re-asking. One asking something substantive the options left open says the restatement needs that information too.
 
 ### Prefer AskUserQuestion Gates over Anti-Skip Prose Rules
 

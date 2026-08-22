@@ -20,7 +20,23 @@ When the guess is not obvious, name what was picked so the user can redirect bef
 
 ## Step 2: Build the Understanding Checklist
 
-Read the change in full: the diff, the touched files, related code, and any commit messages, plan, or PR description that explain intent. Then write a running checklist to `.turbo/understand/<slug>.md` where `<slug>` describes the change. Use a checkbox per item, grouped into three sections:
+Read the change in full: the diff, the touched files, related code, and any commit messages, plan, or PR description that explain intent.
+
+Pick a slug for the change under study:
+
+- Lowercase
+- Replace non-alphanumeric characters with hyphens
+- Collapse consecutive hyphens
+- Trim leading and trailing hyphens
+- Truncate to 40 characters at a word boundary
+
+If the change is anchored to an existing plan at `.turbo/plans/<slug>.md`, reuse that plan's slug verbatim. If `.turbo/understand/<slug>.md` already exists, append `-2`, `-3`, etc. until the path is free. Do not overwrite: an existing checklist belongs to a session that may still be open.
+
+The user may pass an explicit slug or output path; honor it. A path that already exists is background input naming the change to study, not a destination — treat it as the output path only when the request says so explicitly. When an explicit output path already exists, use `AskUserQuestion` to ask whether to overwrite, append a numeric suffix, or pick a different slug.
+
+State the chosen path before continuing.
+
+Write a running checklist to that path, with a checkbox per item, grouped into three sections:
 
 - **Problem** — what the problem was, why it existed, and the alternative approaches that were on the table.
 - **Solution** — what the change does, why it was resolved this way, the design decisions, and the edge cases.

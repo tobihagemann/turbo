@@ -21,9 +21,9 @@ Pick a slug for the current task:
 
 If the work is anchored to an existing plan at `.turbo/plans/<slug>.md`, reuse that plan's slug verbatim.
 
-The user may pass an explicit slug or path; honor it.
+The user may pass an explicit slug or output path; honor it.
 
-The target path is `.turbo/handoff/<YYYY-MM-DD>-<slug>.md`. If the path already exists, append `-2`, `-3`, etc. until the path is free.
+The target path is `.turbo/handoff/<YYYY-MM-DD>-<slug>.md`. A generated slug takes `-2`, `-3`, and so on until the path is free. When the user supplied the slug or path and it already exists, use `request_user_input` to offer overwrite, a numeric suffix, or a different slug.
 
 When an open decision will outlive the rest of the session's state, still unresolved while the work around it is finished, give it its own handoff. Everything else stays in a single file. Slug the split handoff for that decision rather than appending a collision suffix, and write it to stand alone.
 

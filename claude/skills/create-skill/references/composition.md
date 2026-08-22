@@ -29,6 +29,11 @@ Place it before the first step the guide governs, with no work-producing step in
 - ✗ **Avoid**: A six-step skill loads the style guide at Step 1, gathers context through Step 5, then drafts at Step 6.
 - ✓ **Good**: The same skill gathers context through Step 4, loads the style guide at Step 5, then drafts at Step 6.
 
+Late placement has a floor: the load still precedes any step whose condition the guide defines. A step that tests for the presence, location, or shape of something the guide specifies is governed by that guide even though it produces no output of its own. Run it first and it resolves against a default the guide would have overridden, so the skill exits as a silent no-op on exactly the projects that customized that detail. Moving a cheap check ahead of an expensive load is safe only when the check's subject is fixed independently of what the guide defines.
+
+- ✗ **Avoid**: A skill checks whether the target artifact exists, exits when it does not, and loads the style guide that defines where that artifact lives afterward.
+- ✓ **Good**: The same skill loads the style guide first, then applies the existence check to the location the guide resolves.
+
 ## Explicitly Invoke Skills When the Verb Matches a Skill Name
 
 When a step body uses an action verb that is also the name of an existing skill, the bare verb reads as inline reasoning and the agent skips the actual Skill tool call. Name the skill explicitly so the invocation is unambiguous.
