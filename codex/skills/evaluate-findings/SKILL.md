@@ -22,7 +22,9 @@ For each finding:
 3. **Determine scope** — clarify whether the issue was introduced by the PR/changeset or is pre-existing.
    - Pre-existing issues in earlier commits on the same feature branch are in-scope by default — the entire branch is one coherent unit of work. Judge these on their merits like any in-scope finding.
    - Findings genuinely outside the branch's work are the user's call to include. Assign Escalate so the user decides whether to widen the changeset. Reserve Skip for changes whose cost wildly dwarfs the benefit.
-4. **Verify the claim** against the actual code — does the issue genuinely exist? When the finding offers a concrete example as evidence — a claimed mishandled input, a claimed wrong output — verify that example independently: a finding can hold in substance while its example does not. Keep the finding and record the correction beside it; drop it only when the claim rests on that example alone.
+4. **Verify the claim** against the actual code — does the issue genuinely exist?
+   - When the finding offers a concrete example as evidence — a claimed mishandled input, a claimed wrong output — verify that example independently: a finding can hold in substance while its example does not. Keep the finding and record the correction beside it; drop it only when the claim rests on that example alone.
+   - When the finding cites a rule or convention, read the cited text, then look for a place that already applied it before this changeset — the same file, or the nearest files the rule also governs. Where the text alone leaves the reading open, read the rule the way that application reads it; where no such application exists, judge on the text alone.
 5. **Assess severity:**
 
    | Severity | Meaning |
