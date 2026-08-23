@@ -15,4 +15,6 @@ Emit the Agent tool calls for every review agent the two skills define in one as
 
 Aggregate the findings and apply one round of fixes, following each skill's own guidance for resolving its findings.
 
+Once this round's fixes have landed, including any resolved at a gate, make one pass over the agents' findings: any whose verdict depended on code the fixes changed, moved, added, or deleted gets decided again against the current tree, keeping resolutions the user already chose.
+
 Then use the TaskList tool and proceed to any remaining task.

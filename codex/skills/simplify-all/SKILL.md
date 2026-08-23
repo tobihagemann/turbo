@@ -15,4 +15,6 @@ Issue the `spawn_agent` calls for every review sub-agent the two skills define i
 
 Once `wait_agent` has joined every sub-agent, aggregate the findings and apply one round of fixes, following each skill's own guidance for resolving its findings.
 
+Once this round's fixes have landed, including any resolved at a gate, make one pass over the agents' findings: any whose verdict depended on code the fixes changed, moved, added, or deleted gets decided again against the current tree, keeping resolutions the user already chose.
+
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.

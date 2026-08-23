@@ -33,6 +33,16 @@ Build the extraction context:
 
 Output a short text summary of detected stack, top-level layout, chosen target directory, and existing skills before moving on.
 
+When that summary shows no source code to extract conventions from, stop here rather than dispatching Step 2. Executable code in any language qualifies, including scripts no manifest declares, so judge from the directory map rather than the detected stack. Documentation, instruction files, and configuration alone do not: extraction run over prose returns that prose's assertions as observed conventions, and Step 3 scores them with no code sites to test them against.
+
+State that as text first — what the survey found, and that conventions extracted from it would have nothing to verify against. Then use `AskUserQuestion` to offer:
+
+- **Write the skills from what we know (Recommended)** — build skills from what this session established, rather than from conventions read out of the repo
+- **Generate nothing yet** — leave skills until the repo has code to have conventions about
+- **Extract anyway** — generate skills from the documentation and configuration that are there
+
+On the first option, run the `/create-skill` skill directly on that knowledge and skip the remaining steps. On either of the first two, mark the extraction phases cancelled so they no longer read as pending work.
+
 ## Step 2: Extract Patterns in Parallel
 
 Read [references/pattern-extractor.md](references/pattern-extractor.md) to see the full taxonomy of pattern categories. Decide which categories apply to the detected stack (e.g., drop "Styling and UI" for a backend service, drop "State management" for a static-analysis tool).

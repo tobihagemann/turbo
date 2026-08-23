@@ -42,6 +42,7 @@ Structure the question using XML tags for clearer Codex responses:
 - `<dig_deeper_nudge>`: Push past surface-level findings to check for second-order failures.
 - `<verification_loop>`: When correctness matters — ask Codex to verify before finalizing.
 - `<merit_only>`: When a recommendation is wanted, bar answers that appeal to scope.
+- `<style_constraints>`: When the answer must follow a house style, name the shapes that style forbids.
 
 Example prompt for a diagnosis question:
 
@@ -54,6 +55,8 @@ Example prompt for a diagnosis question:
 For correctness-critical questions, add `<verification_loop>` asking Codex to verify its answer before finalizing.
 
 When a recommendation is wanted, add `<merit_only>`: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Pair it with `<compact_output_contract>` demanding one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
+
+When the consultation is a prose rewrite bound by a house style, add `<style_constraints>` naming the shapes that style forbids in the first prompt, so they do not have to be corrected across follow-up turns. Common ones: prefixing a summary with a grammatical subject the convention omits, expanding a pronoun to its full noun phrase at every occurrence, and splitting a sentence so a condition is restated in both halves.
 
 Keep prompts compact, with tight output contracts. One clear task per Codex turn.
 
@@ -116,7 +119,9 @@ When the consultation rewrote prose rather than answering a question, check the 
 - a tense change that promotes a capability into an event
 - a compression that promotes a hedge into a fact, or flattens out the reasoning that made a sentence worth keeping
 - a rule promoted into an enforcement claim
+- a narrowing that recasts an absence of information as a limitation of what it describes
 - an inverted direction in a described mapping
+- a term renamed in prose, drifting from the identifier it documents
 - dropped markup or function words, articles included
 - a split that separates clauses whose relationship is the point
 - a split that strands a pronoun on the wrong noun

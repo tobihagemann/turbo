@@ -19,6 +19,8 @@ State:
 
 When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
+When the consultation is a prose rewrite bound by a house style, name the shapes that style forbids in the first prompt, so they do not have to be corrected across follow-up turns. Common ones: prefixing a summary with a grammatical subject the convention omits, expanding a pronoun to its full noun phrase at every occurrence, and splitting a sentence so a condition is restated in both halves.
+
 ## Step 2: Run `$claude-print` Skill
 
 Run the `$claude-print` skill with the assembled question. Default to read-only permissions.
@@ -36,14 +38,16 @@ When the consultation rewrote prose rather than answering a question, check the 
 - a tense change that promotes a capability into an event
 - a compression that promotes a hedge into a fact, or flattens out the reasoning that made a sentence worth keeping
 - a rule promoted into an enforcement claim
+- a narrowing that recasts an absence of information as a limitation of what it describes
 - an inverted direction in a described mapping
+- a term renamed in prose, drifting from the identifier it documents
 - dropped markup or function words, articles included
 - a split that separates clauses whose relationship is the point
 - a split that strands a pronoun on the wrong noun
 
 Take the plainer sentences and keep the load-bearing why.
 
-Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+When the consultation was opened from a pending question, resolve that question with the answer in hand, re-asking the user when the choice stays theirs. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 
