@@ -98,6 +98,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 | **Outcomes** | What must be true when this is done? The observable behaviors that decide whether it worked, and the acceptance criteria that pin each one. |
 | **Bounds** | How many users and operators, now and realistically? Concurrent writers? Which rigor tier is proportionate — personal tool, small team, or business-critical — and what failure tolerance does that imply? |
 | **Constraints** | Which non-functional requirements apply: performance, security, accessibility, i18n, compliance? Which tech-stack, hosting, or integration choices does the work commit to? |
+| **Prototype unknowns** | What does the surface look like, and does the interaction pattern make sense in the hand? Separate these from ordinary design questions by whether an answer in prose would still leave the user guessing. |
 | **Reuse vs new** | Which survey findings should the new work build on? Which should it deliberately not follow, and why? |
 | **File placement** | Where do new files live? Which existing files are modified? |
 | **Data flow** | How does data move through the change? Any new boundaries or contracts? |
@@ -109,6 +110,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 
 - If a question can be answered by exploring the codebase, explore the codebase instead.
 - When a question defines a boundary, contract, or data shape, add a **Get a second opinion** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/consult-codex` skill for the soundest answer on technical merit alone, independent of the task's original scope; on a question of product intent, run it for what each answer commits to and what reversing it costs. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
+- When a question turns on how a surface looks or how an interaction behaves, and an answer in prose would leave the user guessing, add a **Prototype it first** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/prototype` skill on that unknown, then asks the question again with the prototype in hand.
 - Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 - When the user says "you decide," make the call and explain why.
@@ -177,7 +179,7 @@ Files to read in full before starting implementation:
 - **Context**: State the deployment's bounds explicitly. Downstream review judges whether the plan's machinery is proportionate against these bounds, so a plan that omits them leaves that judgment ungrounded.
 - **Acceptance Criteria**: State observable outcomes, not implementation steps. Use the behavioral form or the user-story form per criterion; both can appear in one plan. Every criterion with observable behavior must be exercised by the Verification section. Omit this section only when the change has no observable behavior, which the Verification section already records.
 - **Implementation Steps**: Use concrete `file_path` references and named functions or symbols. Reference existing functions and utilities from the Pattern Survey instead of reinventing them. Each step describes a discrete unit of work that can be tracked independently during execution.
-- **Verification**: Describe how to know the change actually works. Prefer specific test commands, named test files, or named smoke checks over vague phrases like "run the tests." If the change has no observable behavior, say so explicitly. When citing an existing test as proof that a behavior is already pinned, first confirm the test asserts the real value or behavior at issue rather than a fixture or the pass-through of a fabricated argument.
+- **Verification**: Describe how to know the change actually works. Prefer specific test commands, named test files, or named smoke checks over vague phrases like "run the tests." If the change has no observable behavior, say so explicitly. When citing an existing test as proof that a behavior is already pinned, first confirm the test asserts the real value or behavior at issue rather than a fixture or the pass-through of a fabricated argument. When a test still to be written asserts an observable that some other mechanism in the system also produces, name that mechanism and shape both the fixture and the assertion so only the behavior under test can produce the observable.
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
 - **Scope**: Plan content describes what to build. Do not embed task tracking, skill loading, `/finalize` invocation, test commands, or commit instructions in the plan content — those are execution-wrapper concerns.
 
@@ -185,10 +187,11 @@ Files to read in full before starting implementation:
 
 Present a brief summary of the drafted plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
-Then use `AskUserQuestion` to offer two paths:
+Then use `AskUserQuestion` to offer these paths:
 
 - **Approve** (Recommended) — the plan is final.
 - **Revise** — the user describes what to change. Apply the edits to the plan file, then re-summarize and re-present.
+- **Prototype first** — offer this path when an unknown that only a built artifact settles is still open. Run the `/prototype` skill, apply what it settled to the plan file, then re-summarize and re-present. Mark it "(Recommended)" in place of Approve while such an unknown is open, since a surface or interaction pattern that is still unproven cannot be judged from the plan text.
 
 Then use the TaskList tool and proceed to any remaining task.
 
@@ -196,5 +199,5 @@ Then use the TaskList tool and proceed to any remaining task.
 
 - Never skip the pattern survey.
 - Never skip decision escalation for questions left unanswered. When entering from a Background Document as Input, questions the document already resolves are considered answered and may be skipped.
-- The plan file is the only output. Do not write code, scaffolding, or other project files.
+- The plan file, and any prototype the discussion or the finalize gate called for, are the only outputs. Do not write code, scaffolding, or other project files.
 - Do not run `/review-plan` or any review skills here.

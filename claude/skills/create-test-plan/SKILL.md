@@ -81,6 +81,7 @@ Actively try to break the feature. Explore boundary conditions and unexpected in
 
 - Invalid, empty, or extreme inputs
 - Rapid repeated actions
+- An action re-applied to its own output, checked against what the feature intends on the second application
 - Interrupting operations midway (cancel, disconnect, close)
 - Resource limits (very large files, deep structures, long names)
 - Permission and access edge cases

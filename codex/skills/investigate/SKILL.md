@@ -44,6 +44,10 @@ git blame -L <start>,<end> <file>
 
 If a known-good state exists (e.g., "this worked yesterday"), consider `git bisect` to pinpoint the breaking commit.
 
+### Upstream Issue Search
+
+When the failure surfaces inside a third-party dependency, search its issue tracker for a distinctive string from the error before reading deeper into the dependency's code. An issue whose symptom matches often names the cause and the fix outright. Carry a match forward as a ranked hypothesis and test it.
+
 ### Scope Narrowing
 
 - **Stack traces**: Read the throwing function and its callers — full functions, not just the flagged line
@@ -56,6 +60,8 @@ Before treating a record, file, or build artifact as evidence of the system's be
 ## Step 3: Hypothesize
 
 Before forming a hypothesis about the machinery around a failure, such as a toolchain version, a configuration policy, or an environment difference, read the failing line, identify every path, package, symbol, or resource it names, and confirm each one resolves. Error text often names the site that consumed a missing input rather than the input itself, so the surrounding machinery looks responsible when it is not. Rank a machinery hypothesis only after every named reference checks out.
+
+Once every named reference resolves and the operation has never once succeeded, rank a refusal ahead of any race or resource-exhaustion hypothesis: a denied permission, a firewall rule, an allowlist, an expired or missing credential. Intermittent failure is what a race or a contended resource usually looks like, so a run of attempts with zero successes ranks both below a refusal. Carry the hard blocks on the failing path into Step 4 as the first hypotheses to test, ahead of any measurement or instrumentation.
 
 Generate 2-4 hypotheses ranked by likelihood. Each hypothesis must be **falsifiable** — specify what evidence would confirm or refute it.
 

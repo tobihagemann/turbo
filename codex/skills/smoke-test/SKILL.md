@@ -31,6 +31,7 @@ Before drafting tests, check whether there is something to exercise:
 
 - **No user-visible change in the resolved scope** — look for an existing integration test target that covers the change and is not part of the default test suite (so it hasn't already run in this session). If one exists, run it via the Integration Test Path in Step 4. If nothing exists, report that there is no interactive surface to verify and no separate integration suite to fall back on, then stop.
 - **Required infrastructure cannot be stood up in this session** (backend service, auth provider, seed data, external dependency) — look for a stub before reporting blocked. When the dependency is reached through a client whose endpoint is runtime configuration, repoint that endpoint at a local stub; the same interception yields an artifact the system emits rather than provides (a token, a session identifier, a single-use link). Confine this to runtime configuration and leave the working tree unchanged. When a stub works, record its response shapes and state transitions in the Setup contract's **Mock boundaries** item, and its PID and port in **Owned cleanup**, then carry on with the plan. Report blocked when no stub applies or the ones that do fail, naming what is missing and what was tried, then stop.
+- **A test needs privileged state or a second participant** (an entitlement or plan tier, an elevated role, a second concurrent client or session) — provision it through a path the project already exposes for development, such as its own development-only endpoint, an administrative command, or a second client this run starts. Keep the test in the plan once provisioning succeeds, and record the granted state in the Setup contract's **Test identity** item and every session, role, and record this run creates in **Owned cleanup**. When the provisioning path writes to a shared external system, carry it through the write enumeration and approval sequence this step requires for such writes. Drop the test to unverified only after an attempt failed.
 
 Otherwise, design targeted smoke tests. Each test should:
 
@@ -121,7 +122,7 @@ Do not invent a target if none was found in Step 3 — that gate already stopped
 
 ## Step 5: Report
 
-Before reporting a planned test as unverified, retry its setup with the Step 3 techniques for blocked infrastructure, unless Step 3 already tried them and they failed. When the setup succeeds, run the test and record its result. Report a test as unverified only after that attempt, naming what was tried and what blocked it. Treat an existing unit test over the same behavior as no substitute: it leaves the interactive path unexercised.
+Before reporting a planned test as unverified, retry its setup with the Step 3 techniques for blocked infrastructure and for privileged state, unless Step 3 already tried them and they failed. When the setup succeeds, run the test and record its result. Report a test as unverified only after that attempt, naming what was tried and what blocked it. Treat an existing unit test over the same behavior as no substitute: it leaves the interactive path unexercised.
 
 Report a negative test and its control together: the negative reads as passed only when its control produced the effect, and as inconclusive otherwise.
 

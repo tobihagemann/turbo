@@ -33,7 +33,7 @@ When the recommendation would violate a documented constraint, follow up rather 
 
 Summarize the useful parts of Claude's response. Cross-reference suggestions with the repository before acting.
 
-When the consultation rewrote prose rather than answering a question, check the rewrite against the source yourself before adopting it. Treat its own report that the rewrite is faithful as a claim awaiting verification. Read for these drift shapes:
+When the consultation rewrote prose rather than answering a question, check the rewrite against the source yourself before adopting it. Treat its own report that the rewrite is faithful as a claim awaiting verification. Verify the source's own factual claims against what they describe, since a rewrite can be faithful to a source that was itself wrong. Read for these drift shapes in the rewrite:
 
 - a tense change that promotes a capability into an event
 - a compression that promotes a hedge into a fact, or flattens out the reasoning that made a sentence worth keeping

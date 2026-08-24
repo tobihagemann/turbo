@@ -15,13 +15,14 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
-| [`$discuss-change`](skills/discuss-change/SKILL.md) | Short alignment interview with no plan file: escalate open decisions, confirm the shape, then implement | [`$implement`](skills/implement/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md) |
-| [`$draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`: guided discussion then draft | [`$survey-patterns`](skills/survey-patterns/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md) |
+| [`$discuss-change`](skills/discuss-change/SKILL.md) | Short alignment interview with no plan file: escalate open decisions, confirm the shape, then implement | [`$implement`](skills/implement/SKILL.md), [`$prototype`](skills/prototype/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md) |
+| [`$draft-plan`](skills/draft-plan/SKILL.md) | Produces a plan at `.turbo/plans/<slug>.md`: guided discussion then draft | [`$survey-patterns`](skills/survey-patterns/SKILL.md), [`$prototype`](skills/prototype/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md) |
 | [`$refine-plan`](skills/refine-plan/SKILL.md) | Iterative review loop over a plan until stable: review → evaluate → apply → re-run | [`$review-plan`](skills/review-plan/SKILL.md), [`$evaluate-findings`](skills/evaluate-findings/SKILL.md), [`$apply-findings`](skills/apply-findings/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md) |
 | [`$review-plan`](skills/review-plan/SKILL.md) | Review a plan: internal reviews and peer review in parallel | [`$peer-review`](skills/peer-review/SKILL.md) | [`$refine-plan`](skills/refine-plan/SKILL.md) |
 | [`$implement-plan`](skills/implement-plan/SKILL.md) | Execute a plan file: pre-implementation prep, hand off to `$implement` | [`$implement`](skills/implement/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md) |
 | [`$pick-next-issue`](skills/pick-next-issue/SKILL.md) | Pick the most popular open GitHub issue and plan it | [`$turboplan`](skills/turboplan/SKILL.md) | |
 | [`$survey-patterns`](skills/survey-patterns/SKILL.md) | Survey the codebase and any named external source for analogous features, reusable utilities, and convention anchors | | [`$draft-plan`](skills/draft-plan/SKILL.md) |
+| [`$prototype`](skills/prototype/SKILL.md) | Build a self-contained prototype at `.turbo/prototypes/<slug>.html`, drive it, and hand it over to settle what prose cannot | `browser-use@openai-bundled` plugin | [`$draft-plan`](skills/draft-plan/SKILL.md), [`$discuss-change`](skills/discuss-change/SKILL.md) |
 
 ## Code
 

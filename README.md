@@ -102,6 +102,8 @@ Claude Code's built-in plan mode tends to produce plans that miss existing patte
 
 A plan states the deployment's bounds and, where the change has observable behavior, its acceptance criteria alongside the implementation steps. That gives [`/review-plan`](claude/skills/review-plan/SKILL.md) something concrete to judge proportionality against, so it can tell machinery the system needs from machinery it doesn't. [`/draft-plan`](claude/skills/draft-plan/SKILL.md) also takes a background document — a design doc, an issue, a written proposal — and treats decisions that document already settles as answered, while still confirming the deployment's bounds with you.
 
+Some questions can't be settled in prose: what a surface looks like, whether an interaction reads the way you expect. Both lanes offer [`/prototype`](claude/skills/prototype/SKILL.md) when a discussion question turns on one of those. It builds a self-contained page under `.turbo/prototypes/`, drives every control itself, and hands you the file to try, so the decisions that follow rest on something you've used instead of on faith. The approval gates in [`/draft-plan`](claude/skills/draft-plan/SKILL.md) and [`/discuss-change`](claude/skills/discuss-change/SKILL.md) offer the same path for an unknown you only spot when you read the summary.
+
 Every sub-skill works standalone too. Run [`/draft-plan`](claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file.
 
 ## The Finalize Pipeline
@@ -174,6 +176,7 @@ These are prompts you can type directly into Claude Code or Codex (use `$skill-n
 /turboplan add a caching layer to the image pipeline  ← plan mode → draft → refine → halt; run /implement-plan after
 /turboplan build a notification system with backend, API, and UI  ← same route, larger plan
 /survey-patterns  ← pattern-ground an approach without drafting a plan
+/prototype  ← settle how a surface looks or an interaction feels before committing to it
 /implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
 
 # Investigating bugs

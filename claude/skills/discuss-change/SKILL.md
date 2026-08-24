@@ -48,6 +48,7 @@ Interview the user about the implementation shape until you reach shared underst
 
 | Area | What to explore |
 |---|---|
+| **Prototype unknowns** | What does the surface look like, and does the interaction pattern make sense in the hand? Separate these from ordinary design questions by whether an answer in prose would still leave the user guessing. |
 | **Reuse vs new** | Which existing code should the change build on? Which patterns should it deliberately not follow, and why? |
 | **File placement** | Where do new files live? Which existing files are modified? |
 | **Data flow** | How does data move through the change? Any new boundaries or contracts? |
@@ -59,6 +60,7 @@ Interview the user about the implementation shape until you reach shared underst
 
 - If a question can be answered by exploring the codebase, explore the codebase instead.
 - When a question defines a boundary, contract, or data shape, add a **Get a second opinion** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/consult-codex` skill for the soundest answer on technical merit alone, independent of the task's original scope; on a question of product intent, run it for what each answer commits to and what reversing it costs. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
+- When a question turns on how a surface looks or how an interaction behaves, and an answer in prose would leave the user guessing, add a **Prototype it first** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/prototype` skill on that unknown, then asks the question again with the prototype in hand.
 - Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.
@@ -68,10 +70,11 @@ Interview the user about the implementation shape until you reach shared underst
 
 Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. This text is the change description Step 5 implements, so keep it concrete enough to act on.
 
-Then use `AskUserQuestion` to offer two paths:
+Then use `AskUserQuestion` to offer these paths:
 
 - **Approve** (Recommended) — the shape is settled.
 - **Revise** — the user describes what to change. Apply the correction, then re-present the shape.
+- **Prototype first** — offer this path when an unknown that only a built artifact settles is still open. Run the `/prototype` skill, fold what it settled into the shape, then re-present. Mark it "(Recommended)" in place of Approve while such an unknown is open, since a surface or interaction pattern that is still unproven cannot be judged from the shape description.
 
 ## Step 5: Run `/implement` Skill
 
@@ -81,5 +84,5 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Confine Steps 1 through 4 to reading, discussion, and confirmation.
+- Confine Steps 1 through 4 to reading, discussion, confirmation, and any prototype those steps called for.
 - If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `/turboplan` for plan mode.

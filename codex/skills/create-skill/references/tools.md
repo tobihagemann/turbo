@@ -9,7 +9,7 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
   - Hoist Conditional Opt-Out Checks Above Dispatch Logic
   - Skill Mentions Don't Fan Out on Their Own
   - Keep Parallel Review/Analysis Sub-Agents Read-Only on the Shared Tree
-  - Keep Contended Test Tiers Out of the Fan-Out
+  - Keep Contended Test Tiers From Colliding in the Fan-Out
 - Using request_user_input
   - Output Content as Text Before request_user_input
   - Ask in the Reader's Vocabulary
@@ -73,17 +73,24 @@ Put the constraint in the per-sub-agent dispatch instruction, the text that reac
 - ✗ **Avoid**: "…any empirical check runs in an isolated `git worktree` it discards afterward." This sanctions the worktree without its hygiene, and reads as license to make the worktree runnable by any means.
 - ✓ **Good**: "Each sub-agent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the sub-agent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the sub-agent cannot repair is reported with the exact repair command in place of findings."
 
-### Keep Contended Test Tiers Out of the Fan-Out
+### Keep Contended Test Tiers From Colliding in the Fan-Out
 
 Parallel sub-agents that each run the project's test suite collide whenever a tier depends on a resource outside the tree (a shared database, a fixed port, a cache). Tiers that reset that resource between tests have no cross-process interlock, so concurrent runs wipe each other's state and produce failures that read exactly like defects in the code under review. Contention is a property of the fan-out rather than of any one sub-agent: a sub-agent running the tier cannot see that its siblings are running it too, so a per-sub-agent rule cannot prevent the collision.
 
 Resolve it in the orchestrator step, above the dispatch: have it read the project's test configuration and CI workflow, identify any tier that resets a shared external resource, and name that tier to every sub-agent as off-limits. Name the artifacts to consult, since an orchestrator that has only a file list cannot recognize a contended tier.
 
+Off-limits works only while the sub-agents can do their job without the tier. When the scope under examination is what that tier exists to exercise, so that judging it at all requires running the tier, have the orchestrator direct each sub-agent to provision its own isolated instance of the resource, prepare it through the project's own setup path, run against it, and tear it down afterward. One shared instance carrying an instruction to run a single sub-agent at a time is not sufficient, for the same reason a per-sub-agent rule cannot prevent the collision: nothing enforces the ordering across sub-agents. Give that branch the same terminator as the read-only rules above: when a sub-agent's own instance cannot be provisioned, the tier is left unrun and reported as such.
+
 Leave the tier unrun rather than having the orchestrator run it after the branches join. A skill invoked as a child (a review skill running inside an audit, for example) would run it once per invocation, recreating the contention one level down, and an analysis-only skill has no step or output slot for the result.
+
+Where sub-agents run such a tier, have the orchestrator direct them to redirect the runner's output to a file under `$TMPDIR` and read the file. Piping a runner to `head`, `tail`, or another command that closes the stream early returns while the runner is still going, so a sub-agent that believes its run finished leaves one live to overlap the next. `$TMPDIR` keeps that file out of the shared tree, which the read-only rules above require the sub-agent to leave clean.
 
 - ✗ **Avoid**: "Each sub-agent runs the test suite to confirm its findings."
 - ✗ **Avoid**: "Name it to every sub-agent as off-limits, and run it once after the fan-out returns." The trailing run fires again in every nested invocation.
-- ✓ **Good**: "Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so sub-agents running them concurrently wipe each other's state and return failures indistinguishable from defects in the change. Name any such tier to every sub-agent as off-limits."
+- ✗ **Avoid**: "Sub-agents may run the shared tier, one at a time." Nothing carries that ordering across sub-agents.
+- ✓ **Good** (tier not needed): "Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so branches running them concurrently wipe each other's state and return failures indistinguishable from defects in the change. Name any such tier to every branch as off-limits when the review does not depend on running it."
+- ✓ **Good** (fan-out judges that tier): "When the change under review is what that tier exists to exercise, so that judging it at all requires running the tier, direct each branch instead to provision its own isolated instance of the resource, prepare it through the project's own setup path, run against it, and tear it down afterward. One shared instance carrying an instruction to run a single branch at a time is not sufficient, since nothing enforces that across branches. When a branch's own instance cannot be provisioned, the tier is left unrun and reported as such."
+- ✓ **Good** (branches run the tier): "Direct every branch that runs a test suite to redirect the runner's output to a file under `$TMPDIR` and read the file."
 
 ## Using request_user_input
 

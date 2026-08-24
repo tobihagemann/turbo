@@ -68,6 +68,8 @@ Work through each level sequentially. Complete all tests in a level before movin
 5. Record **PASS**, **FAIL**, or **PARTIAL** with details
 6. When the UX lens is loaded, note any usability observation it surfaces, kept separate from the verdict
 
+When a scenario's preconditions need privileged state or a second participant (an entitlement or plan tier, an elevated role, seed data, a second concurrent client or session), provision it through a path the project already exposes for development and run the scenario. Record **PARTIAL** only after an attempt to provision failed, naming the precondition that could not be provisioned and what was tried.
+
 When the scenario's output is consumed by another system, withhold PASS until that system accepts it. Decoding a token, reading a response body, or confirming a row exists shows only that the artifact was produced. Stand up the consumer under the same isolation and cleanup rules as any other service this run starts, and exercise its own flow. When standing it up is not possible, record **PARTIAL** and name which half is unproven. PARTIAL counts as not passed everywhere a verdict is tallied or gated.
 
 ### Level Progression
