@@ -52,7 +52,11 @@ Stage the fix before mutating it (`git add <file>`), so `git checkout -- <file>`
 
 When the test still passes with the fix reverted, suspect the mutation before the test: confirm it reaches the branch under test and reproduces the original behavior rather than a third one. A test that genuinely cannot be made to fail does not pin the behavior; say so rather than counting it as coverage. When the fixed code combines several signals, also apply the plausible rewrites a maintainer might reach for — reordering the signals, substituting a fallback chain for a conjunction, dropping a term that looks redundant — and confirm each fails at least one test, then restore the fixed code. A rewrite that passes every test while changing behavior on some input means the tests pin the examples rather than the invariant; add the test that distinguishes it. When the fix guards against an unbounded loop or wait, bound the test itself so that reverting the fix fails rather than hangs: cap the iteration count for a loop; enforce a deadline for a wait.
 
-After every mutation in this step, re-run the test and confirm it passes again before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
+When the fix changes when, whether, or how often a mechanism runs, mutate the changed line and run the whole affected suite, not only the test written for this fix: a fix can disarm tests that already existed, and those keep passing. Concentrate on the tests whose pass condition is an absence, and establish for each one that still passes whether it passes for the reason it did before. Those tests cannot distinguish a guard that rejected the work from a mechanism that never ran.
+
+A test whose pass condition is an absence needs an assertion establishing the mechanism was reachable. Place that arming assertion before anything that can consume the state it reads. Placed after, the assertion holds whether or not the guard exists, and the test looks rigorous while pinning nothing.
+
+After every mutation in this step, re-run whatever that mutation was checked against and confirm it passes again before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
 
 Stage all changes made in this step before continuing.
 

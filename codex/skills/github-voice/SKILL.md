@@ -14,6 +14,7 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - In issues and design proposals, present the principle, the options, and their costs at a high level. Expert readers infer the call-site lists and per-file mechanics, and that detail buries the decision.
 - When explaining how the code works, describe its current behavior. Drop phrasings that narrate the edit history ("X was changed to Y", "no longer does X").
 - When the user has stated their reasoning in the conversation, mine it and write from that reasoning. A cleaner argument constructed afterwards reads as someone else's, however sound it is.
+- When the user supplies wording for the artifact, that wording is the draft. Keep their phrasing rather than sharpening it into something more precise, more formal, or more technically careful. Where the phrasing names an effect and the mechanism differs, state the mechanism separately. Flagging the deviation to the user does not license it.
 - Sound like the author, not like an AI assistant.
 - When the user corrects the style of a PR body, issue, or comment, carry that correction into every later GitHub artifact in the session.
 - Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, sub-agents, etc.). The recipient doesn't know about these tools.

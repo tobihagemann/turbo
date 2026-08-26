@@ -122,6 +122,7 @@ When the consultation rewrote prose rather than answering a question, check the 
 - a narrowing that recasts an absence of information as a limitation of what it describes
 - an inverted direction in a described mapping
 - a term renamed in prose, drifting from the identifier it documents
+- a precise word swapped for a vaguer one, or a dropped modifier that carried the argument
 - dropped markup or function words, articles included
 - a split that separates clauses whose relationship is the point
 - a split that strands a pronoun on the wrong noun
