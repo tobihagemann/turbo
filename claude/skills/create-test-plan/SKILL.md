@@ -59,6 +59,8 @@ After identifying scope, read the actual code in depth to understand:
 
 For each level, generate specific, actionable test scenarios tailored to the actual change. Each scenario needs exact steps and an expected outcome.
 
+Confirm a scenario's starting state can be reached before writing it. When a precondition depends on a system the executor does not control (another team's service, an external platform), confirm a write path for it exists. Where the write path is uncertain or absent, write the scenario so it names what to attempt and what to record when the attempt fails.
+
 ### Level 1: Basic Functionality
 
 Does the feature work at all? Verify the happy path and the most obvious behavior.

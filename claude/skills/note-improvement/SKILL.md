@@ -5,11 +5,11 @@ description: "Capture an out-of-scope improvement opportunity so it doesn't get 
 
 # Note Improvement
 
-Capture improvement opportunities discovered during work so they don't get silently dropped. Appends to a project-level `.turbo/improvements.md` file that serves as a backlog of actionable ideas.
+Capture improvement opportunities discovered during work so they don't get silently dropped. Appends to the `.turbo/improvements.md` backlog of the repo an improvement concerns.
 
-## Step 1: Determine Project Root
+## Step 1: Locate the Improvements File
 
-Find the nearest `.git` directory or project root. The improvements file lives at `.turbo/improvements.md` relative to the project root.
+Each repo keeps its improvements file at `.turbo/improvements.md` relative to that repo's root, resolved by the nearest `.git` directory.
 
 ## Step 2: Identify the Improvement
 
@@ -30,9 +30,14 @@ Gather from context or `$ARGUMENTS`:
 
 When the criteria above clearly select one value, use it. Otherwise, use `AskUserQuestion` to confirm; default to `plan` if the user declines to choose.
 
-## Step 3: Append to File
+## Step 3: Route and Append
 
-Read `.turbo/improvements.md` if it exists. Create it with the header below if it doesn't.
+- Append the entry to the `.turbo/improvements.md` of the repo whose files its **Where** names, which may not be the current repo.
+- When **Where** spans several repos, split it into one entry per repo and append each to its own repo. Give every entry the titles of all its counterparts so a reader of any one backlog finds the others.
+- Rewrite each split entry's **Where** so its paths read repo-local, matching the entries already in that backlog. Qualify any remaining reference that resolves only in another repo with the repo it lives in.
+- When a target repo is not reachable on disk, say so plainly and append its entry to the current repo's backlog instead, naming the repo it was meant for.
+
+Read `.turbo/improvements.md` in each target repo if it exists. Create it with the header below if it doesn't.
 
 **File header** (only when creating new):
 
@@ -53,20 +58,21 @@ Out-of-scope improvement opportunities captured during work sessions. Review per
 - **Why**: <brief rationale>
 - **Ceiling**: <limit the shipped approach accepts>
 - **Revisit**: <condition that makes the fuller version worth building>
+- **Paired with**: <repo> — <title of the counterpart entry>
 - **Noted**: <YYYY-MM-DD>
 ```
 
-Include the Ceiling and Revisit lines when the entry records a deliberate simplification; omit both otherwise. Append the new entry at the end of the file.
+Include the Ceiling and Revisit lines when the entry records a deliberate simplification, and a Paired with line per counterpart when the entry is one half of a split; omit them otherwise. Append the new entry at the end of each target file.
 
 ## Step 4: Confirm
 
-Tell the user the improvement was noted and where the file is.
+Tell the user the improvement was noted and where each entry was written.
 
 ## Rules
 
-- Deduplicate before appending: check for a similar entry and update it in place when one exists. When the existing entry predates the Type field, add a Type line while updating.
+- Deduplicate before appending: check each target backlog for a similar entry and update it in place when one exists. When the existing entry predates the Type field, add a Type line while updating.
 - When updating an existing entry tagged with the legacy values `trivial` or `standard`, rewrite the Type to `direct` or `plan` respectively so the file converges on current vocabulary.
 - Keep entries concise. These are backlog items, not specs.
 - When a deliberate simplification's revisit condition is not yet knowable, record what would have to be observed to know it.
 - Record only; leave action to the user, who decides when to address it.
-- When the project has no `.turbo/` directory, use `AskUserQuestion` to confirm the location before creating one.
+- When a target repo has no `.turbo/` directory, use `AskUserQuestion` to confirm the location before creating one.

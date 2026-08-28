@@ -19,7 +19,7 @@ gh label list --limit 100
 gh issue list --search "<keywords>" --state all
 ```
 
-Treat an empty listing as normal. When templates exist, read the one matching the issue type, and read `.github/ISSUE_TEMPLATE/config.yml` when present. Follow the template's structure and required sections, and apply the labels and title prefix the template declares. For a YAML issue form, render each field's `attributes.label` as a `###` heading with the answer beneath, matching what the web form produces. When `config.yml` sets `blank_issues_enabled: false`, choose a template rather than filing a blank issue.
+Treat an empty listing as normal. When templates exist, read the one matching the kind of issue, and read `.github/ISSUE_TEMPLATE/config.yml` when present. Follow the template's structure and required sections, and apply the labels and title prefix the template declares. For a YAML issue form, render each field's `attributes.label` as a `###` heading with the answer beneath, matching what the web form produces. When `config.yml` sets `blank_issues_enabled: false`, choose a template rather than filing a blank issue.
 
 When the search surfaces a plausible duplicate, present it and use `AskUserQuestion` to confirm whether to file anyway.
 
@@ -45,7 +45,7 @@ Write the drafted body to `.turbo/issue/<tag>-body.md` (using the printed tag) w
 gh issue create --title "<TITLE>" --body-file .turbo/issue/<tag>-body.md --label "<LABEL>,<LABEL>"
 ```
 
-Repeat `--label` when the template sets several. Drop `--label` when no existing label fits. Do not set `--assignee` or `--milestone` unless the user explicitly asks.
+Repeat `--label` when the template sets several. Drop `--label` when no existing label fits. Set the issue type with `--type <name>` when a type is asked for or the template declares one; an issue type is a separate feature from a label, so applying a label of the same name leaves the request unmet. Do not set `--assignee` or `--milestone` unless the user explicitly asks.
 
 Then use the TaskList tool and proceed to any remaining task.
 

@@ -12,7 +12,7 @@ Read the current PR title and body, analyze what changed in the session, and dra
 Fetch the current PR details:
 
 ```bash
-gh pr view [PR_NUMBER] --json number,title,body,baseRefName,headRefName,updatedAt,commits
+gh pr view [PR_NUMBER] --json number,title,body,baseRefName,commits
 ```
 
 Omit PR_NUMBER to auto-detect from current branch.
@@ -29,26 +29,26 @@ Before drafting, study the current title and body to identify:
 
 ## Step 3: Evaluate Whether an Update Is Needed
 
-Use the PR's `updatedAt` field and commit timestamps to determine whether new commits were added since the body was last edited.
-
-If `commits_since_body_change` is empty, the description is already up to date — say so and stop.
-
 Run `git fetch origin <base>` so the remote ref is current before any diff below. A local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the description.
 
-If there are commits since the last body change, check the incremental diff to assess significance:
+Read the fetched body against the current diff and list what the body leaves undescribed:
 
 ```bash
-git diff origin/<base>...HEAD --diff-filter=d --stat -- $(git log --since="<body_last_changed>" --name-only --pretty=format: origin/<base>..HEAD | sort -u)
+git diff origin/<base>...HEAD
 ```
 
-Skip the update if the incremental changes are trivial (formatting, typos, config-only). Proceed if they add, remove, or modify meaningful behavior.
+Check every Mermaid diagram in the body the same way, node by node and transition by transition. A diagram that omits a state still renders, so only the code reveals its staleness.
+
+If the body and its diagrams already describe the diff, the description is up to date. Say so and stop.
+
+If what the body leaves undescribed is only trivial (formatting, typos, config-only), say so and stop. Proceed when the body omits, misstates, or still describes behavior the diff no longer contains.
 
 ## Step 4: Analyze the Full Diff
 
 Derive the PR description from the full diff, not from individual commits. The description should reflect the net change — what the code looks like now vs. the base — not the development journey. Intermediate bug fixes, reverted approaches, and implementation pivots that happened during development are not relevant to the reader.
 
-1. Check `git diff origin/<base>...HEAD` for the full scope of changes — this is the primary source of truth
-2. Use the incremental diff (since last body edit) to understand what's new, but frame everything in the context of the whole PR
+1. Work from the full diff Step 3 read (`git diff origin/<base>...HEAD`) — this is the primary source of truth
+2. Use what Step 3 found undescribed to understand what's new, but frame everything in the context of the whole PR
 3. Check if the changes introduce runtime flows or state transitions that warrant diagrams (see Diagrams section below)
 
 ## Step 5: Run `/github-voice` Skill
@@ -64,6 +64,7 @@ Write an updated title and body that:
 - **Preserves what still applies** — keep existing text that remains accurate
 - **Adds what's new** — integrate new changes naturally into the existing structure
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
+- **Scopes to the target repository** — write for someone who knows only the repository the PR targets; when the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body
 - **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
 
 ## Step 7: Confirm with User

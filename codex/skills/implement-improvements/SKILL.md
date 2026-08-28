@@ -137,6 +137,8 @@ Edit `.turbo/improvements.md` to delete the working-set entries that the lane pr
 
 Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
 
+When a processed entry carries a **Paired with** line, drop that reference from each counterpart entry it names, so no backlog is left pointing at an entry that no longer exists.
+
 ## Rules
 
 - `.turbo/` is gitignored. Edits to `.turbo/improvements.md` are local-only and do not need to be staged or committed.

@@ -15,6 +15,8 @@ Source every claim about prior behavior from the base branch itself, by reading 
 
 Before writing that two pull requests must land together, check whether the consumer uses what changed: `git grep <symbol>` in its checkout, or the other repository's working copy when the dependency crosses repositories. When it does, name the actual cause. When it does not, drop the landing-order claim and keep any reference to the related pull request as plain context. State the claim as unverified when the consumer is not reachable.
 
+When the PR closes an issue, read the issue before drafting.
+
 ## Step 2: Run `$github-voice` Skill
 
 Run the `$github-voice` skill to load writing style rules.
@@ -25,19 +27,27 @@ Pick a framing, then draft a title and description in it, embedding any diagrams
 
 ## Step 4: Confirm and Create
 
-Use `request_user_input` for confirmation only. Generate a random tag so the body file is unique across sessions:
+Generate a random tag so the body file is unique across sessions:
 
 ```bash
 head -c 4 /dev/urandom | xxd -p
 ```
 
-Write the drafted body to `.turbo/pr/<tag>-body.md` (using the printed tag) with `apply_patch`, then create the PR with `gh pr create --body-file`:
+Write the drafted body to `.turbo/pr/<tag>-body.md` (using the printed tag) with `apply_patch`.
+
+Use `request_user_input` to choose among three outcomes, and act on the one selected:
+
+- **Post the PR now** — create it with the command below.
+- **Edit the description first** — give the user the path to the body file and stop there. Once they say they are done editing, use `request_user_input` again to offer posting the PR or cancelling, then act on that answer. Posting reads the file, so their edits carry through.
+- **Cancel** — create no PR.
 
 ```bash
 gh pr create --title "<TITLE>" --body-file .turbo/pr/<tag>-body.md
 ```
 
-Do not set `--assignee` unless the user explicitly asks to assign someone.
+Do not set `--assignee` unless the user explicitly asks to assign someone. Reserve `--draft` for an explicit request for a draft pull request on GitHub.
+
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Framing
 
@@ -64,6 +74,9 @@ Write Before lines in the past tense, with two exceptions. A sentence describing
 ### Rules
 
 - Raise each item to behavior a user or operator would notice. Mechanism the reviewer can read off the diff belongs in the diff.
+- Write the body for someone who knows only the repository the PR targets. When the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body. Explaining a cause does not license importing those internals. State the observable outcome instead.
+- When the PR closes an issue, open with `Closes #N`. Carry only what the issue does not already say: the interface being added, behavior a reviewer cannot infer from the diff, and above all any deviation from what the issue asked for. The issue carries the bug, its root cause, and the motivation; reference it rather than restating it.
+- After cutting for any rule above, re-read what remains. A claim whose setup lived in a cut passage no longer stands on its own.
 
 ## Diagrams
 

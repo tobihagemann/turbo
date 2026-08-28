@@ -69,7 +69,7 @@ For each group:
 
 1. Drop the stash
 2. Check out the last created branch
-3. Output a summary table: group name, branch, PR URL, and base branch
+3. Output a summary table: group name, branch, PR URL, and base branch. For a group whose PR was not posted, print the handed-over body file path in place of the URL.
 
 Then use the TaskList tool and proceed to any remaining task.
 
@@ -105,7 +105,7 @@ Then use the TaskList tool and proceed to any remaining task.
 ## Rules
 
 - Run the `/commit-rules` skill before every commit; do not commit without loading it first.
-- Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report any stashed file that no group shipped, rather than discarding it. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery.
+- Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report any stashed file that no group shipped, rather than discarding it. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery. A group whose PR was handed over for editing rather than posted is not a failure; record it in the summary and continue.
 - Stacked PRs target the previous group's branch. Independent PRs target the default branch.
 - For stacked groups, the PR description should note the dependency chain.
 - Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

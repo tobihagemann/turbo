@@ -73,6 +73,8 @@ git push
 - **Create PR** — run the `/create-pr` skill
 - **Update PR** — run the `/update-pr` skill
 
+When `/create-pr` hands the body file over for editing instead of posting, report that path and that no PR was opened.
+
 Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
