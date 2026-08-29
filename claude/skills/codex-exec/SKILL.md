@@ -41,6 +41,8 @@ Run codex via the Bash tool as a foreground call (do not set `run_in_background`
 
 Capture the `session id:` from the run's stderr chrome as it starts; it never appears in the `-o` file, and recovery depends on it. Do not pass `--ephemeral` when the run may need recovery, since it persists no session files.
 
+Give every run its own `-o` path, named with a random tag so that runs spawned concurrently and successive runs in an iteration loop cannot collide on a path each derived independently. A reused path holds the prior run's complete output until the current run exits, so an early read returns well-formed output from the wrong run; a fresh path turns that same read into a detectable empty one. Treat content in the `-o` file as final only once the run has exited.
+
 A run that outlives the timeout is normally **force-backgrounded**: the result carries a task ID and an output file path, and the run continues to completion. Recover it by reading the output file: `Read` the path, then `Read` it again once the `<task-notification>` reports completion.
 
 Rarely the run is **hard-killed** instead, giving an error exit (code 143) reading `Command timed out after <duration>` with no task ID and no `-o` file. Do not re-run the prompt from scratch; that discards the work already done and hits the same ceiling. Resume the session with a fresh output path, asking for the findings as the final message rather than as a file write:
@@ -56,7 +58,7 @@ Never wait with `Monitor` (it returns immediately, and events that arrive after 
 
 ## Transient Crash Retry
 
-Re-run the command once when the Bash call returned an error exit with no stdout and no task ID. A timeout is not a crash: when the error text reads `Command timed out after <duration>`, resume the session per Synchronous Execution rather than re-running. Recover a force-backgrounded run per Synchronous Execution rather than retrying it. Keep the same prompt; when the run writes to an `-o` file, point the retry at a fresh path. Treat a second failure as final.
+Re-run the command once when the Bash call returned an error exit with no stdout and no task ID. A timeout is not a crash: when the error text reads `Command timed out after <duration>`, resume the session per Synchronous Execution rather than re-running. Recover a force-backgrounded run per Synchronous Execution rather than retrying it. Keep the same prompt. Treat a second failure as final.
 
 Treat models-manager and cache-TTL errors as non-fatal warnings. Read the error text for usage-limit and authentication signatures and report those without retrying.
 
