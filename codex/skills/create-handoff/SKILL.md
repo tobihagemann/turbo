@@ -41,7 +41,7 @@ Survey the conversation context for:
 - **Open decisions**: questions raised but not resolved, choices the user is still weighing, escalations awaiting input
 - **In-flight changes**: staged or unstaged edits that are not yet committed; what each change is doing and what is missing
 - **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out
-- **Next step**: the first concrete action the new session should take
+- **Next step**: the first concrete action the new session should take. When the user has stated what they want to work on next, that intent leads and any work left in flight is ordered after it; say so in the same statement when that work should not resume at all
 
 Read `.turbo/improvements.md` if it exists and note any entry this handoff takes over. When no entry clearly matches, leave the backlog alone.
 

@@ -13,3 +13,4 @@ Run the `/commit-rules` skill to load commit message rules and technical constra
 
 - Changes are already staged and ready to commit
 - Do not stage any files
+- Keep the current branch and commit on it, including when it is the default branch
