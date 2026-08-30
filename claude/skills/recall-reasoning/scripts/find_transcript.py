@@ -6,10 +6,11 @@ Usage:
   python3 scripts/find_transcript.py --file <path>[:<line>]
   python3 scripts/find_transcript.py --file <path>:<line> --window-days 14
 
-Resolves a commit SHA (directly or via `git blame`), locates the Claude Code project
-transcript directory (~/.claude/projects/<encoded-cwd>/), ranks candidate transcripts
-by time overlap and file/tool-use references, and extracts relevant user prompts and
-assistant text messages from the top candidate.
+Resolves a commit SHA (directly or via `git blame`), locates candidate Claude Code
+project transcript directories under the effective configuration home
+(`CLAUDE_CONFIG_DIR` or `~/.claude`), ranks candidate transcripts by time overlap and
+file/tool-use references, and extracts relevant user prompts and assistant text from
+the top candidate.
 
 Output: JSON on stdout with commit metadata, candidate list, and excerpts.
 Exit codes: 0 on success (even if no transcripts found), 1 on usage errors, 2 on git failures.
@@ -18,7 +19,6 @@ Exit codes: 0 on success (even if no transcripts found), 1 on usage errors, 2 on
 import argparse
 import json
 import os
-import re
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -82,23 +82,33 @@ def get_commit_meta(sha, repo_root):
     }
 
 
-def project_transcript_dir(repo_root):
-    """Derive ~/.claude/projects/<encoded>/ from an absolute project path.
+def claude_projects_root():
+    """Return the effective Claude Code transcript-storage root."""
+    config_home = os.environ.get('CLAUDE_CONFIG_DIR')
+    if config_home:
+        return Path(config_home).expanduser() / 'projects'
+    return Path.home() / '.claude' / 'projects'
 
-    Claude Code encodes the cwd by replacing both '/' and '.' with '-'.
-    """
-    encoded = re.sub(r'[/.]', '-', str(repo_root))
-    return Path.home() / '.claude' / 'projects' / encoded
 
-
-def iter_transcripts(project_dir):
-    if not project_dir.is_dir():
+def project_transcript_dirs():
+    """Return Claude Code project directories for authoritative cwd filtering."""
+    projects_root = claude_projects_root()
+    if not projects_root.is_dir():
         return []
     return sorted(
-        project_dir.glob('*.jsonl'),
+        (path for path in projects_root.iterdir() if path.is_dir()),
         key=lambda p: p.stat().st_mtime,
         reverse=True,
     )
+
+
+def iter_transcripts(project_dirs):
+    transcripts = [
+        transcript
+        for project_dir in project_dirs
+        for transcript in project_dir.glob('*.jsonl')
+    ]
+    return sorted(transcripts, key=lambda p: p.stat().st_mtime, reverse=True)
 
 
 def parse_timestamp(value):
@@ -128,6 +138,21 @@ def load_transcript_records(path, max_records=20000):
     except OSError:
         return []
     return records
+
+
+def transcript_belongs_to_project(records, repo_root):
+    """Return whether a transcript was launched in the repo or a subdirectory."""
+    root = str(repo_root)
+    seen = set()
+    for record in records:
+        cwd = record.get('cwd')
+        if not cwd or cwd in seen:
+            continue
+        seen.add(cwd)
+        resolved = str(Path(cwd).expanduser().resolve())
+        if resolved == root or resolved.startswith(root + os.sep):
+            return True
+    return False
 
 
 def transcript_time_range(records):
@@ -355,25 +380,27 @@ def main():
         return 0
 
     commit_ts = parse_timestamp(meta['timestamp'])
-    project_dir = project_transcript_dir(repo_root)
+    storage_dirs = project_transcript_dirs()
 
     result = {
         'status': 'ok',
         'commit': meta,
-        'project_dir': str(project_dir),
+        'project_dir': None,
+        'project_dirs': [],
         'candidates': [],
     }
 
-    if not project_dir.is_dir():
+    if not storage_dirs:
         result['status'] = 'no-transcripts'
-        result['error'] = f'no Claude Code transcript dir for {repo_root}'
+        result['error'] = 'no Claude Code transcript directories under the effective config home'
         print(json.dumps(result, indent=2))
         return 0
 
     touched = meta['files']
     window = timedelta(days=args.window_days)
     scored = []
-    for path in iter_transcripts(project_dir):
+    matching_dirs = set()
+    for path in iter_transcripts(storage_dirs):
         # Coarse pre-filter: skip files whose mtime is far from the commit to avoid
         # loading and parsing every historical transcript. score_transcript() uses
         # the precise in-file timestamps for the final time-overlap check.
@@ -381,8 +408,9 @@ def main():
         if commit_ts is not None and abs(mtime - commit_ts) > window:
             continue
         records = load_transcript_records(path)
-        if not records:
+        if not records or not transcript_belongs_to_project(records, repo_root):
             continue
+        matching_dirs.add(path.parent)
         score, reasons, rel_idx = score_transcript(records, commit_ts, touched)
         if score <= 0:
             continue
@@ -399,10 +427,13 @@ def main():
 
     scored.sort(key=lambda c: c['score'], reverse=True)
     result['candidates'] = scored[: args.limit]
+    result['project_dirs'] = [str(path) for path in sorted(matching_dirs)]
 
     if not result['candidates']:
         result['status'] = 'no-match'
         result['error'] = 'no transcript in the window matched the touched files'
+    else:
+        result['project_dir'] = str(Path(result['candidates'][0]['jsonl_path']).parent)
 
     print(json.dumps(result, indent=2))
     return 0

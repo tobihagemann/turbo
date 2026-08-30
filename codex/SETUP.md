@@ -69,6 +69,7 @@ Set:
 - `codex.excludeSkills` to any excluded Codex skill names
 - `codex.lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
 - `codex.configVersion` to the highest version number in `~/.turbo/repo/codex/MIGRATION.md`
+- `codex.sharedClaudeAutoMemory` to its existing boolean value, or `false` when the key is absent or invalid
 
 Preserve any existing config values (`oracle`, `claude` if the Claude edition is also installed).
 
@@ -79,7 +80,8 @@ Example shape:
   "codex": {
     "excludeSkills": [],
     "lastUpdateHead": "<HEAD>",
-    "configVersion": 2
+    "configVersion": 3,
+    "sharedClaudeAutoMemory": false
   }
 }
 ```
@@ -129,6 +131,42 @@ npm install -g @anthropic-ai/claude-code
 Authenticate Claude Code per its instructions, then verify: `claude --help` should show usage info. `$peer-review` calls Claude in non-interactive print mode through `$claude-print`.
 
 Smoke-test print mode in the current project: `claude -p "hello" < /dev/null` should return a response. If it fails because permissions are required, help the user configure Claude Code for read-only review in this trusted workspace. Do not enable broad write or bypass permissions for peer review — Claude only needs to read the repository and inspect diffs unless a specialized consultation explicitly asks for more.
+
+### Shared Claude Code Auto Memory (Optional)
+
+Ask the user whether to let `$self-improve` use Claude Code project memory as a shared source for Codex. When rerunning setup, show the current `codex.sharedClaudeAutoMemory` value and let the user keep or change it. Preserve every other key whenever changing the preference.
+
+If declined, set the preference to `false` and skip the rest of this section. `$self-improve` then bypasses shared-source discovery and retains its harness-memory fallback.
+
+If the preference is already `true` and the user keeps it, trust the recorded global setup contract and skip the rest of this section, including current-project validation. The preference instructs `$self-improve` to assume every project has a matching imported resource when resolving its source path.
+
+When enabling it from any other state, leave the preference `false` while completing the setup below.
+
+Confirm `codex features list` includes `external_agent_memory_import`. If it does, ask before merging these settings into `~/.codex/config.toml`, preserving existing keys:
+
+```toml
+[features]
+memories = true
+external_agent_memory_import = true
+
+[memories]
+generate_memories = true
+use_memories = true
+```
+
+`external_agent_memory_import` is under development. Restart the Codex desktop app after enabling it, open **Settings > Import**, import Claude Code **Memory**, and enable **Keep imports in sync**. The synchronization direction is Claude Code source memory into Codex.
+
+Verify every condition before relying on the shared route:
+
+1. `~/.codex/config.toml` has `features.external_agent_memory_import`, `features.memories`, `memories.generate_memories`, and `memories.use_memories` enabled.
+2. The desktop app wrote `external-agent-import-sync-enabled = true` under `[desktop]` in `~/.codex/config.toml`.
+3. The project has a resource directory under `~/.codex/memories/extensions/external_agent_import/resources/` whose `scope.json` names the canonical project root.
+4. The effective Claude Code settings enable auto memory and identify its source directory. Resolve `autoMemoryDirectory` from Claude Code's managed settings, then project-local `.claude/settings.local.json`, then the user `<Claude config home>/settings.json`; exclude checked-in `.claude/settings.json`, where Claude Code ignores this field. Use the expanded override when set; otherwise use the imported resource directory's name as the project key under `CLAUDE_CONFIG_DIR` when set or `~/.claude` otherwise, followed by `projects/<project key>/memory/`.
+5. That source directory already exists and is writable.
+
+Set `codex.sharedClaudeAutoMemory` to `true` only after every condition passes. If any condition fails, leave it `false` and report that setup is incomplete.
+
+Treat files under the imported `resources/` directory as read-only. The saved `true` value is the runtime contract: `$self-improve` resolves the source path but does not repeat these setup checks.
 
 ## Step 4: Enable Structured User Input in Default Mode
 

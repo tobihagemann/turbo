@@ -25,7 +25,7 @@ For Codex skill conventions, see [`codex/SKILL-CONVENTIONS.md`](codex/SKILL-CONV
 
 ## Key Files
 
-- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared. Per-edition state lives under `codex.{excludeSkills, lastUpdateHead, configVersion}`; the parallel `claude.*` object is present when the Claude edition is also installed.
+- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared. Per-edition state lives under `codex.{excludeSkills, lastUpdateHead, configVersion, sharedClaudeAutoMemory}`; the parallel `claude.*` object is present when the Claude edition is also installed.
 - `~/.turbo/repo/` — Local clone of the upstream turbo repo (skill source for install/update)
 - `~/.agents/skills/` — Installed Codex skills
 

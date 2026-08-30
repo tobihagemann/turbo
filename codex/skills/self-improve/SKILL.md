@@ -12,10 +12,18 @@ Review the current conversation, or the project's past sessions when asked, to e
 Available destinations:
 
 - **Project AGENTS.md** — the instruction file in the project root, plus any nested ones in subdirectories. At each level use `AGENTS.override.md` when one is present, otherwise `AGENTS.md`: an override replaces that directory's `AGENTS.md` rather than adding to it, so a lesson written to a shadowed file never loads. A nested file scopes its guidance to that subtree, so a lesson scoped to one subtree belongs in the nearest enclosing file, with the root reserved for project-wide rules.
-- **Auto memory** — Codex memory, if the active harness exposes a project-specific memory file. If no memory location is available, skip this destination.
+- **Auto memory** — one writable memory target resolved for the canonical project root. Prefer a synced Claude Code project-memory source, then a memory-update target explicitly named by the active harness. If neither resolves, skip this destination.
 - **Skills** — Project skills at `.agents/skills/` (walked from project root down to cwd) and user-installed skills at `~/.agents/skills/` (resolve symlinks)
 
-Discover the project instruction files (the root file and any nested ones in subdirectories, resolved through the override rule above) and read them, then read any available Codex memory. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
+Resolve the canonical project root as the Git top-level containing the working directory, or the physical working directory outside a repository. Resolve Auto memory in this order:
+
+1. **Synced Claude Code source memory** — Read `~/.turbo/config.json`. When `codex.sharedClaudeAutoMemory` is exactly `true`, treat shared-memory setup as complete for every project and use this branch. Resolve `autoMemoryDirectory` from Claude Code's managed settings, then project-local `.claude/settings.local.json`, then the user `<Claude config home>/settings.json`; exclude checked-in `.claude/settings.json`, where Claude Code ignores this security-sensitive field. Use the expanded override when set. Otherwise locate the resource directory under `~/.codex/memories/extensions/external_agent_import/resources/` whose `scope.json` matches the canonical project root, take its directory name as the exact Claude project key, and use `projects/<project key>/memory/` under `CLAUDE_CONFIG_DIR` when set or `~/.claude/`. Treat `false`, a missing or invalid key, and an unreadable `~/.turbo/config.json` as not opted in and continue to the harness target.
+2. **Harness memory update target** — Otherwise use a project-specific memory file or additive note intake that the active harness instructions explicitly name for memory updates.
+3. **No target** — Otherwise skip Auto memory and route lessons through the remaining destinations.
+
+Treat imported extension resources and the harness's consolidated memory files as read-only. For the resolved target, list the directory when applicable and read its index before routing lessons.
+
+Discover the project instruction files (the root file and any nested ones in subdirectories, resolved through the override rule above) and read them. When those files or the resolved Auto memory target point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
 
 ### Turbo Skill Detection
 
@@ -47,7 +55,7 @@ Treat the returned items as raw evidence for the scan below.
 
 **Run** when asked to distill sessions beyond the current one. **Skip** otherwise.
 
-Propose a cutoff first. When Step 1 found a memory location, take its newest modification time, state it, then use `request_user_input` to confirm sweeping from it or sweeping the whole history; when that gate cannot reach the user, sweep from the proposed cutoff and say so in the report. A memory file's timestamp records a write rather than a completed sweep, so it bounds the work without settling what a previous run covered. When no memory location is available, sweep the whole history without asking.
+Propose a cutoff first. When Step 1 resolved a harness memory update target, take its newest modification time, state it, then use `request_user_input` to confirm sweeping from it or sweeping the whole history; when that gate cannot reach the user, sweep from the proposed cutoff and say so in the report. A memory file's timestamp records a write rather than a completed sweep, so it bounds the work without settling what a previous run covered. When Step 1 resolved the synced Claude Code source, take its newest modification time and state that Claude Code writes also advance it, so it may omit unswept Codex sessions; use `request_user_input` with whole Codex history as the recommended option and that timestamp as the bounded option. When that gate cannot reach the user, sweep the whole Codex history and say so in the report. When no memory location is available, sweep the whole history without asking.
 
 Spawn a single sub-agent (inherited model defaults). The sub-agent's prompt must include:
 
@@ -139,10 +147,10 @@ Output a table as text before making any changes:
 | 1 | Always use X for... | Project AGENTS.md | Append to ## Conventions |
 | 2 | The $create-pr skill should... | ~/.agents/skills/create-pr | Update Step 2 |
 | 3 | Multi-step deploy workflow | New project skill | Create new skill |
-| 4 | User prefers short commit msgs | Auto memory | Append to MEMORY.md |
+| 4 | User prefers short commit msgs | Auto memory | Update <resolved memory target> |
 ```
 
-For each lesson, show: concise summary, target file/skill, and whether it's an append, update-in-place, or new creation.
+For each lesson, show: concise summary, exact target file/skill, and whether it's an append, update-in-place, or new creation. For Auto memory, name the resolved source or harness update target and state when a source write still requires import and consolidation before Codex can recall it. The approval covers the durable memory write at that displayed target.
 
 Then use `request_user_input` with these options: **Approve** or **Reject**.
 
@@ -151,7 +159,7 @@ Then use `request_user_input` with these options: **Approve** or **Reject**.
 Apply approved changes in order:
 
 1. **Improvements** — For items routed to project improvements, run the `$note-improvement` skill with the summary, location, and rationale for each.
-2. **Updates to auto memory** — Read the target, find the right section, append or update in place, following the memory system conventions from the system prompt.
+2. **Updates to auto memory** — Re-read the approved target immediately before writing. For a synced Claude Code source, match the existing topic-file and index conventions, leave `.consolidate-lock` untouched, and report propagation as pending; the lesson becomes available to Codex only after successful import and consolidation. Claim completed recall only after verifying it. For a harness memory update target, follow the active memory instructions; when they name an additive note intake, create a new note rather than editing consolidated memory files. Keep imported extension resources read-only in every branch.
 3. **Updates to AGENTS.md** — Read the target file selected in Step 4 (the root file or a nested subtree file, resolved through the override rule in Step 1), find the right section, append or update in place. Match the tone and format already present.
 4. **Updates to user/project skills** — Run the `$create-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
 5. **New skills** — Run the `$create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
@@ -172,6 +180,6 @@ Then call `update_plan` to mark this step completed and continue with the next s
 - Never include temporary state, in-progress work, or task-specific details
 - Keep lessons generic—avoid overly concrete examples; state the rule, not the instance
 - For AGENTS.md: write as agent documentation — project rules any AI agent on this repo should follow
-- For auto memory: write as personal Codex notes — concise, operational, organized by topic
+- For auto memory: write as personal project notes — concise, operational, organized by topic
 - For skills: follow the conventions in the existing skill collection
 - For files that live in the repo (AGENTS.md and project skills): name only mechanisms that live in the repo too; describe an installed skill's behavior generically

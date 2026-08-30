@@ -30,3 +30,16 @@ Turbo no longer distinguishes clone, fork, and source installs. `~/.turbo/repo` 
 
 1. Read `~/.turbo/config.json`.
 2. Delete the top-level `repoMode` key, preserve every other key, and write the file back.
+
+## Version 3: Add Shared Claude Auto-Memory Preference
+
+**Condition:** `codex.sharedClaudeAutoMemory` is missing or is not a boolean.
+
+**Skip if:** `codex.sharedClaudeAutoMemory` is already `true` or `false`.
+
+### Steps
+
+1. Read `~/.turbo/config.json`.
+2. Set `codex.sharedClaudeAutoMemory` to `false`, preserving every other key, and write the file back.
+
+This preference is opt-in. Setup changes it to `true` only after the user chooses Shared Claude Code Auto Memory and the integration passes setup validation; `$self-improve` then trusts the saved value at runtime.

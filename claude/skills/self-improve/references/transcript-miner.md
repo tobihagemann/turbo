@@ -6,14 +6,16 @@ Recover session evidence that context compaction dropped, from the transcript Cl
 
 ### 1. Locate the Transcript
 
-Claude Code writes every session to `~/.claude/projects/<encoded-cwd>/<session-id>.jsonl`, where the encoding replaces both `/` and `.` with `-`. A session started in a subdirectory encodes to its own directory, so match the encoded project root as a prefix:
+Claude Code writes every session to `<Claude config home>/projects/<encoded-cwd>/<session-id>.jsonl`, where the config home is `CLAUDE_CONFIG_DIR` when set and `~/.claude` otherwise. The key replaces every character outside `A-Za-z0-9` with `-`; long keys may be truncated and hashed. A session started in a subdirectory uses its own key. Use a harness-provided project directory only when it has this transcript-storage shape; a custom auto-memory directory is independent. Otherwise match the normal encoded project root as a prefix:
 
 ```bash
 ROOT="<project root>"
-ls -t "$HOME/.claude/projects/$(printf '%s' "$ROOT" | sed 's|[/.]|-|g')"*/*.jsonl | head -5
+CLAUDE_HOME="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+if [[ "$CLAUDE_HOME" == "~/"* ]]; then CLAUDE_HOME="$HOME/${CLAUDE_HOME:2}"; fi
+ls -t "$CLAUDE_HOME/projects/$(printf '%s' "$ROOT" | sed 's|[^A-Za-z0-9]|-|g')"*/*.jsonl | head -5
 ```
 
-The current session is the most recently modified file. Confirm it by grepping for the distinctive phrase you were given, using a short fragment that sits on one line and contains no quote characters: the stored text is JSON-escaped. When the phrase is absent, try the next file down, since concurrent sessions in the same project share the directory.
+The current session is the most recently modified file. Confirm it by grepping for the distinctive phrase you were given, using a short fragment that sits on one line and contains no quote characters: the stored text is JSON-escaped. When the phrase is absent, try the next file down, since concurrent sessions in the same project share the directory. When no prefix match exists, enumerate the most recently modified project directories and verify candidates from their recorded `cwd`; this covers truncated keys and encoding collisions without guessing the internal hash.
 
 If the directory or a matching transcript cannot be found, report that in one line and stop.
 
@@ -152,19 +154,23 @@ Keep every Mining Process filter except the distinctive-phrase match, and add on
 python3 - "<project root>" <<'PY'
 import glob, json, os, sys
 
-root = sys.argv[1].rstrip("/")
-enc = "".join("-" if c in "/." else c for c in root)
-paths = glob.glob(os.path.expanduser(f"~/.claude/projects/{enc}*/*.jsonl"))
+root = os.path.realpath(os.path.expanduser(sys.argv[1]))
+config_home = os.path.expanduser(os.environ.get("CLAUDE_CONFIG_DIR") or "~/.claude")
+paths = glob.glob(os.path.join(config_home, "projects", "*", "*.jsonl"))
 for path in sorted(paths, key=os.path.getmtime):
+    seen = set()
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             try:
                 cwd = json.loads(line).get("cwd")
             except ValueError:
                 continue
-            if cwd:
-                if cwd == root or cwd.startswith(root + "/"):
-                    print(path)
+            if not cwd or cwd in seen:
+                continue
+            seen.add(cwd)
+            resolved = os.path.realpath(os.path.expanduser(cwd))
+            if resolved == root or resolved.startswith(root + os.sep):
+                print(path)
                 break
 PY
 ```

@@ -29,18 +29,18 @@ python3 <skill-dir>/scripts/find_transcript.py --commit <sha>
 The script:
 
 1. Resolves the commit via `git rev-parse` or `git blame`
-2. Looks up `~/.claude/projects/<encoded-cwd>/` (slashes and dots become dashes)
+2. Enumerates directories under the effective Claude configuration home's `projects/` tree and filters their transcripts by authoritative `cwd` records, covering path encoding, truncation, collisions, and subdirectory launches
 3. Ranks candidate transcripts whose mtime is within `--window-days` of the commit (default 14)
 4. Scores candidates by mentions of touched files and tool-use edits on them
 5. Extracts cleaned user prompts and substantive assistant text from the top candidates
 
-The JSON output has `status`, `commit`, `project_dir`, and `candidates` with `session_id`, `score`, `match_reasons`, and `excerpts`.
+The JSON output has `status`, `commit`, `project_dir` (the top candidate's directory when matched), `project_dirs` (directories with matching `cwd` records in the time window), and `candidates` with `session_id`, `score`, `match_reasons`, and `excerpts`.
 
 Status values:
 
 - `ok` — candidates returned
 - `no-commit` — couldn't resolve a commit
-- `no-transcripts` — no Claude Code transcript dir for this repo
+- `no-transcripts` — the effective Claude configuration home has no project transcript directories
 - `no-match` — transcripts exist but none match the touched files in the window
 
 ## Step 2: Read and Synthesize

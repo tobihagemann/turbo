@@ -12,7 +12,7 @@ Review the current conversation, or the project's past sessions when asked, to e
 Available destinations:
 
 - **Project CLAUDE.md / AGENTS.md** — The root `.claude/CLAUDE.md` (may be a symlink to `../AGENTS.md` — resolve it), plus any nested `CLAUDE.md` / `AGENTS.md` files in subdirectories. Claude Code loads a subdirectory's file on demand when files in that subtree are accessed, so a lesson scoped to one subtree belongs in the nearest enclosing file, with the root reserved for project-wide rules.
-- **Auto memory** — The project-specific memory directory at `~/.claude/projects/<encoded project root>/memory/`, where the encoding replaces both `/` and `.` with `-`. List the directory and read `MEMORY.md` if it exists.
+- **Auto memory** — The project-specific memory directory named by the active harness. An effective `autoMemoryDirectory` setting overrides its location; otherwise it normally lives at `<Claude config home>/projects/<encoded project root>/memory/`, where the config home is `CLAUDE_CONFIG_DIR` when set and `~/.claude` otherwise. The key replaces every character outside `A-Za-z0-9` with `-`, and long keys may be truncated and hashed, so prefer the exact harness-provided path over recomputing it. List the directory and read `MEMORY.md` if it exists.
 - **Skills** — Project skills at `skills/` or `.claude/skills/` (resolve symlinks)
 
 Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
@@ -139,10 +139,10 @@ Output a table as text before making any changes:
 | 1 | Always use X for... | Project AGENTS.md | Append to ## Conventions |
 | 2 | The /create-pr skill should... | ~/.claude/skills/create-pr | Update Step 2 |
 | 3 | Multi-step deploy workflow | New project skill | Create new skill |
-| 4 | User prefers short commit msgs | Auto memory | Append to MEMORY.md |
+| 4 | User prefers short commit msgs | Auto memory | Update <resolved memory target> |
 ```
 
-For each lesson, show: concise summary, target file/skill, and whether it's an append, update-in-place, or new creation.
+For each lesson, show: concise summary, exact target file/skill, and whether it's an append, update-in-place, or new creation. For Auto memory, name the resolved project-memory target so the approval covers the durable write at that path.
 
 Then use `AskUserQuestion` with these options: **Approve** or **Reject**.
 
@@ -172,6 +172,6 @@ Then use the TaskList tool and proceed to any remaining task.
 - Never include temporary state, in-progress work, or task-specific details
 - Keep lessons generic—avoid overly concrete examples; state the rule, not the instance
 - For AGENTS.md: write as agent documentation — project rules any AI agent on this repo should follow
-- For auto memory: write as personal Claude notes — concise, operational, organized by topic
+- For auto memory: write as personal project notes — concise, operational, organized by topic
 - For skills: follow the conventions in the existing skill collection
 - For files that live in the repo (CLAUDE.md / AGENTS.md and project skills): name only mechanisms that live in the repo too; describe an installed skill's behavior generically
