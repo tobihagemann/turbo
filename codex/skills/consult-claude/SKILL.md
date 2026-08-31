@@ -39,6 +39,7 @@ When the consultation rewrote prose rather than answering a question, check the 
 - a compression that promotes a hedge into a fact, or flattens out the reasoning that made a sentence worth keeping
 - a rule promoted into an enforcement claim
 - a narrowing that recasts an absence of information as a limitation of what it describes
+- a figure or claim re-attributed to a different subject than the source gave it, the predicate left intact
 - an inverted direction in a described mapping
 - a term renamed in prose, drifting from the identifier it documents
 - a precise word swapped for a vaguer one, or a dropped modifier that carried the argument
