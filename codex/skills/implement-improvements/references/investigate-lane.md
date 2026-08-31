@@ -29,4 +29,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Run `$finalize` only once (inside `$implement` in Phase 2), not once per investigation.
+- Run the close-out only once (inside `$implement` in Phase 2), not once per investigation.

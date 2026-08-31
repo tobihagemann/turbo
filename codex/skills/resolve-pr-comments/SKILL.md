@@ -110,7 +110,7 @@ Whenever the item is costly to reverse (its resolution establishes a pattern oth
 
 If there are no accepted findings to implement, skip to Step 9.
 
-Run the `$resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. `$finalize` commits and pushes as part of its normal flow; Steps 10 and 11 replies reference the already-pushed commit SHA.
+Run the `$resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. Its direct path commits and pushes before returning; Steps 10 and 11 replies reference that commit SHA.
 
 ## Step 8: Verify Fixes
 

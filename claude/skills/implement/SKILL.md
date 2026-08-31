@@ -56,7 +56,7 @@ When a plan file governs the work, hold this step until every Implementation Ste
 When no plan file governs the work, use `AskUserQuestion` to offer three options:
 
 - **Full QA** — run the `/finalize` skill
-- **Lighter pass** — run the `/simplify-all` skill
+- **Quick close** — run the `/quick-finalize` skill
 - **Stop here** — leave the change as-is
 
 Then use the TaskList tool and proceed to any remaining task.

@@ -29,4 +29,4 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Run `/finalize` only once (inside `/implement` in Phase 2), not once per investigation.
+- Run the close-out only once (inside `/implement` in Phase 2), not once per investigation.

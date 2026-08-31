@@ -31,7 +31,7 @@ Run the `/update-changelog` skill.
 
 ## Phase 4: Run `/self-improve` Skill
 
-Run the `/self-improve` skill for the current session. Always run this phase even if the session seemed routine.
+Run the `/self-improve` skill for the current session. Always run this phase even if the session seemed routine. Skip it only when the invocation passed `defer-self-improve`, meaning a parent workflow continues past this call and closes the session itself.
 
 ## Phase 5: Ship It
 

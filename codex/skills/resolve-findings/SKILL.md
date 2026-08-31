@@ -19,7 +19,7 @@ At the start, use `update_plan` to track each step, restating any remaining step
 Present a summary of accepted findings (Apply verdict): count by complexity (mechanical fixes vs. architectural or design changes). Then use `request_user_input` to let the user choose:
 
 - **Plan** — Run `$turboplan` for drafting, refinement, approval, implementation, and finalize
-- **Direct** — Run `$apply-findings`, then `$finalize`
+- **Direct** — Run `$apply-findings`, then close out the change
 
 Suggest Plan when findings include complex or architectural changes. Suggest Direct when all findings are mechanical fixes.
 
