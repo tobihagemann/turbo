@@ -36,6 +36,7 @@ When the criteria above clearly select one value, use it. Otherwise, use `AskUse
 - When **Where** spans several repos, split it into one entry per repo and append each to its own repo. Give every entry the titles of all its counterparts so a reader of any one backlog finds the others.
 - Rewrite each split entry's **Where** so its paths read repo-local, matching the entries already in that backlog. Qualify any remaining reference that resolves only in another repo with the repo it lives in.
 - When a target repo is not reachable on disk, say so plainly and append its entry to the current repo's backlog instead, naming the repo it was meant for.
+- Write to a target repo other than the current one with the Edit or Write tool. The Bash sandbox denies a shell append into another repo, and a separately-issued verification command then prints the file's unchanged contents, which reads as success.
 
 Read `.turbo/improvements.md` in each target repo if it exists. Create it with the header below if it doesn't.
 

@@ -51,7 +51,13 @@ For each finding, propose: delete it, correct it, tighten to the load-bearing WH
 
 ### Agent 2: Markdown Documentation Review
 
-Review markdown files in scope (READMEs, AGENTS.md, docs/, contributor guides). Flag passages that add no information beyond what the reader can derive from current state:
+Review two sets.
+
+**Markdown files in scope** (READMEs, AGENTS.md, docs/, contributor guides), against every criterion below. This set is empty when the scope holds no markdown.
+
+**The repo's own documentation** (its instruction files, README, and `docs/`) when the scope is a diff, against explanation rot alone: prose the changeset falsified. This sub-agent's prompt carries a summary of what the change did in place of a file list.
+
+Flag passages that contradict the current state, or that add no information beyond what the reader can derive from it:
 
 1. **Status-update voice** — prose framed as recent updates or transitions. It also appears in invariant form: a sentence that reads as a rule but only carries meaning as a contrast with the design it replaced, and that you would not write if the project had always worked this way. Rewrite as timeless current-state prose.
 2. **Restates what the codebase already shows** — passages that duplicate the repo layout or re-summarize what the code makes obvious.
@@ -62,7 +68,7 @@ Review markdown files in scope (READMEs, AGENTS.md, docs/, contributor guides). 
 
 **Keep these:** passages that explain motivation, capture constraints or tradeoffs the code can't express, document interfaces meant for outside readers, or record decisions whose rationale would otherwise be lost.
 
-For each flagged passage, propose: delete it, tighten it, restructure it for readability, or rewrite it as timeless current-state prose.
+For each flagged passage, propose: delete it, correct it, tighten it, restructure it for readability, or rewrite it as timeless current-state prose.
 
 ## Step 3: Fix Issues
 
