@@ -18,7 +18,7 @@ This loop is the core. Two more pipelines run alongside it for work that does no
 
 Pick your edition: [`claude/SETUP.md`](claude/SETUP.md) for Claude Code, [`codex/SETUP.md`](codex/SETUP.md) for Codex. Both editions work best with their respective Max-tier plans (pipeline workflows are context-heavy). Additional tools are installed during setup.
 
-**External services:** The Claude edition benefits from ChatGPT Plus or higher for Codex peer review. The Codex edition benefits from Claude Code access for Claude peer review. ChatGPT Pro or Business is useful for [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md), where Pro models are the only ones that reliably solve very hard problems. [`/peer-review`](claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) are designed as swappable puzzle pieces, so if you don't have access, replace them with alternatives that work for you.
+**External services:** The Claude edition benefits from ChatGPT Plus or higher for Codex peer review. The Codex edition benefits from Claude Code access for Claude peer review. ChatGPT Pro or Business is useful for [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md), where the Pro tier is what reliably solves very hard problems. [`/peer-review`](claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) are designed as swappable puzzle pieces, so if you don't have access, replace them with alternatives that work for you.
 
 ### Automatic Setup (Recommended)
 
@@ -79,7 +79,7 @@ Every skill is a self-contained piece. Pipeline skills like [`/finalize`](claude
 
 Want to swap a piece? For example:
 
-- Replace [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) with your own setup (it's macOS-only and has a cookies workaround)
+- Replace [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) with your own setup (it drives ChatGPT through a browser and needs a one-time sign-in)
 - Replace [`/commit-rules`](claude/skills/commit-rules/SKILL.md) or [`/changelog-rules`](claude/skills/changelog-rules/SKILL.md) with your team's conventions. The pipeline adapts.
 - Replace [`/code-style`](claude/skills/code-style/SKILL.md) with your team's style guide. The built-in one teaches general principles rather than opinionated rules, so it's a natural swap point.
 

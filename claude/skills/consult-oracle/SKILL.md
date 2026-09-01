@@ -15,7 +15,7 @@ The oracle reads from `~/.turbo/config.json`:
 {
   "oracle": {
     "chatgptUrl": "https://chatgpt.com/",
-    "chromeProfile": "Default"
+    "model": "gpt-5.6-sol"
   }
 }
 ```
@@ -23,19 +23,25 @@ The oracle reads from `~/.turbo/config.json`:
 | Key | Purpose | Default |
 |---|---|---|
 | `chatgptUrl` | ChatGPT URL (e.g., a custom GPT project URL) | `https://chatgpt.com/` |
-| `chromeProfile` | Chrome profile directory name | `Default` |
+| `model` | Model to target; use a non-Pro model, since a Pro target aborts before submitting | `gpt-5.6-sol` |
 
-## Step 1: Identify Key Files
+## Step 1: Confirm the Thinking Effort
+
+The oracle consults through its own signed-in ChatGPT profile, created during setup and separate from the user's everyday browser. That profile's composer sets thinking effort with a slider the oracle can neither read nor change, so a consultation runs at whatever level the slider holds and the response never reports which one it used.
+
+State this, then use `AskUserQuestion` to confirm the slider is set to Pro. Offer "Pro is selected" and "Not sure, consult anyway". Both proceed to Step 2; on the second, note in the Step 6 summary that the thinking effort was unconfirmed.
+
+## Step 2: Identify Key Files
 
 Find the 2-5 files most relevant to the problem.
 
-## Step 2: Formulate the Question
+## Step 3: Formulate the Question
 
 Write a clear, specific problem description. Include what has already been tried and why it failed. Open with a short project briefing (stack, services, build steps). The more context, the better the response.
 
-## Step 3: Run the Oracle
+## Step 4: Run the Oracle
 
-Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`). The script loads `chatgptUrl` and `chromeProfile` from `~/.turbo/config.json` automatically and reuses the signed-in ChatGPT session from that Chrome profile. Generate a random tag and persist the response:
+Run via the Bash tool (`timeout: 600000`, do not set `run_in_background`). The script loads `chatgptUrl` and `model` from `~/.turbo/config.json` automatically and consults through the oracle's own signed-in ChatGPT profile. Generate a random tag and persist the response:
 
 ```bash
 ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p "$PWD/.turbo/oracle" && echo "$PWD/.turbo/oracle/$ORACLE_TAG.txt"
@@ -49,11 +55,11 @@ python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant 
 
 Keep backticks and `$` out of `--prompt` even in text you wrote, since both stay live inside the quotes. Text you did not author — a diff, file contents, an error trace, command output — goes in a file passed with `--file`, written with the Write tool. This holds on follow-up turns too.
 
-If the run fails, retry the command once — same prompt, attachments, profile, and timeout — when the failure looks transient, such as a browser challenge or automation error while the signed-in session is otherwise healthy. Report an authentication, browser-challenge, or permission blocker only after the retry reproduces it, and cite the failing output. Do not broaden permissions when the current context already has the access the run needs.
+If the run fails, retry the command once — same prompt, attachments, and timeout — when the failure looks transient, such as a browser challenge or automation error while the signed-in session is otherwise healthy. Report an authentication, browser-challenge, or permission blocker only after the retry reproduces it, and cite the failing output. Do not broaden permissions when the current context already has the access the run needs.
 
-## Step 4: Follow Up
+## Step 5: Follow Up
 
-Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Run via the Bash tool with the same settings as Step 3 (`timeout: 600000`, do not set `run_in_background`):
+Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Run via the Bash tool with the same settings as Step 4 (`timeout: 600000`, do not set `run_in_background`):
 
 ```bash
 python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output "<printed-path>"
@@ -61,11 +67,11 @@ python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>"
 
 Find the slug with `python3 scripts/run_oracle.py status` (the Slug column; follow-ups nest under their parent session) or from the directory names under `~/.oracle/sessions/`.
 
-Reuse the chat for a multi-turn review of the same code; start a fresh session (Step 3) for an unrelated question. Cap at 5 turns to prevent runaway conversations.
+Reuse the chat for a multi-turn review of the same code; start a fresh session (Step 4) for an unrelated question. Cap at 5 turns to prevent runaway conversations.
 
 When the reviewed code changed since the prior turn, re-attach the changed files (`--file <paths>`) or a fresh diff, or state what changed. Otherwise the model reasons from the earlier attachments and flags already-fixed issues as live contradictions.
 
-## Step 5: Synthesize
+## Step 6: Synthesize
 
 Read the response from `<printed-path>`. Summarize the key insights from the consultation. Cross-reference suggestions with official docs and peer open-source implementations before applying. Oracle suggestions are starting points, not guaranteed solutions.
 

@@ -43,3 +43,22 @@ Turbo no longer distinguishes clone, fork, and source installs. `~/.turbo/repo` 
 2. Set `codex.sharedClaudeAutoMemory` to `false`, preserving every other key, and write the file back.
 
 This preference is opt-in. Setup changes it to `true` only after the user chooses Shared Claude Code Auto Memory and the integration passes setup validation; `$self-improve` then trusts the saved value at runtime.
+
+## Version 4: Sign In to Oracle's Own Browser Profile
+
+**Condition:** `~/.turbo/config.json` has an `oracle` object.
+
+**Skip if:** The object does not exist.
+
+### Steps
+
+`$consult-oracle` no longer reads the user's Chrome profile. It consults through oracle's own browser profile, so `oracle.chromeProfile` has no effect and the new profile needs a one-time sign-in before the next consultation.
+
+1. Read `~/.turbo/config.json`. Delete `oracle.chromeProfile`, preserve every other key, and write the file back.
+2. Run the one-time sign-in with a generous timeout (60 minutes / 3600000ms); it blocks until sign-in completes:
+
+```bash
+npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-5.6-sol -p "HI"
+```
+
+3. Have the user sign into ChatGPT in the window that opens and set the composer's thinking effort to Pro.

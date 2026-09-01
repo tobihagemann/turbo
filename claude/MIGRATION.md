@@ -77,3 +77,22 @@ Claude Code leaves the task tools out on newer models unless this environment va
 
 1. Read `~/.claude/settings.json`, set `env.CLAUDE_CODE_ENABLE_TODO_TOOLS` to the string `"1"`, preserve every other key, and write the file back. Create the file with just that key when it does not exist.
 2. Tell the user to restart Claude Code before the tools appear.
+
+## Version 6: Sign In to Oracle's Own Browser Profile
+
+**Condition:** `~/.turbo/config.json` has an `oracle` object.
+
+**Skip if:** The object does not exist.
+
+### Steps
+
+`/consult-oracle` no longer reads the user's Chrome profile. It consults through oracle's own browser profile, so `oracle.chromeProfile` has no effect and the new profile needs a one-time sign-in before the next consultation.
+
+1. Read `~/.turbo/config.json`. Delete `oracle.chromeProfile`, preserve every other key, and write the file back.
+2. Run the one-time sign-in via the Bash tool (`timeout: 600000`); it blocks until sign-in completes:
+
+```bash
+npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-5.6-sol -p "HI"
+```
+
+3. Have the user sign into ChatGPT in the window that opens and set the composer's thinking effort to Pro.

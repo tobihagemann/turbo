@@ -210,20 +210,29 @@ Ask the user whether they want to set up the oracle. Explain that `$consult-orac
 
 It requires:
 
-- **Chrome** with an active ChatGPT session
+- **Chrome** (the oracle drives its own profile, separate from the user's)
 - **Node.js 24+** (required by the oracle CLI)
+- A one-time ChatGPT sign-in to that profile
 - A `~/.turbo/config.json` file with `oracle` settings:
 
 ```json
 {
   "oracle": {
     "chatgptUrl": "https://chatgpt.com/",
-    "chromeProfile": "Default"
+    "model": "gpt-5.6-sol"
   }
 }
 ```
 
-Merge these values into the existing `~/.turbo/config.json`. The `oracle` object lives at the top level (shared across editions). See the [consult-oracle skill](skills/consult-oracle/SKILL.md) for details.
+Merge these values into the existing `~/.turbo/config.json`. The `oracle` object lives at the top level (shared across editions). Then run the one-time sign-in with a generous timeout (60 minutes / 3600000ms); it blocks until sign-in completes:
+
+```bash
+npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-5.6-sol -p "HI"
+```
+
+Have the user sign into ChatGPT in the window that opens and set the composer's thinking effort to Pro.
+
+See the [consult-oracle skill](skills/consult-oracle/SKILL.md) for details.
 
 ## Step 8: Quick Onboarding
 
