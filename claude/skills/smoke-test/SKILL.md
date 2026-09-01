@@ -39,6 +39,8 @@ Otherwise, design targeted smoke tests. Each test should:
 2. Verify the happy path works end-to-end
 3. Check one obvious edge case if applicable
 
+Confirm any control, command, or other affordance a test names exists in the code before writing the test: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the test against the outcome to verify and leave the affordance to be found during execution.
+
 Output the plan as text:
 
 ```
@@ -126,11 +128,13 @@ Before reporting a planned test as unverified, retry its setup with the Step 3 t
 
 Report a negative test and its control together: the negative reads as passed only when its control produced the effect, and as inconclusive otherwise.
 
+When a test names a control, command, or other affordance the app does not have, establish what the test verifies before recording a verdict. When the named mechanism is itself what the test verifies, its absence is a **FAIL**. When the mechanism is incidental to the outcome the test verifies, drive the affordance that delivers that outcome, record the verdict against it, and name the substitution in the result. Record **INCONCLUSIVE** when which of the two it is cannot be established.
+
 Present a summary:
 
 ```
 Smoke Test Results:
-- [PASS] Test 1: description
+- [PASS] Test 1: description — [substitution, when one was driven]
 - [FAIL] Test 2: description — [what went wrong]
 - [UNVERIFIED] Test 3: description — [what was tried, what blocked it]
 - [INCONCLUSIVE] Test 4: description — [why the result cannot be read]

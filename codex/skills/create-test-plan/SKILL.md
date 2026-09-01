@@ -61,6 +61,8 @@ For each level, generate specific, actionable test scenarios tailored to the act
 
 Confirm a scenario's starting state can be reached before writing it. When a precondition depends on a system the executor does not control (another team's service, an external platform), confirm a write path for it exists. Where the write path is uncertain or absent, write the scenario so it names what to attempt and what to record when the attempt fails.
 
+Confirm any control, command, or other affordance a scenario names exists in the code before writing the scenario: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the scenario against the outcome to verify and leave the executor to find the affordance.
+
 ### Level 1: Basic Functionality
 
 Does the feature work at all? Verify the happy path and the most obvious behavior.

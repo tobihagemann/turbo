@@ -70,6 +70,8 @@ Work through each level sequentially. Complete all tests in a level before movin
 
 When a scenario's preconditions need privileged state or a second participant (an entitlement or plan tier, an elevated role, seed data, a second concurrent client or session), provision it through a path the project already exposes for development and run the scenario. Record **PARTIAL** only after an attempt to provision failed, naming the precondition that could not be provisioned and what was tried.
 
+When a scenario names a control, command, or other affordance the app does not have, establish what the scenario verifies before recording a verdict. When the named mechanism is itself what the scenario verifies, its absence is a **FAIL**. When the mechanism is incidental to the outcome the scenario verifies, drive the affordance that delivers that outcome, record the verdict against it, and name the substitution in the result. Record **PARTIAL** when which of the two it is cannot be established.
+
 When the scenario's output is consumed by another system, withhold PASS until that system accepts it. Decoding a token, reading a response body, or confirming a row exists shows only that the artifact was produced. Stand up the consumer under the same isolation and cleanup rules as any other service this run starts, and exercise its own flow. When standing it up is not possible, record **PARTIAL** and name which half is unproven. PARTIAL counts as not passed everywhere a verdict is tallied or gated.
 
 ### Level Progression
@@ -101,22 +103,22 @@ Present results organized by level:
 Exploratory Test Results:
 
 ## Level 1: Basic Functionality (X/Y passed)
-- [PASS] Test name: description
+- [PASS] Test name: description — [substitution, when one was driven]
 - [FAIL] Test name: description — [what went wrong]
 - [PARTIAL] Test name: description — [which half is unproven]
 
 ## Level 2: Complex Operations (X/Y passed)
-- [PASS] Test name: description
+- [PASS] Test name: description — [substitution, when one was driven]
 - [FAIL] Test name: description — [what went wrong]
 - [PARTIAL] Test name: description — [which half is unproven]
 
 ## Level 3: Adversarial Testing (X/Y passed)
-- [PASS] Test name: description
+- [PASS] Test name: description — [substitution, when one was driven]
 - [FAIL] Test name: description — [what went wrong]
 - [PARTIAL] Test name: description — [which half is unproven]
 
 ## Level 4: Cross-Cutting Scenarios (X/Y passed)
-- [PASS] Test name: description
+- [PASS] Test name: description — [substitution, when one was driven]
 - [FAIL] Test name: description — [what went wrong]
 - [PARTIAL] Test name: description — [which half is unproven]
 
