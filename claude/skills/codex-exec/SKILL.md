@@ -79,6 +79,7 @@ For fix or implementation tasks, default to `--sandbox workspace-write --full-au
 
 | Option | Description |
 |--------|-------------|
+| `-m <model>` | Model for the run |
 | `--full-auto` | Allow file edits without confirmation prompts |
 | `--sandbox <level>` | Permission level: `read-only`, `workspace-write`, `danger-full-access` |
 | `--json` | JSON Lines output (progress + final message) |
@@ -86,6 +87,8 @@ For fix or implementation tasks, default to `--sandbox workspace-write --full-au
 | `--output-schema <path>` | Enforce JSON Schema on the output |
 | `--ephemeral` | No persisted session files |
 | `--skip-git-repo-check` | Bypass git repository requirement |
+
+Omit `-m`, leaving the run on codex's configured model. When the user named a model for this run, add `-m <model>` to every `codex exec` command in this skill, resume turns included, and pass the name verbatim.
 
 ## Prompt Shaping
 

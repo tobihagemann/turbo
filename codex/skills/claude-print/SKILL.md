@@ -7,7 +7,7 @@ description: "Run a non-interactive Claude Code print-mode call from Codex. Use 
 
 Run a non-interactive Claude Code CLI print-mode call from Codex. This is the Codex edition's low-level Claude bridge for one-shot review and consultation prompts.
 
-## Step 1: Choose Permission Scope
+## Step 1: Choose Permission Scope and Model
 
 Default to read-only review:
 
@@ -16,6 +16,8 @@ claude -p --permission-mode dontAsk --allowedTools="Read,Grep,Glob,Bash(git diff
 ```
 
 The Bash allow-list is restricted to read-only git subcommands so peer review cannot mutate the working tree, branches, or remotes. Use broader permissions only when the user explicitly asks Claude to perform write-capable work.
+
+Omit `--model`, leaving the run on Claude Code's configured model. When the user named a model for this run, add `--model <model>` to every `claude -p` command in this skill and pass the name verbatim — the flag takes an alias or a full model name.
 
 ## Step 2: Shape the Prompt
 
