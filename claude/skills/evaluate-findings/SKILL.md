@@ -139,6 +139,8 @@ Where Investigated shows:
 
 For findings whose severity was re-assessed from the upstream level, append the change in the Severity cell (e.g., "High (was Medium)").
 
+Carry each verdict into the Verdict column exactly as assessed, Escalate included.
+
 For disputed findings, add a callout below the table showing both perspectives. For each finding, indicate scope in the Issue column (e.g., "Pre-existing:" prefix).
 
-Then use the TaskList tool and proceed to any remaining task. The next pending skill — `/resolve-findings` or `/apply-findings` — reads the findings table directly, including Escalate verdicts, which `/apply-findings` surfaces to the user via AskUserQuestion.
+Then use the TaskList tool and proceed to any remaining task.
