@@ -15,10 +15,13 @@ Run the `/review-dependencies` skill to detect package managers and discover ava
 
 ## Phase 2: User Strategy Selection
 
+Before summarizing, set aside packages whose version tracks a pinned runtime or platform rather than the newest release, such as runtime type definitions and platform SDKs. Find the pin the project declares (version manager file, `engines` field, container base image, CI setup step) and hold any version beyond it until the pin moves.
+
 Present a summary showing:
 - Count and list of major updates (with current → target versions)
 - Count of minor updates
 - Count of patch updates
+- Packages set aside, each with the pin that governs it
 
 Use AskUserQuestion for upgrade strategy:
 
@@ -60,12 +63,15 @@ Identify: API changes (renamed/removed functions), configuration changes, peer/t
 
 Use Grep to find usage of deprecated or changed APIs. Document which files are affected and what changes are needed.
 
+Then check the package's installed consumers: read their declared peer or compatibility ranges and flag any range that excludes the target version. Toolchain consumers such as linters, type checkers, and build tooling can block a major even when the project's own code and configuration are clean. Carry each one into Phase 4 as a blocker.
+
 ## Phase 4: User Confirmation
 
 For each major update, present:
 - Package name and version transition
 - Breaking changes found (summarized)
 - Files potentially affected (count and list)
+- Consumers whose declared ranges block the upgrade, when Phase 3 found any
 
 Use AskUserQuestion to confirm:
 
@@ -79,6 +85,11 @@ Use AskUserQuestion to confirm:
 If "Show details" selected, display full migration research, then ask again.
 
 ## Phase 5: Execute Upgrades
+
+After every install command in this phase, run both checks below before any tests and before Phase 6.
+
+1. **Confirm the installed tree moved** — spot-check the resolved version of one or two upgraded packages in the installed dependency tree against the manifest. An install can record the new versions while leaving the installed packages on their old ones, which makes every later check report on the pre-upgrade tree. When the two disagree, force a clean resolve: use the package manager's lockfile-respecting install where it has one, otherwise clear the installed tree and install again. Re-check afterward.
+2. **Diff the package-manager configuration** — inspect the package-manager config files for entries the tool wrote on its own. A tool enforcing a safety guard, such as a minimum age before a release is installable or a provenance requirement, may record a per-package exclusion rather than refusing. Treat such an entry as the guard being bypassed: revert it, then pin the manifest to the newest version the guard admits, which resolves without an exclusion.
 
 ### Cautious Strategy
 
@@ -125,6 +136,8 @@ Some packages pin their version outside the manifest, beyond the package manager
 ## Phase 7: Verification
 
 Run the project's test, build, and lint commands. Detect which commands are available from the project's config files and scripts. Use project-level task runners when present (`Makefile`, `Taskfile`, `justfile`, npm scripts, etc.).
+
+When an upgraded package owns persisted schema, run the test tiers that exercise the real backing store rather than the default command alone. A tier that substitutes test doubles for the store passes on a schema the upgraded package no longer accepts. Diff the schema the package now generates against the one the project has migrated to; when they differ, return to Phase 6 for the migration the difference calls for, then re-run the tiers.
 
 ### Report Results
 

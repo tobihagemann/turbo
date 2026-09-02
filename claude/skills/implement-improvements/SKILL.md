@@ -43,12 +43,13 @@ For each entry, verify whether the specific problem or opportunity described sti
 2. **Problem persists** — Read the relevant code sections. Is the exact issue or opportunity described in the entry still present? Check the specific claims: if the entry says a function is uncalled, verify it has no callers; if it says error handling is missing, check whether it was added.
 3. **Revisit condition met** — For an entry carrying a Revisit field, check whether the recorded condition now holds. The shipped simplification is present by construction, so its presence alone says nothing about whether the fuller version is worth building yet.
 4. **Stated scope matches the real gap** — For an entry claiming missing coverage, read what existing tests already pin before accepting its scope: a test that substitutes a test double at a boundary pins the behavior on one side of it and leaves the boundary itself unpinned, so a request to cover several variants often reduces to the single boundary they share. Restate such an entry at its real scope, classify it Active, and use the restatement as its summary in Step 3.
+5. **Claimed consequence holds** — For an entry claiming that two paths behave differently, or that a change would alter observable behavior, verify the claimed difference itself by reading what each path actually returns, exercising both when reading cannot settle it, rather than confirming only that the code it points at exists. When the named code is present but its stated consequence is false, restate the entry at the benefit it actually delivers, classify it Active, and use the restatement as its summary in Step 3; classify it Stale when no benefit survives.
 
 Classify each entry as:
 
 - **Active** — The described problem or opportunity is confirmed present in the current code
 - **Deferred** — The entry carries a Revisit condition that does not yet hold; the shipped approach remains the right one
-- **Stale** — The referenced files no longer exist, or the specific issue has been resolved (cite evidence: what changed and where)
+- **Stale** — The referenced files no longer exist, the specific issue has been resolved, or the entry's premise never held (cite evidence: what changed and where, or why the claim is false)
 - **Unclear** — Cannot determine from code alone, needs user input
 
 When in doubt, classify as Active. The cost of re-examining a resolved issue is low; dismissing a valid improvement is high.
