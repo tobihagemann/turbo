@@ -12,7 +12,7 @@ Fetch unresolved review comments from a GitHub PR (inline threads, review-body o
 At the start, use `TaskCreate` to create a task for each step:
 
 1. Fetch comments
-2. Triage review bodies and issue comments
+2. Triage already-addressed feedback
 3. Run `/interpret-feedback` skill
 4. Split questions and change requests
 5. Run `/evaluate-findings` skill
@@ -46,11 +46,11 @@ Output shape:
 
 Filter review threads to unresolved only. Filter reviews to those with a non-empty body, excluding `PENDING` state (unsubmitted drafts). Filter issue comments to those with a non-empty body.
 
-## Step 2: Triage Review Bodies and Issue Comments
+## Step 2: Triage Already-Addressed Feedback
 
 Review bodies and PR conversation comments (issue comments) often pack multiple distinct concerns into one comment. Split each non-empty, non-PENDING review body and each non-empty issue comment into atomic observations, one per paragraph or bullet, so each can be evaluated on its own merits.
 
-For every observation, check whether a subsequent commit already addresses it. Compare the source timestamp (`submittedAt` for review bodies, `createdAt` for issue comments) against each commit's `committedDate`; only commits after the source was posted can address it. Start with commit messages; read `git show <oid>` only when the message is ambiguous. A commit addresses an observation when its changes clearly resolve that specific concern. Touching the same area is not enough.
+For every observation, check whether a subsequent commit already addresses it. Compare the source timestamp (`submittedAt` for review bodies, `createdAt` for issue comments) against each commit's `committedDate`; only commits after the source was posted can address it. Start with commit messages; read `git show <oid>` only when the message is ambiguous. A commit addresses an observation when its changes clearly resolve that specific concern. Touching the same area is not enough for an observation.
 
 Classify each observation:
 - **Addressed**: A subsequent commit resolves it. Record the commit SHA for the Step 12 summary.
@@ -58,10 +58,12 @@ Classify each observation:
 
 Review-body and issue-comment findings have no `diffHunk`, file path, or line reference. The downstream pipeline handles findings without a code location.
 
+Triage inline threads on their replies. Look for a later reply that claims the concern is fixed and names the commit that fixed it. Verify two things about that commit. First, it is on the branch: it appears in `commits`, or `git branch --contains <sha>` reports the head branch. Second, it changed or deleted the thread's path. When both hold, classify the thread **Addressed** with that SHA and skip Steps 3 through 8 for it. Classify the rest **Unaddressed** and carry them into Step 3.
+
 ## Step 3: Run `/interpret-feedback` Skill
 
 Run the `/interpret-feedback` skill on the union of:
-- Unresolved inline threads
+- Unaddressed inline threads from Step 2
 - Unaddressed review-body findings from Step 2
 - Unaddressed issue-comment findings from Step 2
 
@@ -139,7 +141,7 @@ Assemble the processed-thread list from inline-thread items only:
 - **answer** — inline-thread questions with answers composed in Step 9. Payload: the raw answer text.
 - **clarify** — inline threads reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
-Issue-comment findings go to Step 11; review-body findings have no destination to post to and surface only in Step 12.
+Issue-comment findings go to Step 11. Review-body findings have no destination to post to, and Addressed inline threads already carry the reply naming the commit; both surface only in Step 12.
 
 Run the `/reply-to-pr-threads` skill with the assembled list.
 
@@ -164,6 +166,7 @@ After processing all items, present a summary grouped by source.
 
 **Inline threads:**
 - Total unresolved threads found
+- Already addressed by commits (list file path, one-line summary, addressing commit SHA)
 - Fixed (change requests with accepted verdicts)
 - Skipped (false positives or disproportionate changes)
 - Questions answered (split into: answered from recalled transcript, answered from current code)
