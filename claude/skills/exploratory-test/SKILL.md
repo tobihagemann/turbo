@@ -74,6 +74,8 @@ When a scenario names a control, command, or other affordance the app does not h
 
 When the scenario's output is consumed by another system, withhold PASS until that system accepts it. Decoding a token, reading a response body, or confirming a row exists shows only that the artifact was produced. Stand up the consumer under the same isolation and cleanup rules as any other service this run starts, and exercise its own flow. When standing it up is not possible, record **PARTIAL** and name which half is unproven. PARTIAL counts as not passed everywhere a verdict is tallied or gated.
 
+When a scenario depends on an input mode or device characteristic the browser emulates, confirm the page itself reports that capability before recording a verdict resting on it — a device preset may change only the viewport and the user agent. Record **PARTIAL**, naming the unproven half, when the capability cannot be established.
+
 ### Level Progression
 
 1. **Level 1: Basic Functionality** — If any Level 1 test does not pass, report early and use `AskUserQuestion` to ask whether to continue. Basic failures may indicate the feature is too broken for deeper testing.

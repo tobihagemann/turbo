@@ -130,6 +130,8 @@ Report a negative test and its control together: the negative reads as passed on
 
 When a test names a control, command, or other affordance the app does not have, establish what the test verifies before recording a verdict. When the named mechanism is itself what the test verifies, its absence is a **FAIL**. When the mechanism is incidental to the outcome the test verifies, drive the affordance that delivers that outcome, record the verdict against it, and name the substitution in the result. Record **INCONCLUSIVE** when which of the two it is cannot be established.
 
+When a test depends on an input mode or device characteristic the browser emulates, confirm the page itself reports that capability before recording a verdict resting on it — a device preset may change only the viewport and the user agent. Record **INCONCLUSIVE**, naming the capability that could not be confirmed, when it cannot be established.
+
 Present a summary:
 
 ```

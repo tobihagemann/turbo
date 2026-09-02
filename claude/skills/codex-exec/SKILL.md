@@ -101,6 +101,8 @@ Codex uses XML tags in its own context scaffolding, so the model parses them nat
 - `<dig_deeper_nudge>`: Push past surface-level findings to check for second-order failures.
 - `<verification_loop>`: When correctness matters — ask Codex to verify before finalizing.
 
+Instruct codex to carry out the task itself rather than delegating to a peer review or consultation skill that crosses back to Claude. The prompt has already crossed the tool boundary; a further crossing that fails mid-flight leaves this run holding a question instead of an answer.
+
 Keep prompts compact, with tight output contracts. One clear task per exec call. For a large scope, instruct codex to report findings as it goes rather than verifying exhaustively before reporting, so a run that hits the timeout ceiling still yields usable output.
 
 ## Parallel Execution

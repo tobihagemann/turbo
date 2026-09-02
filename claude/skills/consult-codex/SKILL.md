@@ -62,6 +62,8 @@ When a recommendation is wanted, add `<merit_only>`: state that "out of scope" o
 
 When the consultation is a prose rewrite bound by a house style, add `<style_constraints>` naming the shapes that style forbids in the first prompt, so they do not have to be corrected across follow-up turns. Common ones: prefixing a summary with a grammatical subject the convention omits, expanding a pronoun to its full noun phrase at every occurrence, and splitting a sentence so a condition is restated in both halves.
 
+Instruct Codex to answer the consultation itself rather than delegating to a peer review or consultation skill that crosses back to Claude. The prompt has already crossed the tool boundary; a further crossing that fails mid-flight leaves this run holding a question instead of an answer.
+
 Keep prompts compact, with tight output contracts. One clear task per Codex turn.
 
 For context that does not belong in the argument, write a context file with the Write tool and pipe it via stdin. The prompt stays as the argument, context pipes in as `<stdin>` automatically:
@@ -82,7 +84,7 @@ Run via the Bash tool as a foreground call (`timeout: 600000`, the Bash maximum;
 
 ## Step 3: Read and Evaluate Response
 
-The `-o` file contains only Codex's response (cleaner than stdout, which includes CLI chrome and tool-use logs). Read the current turn's `-o` file. If the output is too large for the Read tool, read stdout from the Bash tool result instead.
+The `-o` file contains only Codex's response (cleaner than stdout, which includes CLI chrome and tool-use logs). Read the current turn's `-o` file. If the output is too large for the Read tool, read stdout from the Bash tool result instead. When the file holds a question put to you rather than an answer, codex halted to ask for input: resume the session with the answer and the original output contract, rather than re-running the consultation from scratch.
 
 Assess whether:
 - The answer is sufficient and actionable

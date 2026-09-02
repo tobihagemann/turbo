@@ -17,13 +17,13 @@ Available destinations:
 
 Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
 
-### Turbo Skill Detection
+### Skill Ownership Detection
 
-If `~/.turbo/repo/` exists, identify which installed skills are turbo skills:
+Classify every skill this session touched:
 
-- List directories in `~/.turbo/repo/claude/skills/`
-- Any skill in `~/.claude/skills/` that has a matching directory in `~/.turbo/repo/claude/skills/` is a turbo skill
-- Skills only in `~/.claude/skills/` (no match in the repo) are user/project skills
+- Skills that live in the project are user/project skills
+- If `~/.turbo/repo/` exists, list directories in `~/.turbo/repo/claude/skills/`; any skill in `~/.claude/skills/` with a matching directory there is a turbo skill
+- Every other skill in `~/.claude/skills/` is either one the user maintains or one a package manager installed and replaces on its next update. Nothing in the directory distinguishes the two, so carry its ownership as unresolved into Step 4
 
 **Verification rule (mandatory before routing in Step 4):** For every candidate skill that is about to be routed as turbo, confirm with a fresh `test -d ~/.turbo/repo/claude/skills/<name>` check that the skill actually lives in the turbo repo. Do not rely on remembered listings from earlier in the session, filename hits in grep output, or assumptions based on where a SKILL.md was read from. A miss here mislabels a user/project skill as turbo, triggers the contribution flow unnecessarily, and can introduce session-specific content into a shared skill — so the check is not optional.
 
@@ -62,7 +62,7 @@ Treat the returned items as raw evidence for the scan below.
 Before scanning for lessons, identify which skills were loaded during this session:
 
 - Scan the conversation for Skill tool invocations and SKILL.md reads from `~/.claude/skills/`
-- Build a list of session skills, marking each as turbo or user/project skill (using the detection from Step 1)
+- Build a list of session skills, marking each as turbo, user/project, or ownership-unresolved (using the detection from Step 1)
 - This list informs routing in Step 4: when a lesson clearly arose from a specific skill's workflow, that skill is the natural routing target
 
 ### Scan for Lessons
@@ -98,14 +98,16 @@ Assign each surviving lesson to exactly one destination.
 
 **Skill-first rule (mandatory):** Before consulting the table below, check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running /skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or CLAUDE.md — they belong in the skill they correct. This rule is not a preference; it is a hard constraint that takes precedence over the table rows below.
 
+**Package-managed skills (mandatory):** A skill under `~/.claude/skills/` that Step 1 left ownership-unresolved may be one a package manager replaces wholesale on its next update, discarding any edit made here. Before routing a lesson to such a skill, say plainly that an edit to it survives only while the user maintains it themselves. Then use `AskUserQuestion` to ask which is the case, with the options phrased as that effect: edits to this skill stick, or the next update overwrites them. Route the lesson to **Auto memory** when a package manager maintains the skill, recording the skill it applies to so the knowledge survives the next update. For those skills this rule outranks the skill-first rule, the routing table rows, and the tiebreakers below.
+
 | Destination | Criteria |
 |---|---|
 | **Project improvements** | Actionable improvement to existing **code**: refactoring, performance, reliability, readability, testing, or DX. Not for documentation fixes — factual errors in CLAUDE.md belong in the **Project CLAUDE.md / AGENTS.md** row. Route to `.turbo/improvements.md` via the `/note-improvement` skill. |
-| **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). |
+| **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). A lesson the package-managed skills rule sends here stays here, whatever domain it overlaps. |
 | **Project CLAUDE.md / AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. Also factual corrections to CLAUDE.md content (wrong commands, outdated paths, incorrect conventions) — fix these directly, do not defer to Project improvements. When the lesson applies only to one subtree, route it to the nearest enclosing CLAUDE.md/AGENTS.md; reserve the root file for project-wide decisions. |
 | **Existing user/project skill** | Lesson would improve a skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any skill whose *domain* covers the lesson — not just the skill worked on in this session. Changes go to the skill file directly. No contribution flow. |
 | **New skill** | A cohesive body of knowledge emerged that deserves its own on-demand context. The test: would this knowledge be too large for a CLAUDE.md section, and should it only be loaded when relevant? See the skill categories table below. |
-| **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, run `test -d ~/.turbo/repo/claude/skills/<name>`; if the directory does not exist, route to the Existing user/project skill destination instead.** Changes go to the installed copy at `~/.claude/skills/`, and are flagged for contribution (see Step 6). |
+| **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, run `test -d ~/.turbo/repo/claude/skills/<name>`; if the directory does not exist, route to the Existing user/project skill destination instead, subject to the package-managed skills rule above.** Changes go to the installed copy at `~/.claude/skills/`, and are flagged for contribution (see Step 6). |
 | **No destination** | Does not clearly fit any destination. Drop it. Routing a weak lesson is worse than losing it. |
 
 **Skill categories:**
@@ -122,10 +124,10 @@ Assign each surviving lesson to exactly one destination.
 **Splitting heuristic:** When a session creates scripts or multi-step procedures, split the lesson: a brief pointer goes to CLAUDE.md (script names, purpose), and the full workflow goes to a skill. Don't collapse them into a single CLAUDE.md entry.
 
 **Tiebreakers (in priority order):**
-1. **Skill correction → skill (hard rule).** Any lesson that corrects, constrains, or refines a skill's behavior MUST route to that skill. Never to auto memory, never to CLAUDE.md. This is the highest-priority routing rule.
+1. **Skill correction → skill (hard rule).** Any lesson that corrects, constrains, or refines a skill's behavior MUST route to that skill. Never to auto memory, never to CLAUDE.md. This is the highest-priority routing rule, ahead of every tiebreaker below and yielding only to the package-managed skills rule above.
 2. **Turbo skill vs. CLAUDE.md → always the turbo skill.** Broader impact (benefits all turbo users), better scoped, loaded only when relevant.
 3. **Skill vs. CLAUDE.md → always the skill.** Skills are more discoverable, better scoped, and loaded only when relevant.
-4. **Skill vs. auto memory → always the skill.** If a lesson falls within the domain of an existing skill, it goes to the skill. Auto memory is for knowledge that has no skill home.
+4. **Skill vs. auto memory → always the skill.** If a lesson falls within the domain of an existing skill, it goes to the skill. Auto memory is for knowledge that has no skill home, and for the domain of an ownership-unresolved skill a package manager maintains.
 5. **CLAUDE.md vs. auto memory** — intentional decisions go to CLAUDE.md. Discovered knowledge (gotchas, workarounds, quirks) goes to auto memory.
 6. **Lesson vs. improvement** — if the item is *knowledge to remember*, it's a lesson. If it's *work to do later*, it's an improvement. They don't compete — the same session can produce both.
 

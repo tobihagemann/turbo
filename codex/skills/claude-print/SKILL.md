@@ -28,6 +28,7 @@ Keep the prompt compact and explicit:
 - Include the required output contract.
 - Tell Claude to verify codebase claims by reading files before reporting findings.
 - Tell Claude not to modify files unless the current task explicitly requests write-capable work.
+- Tell Claude to answer the request itself rather than delegating to a peer review or consultation skill that crosses back to Codex. The prompt has already crossed the tool boundary; a further crossing that fails mid-flight leaves this run holding a question instead of an answer.
 
 For large context, print the absolute path of the context file first:
 

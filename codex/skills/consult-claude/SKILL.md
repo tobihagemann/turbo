@@ -33,6 +33,8 @@ When the recommendation would violate a documented constraint, follow up rather 
 
 Summarize the useful parts of Claude's response. Cross-reference suggestions with the repository before acting.
 
+When the output holds a question put to you rather than an answer, Claude stopped for input: re-issue the request with that question answered inline and the original output contract restated, rather than synthesizing the question as though it were the answer.
+
 When the consultation rewrote prose rather than answering a question, check the rewrite against the source yourself before adopting it. Treat its own report that the rewrite is faithful as a claim awaiting verification. Verify the source's own factual claims against what they describe, since a rewrite can be faithful to a source that was itself wrong. Read for these drift shapes in the rewrite:
 
 - a tense change that promotes a capability into an event
