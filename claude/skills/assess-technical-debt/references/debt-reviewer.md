@@ -99,7 +99,7 @@ Tag every finding with both axes so the report can rank them.
 
 ## Output Format
 
-Return findings as a single structured markdown block. Group by dimension; omit dimensions with no findings.
+Return findings as a single structured markdown block. Group by dimension; state an explicit outcome for every dimension, including one with no findings.
 
 ```markdown
 ## Debt Findings — <partition or "Architecture">

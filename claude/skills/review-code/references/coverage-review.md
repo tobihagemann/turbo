@@ -14,6 +14,8 @@ This covers any claim that a specific behavior is or is not guarded, including "
 
 A surviving mutation proves a gap only when the mutated code behaves differently from the original for some reachable input. Name that input in the finding. When none can be named, the finding is void.
 
+A failing test proves the behavior is pinned only when the mutation landed in the branch under review. Name that branch and the original behavior the mutation reproduces before running it, then re-read the mutated lines: a mutation placed a statement away fails for a reason unrelated to the gap, and voiding the finding on that evidence hides it with nothing to show the check went wrong.
+
 Skip the mutation when a fresh checkout cannot run the suite cheaply: it needs an install or build step, there is no runnable test command, or the suite depends on state outside the tree such as fixed ports, shared databases, caches, untracked local configuration, or external services. Needing an install is itself a skip trigger here, whether or not that install would succeed. Skip it as well when the line at issue bounds a loop, a retry, or a wait and the suite has no per-test timeout — the mutation hangs instead of failing. Run the suite only against dependencies inside the worktree. Reaching the shared tree's install by any route, whether a link, a copy, a mount, or an environment variable redirecting resolution, is not a substitute, since removing a worktree deletes through symlinks and a redirected suite writes into the shared install. When skipping, say in the finding's paragraph that the claim rests on inspection alone.
 
 ### Reviewing a Boundary Served by a Double

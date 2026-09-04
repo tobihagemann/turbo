@@ -63,6 +63,8 @@ Confirm a scenario's starting state can be reached before writing it. When a pre
 
 Confirm any control, command, or other affordance a scenario names exists in the code before writing the scenario: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the scenario against the outcome to verify and leave the executor to find the affordance.
 
+When a scenario's pass condition is that nothing happens — no write, no call, no state change — pair it with a control that differs only in the dimension under test and whose expected outcome is that the effect does occur, since a lone negative scenario cannot distinguish the behavior under test from a harness that never reached it. When such a scenario injects a crafted payload, establish that the payload satisfies every validation layer between the injection point and the code under test, and state which layers the trace cannot settle: a payload rejected at a parse boundary produces the expected absence for the wrong reason.
+
 ### Level 1: Basic Functionality
 
 Does the feature work at all? Verify the happy path and the most obvious behavior.
