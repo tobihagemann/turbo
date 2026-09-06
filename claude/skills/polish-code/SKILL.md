@@ -53,15 +53,18 @@ A test whose pass condition is an absence needs an assertion establishing the me
 
 **When the test still passes with the fix reverted**, suspect the mutation before the test: confirm it reaches the branch under test and reproduces the original behavior rather than a third one. Name the branch under test and the original behavior it reproduces before running the mutation, then re-read the mutated lines. A mutation that lands a statement away from that branch also changes paths the fix never touched, and the resulting failure is indistinguishable from a caught mutation.
 
-**When the mutation is faithful and the test still passes**, the test cannot observe the defect. Determine which of three shapes applies before reworking the test's setup:
+**When the mutation is faithful and the test still passes**, the test cannot observe the defect. Determine which of four shapes applies before reworking the test's setup:
 
 - The assertion inspects output that is identical whether or not the defect is present. Assert on the mechanism itself rather than on the output it produces: teardown, cancellation, deduplication, and ran-only-once fixes leave no trace there.
 - The inputs the test drives land the same way under the fixed value and the mutated one. When the fix seeds an initial value, drive an input on the far side of that seed; a test that only advances past it never observes the seed.
 - An earlier guard against the same condition catches first, leaving the guard under test unreachable. Construct the ordering that reaches the later guard specifically. A defense-in-depth guard is reachable only through the window its predecessor does not cover, and an end-to-end exercise of the operation misses it systematically.
+- The entry surface the test drives is itself closed for the window the guard covers, so no input the test can send reaches the guard. Where the earlier shape puts a predecessor in the code path, this one puts the block ahead of it: when the fix guards a repeat invocation, a busy or pending state on that affordance refuses the repeat before the guard sees it, and the test passes for the wrong reason. Drive an entry point that carries no such state instead.
 
 A test that genuinely cannot be made to fail does not pin the behavior; say so rather than counting it as coverage.
 
 After every mutation in this step, re-run whatever that mutation was checked against and confirm it passes again before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
+
+A project command run to verify a fix writes to the shared tree the same way a mutation does. Establish whether it writes tracked files before running it, and read `git status --short` afterward: revert what it wrote, so files it regenerated are not swept into the changeset by the staging below.
 
 Stage all changes made in this step before continuing.
 
