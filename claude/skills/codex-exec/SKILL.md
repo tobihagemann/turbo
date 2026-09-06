@@ -8,13 +8,13 @@ description: "Run autonomous task execution using the codex CLI. Use when the us
 Autonomous task execution via the codex CLI. Runs non-interactively. Progress streams to stderr; final result on stdout.
 
 ```bash
-codex exec "task description" < /dev/null
+codex exec --skip-git-repo-check "task description" < /dev/null
 ```
 
 For large context, pipe it via stdin. The prompt stays as the argument, context is passed as `<stdin>` automatically:
 
 ```bash
-cat context.txt | codex exec "question about the context"
+cat context.txt | codex exec --skip-git-repo-check "question about the context"
 ```
 
 Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with the Write tool so nothing is interpreted on the way in.
@@ -23,6 +23,10 @@ Route text you did not author through this channel whatever its size — a diff,
 
 **All `codex` Bash calls require `dangerouslyDisableSandbox: true`** (network access to OpenAI API). Without it, codex crashes with an `Operation not permitted` panic from the `system-configuration` crate before the model runs.
 
+## Git Repository Check
+
+**Every `codex exec` invocation requires `--skip-git-repo-check`**, resume turns included. Outside a git repository codex aborts before doing any work, printing `Not inside a trusted directory and --skip-git-repo-check was not specified.`, and never writes the `-o` file.
+
 ## Stdin Gotcha
 
 Codex reads from stdin whenever stdin is non-TTY (per `codex exec --help`: "If stdin is piped and a prompt is also provided, stdin is appended as a `<stdin>` block"). In subagent and subprocess contexts the harness leaves stdin connected to a pipe that never EOFs, so a bare `codex exec "..."` hangs forever, printing only `Reading additional input from stdin...`.
@@ -30,7 +34,7 @@ Codex reads from stdin whenever stdin is non-TTY (per `codex exec --help`: "If s
 Always redirect stdin on non-piped invocations:
 
 ```bash
-codex exec "task description" < /dev/null
+codex exec --skip-git-repo-check "task description" < /dev/null
 ```
 
 The piped form (`cat context.txt | codex exec "..."`) is safe — `cat` closes the pipe after the file, sending EOF.
@@ -48,7 +52,7 @@ A run that outlives the timeout is normally **force-backgrounded**: the result c
 Rarely the run is **hard-killed** instead, giving an error exit (code 143) reading `Command timed out after <duration>` with no task ID and no `-o` file. Do not re-run the prompt from scratch; that discards the work already done and hits the same ceiling. Resume the session with a fresh output path, asking for the findings as the final message rather than as a file write:
 
 ```bash
-codex exec -o <fresh-output-path> resume <session-id> \
+codex exec --skip-git-repo-check -o <fresh-output-path> resume <session-id> \
   "Reply now with your complete findings as your final message." < /dev/null
 ```
 
@@ -58,7 +62,7 @@ Never wait with `Monitor` (it returns immediately, and events that arrive after 
 
 ## Transient Crash Retry
 
-Re-run the command once when the Bash call returned an error exit with no stdout and no task ID. A timeout is not a crash: when the error text reads `Command timed out after <duration>`, resume the session per Synchronous Execution rather than re-running. Recover a force-backgrounded run per Synchronous Execution rather than retrying it. Keep the same prompt. Treat a second failure as final.
+Re-run the command once when the Bash call returned an error exit with no stdout and no task ID. A timeout is not a crash: when the error text reads `Command timed out after <duration>`, resume the session per Synchronous Execution rather than re-running. An aborted git-repo check is not a crash either: when the error text reads `Not inside a trusted directory and --skip-git-repo-check was not specified.`, add the flag per Git Repository Check and run again. Recover a force-backgrounded run per Synchronous Execution rather than retrying it. Keep the same prompt. Treat a second failure as final.
 
 Treat models-manager and cache-TTL errors as non-fatal warnings. Read the error text for usage-limit and authentication signatures and report those without retrying.
 

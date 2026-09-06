@@ -36,7 +36,7 @@ Output shape:
 
 ```jsonc
 {
-  "meta":          { "title", "url", "headRefName", "baseRefName" },
+  "meta":          { "title", "url", "headRefName", "baseRefName", "body" },
   "reviewThreads": [ { "id", "isResolved", "isOutdated", "comments": { "nodes": [ { "author", "body", "path", "line", "originalLine", "diffHunk" } ] } } ],
   "reviews":       [ { "author", "body", "state", "submittedAt" } ],
   "issueComments": [ { "author", "body", "createdAt", "url" } ],
@@ -52,9 +52,11 @@ Review bodies and PR conversation comments (issue comments) often pack multiple 
 
 For every observation, check whether a subsequent commit already addresses it. Compare the source timestamp (`submittedAt` for review bodies, `createdAt` for issue comments) against each commit's `committedDate`; only commits after the source was posted can address it. Start with commit messages; read `git show <oid>` only when the message is ambiguous. A commit addresses an observation when its changes clearly resolve that specific concern. Touching the same area is not enough for an observation.
 
+When an observation asserts a requirement or an intended behavior, compare that assertion against `meta.body`. The PR description is the author's own current statement of intent, so a description stating the opposite leaves a premise for Step 5 to settle. Record the contradiction against the observation and carry it forward, so Step 5 settles that premise once instead of re-deriving it for every finding the premise produced.
+
 Classify each observation:
 - **Addressed**: A subsequent commit resolves it. Record the commit SHA for the Step 12 summary.
-- **Unaddressed**: No subsequent commit resolves it. Carry into Step 3, tagged with its `source` (`review-body` or `issue-comment`), the author, the observation text, and (for review bodies) the review state.
+- **Unaddressed**: No subsequent commit resolves it. Carry into Step 3, tagged with its `source` (`review-body` or `issue-comment`), the author, the observation text, any recorded contradiction with the PR description, and (for review bodies) the review state.
 
 Review-body and issue-comment findings have no `diffHunk`, file path, or line reference. The downstream pipeline handles findings without a code location.
 
@@ -82,7 +84,7 @@ Classify each interpreted item as either a **question** or a **change request** 
 
 When in doubt, treat the item as a change request. The verdict from `/evaluate-findings` in Step 5 will catch genuine non-issues.
 
-Produce two lists. Each entry retains the `source` tag, identifier (thread id for inline threads; a generated id for review-body and issue-comment findings), file path and line (use `originalLine` when `line` is null; omit for review-body and issue-comment findings), the reviewer's original text, and the reconciled intent from Step 3. Questions skip Step 5 and feed Step 9. Change requests feed Step 5.
+Produce two lists. Each entry retains the `source` tag, identifier (thread id for inline threads; a generated id for review-body and issue-comment findings), file path and line (use `originalLine` when `line` is null; omit for review-body and issue-comment findings), the reviewer's original text, any recorded contradiction with the PR description, and the reconciled intent from Step 3. Questions skip Step 5 and feed Step 9. Change requests feed Step 5.
 
 ## Step 5: Run `/evaluate-findings` Skill
 

@@ -20,6 +20,13 @@ Cover all three categories in one sweep. The searches overlap heavily: the same 
 - **Reusable Utilities** — Helpers, types, base classes, shared modules, or domain-specific building blocks the new work could build on instead of reimplementing. Look for both generic names (utils, helpers, shared, common) and domain-specific equivalents.
 - **Convention Anchors** — The project's idiomatic way to do this kind of thing: file placement, naming, error handling boundaries, test structure, data flow. Report these as structural patterns (where code lives, how it is organized), not as cosmetic preferences.
 
+When the task ports work across runtimes, languages, or frameworks, tag every mechanism inventoried under Analogous Features and Reusable Utilities as one of two kinds, in its description:
+
+- **Domain guard** — protects an invariant of the problem itself that the target does not supply on its own. Re-express it in the target.
+- **Runtime workaround** — exists because of the source runtime, its concurrency model, a library defect, or the limits of its test harness. Leave it behind; the target either supplies the property by construction or has its own idiom for it.
+
+Recurring workaround shapes: isolation the target runtime already provides by construction, readiness or retry loops the target's driver, pool, or supervisor already supplies, test scaffolding built around one library's defect, version-gated migrations whose reason disappears with a fresh store, and compatibility fallbacks serving a single consumer. Report alongside the tag the probe that settles each classification: a search or count over the source showing whether the condition the mechanism guards against ever occurred.
+
 ### 3. Search Tactics
 
 - Use shell glob expansion or `find` to locate candidate files by name pattern
@@ -65,6 +72,8 @@ Return findings as a single structured markdown block:
 ### Proposed Alignment
 <1-3 sentences: should the new work follow these patterns, deviate, or blend? State the recommendation with reasoning.>
 ```
+
+When the task ports work across runtimes, languages, or frameworks, open each Analogous Features and Reusable Utilities description with the mechanism's tag and the probe that settles it, before the rest of the description.
 
 If a category has no findings, write "None found" under the header rather than omitting the section. If no analogous features exist at all, state that explicitly in Proposed Alignment rather than forcing a comparison.
 

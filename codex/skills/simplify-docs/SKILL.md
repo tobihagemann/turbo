@@ -19,7 +19,7 @@ State the resolved file list before launching the agents: add `--name-only` to a
 
 ## Step 2: Launch Two Review Agents in Parallel
 
-Launch both agents below with `spawn_agent` / `wait_agent` using inherited model defaults, issuing every call in one batch. Do not issue one and await its result before issuing the rest. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
+Launch both agents below with `spawn_agent` / `wait_agent` using inherited model defaults, issuing every call in one batch. Do not issue one and await its result before issuing the rest. Pass the scope from Step 1 to each agent. Every sub-agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Direct each agent to write its full findings to a uniquely named file under `$TMPDIR` and to return that path with its report, so a compaction before Step 3 leaves the findings recoverable.
 
 Confine the sub-agent's prompt to what to review, plus the conventions and factual properties that bear on it. Pass a property of the existing prose as a fact the sub-agent weighs, such as "the file documents non-obvious third-party behavior". Leave out any statement that tells the sub-agent what verdict to reach about that property, such as "the file is deliberately comment-dense, judge against that established bar", because it binds the sub-agent to accept the very property the review exists to assess.
 
@@ -72,7 +72,7 @@ For each flagged passage, propose: delete it, correct it, tighten it, restructur
 
 ## Step 3: Fix Issues
 
-Wait for both agents to complete. Aggregate their findings, then apply each fix directly, skipping false positives. When uncertain whether a comment captures a non-obvious WHY, keep it.
+Wait for both agents to complete. Aggregate their findings, reading each agent's findings file at the path it returned when its report is no longer in context. Then apply each fix directly, skipping false positives. When uncertain whether a comment captures a non-obvious WHY, keep it.
 
 When the scope is a diff, confine fixes to prose the changeset authored or falsified. Prose the change left both untouched and accurate stays as it is, however badly it reads.
 
@@ -86,6 +86,8 @@ Where Outcome is one of:
 - **Deleted**, **Corrected**, **Tightened**, **Restructured**, or **Rewritten** — the fix that was applied
 - **Flagged** — the fix belongs in the code: a refactor that would make the comment unnecessary, or a missing enforcement of a stated contract
 - **Skipped** — name the reason
+
+Where one criterion recurs across many sites, or many sites fall within one file, a single row may cover that group. Name the directory or file cluster it spans and the count. Every **Skipped** and **Flagged** finding keeps its own row with its reason, since those are the rows a reader acts on.
 
 Keep the report to the table. When the table would be empty, report one line stating the docs were already clean instead.
 

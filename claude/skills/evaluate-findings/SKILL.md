@@ -24,6 +24,7 @@ For each finding:
    - Findings genuinely outside the branch's work are the user's call to include. Assign Escalate so the user decides whether to widen the changeset. Reserve Skip for changes whose cost wildly dwarfs the benefit.
 4. **Verify the claim** against the actual code — does the issue genuinely exist?
    - When the finding offers a concrete example as evidence — a claimed mishandled input, a claimed wrong output — verify that example independently: a finding can hold in substance while its example does not. Keep the finding and record the correction beside it; drop it only when the claim rests on that example alone.
+   - When the finding asserts a compatibility property, establish two things before assigning Apply: what the existing check actually enforces, and what real counterparts produce today. A claim stronger than the check enforces is a premise error rather than a defect — Skip, citing what the check enforces, or narrow the finding to the property it does enforce and record the narrowing beside it. When neither can be established from the code, the artifacts, or authoritative documentation, keep the finding Escalate.
    - When the finding cites a rule or convention, read the cited text, then look for a place that already applied it before this changeset — the same file, or the nearest files the rule also governs. Where the text alone leaves the reading open, read the rule the way that application reads it; where no such application exists, judge on the text alone.
 5. **Assess severity:**
 

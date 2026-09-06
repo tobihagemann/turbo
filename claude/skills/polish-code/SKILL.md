@@ -39,6 +39,8 @@ Run the `/evaluate-findings` skill on the results from Step 3.
 
 Run the `/apply-findings` skill on the evaluated results.
 
+Record any fix whose remedy you deliberately narrowed as you make it, naming what the remedy covered and what it left, so Step 7 carries it forward without reconstructing the decision later.
+
 When a fix ships with a regression test, confirm the test fails with the fix reverted, then restore the fix.
 
 Stage the fix immediately before mutating it (`git add <file>`), so `git checkout -- <file>` restores it exactly from the index. A file staged in an earlier step has an index copy older than the current edits, and restoring reverts them. Stage only the files about to be mutated, and reach for `git add -p <file>` when one also carries unrelated changes: a broader restore point sweeps in working-tree changes the project may require stay uncommitted. Each mutation edits the shared working tree in place, so hold anything that reads or builds that tree until the mutation is restored.
@@ -96,7 +98,7 @@ Treat reversal as the stronger signal: when a round's accepted findings undo an 
 
 **When the same class of defect recurs across iterations**, stop patching the individual instance and instead encode the root-cause invariant structurally — a shared guard or type, or a regression test that pins the class against the worked failures it must prevent. In the same pass, audit the existing code against the newly encoded invariant and fix every instance it catches, including code written before it existed. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 
-The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `/review-code`. It does not affect which steps run or whether skills are invoked. Whichever gate above sends the run into another iteration, supply that iteration with every Skip and Escalate verdict recorded so far, across this run and earlier iterations, as the already-adjudicated list for `/review-code`, one line each: the finding, its verdict, and the recorded reason. Fresh task tracking leaves that list intact.
+The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. "Scoped to modified files" only affects the diff command passed to `/review-code`. It does not affect which steps run or whether skills are invoked. Whichever gate above sends the run into another iteration, supply that iteration with every Skip and Escalate verdict recorded so far, and every Apply whose remedy Step 5 recorded as narrowed, across this run and earlier iterations, as the already-adjudicated list for `/review-code`, one line each: the finding, its verdict, and the recorded reason. A narrowed Apply carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. Fresh task tracking leaves that list intact. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal the rule above depends on.
 
 Then use the TaskList tool and proceed to any remaining task.
 

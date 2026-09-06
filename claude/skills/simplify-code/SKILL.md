@@ -19,7 +19,7 @@ State the resolved file list before launching the agents: add `--name-only` to a
 
 ## Step 2: Launch Six Review Agents in Parallel
 
-Emit all six Agent tool calls below in one assistant message. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Pass the scope from Step 1 to each agent. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
+Emit all six Agent tool calls below in one assistant message. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Pass the scope from Step 1 to each agent. Every agent's prompt must direct it to treat the shared working tree and its git index as read-only and to reach its findings by reading and reasoning; fixes happen in Step 3. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Direct each agent to write its full findings to a uniquely named file in the session scratchpad directory and to return that path with its report, so a compaction before Step 3 leaves the findings recoverable.
 
 Confine the agent's prompt to what to review, plus the conventions and factual properties that bear on it. Pass a property of the existing code as a fact the agent weighs, such as "the retry loop guards a dependency known to fail intermittently". Leave out any statement that tells the agent what verdict to reach about that property, such as "the duplication here is intentional for readability, judge against that", because it binds the agent to accept the very property the review exists to assess.
 
@@ -85,7 +85,7 @@ Review the same changes for whether each is implemented at the right depth:
 
 ## Step 3: Fix Issues
 
-Aggregate the agents' findings, then apply each fix directly, skipping only findings that are wrong. When a deletion recommendation and a refactor recommendation land on the same code, the deletion wins.
+Aggregate the agents' findings, reading each agent's findings file at the path it returned when its report is no longer in context. Then apply each fix directly, skipping only findings that are wrong. When a deletion recommendation and a refactor recommendation land on the same code, the deletion wins.
 
 A finding that would revise an interface or shape the user already approved is not a false positive. Output its technical detail as text, then use `AskUserQuestion` to let the user decide, naming what the revision would change and what reversing the earlier decision costs. Place the genuinely best option first and append `(Recommended)` to its label, judging "best" on technical merit alone, independent of how closely it conforms to the earlier decision. When merit cannot settle it, say so instead of forcing a pick:
 
@@ -106,6 +106,8 @@ Where Outcome is one of:
 - **Fixed** — the fix was made
 - **Escalated** — name the resolution the user chose: fixed, kept, or noted for later
 - **Skipped** — name the reason
+
+Where one criterion recurs across many sites, or many sites fall within one file, a single row may cover that group. Name the directory or file cluster it spans and the count. Every **Skipped** and **Escalated** finding keeps its own row with its reason, since those are the rows a reader acts on.
 
 Keep the report to the table. Add prose only where an escalation's resolution changed what the other fixes look like. When the table would be empty, report one line stating the code was already clean instead.
 

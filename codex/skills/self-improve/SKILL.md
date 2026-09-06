@@ -31,7 +31,7 @@ Classify every skill this session touched:
 
 - Skills that live in the project are user/project skills
 - If `~/.turbo/repo/` exists, list directories in `~/.turbo/repo/codex/skills/`; any skill in `~/.agents/skills/` with a matching directory there is a turbo skill
-- Every other skill in `~/.agents/skills/` is either one the user maintains or one a package manager installed and replaces on its next update. Nothing in the directory distinguishes the two, so carry its ownership as unresolved into Step 4
+- For every other skill in `~/.agents/skills/`, read `~/.agents/.skill-lock.json`. Its top-level `skills` object is keyed by skill name, and a skill listed there was installed from a source that replaces it wholesale on its next update. Match on the resolved path rather than the name alone, against the entry's `skillPath`, so a local fork that replaced the installed copy is not mistaken for it. A skill that matches is package-managed. The signal runs one way: absence from the file leaves ownership genuinely open, so carry an unlisted skill into Step 4 as ownership-unresolved
 
 **Verification rule (mandatory before routing in Step 4):** For every candidate skill that is about to be routed as turbo, confirm with a fresh `test -d ~/.turbo/repo/codex/skills/<name>` check that the skill actually lives in the turbo repo. Do not rely on remembered listings from earlier in the session, filename hits in grep output, or assumptions based on where a SKILL.md was read from. A miss here mislabels a user/project skill as turbo, triggers the contribution flow unnecessarily, and can introduce session-specific content into a shared skill — so the check is not optional.
 
@@ -70,7 +70,7 @@ Treat the returned items as raw evidence for the scan below.
 Before scanning for lessons, identify which skills were loaded during this session:
 
 - Scan the conversation for Turbo skill invocations and `SKILL.md` reads from `~/.agents/skills/`
-- Build a list of session skills, marking each as turbo, user/project, or ownership-unresolved (using the detection from Step 1)
+- Build a list of session skills, marking each as turbo, user/project, package-managed, or ownership-unresolved (using the detection from Step 1)
 - This list informs routing in Step 4: when a lesson clearly arose from a specific skill's workflow, that skill is the natural routing target
 
 ### Scan for Lessons
@@ -106,7 +106,7 @@ Assign each surviving lesson to exactly one destination.
 
 **Skill-first rule (mandatory):** Before consulting the table below, check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running $skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or AGENTS.md — they belong in the skill they correct. This rule is not a preference; it is a hard constraint that takes precedence over the table rows below.
 
-**Package-managed skills (mandatory):** A skill under `~/.agents/skills/` that Step 1 left ownership-unresolved may be one a package manager replaces wholesale on its next update, discarding any edit made here. Before routing a lesson to such a skill, say plainly that an edit to it survives only while the user maintains it themselves. Then use `request_user_input` to ask which is the case, with the options phrased as that effect: edits to this skill stick, or the next update overwrites them. When that gate cannot reach the user, treat the skill as package-managed and say so in the report. Route the lesson to **Auto memory** when a package manager maintains the skill, recording the skill it applies to so the knowledge survives the next update; when Step 1 resolved no Auto memory target, leave the skill unedited and report the lesson as unrouted. For those skills this rule outranks the skill-first rule, the routing table rows, and the tiebreakers below.
+**Package-managed skills (mandatory):** A skill Step 1 classified as package-managed from the lock file routes its lesson straight to **Auto memory**, recording the skill it applies to, with no question put to the user: the lock file has already settled ownership. A skill under `~/.agents/skills/` that Step 1 left ownership-unresolved may still be one a package manager replaces wholesale on its next update, discarding any edit made here. Before routing a lesson to such a skill, say plainly that an edit to it survives only while the user maintains it themselves. Then use `request_user_input` to ask which is the case, with the options phrased as that effect: edits to this skill stick, or the next update overwrites them. When that gate cannot reach the user, treat the skill as package-managed and say so in the report. Route the lesson to **Auto memory** when a package manager maintains the skill, recording the skill it applies to so the knowledge survives the next update. Whichever branch sent it there, when Step 1 resolved no Auto memory target, leave the skill unedited and report the lesson as unrouted. For those skills this rule outranks the skill-first rule, the routing table rows, and the tiebreakers below.
 
 | Destination | Criteria |
 |---|---|
@@ -135,7 +135,7 @@ Assign each surviving lesson to exactly one destination.
 1. **Skill correction → skill (hard rule).** Any lesson that corrects, constrains, or refines a skill's behavior MUST route to that skill. Never to auto memory, never to AGENTS.md. This is the highest-priority routing rule, ahead of every tiebreaker below and yielding only to the package-managed skills rule above.
 2. **Turbo skill vs. AGENTS.md → always the turbo skill.** Broader impact (benefits all turbo users), better scoped, loaded only when relevant.
 3. **Skill vs. AGENTS.md → always the skill.** Skills are more discoverable, better scoped, and loaded only when relevant.
-4. **Skill vs. auto memory → always the skill.** If a lesson falls within the domain of an existing skill, it goes to the skill. Auto memory is for knowledge that has no skill home, and for the domain of an ownership-unresolved skill a package manager maintains.
+4. **Skill vs. auto memory → always the skill.** If a lesson falls within the domain of an existing skill, it goes to the skill. Auto memory is for knowledge that has no skill home, and for the domain of a skill a package manager maintains.
 5. **AGENTS.md vs. auto memory** — intentional decisions go to AGENTS.md. Discovered knowledge (gotchas, workarounds, quirks) goes to auto memory.
 6. **Lesson vs. improvement** — if the item is *knowledge to remember*, it's a lesson. If it's *work to do later*, it's an improvement. They don't compete — the same session can produce both.
 

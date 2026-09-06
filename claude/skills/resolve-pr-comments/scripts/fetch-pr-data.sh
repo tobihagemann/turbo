@@ -2,7 +2,7 @@
 # Fetch all review threads, reviews, issue comments, commits, and metadata for a
 # GitHub PR. Emits a single merged JSON document on stdout:
 #   {
-#     "meta":          { title, url, headRefName, baseRefName },
+#     "meta":          { title, url, headRefName, baseRefName, body },
 #     "reviewThreads": [ ... ],
 #     "reviews":       [ ... ],   # includes submittedAt
 #     "issueComments": [ ... ],   # PR conversation comments; author, body, createdAt, url
@@ -29,7 +29,7 @@ pr="$3"
 meta_query=$(cat <<'GRAPHQL'
 query($owner: String!, $repo: String!, $pr: Int!) {
   repository(owner: $owner, name: $repo) {
-    pullRequest(number: $pr) { title url headRefName baseRefName }
+    pullRequest(number: $pr) { title url headRefName baseRefName body }
   }
 }
 GRAPHQL

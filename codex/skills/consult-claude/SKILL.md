@@ -19,13 +19,15 @@ State:
 
 When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
+When the consultation runs until Claude approves, fix the line that ends every response: require every response to end with exactly one fixed line stating the verdict, in a designated positive or negative form, carrying nothing else. Stop consulting when that line reaches the positive form, so a politely worded answer does not end the consultation early and agreement does not go unrecognized. Pair it with a compact output contract demanding that each finding ship a ready-to-paste replacement rather than an instruction, which keeps a round cheap enough to iterate.
+
 When the consultation is a prose rewrite bound by a house style, name the shapes that style forbids in the first prompt, so they do not have to be corrected across follow-up turns. Common ones: prefixing a summary with a grammatical subject the convention omits, expanding a pronoun to its full noun phrase at every occurrence, and splitting a sentence so a condition is restated in both halves.
 
 ## Step 2: Run `$claude-print` Skill
 
 Run the `$claude-print` skill with the assembled question. Default to read-only permissions.
 
-For follow-up questions, include Claude's previous answer and the new evidence gathered since then.
+For follow-up questions, include Claude's previous answer and the new evidence gathered since then. When the consultation runs until Claude approves, open each follow-up by listing what was already applied, so Claude judges the current state rather than re-reporting findings that are already fixed. Cap the consultation at five turns, counting the initial request. When the fifth verdict is still negative, carry the outstanding findings into Step 3 as unresolved and state that the consultation ended without approval.
 
 When the recommendation would violate a documented constraint, follow up rather than discarding or adopting it. Quote the constraint back and ask Claude to argue it out: whether the constraint is sound or was set without the problem Claude identified in view, whether that problem is reachable given code Claude may not have accounted for, and what the best fix that respects the constraint is. Ask it to quantify the exposure rather than assert it, and say that reversing its prior recommendation is acceptable.
 

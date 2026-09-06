@@ -62,6 +62,8 @@ Example: When building a `big-query` skill to handle queries like "How many user
 
 To establish the skill's contents, analyze each concrete example to create a list of the reusable resources to include: scripts, references, and assets.
 
+When creating a new skill, establish with that list in hand whether the skill earns its existence. The contents fail that test when they compensate for a problem fixable at its source, when they serve a one-time job rather than a recurring one, or when the instruction files the harness already loads cover them. Where any of those holds, state which one and name the alternative — the upstream fix, a runbook, or a doc pointer — then use `AskUserQuestion` to let the user choose between that alternative and building the skill anyway, and continue from their answer. When updating an existing skill, apply the test to the change in hand and record any doubt about the whole skill's reason to exist beside the finished edit.
+
 ## Step 3: Initializing the Skill
 
 Skip this step if the skill being developed already exists and iteration is needed. In this case, continue to the next step.
