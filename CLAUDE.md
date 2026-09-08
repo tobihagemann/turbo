@@ -29,4 +29,6 @@ Each skill is self-contained. Skills compose other skills to any depth via `/ski
 - `~/.turbo/repo/` — Local clone of the upstream turbo repo (skill source for install/update)
 - `~/.claude/skills/` — Installed Claude Code skills
 
+A change that leaves a `~/.turbo/config.json` key with no effect carries its own cleanup: add a `MIGRATION.md` entry deleting the key in each edition and bump the `Current version` in `UPDATE.md`. Dropping the key from `SETUP.md` only stops new installs from writing it, leaving it behind everywhere it was already written.
+
 When working inside `claude/`, also see [`claude/CLAUDE.md`](claude/CLAUDE.md) for edition-specific rules.

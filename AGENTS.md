@@ -29,4 +29,6 @@ For Codex skill conventions, see [`codex/SKILL-CONVENTIONS.md`](codex/SKILL-CONV
 - `~/.turbo/repo/` — Local clone of the upstream turbo repo (skill source for install/update)
 - `~/.agents/skills/` — Installed Codex skills
 
+A change that leaves a `~/.turbo/config.json` key with no effect carries its own cleanup: add a `MIGRATION.md` entry deleting the key in each edition and bump the `Current version` in `UPDATE.md`. Dropping the key from `SETUP.md` only stops new installs from writing it, leaving it behind everywhere it was already written.
+
 When working inside `codex/`, also see [`codex/AGENTS.md`](codex/AGENTS.md) for edition-specific rules.
