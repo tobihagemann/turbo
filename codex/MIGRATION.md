@@ -58,7 +58,20 @@ This preference is opt-in. Setup changes it to `true` only after the user choose
 2. Run the one-time sign-in with a generous timeout (60 minutes / 3600000ms); it blocks until sign-in completes:
 
 ```bash
-npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-5.6-sol -p "HI"
+npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser -p "HI"
 ```
 
-3. Have the user sign into ChatGPT in the window that opens and set the composer's thinking effort to Pro.
+3. Have the user sign into ChatGPT in the window that opens.
+
+## Version 5: Remove `oracle.model`
+
+**Condition:** `~/.turbo/config.json` has an `oracle.model` key.
+
+**Skip if:** The key does not exist.
+
+### Steps
+
+`$consult-oracle` no longer pins a model. The oracle CLI selects and verifies its own default Pro model, so `oracle.model` has no effect.
+
+1. Read `~/.turbo/config.json`.
+2. Delete the `oracle.model` key, preserve every other key, and write the file back.

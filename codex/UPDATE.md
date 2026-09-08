@@ -30,7 +30,7 @@ git -C ~/.turbo/repo fetch origin
 
 ### Step 2: Run Migrations
 
-**Current version: 4**
+**Current version: 5**
 
 Read `codex.configVersion` from `~/.turbo/config.json` (default: `0` if missing). Migrations run before any head comparison so users on a current commit still pick up schema migrations.
 
