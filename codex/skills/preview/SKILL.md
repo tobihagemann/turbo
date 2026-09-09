@@ -29,7 +29,7 @@ Check for a project-specific skill or plugin that launches the app, and use it i
 
 Start backend services and frontend together — a frontend-only change still needs the backend running to be exercised. Build first if the project requires a build step.
 
-Start long-running processes in a background shell and wait until each reports ready. Tail their logs in a background shell so backend errors and warnings surface while the user is trying the app.
+Start long-running processes in a background shell and wait until each reports ready. Confirm each process bound to its port before sending it traffic, since a readiness probe passes just as well against an orphan from an earlier attempt. Capture each process's PID and stop it by that PID and its process group, rather than by port or command-line pattern, which also match a concurrent agent's server. Tail their logs in a background shell so backend errors and warnings surface while the user is trying the app.
 
 If a required service cannot be stood up in this session (missing auth provider, external dependency, seed data), or a process fails to start or never reports ready, use `request_user_input` to surface the blocker and let the user choose how to proceed.
 

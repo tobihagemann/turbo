@@ -9,6 +9,21 @@ Upgrade project dependencies, researching breaking changes for major version upd
 
 Optional filter: `$ARGUMENTS` (e.g., `react`, `Alamofire`, `serde tokio`)
 
+## Task Tracking
+
+At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
+
+1. Run `$review-dependencies` skill
+2. User strategy selection
+3. Research breaking changes
+4. User confirmation
+5. Execute upgrades
+6. Apply migrations
+7. Run `$run-checks` skill
+8. Exercise upgraded schema against the real store
+9. Report results
+10. Recommend next steps
+
 ## Phase 1: Review Dependencies
 
 Run the `$review-dependencies` skill to detect package managers and discover available updates. If no updates are available, stop.
@@ -100,6 +115,8 @@ If "Show details" selected, display full migration research, then ask again.
 
 ## Phase 5: Execute Upgrades
 
+Report an outdated CI action pin for the user to act on and leave the workflow file unchanged; this skill upgrades packages a manifest declares.
+
 After every install command in this phase, run both checks below before any tests and before Phase 6.
 
 1. **Confirm the installed tree moved** — spot-check the resolved version of one or two upgraded packages in the installed dependency tree against the manifest. An install can record the new versions while leaving the installed packages on their old ones, which makes every later check report on the pre-upgrade tree. When the two disagree, force a clean resolve: use the package manager's lockfile-respecting install where it has one, otherwise clear the installed tree and install again. Re-check afterward.
@@ -149,15 +166,19 @@ Some packages pin their version outside the manifest, beyond the package manager
 
 ## Phase 7: Verification
 
-Run the project's test, build, and lint commands. Detect which commands are available from the project's config files and scripts. Use project-level task runners when present (`Makefile`, `Taskfile`, `justfile`, npm scripts, etc.).
+### Step 1: Run `$run-checks` Skill
+
+Run the `$run-checks` skill to execute the project's verification gate.
+
+### Step 2: Exercise Upgraded Schema Against the Real Store
 
 When an upgraded package owns persisted schema, run the test tiers that exercise the real backing store rather than the default command alone. A tier that substitutes test doubles for the store passes on a schema the upgraded package no longer accepts. Diff the schema the package now generates against the one the project has migrated to; when they differ, return to Phase 6 for the migration the difference calls for, then re-run the tiers.
 
-### Report Results
+### Step 3: Report Results
 
 Summarize: packages upgraded (count), breaking changes addressed (count), files modified (count), test results, remaining manual tasks.
 
-### Recommend Next Steps
+### Step 4: Recommend Next Steps
 
 If any migrations could not be automated:
 - List specific changes the user needs to review
@@ -176,9 +197,10 @@ If web search/fetch fails: retry with alternative search terms, provide manual r
 
 ### Test Failures After Upgrade
 
-- Stop the upgrade process
-- Suggest rollback: restore manifest and lockfile from git, then reinstall
+Phase 7's gate diagnoses a failing test and applies a fix. When it stops without a root cause:
+
 - Identify which package likely caused the failure
+- Suggest rollback: restore manifest and lockfile from git, then reinstall
 
 ### Migration Research Incomplete
 

@@ -1,11 +1,11 @@
 ---
 name: review-dependencies
-description: "Detect package managers and discover outdated or vulnerable dependencies. Returns structured findings without upgrading. Use when the user asks to \"review dependencies\", \"check for outdated packages\", \"check dependencies\", \"scan dependencies\", or \"dependency review\"."
+description: "Detect package managers and CI action pins, then discover outdated or vulnerable dependencies. Returns structured findings without upgrading. Use when the user asks to \"review dependencies\", \"check for outdated packages\", \"check dependencies\", \"scan dependencies\", \"dependency review\", \"check for outdated GitHub Actions\", or \"are my workflow actions up to date\"."
 ---
 
 # Review Dependencies
 
-Detect package managers and discover outdated or vulnerable dependencies. Analysis only. Does not upgrade.
+Detect package managers and CI action pins, then discover outdated or vulnerable dependencies. Analysis only. Does not upgrade.
 
 ## Step 1: Detect Package Managers
 
@@ -21,6 +21,7 @@ Identify which package managers are in use by searching for config files:
 | `Gemfile` | Bundler | `Gemfile.lock` | Ruby |
 | `pom.xml` | Maven | — | Java |
 | `build.gradle`, `build.gradle.kts` | Gradle | `gradle.lockfile` | Java/Kotlin |
+| `.github/workflows/*.yml` / `.yaml`, `action.yml` / `.yaml` | GitHub Actions | — | CI |
 
 Swift dependencies can live in `Package.swift` or be configured directly in the Xcode project file (`.xcodeproj`/`.xcworkspace`). For Xcode-managed dependencies, inspect the project's package references.
 
@@ -28,9 +29,11 @@ Detection steps:
 
 1. Search for config files in the project root and subdirectories (exclude vendored directories)
 2. If a lockfile exists, use the corresponding package manager variant (e.g., `yarn.lock` → yarn, `pnpm-lock.yaml` → pnpm)
-3. If **multiple instances of the same package manager** found (e.g., monorepo with several `package.json` files): use `request_user_input` to let the user pick one (Codex `request_user_input` choices are mutually exclusive). For an "all of them" workflow, ask follow-up free-form input or run the review per instance.
-4. If **multiple package managers** found: use `request_user_input` to let the user pick one
-5. If **none** found: inform user and stop
+3. When the repo declares a dependency automation config (`.github/dependabot.yml` / `.yaml`, `renovate.json`, `.github/renovate.json`), read it and add every ecosystem it declares to the set found by the config-file search
+4. When the repo has a GitHub remote, list open dependency PRs with `gh pr list --author app/dependabot` (or `app/renovate`), and mark each upgrade one of them already proposes
+5. If **multiple instances of the same package manager** found (e.g., monorepo with several `package.json` files): use `request_user_input` to let the user pick one (Codex `request_user_input` choices are mutually exclusive). For an "all of them" workflow, ask follow-up free-form input or run the review per instance.
+6. If **multiple package managers** found: use `request_user_input` to let the user pick one. Exclude the CI ecosystem from that choice and review it alongside whichever the user picks
+7. If **none** found across every step above: inform user and stop
 
 ## Step 2: Discovery
 
@@ -50,6 +53,7 @@ Run the appropriate discovery command to find available updates:
 | Bundler | `bundle outdated` | |
 | Maven | `mvn versions:display-dependency-updates` | |
 | Gradle | `gradle dependencyUpdates` | Requires `com.github.ben-manes.versions` plugin. |
+| GitHub Actions | `gh api repos/<owner>/<repo>/releases/latest --jq .tag_name`, compared against each `uses:` ref | No outdated command. Take `<owner>/<repo>` from the ref's first two path segments. Read a SHA-pinned ref's version from its trailing comment (`uses: <owner>/<action>@<sha> # v1.2.3`). Compare only the components the ref pins, so `@v7` is current against `v7.0.1`. Fall back to `repos/<owner>/<repo>/tags` when the release 404s or its tag namespace differs from the ref's, and to web search when the action is not hosted on GitHub. Exclude local (`./…`), `<repo-relative>` (`$/…`), and Docker (`docker://…`) refs, which pin no release. |
 
 Categorize updates:
 - **Major** (breaking changes) — requires migration research
@@ -71,6 +75,7 @@ Format each finding as:
 
 **Package:** `<name>` <current> -> <latest>
 **Manager:** <npm/pip/cargo/etc.>
+**Proposed:** <open automation PR already covering this upgrade, when one exists>
 
 <one paragraph: why this matters, known vulnerabilities if any, major version gap>
 ```

@@ -43,7 +43,7 @@ Survey the conversation context for:
 - **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out
 - **Next step**: the first concrete action the new session should take. When the user has stated what they want to work on next, that intent leads and any work left in flight is ordered after it; say so in the same statement when that work should not resume at all
 
-Read `.turbo/improvements.md` if it exists and note any entry this handoff takes over. When no entry clearly matches, leave the backlog alone.
+Read `.turbo/improvements.md` if it exists and note any entry this handoff takes over, resolving it against the repo root from `git rev-parse --show-toplevel`, except inside a linked worktree — where `git rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir. When no entry clearly matches, leave the backlog alone.
 
 When something is genuinely unclear and would leave a gap in the handoff, use `AskUserQuestion` to resolve it. Default to inferring quietly when the conversation makes the answer clear.
 

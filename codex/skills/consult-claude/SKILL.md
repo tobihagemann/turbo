@@ -54,6 +54,8 @@ When the consultation rewrote prose rather than answering a question, check the 
 
 Take the plainer sentences and keep the load-bearing why.
 
+Check separately whether the supporting material in a proposed replacement is already in use. The consultation sees only the files and excerpts the prompt showed it, so a replacement that introduces new material such as a citation, an example, or a quotation can reuse something the document already relies on elsewhere. Search the whole target document for that material before adopting it, and either discard the replacement or mark the reuse in the text.
+
 When the consultation was opened from a pending question, resolve that question with the answer in hand, re-asking the user when the choice stays theirs. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules

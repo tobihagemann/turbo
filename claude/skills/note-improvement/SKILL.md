@@ -9,7 +9,7 @@ Capture improvement opportunities discovered during work so they don't get silen
 
 ## Step 1: Locate the Improvements File
 
-Each repo keeps its improvements file at `.turbo/improvements.md` relative to that repo's root, resolved by the nearest `.git` directory.
+Each repo keeps its improvements file at `.turbo/improvements.md` relative to that repo's root. Resolve that root with `git -C <repo path> rev-parse --show-toplevel`, except inside a linked worktree — where `git -C <repo path> rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir, so the entry lands in the main checkout rather than in a worktree that is destroyed with its branch.
 
 ## Step 2: Identify the Improvement
 
@@ -35,8 +35,9 @@ When the criteria above clearly select one value, use it. Otherwise, use `AskUse
 - Append the entry to the `.turbo/improvements.md` of the repo whose files its **Where** names, which may not be the current repo.
 - When **Where** spans several repos, split it into one entry per repo and append each to its own repo. Give every entry the titles of all its counterparts so a reader of any one backlog finds the others.
 - Rewrite each split entry's **Where** so its paths read repo-local, matching the entries already in that backlog. Qualify any remaining reference that resolves only in another repo with the repo it lives in.
-- When a target repo is not reachable on disk, say so plainly and append its entry to the current repo's backlog instead, naming the repo it was meant for.
-- Write to a target repo other than the current one with the Edit or Write tool. The Bash sandbox denies a shell append into another repo, and a separately-issued verification command then prints the file's unchanged contents, which reads as success.
+- When a target repo is absent from disk, say so plainly and append its entry to the backlog of the repo root resolved in Step 1, naming the repo it was meant for.
+- Write to any path outside the current working directory with the Edit or Write tool, the main checkout of the worktree this session runs in included. The Bash sandbox denies a shell append there, and a separately-issued verification command then prints the file's unchanged contents, which reads as success.
+- When that write is refused while this session runs inside a linked worktree, report that the entry cannot be persisted from here and print the fully formatted entry so it can be pasted in from a session that can write to the main checkout. Leave it out of the worktree's own `.turbo/`, which is gitignored and is destroyed with the worktree.
 
 Read `.turbo/improvements.md` in each target repo if it exists. Create it with the header below if it doesn't.
 
@@ -67,7 +68,7 @@ Include the Ceiling and Revisit lines when the entry records a deliberate simpli
 
 ## Step 4: Confirm
 
-Tell the user the improvement was noted and where each entry was written.
+Tell the user the improvement was noted and where each entry was written, or that it could not be persisted and is printed above.
 
 ## Rules
 

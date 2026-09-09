@@ -87,6 +87,8 @@ Review the same changes for whether each is implemented at the right depth:
 
 Wait for all six agents to complete. Aggregate their findings, reading each agent's findings file at the path it returned when its report is no longer in context. Then apply each fix directly, skipping only findings that are wrong. When a deletion recommendation and a refactor recommendation land on the same code, the deletion wins.
 
+When a recommendation rests on a factual premise that reading the source cannot settle — what a platform API returns at runtime, or what a value measures once the system runs — establish that premise before implementing it rather than taking the agent's assertion, using the cheapest check that settles it: a targeted search or count over the source, or a measurement from a surface already running in this session. When nothing available settles it, skip the finding and name the unverified premise as its reason. Reading alone cannot catch a false premise: the recommendation is coherent, the change lands cleanly, and the checks pass, leaving a change that cannot do what it was made to do.
+
 A finding that would revise an interface or shape the user already approved is not a false positive. Output its technical detail as text, then use `request_user_input` to let the user decide, naming what the revision would change and what reversing the earlier decision costs. Place the genuinely best option first and append `(Recommended)` to its label, judging "best" on technical merit alone, independent of how closely it conforms to the earlier decision. When merit cannot settle it, say so instead of forcing a pick. Present the consultation option in place of **Note for later**, keeping the question at three options:
 
 - **Apply** — make the change

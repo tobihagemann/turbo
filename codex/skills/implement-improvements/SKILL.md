@@ -19,7 +19,7 @@ At the start, use `update_plan` to track each step, restating any remaining step
 
 ## Step 1: Read the Backlog
 
-Read `.turbo/improvements.md`. If the file does not exist, there are no improvements to implement; stop.
+Read `.turbo/improvements.md`, relative to the repo root resolved with `git rev-parse --show-toplevel`, except inside a linked worktree — where `git rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir. If the file does not exist, there are no improvements to implement; stop.
 
 Parse all entries, extracting for each:
 

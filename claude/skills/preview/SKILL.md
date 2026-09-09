@@ -29,7 +29,7 @@ Check for a project-specific skill or MCP tool that launches the app, and use it
 
 Start backend services and frontend together — a frontend-only change still needs the backend running to be exercised. Build first if the project requires a build step.
 
-Start long-running processes with the Bash tool (`run_in_background: true`) and wait until each reports ready. Tail their logs with the Monitor tool so backend errors and warnings surface while the user is trying the app.
+Start long-running processes with the Bash tool (`run_in_background: true`) and wait until each reports ready. Pass `run_in_background` alone, never with a trailing `&`: backgrounding twice reports success within seconds while the servers are either dead with the wrapper or orphaned still holding the port. Confirm each process bound to its port before sending it traffic, since a readiness probe passes just as well against an orphan from an earlier attempt. Capture each process's PID and stop it by that PID and its process group, rather than by port or command-line pattern, which also match a concurrent agent's server. Tail their logs with the Monitor tool so backend errors and warnings surface while the user is trying the app.
 
 If a required service cannot be stood up in this session (missing auth provider, external dependency, seed data), or a process fails to start or never reports ready, use `AskUserQuestion` to surface the blocker and let the user choose how to proceed.
 
