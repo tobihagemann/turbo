@@ -158,6 +158,7 @@ Convert the markdown report into a styled, interactive HTML page.
    - Severity summary bar (P0/P1/P2/P3 counts)
    - Sticky navigation between report sections
    - Collapsible category sections
+   - `[hidden] { display: none !important; }` in the base styles, so a section whose own CSS sets a `display` value still hides
    - Finding tables with file, line, and description columns
    - Severity badges and color-coded group labels
    - Entrance animations and hover states

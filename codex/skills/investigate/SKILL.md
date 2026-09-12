@@ -55,7 +55,7 @@ When the failure surfaces inside a third-party dependency, search its issue trac
 - **Build errors**: Read the config file and the referenced source
 - **Unexpected behavior**: Trace the data flow from input to the unexpected output
 
-Before treating a record, file, or build artifact as evidence of the system's behavior, confirm the system under test produced it: check creator, source metadata, or generation time. Suspect imported, seeded, hand-edited, and leftover data from an earlier run, which reads identically to generated output.
+Before treating a record, file, or build artifact as evidence of the system's behavior, confirm the system under test produced it: check creator, source metadata, or generation time. Suspect imported, seeded, hand-edited, and leftover data from an earlier run, which reads identically to generated output. A checkout of another repository is the same trap: confirm it is current before reading it as evidence, since a stale one reads identically to the authoritative source.
 
 ## Step 3: Hypothesize
 
@@ -84,6 +84,8 @@ For complex problems with 3+ hypotheses and a non-obvious root cause, spawn para
 **Skip** when 1-2 hypotheses are obvious (e.g., stack trace points directly to the bug).
 
 Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so branches running them concurrently wipe each other's state and return failures that look like real defects. Name any such tier to every branch as off-limits.
+
+When the evidence lives in a repository other than this one, including a submodule or a vendored clone with its own remote, establish the authoritative ref before dispatching and bring it up to date, fetching it or reading it through the forge API. A local checkout may be behind its remote, and an investigation branch reading a stale one returns findings the current code has already resolved. Name that ref and how to read it in every branch prompt, including the text the Claude consultation branch forwards.
 
 Launch all investigation branches with `spawn_agent` / `wait_agent` using inherited model defaults, issuing every call in one batch. Do not issue one and await its result before issuing the rest. Expect one branch per hypothesis plus one Claude consultation branch. Every branch prompt must direct it to treat the shared working tree and its git index as read-only and to gather evidence by reading and reasoning; experiments that mutate code wait for Step 4, where they run one at a time. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 

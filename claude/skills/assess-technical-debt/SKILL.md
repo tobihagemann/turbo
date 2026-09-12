@@ -125,6 +125,7 @@ Convert the markdown report into a styled, interactive HTML page.
    - Priority matrix laid out as an impact-by-effort quadrant, color-coded by tier (quick wins highlighted)
    - Sticky navigation between sections
    - Collapsible dimension sections
+   - `[hidden] { display: none !important; }` in the base styles, so a section whose own CSS sets a `display` value still hides
    - Finding cards with location, impact, effort, and recommended refactor
    - Impact and effort badges with color-coding
    - Entrance animations and hover states

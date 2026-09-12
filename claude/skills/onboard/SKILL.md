@@ -101,6 +101,7 @@ Convert the markdown report into a styled, interactive HTML page.
    - Welcome section as a prominent header card
    - Sticky navigation between sections
    - Collapsible sections for Architecture Overview and Development Workflow
+   - `[hidden] { display: none !important; }` in the base styles, so a section whose own CSS sets a `display` value still hides
    - File and directory references as styled inline code
    - GitHub issue links as clickable cards with engagement indicators
    - Entrance animations and hover states

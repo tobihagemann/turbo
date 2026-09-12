@@ -116,6 +116,7 @@ Convert the markdown report into a styled, interactive HTML page.
    - Executive summary card
    - Sticky navigation between sections
    - Collapsible dimension sections
+   - `[hidden] { display: none !important; }` in the base styles, so a section whose own CSS sets a `display` value still hides
    - File and directory references as styled inline code
    - Entrance animations and hover states
    - Print-friendly styles via `@media print`

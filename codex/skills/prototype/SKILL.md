@@ -11,7 +11,7 @@ Build a throwaway prototype that answers named unknowns, operate it, and hand it
 
 Take the open unknowns from what was passed in. When nothing was passed in, derive them from the current work: the questions whose answers in prose would still leave the user guessing, such as what a surface looks like or whether an interaction pattern makes sense in the hand.
 
-State each unknown as a question the user answers by using the prototype rather than by reading a description. Output that list as text before building, and keep anything outside it out of the prototype.
+State each unknown as a question the user answers by using the prototype rather than by reading a description. When the work that prompted the prototype already named competing alternatives, state the unknown as a comparison between them. Output that list as text before building, and keep anything outside it out of the prototype.
 
 ## Step 2: Resolve the Prototype Path
 
@@ -27,9 +27,11 @@ Write to `.turbo/prototypes/<slug>.html`, creating the directory when it does no
 
 ## Step 3: Build It
 
-Write one self-contained `.html` file at the resolved path, with markup, styles, script, and sample data inline. It runs from `file://` with no build step, no package install, and no dependency on the real application.
+Write one self-contained `.html` file at the resolved path, with markup, styles, script, and sample data inline. It runs from `file://` with no build step, no package install, and no dependency on the real application. Start the styles with `[hidden] { display: none !important; }`: an element whose own CSS sets any `display` value otherwise ignores the `hidden` attribute and paints anyway.
 
 Build only what the Step 1 questions require. Hardcode the data behind them, stub anything that would cross a network boundary, and leave persistence out.
+
+When a Step 1 question compares alternatives, build every alternative into the same file behind a header toggle, kept visually separate from the design as prototype chrome, so the user compares them in place rather than across descriptions.
 
 ## Step 4: Operate It
 
@@ -46,7 +48,7 @@ Give the user the file path, the Step 1 questions the prototype answers, and wha
 
 ## Step 6: Record What It Settled
 
-Delete from the prototype file every approach it disproved, so that nothing which failed survives in the file as apparent implementation. Keep what the settled answers rest on.
+Delete from the prototype file every approach it disproved, so that nothing which failed survives in the file as apparent implementation. Remove any comparison toggle along with the alternatives it switched between. Keep what the settled answers rest on.
 
 Then state each Step 1 question with the answer the prototype produced, and name separately anything it disproved. Carry these answers into the work that prompted the prototype. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
