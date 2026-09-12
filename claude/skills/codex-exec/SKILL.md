@@ -45,7 +45,7 @@ Run codex via the Bash tool as a foreground call (do not set `run_in_background`
 
 Capture the `session id:` from the run's stderr chrome as it starts; it never appears in the `-o` file, and recovery depends on it. Do not pass `--ephemeral` when the run may need recovery, since it persists no session files.
 
-Give every run its own `-o` path, named with a random tag so that runs spawned concurrently and successive runs in an iteration loop cannot collide on a path each derived independently. A reused path holds the prior run's complete output until the current run exits, so an early read returns well-formed output from the wrong run; a fresh path turns that same read into a detectable empty one. Treat content in the `-o` file as final only once the run has exited.
+Give every run its own absolute `-o` path, named with a random tag so that runs spawned concurrently and successive runs in an iteration loop cannot collide on a path each derived independently. Pass it absolute: a relative path resolves against a working directory that drifts over a session, so the run does its work and exits having written no final message (`Failed to write last message file "<path>": No such file or directory`). A reused path holds the prior run's complete output until the current run exits, so an early read returns well-formed output from the wrong run; a fresh path turns that same read into a detectable empty one. Treat content in the `-o` file as final only once the run has exited.
 
 A run that outlives the timeout is normally **force-backgrounded**: the result carries a task ID and an output file path, and the run continues to completion. Recover it by reading the output file: `Read` the path, then `Read` it again once the `<task-notification>` reports completion.
 
@@ -58,6 +58,8 @@ codex exec --skip-git-repo-check -o <fresh-output-path> resume <session-id> \
 
 `resume` inherits the original session's sandbox, so pass `--sandbox` only to change it. When the kill left no session id in hand, recover it from the newest `~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-<timestamp>-<session-id>.jsonl` (the id is the UUID in the filename), listing a single day directory so the ordering is right. `codex exec resume --last` also works when no other codex run is in flight. Do not consult `~/.codex/session_index.jsonl`; it lags behind the rollout files.
 
+A run can also exit 0 within the timeout without completing the task, its final message **asking for authorization** to take an approach its own instructions require it to clear first. Read the final message before treating the run as finished: the exit code and the well-formed message both read as success. Resume the session with the authorization as the prompt, per the form above. Do not re-run the original prompt; it reaches the same gate.
+
 Never wait with `Monitor` (it returns immediately, and events that arrive after your final text are dropped), and never return the task ID, an interim file snapshot, or `"Waiting for codex to finish"` as the result — each is a false-empty return.
 
 ## Transient Crash Retry
@@ -66,31 +68,21 @@ Re-run the command once when the Bash call returned an error exit with no stdout
 
 Treat models-manager and cache-TTL errors as non-fatal warnings. Read the error text for usage-limit and authentication signatures and report those without retrying.
 
-## Permission Levels
-
-| Level | Flag | When to Use |
-|-------|------|-------------|
-| Read-only | `--sandbox read-only` | Analysis, code reading, generating reports |
-| Workspace write | `--sandbox workspace-write` | Editing files within the project |
-| Full access | `--sandbox danger-full-access` | Installing packages, running tests, system operations |
-| Full auto | `--full-auto` | Combined with a sandbox level for unattended execution |
-
-Omitting `--sandbox` falls back to the codex config and project trust level (trusted projects run workspace-write), so always pass the flag explicitly.
-
-For fix or implementation tasks, default to `--sandbox workspace-write --full-auto` so Codex can edit files without confirmation prompts. Use `--sandbox read-only` for analysis or research tasks.
-
 ## Options
 
 | Option | Description |
 |--------|-------------|
 | `-m <model>` | Model for the run |
-| `--full-auto` | Allow file edits without confirmation prompts |
-| `--sandbox <level>` | Permission level: `read-only`, `workspace-write`, `danger-full-access` |
+| `--sandbox read-only` | Analysis, code reading, generating reports |
+| `--sandbox workspace-write` | Editing files within the project |
+| `--sandbox danger-full-access` | Installing packages, running tests, system operations |
 | `--json` | JSON Lines output (progress + final message) |
 | `-o <path>` | Write final message to a file |
 | `--output-schema <path>` | Enforce JSON Schema on the output |
 | `--ephemeral` | No persisted session files |
 | `--skip-git-repo-check` | Bypass git repository requirement |
+
+For fix or implementation tasks, default to `--sandbox workspace-write` so Codex can edit files. Use `--sandbox read-only` for analysis or research tasks. Pass `--sandbox` and no other permission flag. Omitting `--sandbox` falls back to the codex config and project trust level (trusted projects run workspace-write), so always pass the flag explicitly.
 
 Omit `-m`, leaving the run on codex's configured model. When the user named a model for this run, add `-m <model>` to every `codex exec` command in this skill, resume turns included, and pass the name verbatim.
 
