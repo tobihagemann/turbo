@@ -13,7 +13,7 @@ At the start, use `update_plan` to track each step, restating any remaining step
 
 1. Read the backlog
 2. Validate and classify
-3. Recommend, confirm, and prune stale
+3. Recommend, confirm, and update the backlog
 4. Run the chosen lane
 5. Prune working-set entries from the backlog
 
@@ -33,13 +33,13 @@ Parse all entries, extracting for each:
 
 ## Step 2: Validate and Classify
 
-Improvements can go stale: files get renamed, code gets refactored, issues get fixed as side effects of other work. Before routing, validate each improvement and classify any entry missing a Type.
+Improvements drift: files get renamed, code gets refactored, issues get fixed as side effects of other work. Before routing, validate each improvement and classify any entry missing a Type.
 
 ### Validate
 
 For each entry, verify whether the specific problem or opportunity described still exists. Do not rely on git log alone. Recent commits touching the same files do not mean the specific issue was addressed. Read the actual code and confirm:
 
-1. **Files exist** — Do the referenced files/paths still exist? If not, the entry is stale.
+1. **Files exist** — Do the referenced files/paths still exist? When one was renamed or its code moved, validate the entry at the current location instead. This check marks the entry stale only when the code it names is gone.
 2. **Problem persists** — Read the relevant code sections. Is the exact issue or opportunity described in the entry still present? Check the specific claims: if the entry says a function is uncalled, verify it has no callers; if it says error handling is missing, check whether it was added.
 3. **Revisit condition met** — For an entry carrying a Revisit field, check whether the recorded condition now holds. The shipped simplification is present by construction, so its presence alone says nothing about whether the fuller version is worth building yet.
 4. **Stated scope matches the real gap** — For an entry claiming missing coverage, read what existing tests already pin before accepting its scope: a test that substitutes a test double at a boundary pins the behavior on one side of it and leaves the boundary itself unpinned, so a request to cover several variants often reduces to the single boundary they share. Restate such an entry at its real scope, classify it Active, and use the restatement as its summary in Step 3.
@@ -49,7 +49,7 @@ Classify each entry as:
 
 - **Active** — The described problem or opportunity is confirmed present in the current code
 - **Deferred** — The entry carries a Revisit condition that does not yet hold; the shipped approach remains the right one
-- **Stale** — The referenced files no longer exist, the specific issue has been resolved, or the entry's premise never held (cite evidence: what changed and where, or why the claim is false)
+- **Stale** — The code the entry names no longer exists, the specific issue has been resolved, or the entry's premise never held (cite evidence: what changed and where, or why the claim is false)
 - **Unclear** — Cannot determine from code alone, needs user input
 
 When in doubt, classify as Active. The cost of re-examining a resolved issue is low; dismissing a valid improvement is high.
@@ -64,7 +64,7 @@ For any Active entry without a Type field, infer one on the fly. Base the classi
 
 Pick the type without asking the user. Default to `plan` when genuinely ambiguous.
 
-## Step 3: Recommend, Confirm, and Prune Stale
+## Step 3: Recommend, Confirm, and Update the Backlog
 
 Output the backlog status as text first, grouped by type and status. Include each entry's category inline and a category tally across active entries:
 
@@ -115,6 +115,8 @@ Use `request_user_input` to confirm. Combine into the same prompt:
 3. Resolution for unclear items — include only when unclear entries exist
 
 If the user confirmed stale removal, edit `.turbo/improvements.md` to delete the stale entries.
+
+Rewrite in `.turbo/improvements.md` each Active or Deferred entry whose path, scope, count, or consequence Step 2 corrected, changing only the fields the correction touches. When that changes an entry's summary, update each **Paired with** line in its counterpart entries that names the old title.
 
 Compute the **working set** from the confirmed choice. If the working set is empty, stop.
 

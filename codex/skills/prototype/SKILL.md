@@ -39,9 +39,11 @@ Open the file and drive it yourself before handing it over, using the `browser-u
 
 Exercise every control and flow that the Step 1 questions depend on, and confirm each one is reachable and responds. Fix whatever does not work and drive it again. A render or a screenshot leaves the controls untested, so it does not establish that the user can reach what they are being asked to judge.
 
+When a Step 1 question turns on how an interaction feels, such as a drag, scrub, or resize, drive the gesture as one continuous sequence of many small pointer moves. After each move, record the position of every element that should stay put and the moved element's offset from the pointer. Treat any change between consecutive moves that the interaction does not call for as broken, fix it, and drive the sequence again.
+
 ## Step 5: Hand It Over
 
-Give the user the file path, the Step 1 questions the prototype answers, and what to try for each. Then use `request_user_input` for their verdict:
+Give the user the file path, the Step 1 questions the prototype answers, and what to try for each. For a gesture driven move by move in Step 4, also give the largest change between consecutive moves in the values it recorded. Then use `request_user_input` for their verdict:
 
 - **Settled** — the prototype answered the questions.
 - **Needs changes** — the user describes what to change. Return to Step 3 and continue from there, so every later round is driven in Step 4 before it reaches the user.
