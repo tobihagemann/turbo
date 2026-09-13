@@ -41,6 +41,8 @@ Otherwise, design targeted smoke tests. Each test should:
 
 Confirm any control, command, or other affordance a test names exists in the code before writing the test: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the test against the outcome to verify and leave the affordance to be found during execution.
 
+Confirm as well that the surface accepts a test's action in the state the test sets up. When the code refuses or swallows that action there, drive a state or entry point where the action goes through, or make the refusal itself the observation.
+
 Output the plan as text:
 
 ```

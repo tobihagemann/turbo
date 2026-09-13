@@ -61,6 +61,8 @@ Example prompt for a diagnosis question:
 
 For correctness-critical questions, add `<verification_loop>` asking Codex to verify its answer before finalizing.
 
+When Codex must judge claims against a source, state in `<grounding_rules>` whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Codex reports what the excerpt leaves out as unverifiable or missing.
+
 When a recommendation is wanted, add `<merit_only>`: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Pair it with `<compact_output_contract>` demanding one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
 When the consultation runs until Codex approves, add `<verdict_line>`: require every response to end with exactly one fixed line stating the verdict, in a designated positive or negative form, carrying nothing else. Terminate the loop when that line reaches the positive form, so a politely worded answer does not end it early and agreement does not go unrecognized. Pair it with `<compact_output_contract>` demanding that each finding ship a ready-to-paste replacement rather than an instruction, which keeps a round cheap enough to iterate.
@@ -79,7 +81,11 @@ cat "<prefix>-ctx.txt" | codex exec --skip-git-repo-check -s read-only -o "<pref
 
 A `cat` that fails does not stop the run: codex executes on the bare prompt, burns the full timeout, and returns nothing. Read the stderr chrome for the `cat` error rather than waiting on the `-o` file.
 
-Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with the Write tool so nothing is interpreted on the way in.
+Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Write the context file with the Write tool so nothing is interpreted on the way in. Keep backticks, `$`, and straight double quotes out of the quoted argument even in text you wrote: the first two stay live inside it, and a double quote ends it. When the prompt itself must carry any of them, as when it quotes a title or a passage, write the whole prompt and its context to one file with the Write tool and pass `-`, so stdin is the entire prompt:
+
+```bash
+cat "<prefix>-prompt.txt" | codex exec --skip-git-repo-check -s read-only -o "<prefix>-1.txt" -
+```
 
 Parse the `session id:` line from the CLI output. This UUID is needed for follow-up turns.
 
@@ -109,7 +115,7 @@ Resume the session with the parsed session ID (not `--last`, which is unsafe for
 codex exec resume --skip-git-repo-check <session-id> -o "<prefix>-<turn>.txt" "<follow-up question>" < /dev/null
 ```
 
-When the follow-up carries text you did not author, write it to a file with the Write tool and pass `-` so the prompt is read from stdin instead:
+When the follow-up carries text you did not author, or backticks, `$`, or straight double quotes, write it to a file with the Write tool and pass `-` so the prompt is read from stdin instead:
 
 ```bash
 cat "<prefix>-followup.txt" | codex exec resume --skip-git-repo-check <session-id> -o "<prefix>-<turn>.txt" -
@@ -122,6 +128,8 @@ The `-s` flag is not available for `resume`. It inherits sandbox settings from t
 When the consultation runs until Codex approves, open each resume turn by listing what was already applied, so Codex judges the current state rather than re-reporting findings that are already fixed. The 5-turn cap still binds: when it is reached with the verdict still negative, carry the outstanding findings into Step 5 as unresolved and state that the consultation ended without approval.
 
 When the recommendation would violate a documented constraint, quote the constraint back and ask Codex to argue it out: whether the constraint is sound or was set without the problem Codex identified in view, whether that problem is reachable given code Codex may not have accounted for, and what the best fix that respects the constraint is. Ask it to quantify the exposure rather than assert it, and say that reversing its prior recommendation is acceptable.
+
+When Codex marks a point as not verifiable from the material provided, check the complete source before replying, and quote the passage that settles it in the resume turn rather than arguing the point. When no passage settles it, the point stands.
 
 Return to Step 3. Cap at 5 turns to prevent runaway conversations.
 

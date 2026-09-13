@@ -17,7 +17,11 @@ For large context, pipe it via stdin. The prompt stays as the argument, context 
 cat context.txt | codex exec --skip-git-repo-check "question about the context"
 ```
 
-Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it. Write the context file with the Write tool so nothing is interpreted on the way in.
+Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Write the context file with the Write tool so nothing is interpreted on the way in. Keep backticks, `$`, and straight double quotes out of the quoted argument even in text you wrote: the first two stay live inside it, and a double quote ends it. When the prompt itself must carry any of them, as when it quotes a title or a passage, write the whole prompt and its context to one file with the Write tool and pass `-`, so stdin is the entire prompt:
+
+```bash
+cat prompt.txt | codex exec --skip-git-repo-check -
+```
 
 ## Sandbox
 

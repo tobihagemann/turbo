@@ -51,6 +51,8 @@ When the fix changes when, whether, or how often a mechanism runs, mutate the ch
 
 A test whose pass condition is an absence needs an assertion establishing the mechanism was reachable. Place that arming assertion before anything that can consume the state it reads. Placed after, the assertion holds whether or not the guard exists, and the test looks rigorous while pinning nothing.
 
+A test that asserts only the direction of a numeric change passes on any movement of the right sign, including rounding noise or drift the fix did not cause. Assert the expected size of the change instead.
+
 **When the test still passes with the fix reverted**, suspect the mutation before the test: confirm it reaches the branch under test and reproduces the original behavior rather than a third one. Name the branch under test and the original behavior it reproduces before running the mutation, then re-read the mutated lines. A mutation that lands a statement away from that branch also changes paths the fix never touched, and the resulting failure is indistinguishable from a caught mutation.
 
 **When the mutation is faithful and the test still passes**, the test cannot observe the defect. Determine which of four shapes applies before reworking the test's setup:

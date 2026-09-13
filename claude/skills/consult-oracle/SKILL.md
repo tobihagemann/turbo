@@ -45,7 +45,7 @@ Substitute the printed value for `<printed-path>` in the command below and on ev
 python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output "<printed-path>"
 ```
 
-Keep backticks and `$` out of `--prompt` even in text you wrote, since both stay live inside the quotes. Text you did not author — a diff, file contents, an error trace, command output — goes in a file passed with `--file`, written with the Write tool. This holds on follow-up turns too.
+Keep backticks, `$`, and straight double quotes out of `--prompt` even in text you wrote: the first two stay live inside the quotes, and a double quote ends them. Text you did not author — a diff, file contents, an error trace, command output — goes in a file passed with `--file`, written with the Write tool, as does any title or passage the prompt would otherwise quote. This holds on follow-up turns too.
 
 If the run fails, retry the command once — same prompt, attachments, and timeout — when the failure looks transient, such as a browser challenge or automation error while the signed-in session is otherwise healthy. Report an authentication, browser-challenge, or permission blocker only after the retry reproduces it, and cite the failing output. Do not broaden permissions when the current context already has the access the run needs.
 

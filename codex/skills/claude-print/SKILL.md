@@ -44,7 +44,11 @@ cat "<printed-path>" | claude -p --permission-mode dontAsk --allowedTools="Read,
 
 A `cat` that fails does not stop the run: Claude executes on the bare prompt, burns the full wait, and returns nothing. Read the stderr for the `cat` error rather than waiting on the output.
 
-Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks and `$` out of the quoted argument even in text you wrote, since both stay live inside it.
+Route text you did not author through this channel whatever its size — a diff, file contents, a code comment, a plan or spec, third-party feedback, command output. Keep backticks, `$`, and straight double quotes out of the quoted argument even in text you wrote: the first two stay live inside it, and a double quote ends it. When the prompt itself must carry any of them, as when it quotes a title or a passage, write the whole prompt and its context to one file with `apply_patch` and pipe it with no prompt argument, so stdin is the entire prompt:
+
+```bash
+cat "<printed-path>" | claude -p --permission-mode dontAsk --allowedTools="Read,Grep,Glob,Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git rev-parse:*),Bash(git ls-files:*)"
+```
 
 ## Step 3: Run Synchronously
 

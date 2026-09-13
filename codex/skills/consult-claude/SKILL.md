@@ -17,6 +17,8 @@ State:
 - What files, commands, plans, or error messages matter
 - What kind of answer is useful: hypotheses, tradeoffs, concrete fix, or review
 
+When Claude must judge claims against a source, state whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Claude reports what the excerpt leaves out as unverifiable or missing.
+
 When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
 When the consultation runs until Claude approves, fix the line that ends every response: require every response to end with exactly one fixed line stating the verdict, in a designated positive or negative form, carrying nothing else. Stop consulting when that line reaches the positive form, so a politely worded answer does not end the consultation early and agreement does not go unrecognized. Pair it with a compact output contract demanding that each finding ship a ready-to-paste replacement rather than an instruction, which keeps a round cheap enough to iterate.
@@ -30,6 +32,8 @@ Run the `$claude-print` skill with the assembled question. Default to read-only 
 For follow-up questions, include Claude's previous answer and the new evidence gathered since then. When the consultation runs until Claude approves, open each follow-up by listing what was already applied, so Claude judges the current state rather than re-reporting findings that are already fixed. Cap the consultation at five turns, counting the initial request. When the fifth verdict is still negative, carry the outstanding findings into Step 3 as unresolved and state that the consultation ended without approval.
 
 When the recommendation would violate a documented constraint, follow up rather than discarding or adopting it. Quote the constraint back and ask Claude to argue it out: whether the constraint is sound or was set without the problem Claude identified in view, whether that problem is reachable given code Claude may not have accounted for, and what the best fix that respects the constraint is. Ask it to quantify the exposure rather than assert it, and say that reversing its prior recommendation is acceptable.
+
+When Claude marks a point as not verifiable from the material provided, check the complete source before following up, and quote the passage that settles it in the follow-up rather than arguing the point. When no passage settles it, the point stands.
 
 ## Step 3: Synthesize
 
