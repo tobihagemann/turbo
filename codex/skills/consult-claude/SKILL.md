@@ -17,7 +17,7 @@ State:
 - What files, commands, plans, or error messages matter
 - What kind of answer is useful: hypotheses, tradeoffs, concrete fix, or review
 
-When Claude must judge claims against a source, state whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Claude reports what the excerpt leaves out as unverifiable or missing.
+When Claude must judge claims against a source, state whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Claude reports what the excerpt leaves out as unverifiable or missing. Pass the complete source, or its path for Claude to read, whenever it fits. When an excerpt is unavoidable, confirm before sending it that every passage the claims under judgment rest on made it into the material provided.
 
 When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 

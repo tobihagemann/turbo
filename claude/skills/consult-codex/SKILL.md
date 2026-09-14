@@ -61,7 +61,7 @@ Example prompt for a diagnosis question:
 
 For correctness-critical questions, add `<verification_loop>` asking Codex to verify its answer before finalizing.
 
-When Codex must judge claims against a source, state in `<grounding_rules>` whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Codex reports what the excerpt leaves out as unverifiable or missing.
+When Codex must judge claims against a source, state in `<grounding_rules>` whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Codex reports what the excerpt leaves out as unverifiable or missing. Pass the complete source, or its path for Codex to read, whenever it fits. When an excerpt is unavoidable, confirm before running that every passage the claims under judgment rest on made it into the material provided.
 
 When a recommendation is wanted, add `<merit_only>`: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Pair it with `<compact_output_contract>` demanding one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
