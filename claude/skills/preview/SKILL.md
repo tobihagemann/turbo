@@ -27,7 +27,7 @@ Check for a project-specific skill or MCP tool that launches the app, and use it
 
 ## Step 3: Bring Up the Stack
 
-Start backend services and frontend together — a frontend-only change still needs the backend running to be exercised. Build first if the project requires a build step.
+Start backend services and frontend together — a frontend-only change still needs the backend running to be exercised. When a service runs at an address other than its default, find the settings elsewhere in the stack that name that default, such as allowed origins and sign-in callback URLs, and bring each in line through runtime overrides, leaving the working tree unchanged: add the new address beside the default in a list, and replace the default only where no process outside this skill reads the setting. Build first if the project requires a build step.
 
 Start long-running processes with the Bash tool (`run_in_background: true`) and wait until each reports ready. Pass `run_in_background` alone, never with a trailing `&`: backgrounding twice reports success within seconds while the servers are either dead with the wrapper or orphaned still holding the port. Confirm each process bound to its port before sending it traffic, since a readiness probe passes just as well against an orphan from an earlier attempt. Capture each process's PID and stop it by that PID and its process group, rather than by port or command-line pattern, which also match a concurrent agent's server. Tail their logs with the Monitor tool so backend errors and warnings surface while the user is trying the app.
 
@@ -39,8 +39,8 @@ Output as text:
 
 - The access point — the local URL and port for a web app, or confirmation that the window is open for a native app
 - When the surface sits behind a sign-in, each account to use with its password and the role that account holds
-- What changed and where to look
-- Any specific interaction worth checking
+- What changed
+- Each scenario worth trying, as many as the change needs: numbered steps naming the exact controls and inputs, the result the scenario should produce, and the judgment the user is being asked to make
 - When a verification pass preceded this hand-over, what it could not cover: paths needing real credentials, external services, or state unavailable in this session
 
 ## Step 5: Verdict Gate
@@ -48,7 +48,7 @@ Output as text:
 Use `AskUserQuestion` to ask the user for their verdict after they have tried the app. Three options, with keeping the app running as the default:
 
 - **Looks good, keep it running** — leave every process this skill started running so the user can keep using the app.
-- **Looks good, shut it down** — stop every process this skill started.
+- **Looks good, shut it down** — stop every process this skill started, and revert every override this skill made in a service that keeps running.
 - **Needs changes** — note what the user wants different, make the change, rebuild or refresh the running app so it is live, then repeat this step's gate. When the user's response or session context surfaces further open issues, resolve every known issue — fixing and re-verifying each — before re-asking the verdict; the gate re-fires only once no known issue remains.
 
 Then use the TaskList tool and proceed to any remaining task.
