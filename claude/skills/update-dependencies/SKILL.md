@@ -138,11 +138,15 @@ For changes requiring manual intervention:
 2. Apply the necessary transformation using Edit
 3. Show the user what changed
 
-### Step 3: Update Configuration Files
+### Step 3: Raise Manifest Floors
+
+When migrated code adopts an API that first shipped after the lower bound the manifest declares for that package, raise the constraint to the earliest release that provides every API the migrated code uses, confirmed against the package's tagged source or changelog, then re-run the install so any lockfile records the raised constraint. Passing checks do not clear a stale floor, since they build against the resolved release rather than the floor.
+
+### Step 4: Update Configuration Files
 
 If configuration format changed, read current config, transform to new format, write updated config.
 
-### Step 4: Sync Version-Pinned CI/Container References
+### Step 5: Sync Version-Pinned CI/Container References
 
 Some packages pin their version outside the manifest, beyond the package manager's reach, so a green local run hides the drift. For every upgraded package (major, minor, or patch), search CI and container configs for the old version string with the Grep tool (across `.github/`, `Dockerfile*`, `docker-compose*`, and `.devcontainer/`) and bump it in lockstep:
 

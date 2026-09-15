@@ -50,13 +50,13 @@ If a CLI tool is installed, run it as a fast first pass for **zero-reference** d
 
 **Important limitation:** CLI tools count test imports as real usage. They **cannot** detect code that is only used in tests. They only find symbols with literally zero references anywhere. Step 3 is required for test-only detection.
 
-If no CLI tool is installed, skip to Step 3. Do not ask the user to install anything.
+If no CLI tool is installed, or the tool errors out without producing a report, skip to Step 3. Do not ask the user to install anything.
 
 ## Step 3: Test-Only Analysis — Parallel Subagents (Core)
 
 Before dispatching, read the project's test configuration and CI workflow to identify any test tier that resets a shared external resource between tests, such as a database, a fixed port, or a cache. Such tiers have no cross-process interlock, so subagents running them concurrently wipe each other's state and return failures that look like real defects. Name any such tier to every subagent as off-limits.
 
-This is the primary analysis. Emit one Agent tool call per top-level source directory from Step 1, all in one assistant message. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Cap at 8 per the Rules section. State the count explicitly when emitting the calls. Each subagent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Refer to that worktree by absolute path in every command and join chained steps with `&&`, so a failed step cannot leave the rest running in the shared checkout. Run teardown and verification as their own commands. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the subagent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Damage the subagent cannot repair is reported with the exact repair command in place of findings.
+This is the primary analysis. Emit one Agent tool call per top-level source directory from Step 1, all in one assistant message. Each Agent call uses `model: "opus"` and no `name`. Wait for every agent to report before continuing. Do not begin the next step on a partial set, and do not relaunch an agent that has not yet reported. Cap at 8 per the Rules section. State the count explicitly when emitting the calls. Each subagent's prompt directs it to treat the shared working tree and its git index as read-only — any empirical check runs in an isolated `git worktree` created under `$TMPDIR` and discarded afterward. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. Refer to that worktree by absolute path in every command and join chained steps with `&&`, so a failed step cannot leave the rest running in the shared checkout. Run teardown and verification as their own commands. Give that worktree its own dependency install rather than reaching the shared tree's install by any route: removing a worktree deletes through symlinks, and a redirected suite writes into the shared install. When its own install is not possible, the check is left unrun and reported as such. Afterward the subagent verifies that `git worktree list` no longer shows the worktree, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). It also confirms that no process whose command line names the worktree path is still running, since stopping a runner can leave the processes it spawned alive. When it cannot list processes, it reports that check as unrun and names the worktree path. Damage the subagent cannot repair is reported with the exact repair command in place of findings.
 
 ### Subagent Strategy
 
@@ -97,7 +97,7 @@ Each subagent performs these steps on its assigned directory:
 
 ### Merging Results
 
-After all subagents complete, collect and merge their results. Deduplicate any symbols that appear in multiple reports (e.g., re-exports).
+After all subagents complete, collect and merge their results. Deduplicate any symbols that appear in multiple reports (e.g., re-exports). When a Step 2 tool reports a symbol dead that a subagent classified `alive`, keep the symbol in the merged results with the subagent's production references attached.
 
 ## Step 4: Filter, Classify & Evaluate
 
@@ -112,7 +112,7 @@ Apply these filters to the merged results from Steps 2 and 3:
 Classify each finding:
 - **Definite dead**: zero references outside its definition file
 - **Test-only dead**: references exist, but ALL are in test files
-- **Likely dead**: uncertain due to dynamic usage, framework conventions, or complex re-export chains
+- **Likely dead**: uncertain due to dynamic usage, framework conventions, complex re-export chains, or a Step 2 tool reporting dead a symbol a subagent found production references for
 
 ### Evaluate Findings
 
