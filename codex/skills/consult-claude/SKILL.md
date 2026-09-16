@@ -19,6 +19,8 @@ State:
 
 When Claude must judge claims against a source, state whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Claude reports what the excerpt leaves out as unverifiable or missing. Pass the complete source, or its path for Claude to read, whenever it fits. When an excerpt is unavoidable, confirm before sending it that every passage the claims under judgment rest on made it into the material provided.
 
+When the consultation concerns an artifact Claude can inspect itself, pass its path and let Claude choose how to inspect it, rather than attaching excerpts or other material extracted from it.
+
 When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
 When the consultation runs until Claude approves, fix the line that ends every response: require every response to end with exactly one fixed line stating the verdict, in a designated positive or negative form, carrying nothing else. Stop consulting when that line reaches the positive form, so a politely worded answer does not end the consultation early and agreement does not go unrecognized. Pair it with a compact output contract demanding that each finding ship a ready-to-paste replacement rather than an instruction, which keeps a round cheap enough to iterate.

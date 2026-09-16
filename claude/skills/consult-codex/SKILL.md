@@ -13,7 +13,7 @@ Identify the 2-5 files most relevant to the problem. Formulate a clear, specific
 
 ## Step 2: Start Session
 
-Run `codex exec` with `-o` to capture the response cleanly. Default to `-s read-only` for safety. Use `-s workspace-write` when the consultation requires running code or reading files outside the workspace.
+Run `codex exec` with `-o` to capture the response cleanly. Default to `-s read-only` for safety. Use `-s workspace-write` when the consultation requires running code, inspecting an artifact passed by path, or reading files outside the workspace, and tell Codex to keep any scratch files it writes under `.turbo/`.
 
 Omit `-m`, leaving the consultation on codex's configured model. When the user named a model for this consultation, add `-m <model>` to every `codex exec` command in this skill, resume turns included, and pass the name verbatim.
 
@@ -62,6 +62,8 @@ Example prompt for a diagnosis question:
 For correctness-critical questions, add `<verification_loop>` asking Codex to verify its answer before finalizing.
 
 When Codex must judge claims against a source, state in `<grounding_rules>` whether the material provided is the complete source or an excerpt. When a verdict can turn on something being absent, provide the complete relevant sections: given an excerpt, Codex reports what the excerpt leaves out as unverifiable or missing. Pass the complete source, or its path for Codex to read, whenever it fits. When an excerpt is unavoidable, confirm before running that every passage the claims under judgment rest on made it into the material provided.
+
+When the consultation concerns an artifact Codex can inspect itself, pass its path and let Codex choose how to inspect it, rather than attaching excerpts or other material extracted from it.
 
 When a recommendation is wanted, add `<merit_only>`: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Pair it with `<compact_output_contract>` demanding one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
 
