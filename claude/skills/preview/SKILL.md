@@ -38,7 +38,7 @@ If a required service cannot be stood up in this session (missing auth provider,
 Output as text:
 
 - The access point — the local URL and port for a web app, or confirmation that the window is open for a native app
-- When the surface sits behind a sign-in, each account to use with its password and the role that account holds
+- When the surface sits behind a sign-in, each account to use with its password and the role that account holds, plus every key or code generated while bringing up the stack that the app requests during or after sign-in, such as on a new browser
 - What changed
 - Each scenario worth trying, as many as the change needs: numbered steps naming the exact controls and inputs, the result the scenario should produce, and the judgment the user is being asked to make
 - When a verification pass preceded this hand-over, what it could not cover: paths needing real credentials, external services, or state unavailable in this session
