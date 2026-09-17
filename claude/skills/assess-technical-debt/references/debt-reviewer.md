@@ -64,8 +64,9 @@ Look for:
 - Copy-pasted blocks with small variations, especially logic duplicated across modules.
 - Parallel implementations of the same concept that drift independently (validation, formatting, mapping, error handling repeated per call site).
 - Repeated literal sets or magic constants that belong in one shared definition.
+- Custom infrastructure that re-implements what an established, maintained dependency already provides.
 
-Distinguish genuine duplication worth unifying from coincidental resemblance. Report the cluster (all locations), what they share, and the consolidation target (shared helper, base type, table, generic).
+Distinguish genuine duplication worth unifying from coincidental resemblance. Report the cluster (all locations), what they share, and the consolidation target (shared helper, base type, table, generic, established dependency). When the target is an established dependency, name the candidate and mark its coverage of the needed behavior, compatibility, license, and migration cost as unverified.
 
 ## Dimension 4: Architecture Rot
 
