@@ -1,6 +1,6 @@
 # Diagrams
 
-The main README diagrams are authored in draw.io (`how-turboplan-connects.drawio` and `how-finalize-connects.drawio`), each rendered to a sibling `.svg`. Not Mermaid.
+The [workflow guide](../docs/workflows.md) diagrams are authored in draw.io (`how-turboplan-connects.drawio` and `how-finalize-connects.drawio`), each rendered to a sibling `.svg`. Not Mermaid.
 
 ## Collaboration Workflow
 

@@ -1,6 +1,6 @@
 # Turbo
 
-Turbo is a modular collection of agentic coding skills with sibling editions for Claude Code and Codex. Skills connect into larger pipelines like `/finalize` and `/review-pr`. See [README.md](README.md) for the full overview and dependency graph.
+Turbo is a modular collection of agentic coding skills with sibling editions for Claude Code and Codex. Skills connect into larger pipelines like `/finalize` and `/review-pr`. See [README.md](README.md) for an introduction and [docs/workflows.md](docs/workflows.md) for workflow details and diagrams.
 
 ## Project Structure
 

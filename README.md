@@ -1,240 +1,84 @@
 # Turbo
 
-A composable dev process for agentic coding harnesses, packaged as modular skills. Turbo has sibling editions for [Claude Code](claude/) and [Codex](codex/).
+**Reusable workflows for planning, building, reviewing, and shipping with AI coding agents.**
 
-The Claude Code edition is production-tested. The Codex edition is currently experimental: the skill set has reached parity, but it has seen less real-world use.
+Turbo gives Claude Code and Codex a repeatable development process, packaged as Markdown skills. Use a skill for a single task, or combine them into a workflow that takes a change from idea to pull request.
 
-**TL;DR** — Three steps to ship:
+**[Claude Code](claude/):** production-tested · **[Codex](codex/):** experimental, with skill parity but less real-world use
 
-1. **Plan** — Run [`/turboplan`](claude/skills/turboplan/SKILL.md) (or enter raw plan mode) and describe what you want to build
-2. **Implement** — Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) on the plan, or [`/implement`](claude/skills/implement/SKILL.md) for ad-hoc changes
-3. **Finalize** — [`/finalize`](claude/skills/finalize/SKILL.md) runs tests, code polishing, commit, and PR. It kicks in automatically once a plan file's steps are done; when no plan file governs the work, `/implement` offers it alongside a quick close or stopping. Run it yourself if you built by hand.
+[Get started](#get-started) · [What you can do](#what-you-can-do) · [Browse the guides](#go-deeper)
 
-This loop is the core. Two more pipelines run alongside it for work that does not fit the loop: [`/audit`](claude/skills/audit/SKILL.md) for project-wide health checks and [`/onboard`](claude/skills/onboard/SKILL.md) for ramping up on new projects. Beyond the four main pipelines, Turbo ships [70+ skills](#all-skills) for debugging, reviewing, dependency upgrades, and self-improvement that makes each session teach the next. See the [prompt examples](#prompt-examples) for how they look in practice, or read on for the full picture.
+## From Idea to Pull Request
 
-## Quick Start
-
-### Prerequisites
-
-Pick your edition: [`claude/SETUP.md`](claude/SETUP.md) for Claude Code, [`codex/SETUP.md`](codex/SETUP.md) for Codex. Both editions work best with their respective Max-tier plans (pipeline workflows are context-heavy). Additional tools are installed during setup.
-
-**External services:** The Claude edition benefits from ChatGPT Plus or higher for Codex peer review. The Codex edition benefits from Claude Code access for Claude peer review. ChatGPT Pro or Business is useful for [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md), where the Pro tier is what reliably solves very hard problems. [`/peer-review`](claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) are designed as swappable puzzle pieces, so if you don't have access, replace them with alternatives that work for you.
-
-### Automatic Setup (Recommended)
-
-In Claude Code or Codex, prompt:
-
+```text
+Plan  →  Implement  →  Finalize
 ```
+
+Start with a change you want to make:
+
+```text
+/turboplan add password reset to the app
+```
+
+Turbo assesses the scope and helps you settle the approach. Clear-scope changes proceed to implementation after you agree on the shape. When the approach needs a written plan, Turbo drafts and reviews one; you then run `/implement-plan` in a fresh session.
+
+Once a plan's steps are complete, `/finalize` runs checks, reviews and polishes the changes, updates documentation and the changelog, captures lessons, and takes you through shipping. For work without a plan file, `/implement` offers full finalization, a quicker close, or stopping. You can also run `/finalize` on work you built yourself.
+
+Examples use Claude Code's `/skill-name` syntax. In Codex, use `$skill-name`:
+
+```text
+$turboplan add password reset to the app
+```
+
+## Get Started
+
+Paste this into Claude Code or Codex:
+
+```text
 Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and follow the guide for your edition.
 ```
 
-The agent reads the root [`SETUP.md`](SETUP.md), picks the file that matches its harness ([`claude/SETUP.md`](claude/SETUP.md) or [`codex/SETUP.md`](codex/SETUP.md)), clones the repo, installs skills, configures the environment, and walks you through each step interactively.
+The agent selects your edition, installs the skills, and walks you through tools and configuration interactively.
 
-### Updating
+Prefer to read the steps first? Open the **[Claude Code setup](claude/SETUP.md)** or **[Codex setup](codex/SETUP.md)** guide.
 
-Run [`/update-turbo`](claude/skills/update-turbo/SKILL.md) (Claude Code) or [`$update-turbo`](codex/skills/update-turbo/SKILL.md) (Codex) to update all skills. It fetches the latest update instructions from GitHub, builds a changelog, handles conflict detection for customized skills, and manages exclusions.
+Pipeline workflows are context-heavy. Peer review uses the other coding agent, so access to both gives you the full workflow. You can replace those review skills to suit your setup. See [access and prerequisites](docs/customization.md#access-and-prerequisites) for details.
 
-## Editions
+## What You Can Do
 
-```text
-claude/   # Claude Code edition
-codex/    # Codex edition
-```
+You can start with any of these skills; you don't need to learn the whole pipeline first.
 
-Each edition is a self-contained tree with its own `SETUP.md`, `UPDATE.md`, `MIGRATION.md`, `ADDITIONS.md`, `SKILL-CONVENTIONS.md`, and `skills/`. The root-level files are short routers that point at the per-edition versions.
+| I want to… | Claude Code | Codex |
+|---|---|---|
+| Plan and build a change | `/turboplan` | `$turboplan` |
+| Understand a failing test or bug | `/investigate` | `$investigate` |
+| Review a pull request | `/review-pr` | `$review-pr` |
+| Finish and ship a change | `/finalize` | `$finalize` |
+| Check project health | `/audit` | `$audit` |
+| Get oriented in a new codebase | `/onboard` | `$onboard` |
 
-## What Is This?
+Skills also work naturally in a request: `tests are failing in the auth module, can you please /investigate?`
 
-Turbo covers the full dev lifecycle. Five ideas shape its design:
+See [more prompt examples](docs/examples.md) for dependency updates, UI testing, PR feedback, and other everyday tasks.
 
-1. **Standardized process.** Skills capture dev workflows so you can run them directly instead of prompting from scratch. [`/turboplan`](claude/skills/turboplan/SKILL.md) analyzes complexity and routes to the right mode. [`/finalize`](claude/skills/finalize/SKILL.md) runs your entire post-implementation QA in one command. [`/investigate`](claude/skills/investigate/SKILL.md) follows a structured root cause analysis cycle. The skill is the prompt.
-2. **Layered design.** Skills compose other skills to any depth. [`/review-code security`](claude/skills/review-code/SKILL.md) runs a single-concern scan. [`/review-code`](claude/skills/review-code/SKILL.md) with no argument runs all six types in parallel. [`/polish-code`](claude/skills/polish-code/SKILL.md) loops stage → format → lint → test → review → evaluate → apply → smoke test until stable. [`/finalize`](claude/skills/finalize/SKILL.md) wraps the whole pipeline with self-improvement and commit. [`/audit`](claude/skills/audit/SKILL.md) fans out to all analysis skills in parallel, evaluates the combined findings, and produces a health report. Each pipeline composes with a natural, predictable interface. See [The Turboplan Pipeline](#the-turboplan-pipeline) and [The Finalize Pipeline](#the-finalize-pipeline) for worked examples.
-3. **Swappable by design.** Every skill owns one concern and communicates through standard interfaces. Replace any piece with your own and the pipeline adapts. See [The Puzzle Piece Philosophy](#the-puzzle-piece-philosophy) for details.
-4. **Works out of the box.** Install the skills and the full workflow is ready. Dependencies are standard dev tooling (GitHub CLI, Codex) that most teams already have.
-5. **Just skills.** No framework, no custom runtime, no new memory system. Skills are plain markdown that use the harness's native primitives (git, filesystem, built-in tools). Remove an independent skill and the rest still work.
+## Why Turbo
 
-The one thing beyond skills is each edition's `ADDITIONS.md` (e.g. [`claude/ADDITIONS.md`](claude/ADDITIONS.md)), a small set of behavioral rules added to your harness's instruction file during setup. The most important one is **Skill Loading**: without it, the agent tends to skip reloading skills it has already seen in a session, which causes it to silently drop steps in nested pipelines like [`/finalize`](claude/skills/finalize/SKILL.md). The additions are kept in sync by [`/update-turbo`](claude/skills/update-turbo/SKILL.md). See [claude/docs/skill-loading-reasoning.md](claude/docs/skill-loading-reasoning.md) for the full rationale (Claude-specific failure modes and mitigations; the Codex edition adapts the same rules in [`codex/ADDITIONS.md`](codex/ADDITIONS.md)).
+- **A process you can repeat.** Planning, investigation, review, and shipping workflows are written down as skills, so you can invoke them without rebuilding the prompt each time. They use your project's existing tests, linters, formatters, and hooks.
+- **Pieces you can replace.** Use individual skills or compose them into larger workflows. Swap review tools, commit conventions, or code-style guidance for your own. The skills are plain Markdown using the harness's native tools.
+- **Lessons carried forward.** `/self-improve` captures corrections and project conventions in instructions, memory, and skills, so future sessions can build on what you've learned.
 
-The other core piece is [`/self-improve`](claude/skills/self-improve/SKILL.md), which makes the whole system compound: it routes each session's lessons back into your project's instructions, memory, and skills. See [Self-Improvement](#self-improvement) below.
+You stay involved in choosing the approach and reviewing the result. Turbo works best alongside the checks and engineering judgment you already bring to a project.
 
-## Works Best With
+## Go Deeper
 
-Turbo amplifies your existing process. It shines when your project has the right infrastructure in place:
+- <a id="the-turboplan-pipeline"></a><a id="the-finalize-pipeline"></a>**[Workflow guide](docs/workflows.md)** — planning and finalization diagrams, self-improvement, audits, and onboarding.
+- <a id="browser-and-ui-testing"></a>**[Browser and UI testing](docs/workflows.md#browser-and-ui-testing)** — hands-on verification and trying changes yourself.
+- **[Customization and setup details](docs/customization.md)** — swap skills, understand harness instructions, and update your installation.
+- **[Prompt examples](docs/examples.md)** — requests you can copy into your next session.
+- <a id="all-skills"></a>**All skills:** [Claude Code index](claude/SKILL-INDEX.md) · [Codex index](codex/SKILL-INDEX.md) — descriptions and dependencies for every skill.
 
-- **Tests** — The [`/polish-code`](claude/skills/polish-code/SKILL.md) loop inside [`/finalize`](claude/skills/finalize/SKILL.md) runs your test suite and reviews coverage gaps. Without tests, there's no safety net. If your project has none, [`/smoke-test`](claude/skills/smoke-test/SKILL.md) can fill the gap by launching your app and verifying changes manually in the same loop, but real tests are always better. See [Browser and UI Testing](#browser-and-ui-testing) for the tools behind that verification.
-- **Linters and formatters** — The [`/polish-code`](claude/skills/polish-code/SKILL.md) loop runs your formatter and linter before code review. If you don't have one, style issues slip through.
-- **Pre-commit hooks** — When [`/finalize`](claude/skills/finalize/SKILL.md) commits, it triggers any pre-commit hooks you have configured and fixes hook failures before retrying. If your project uses tools like `husky`, `lint-staged`, or `pre-commit`, Turbo works with them automatically.
-- **Existing analysis tools** — Skills like [`/find-dead-code`](claude/skills/find-dead-code/SKILL.md) and [`/assess-technical-debt`](claude/skills/assess-technical-debt/SKILL.md) lean on integrated tools (`knip`, `vulture`, `periphery`, `lizard`, `jscpd`) when your project already has them.
-- **Dependencies** — [GitHub CLI](https://cli.github.com/) powers PR and issue operations. The Claude edition uses Codex for peer review; the Codex edition uses Claude for peer review. Everything works without peer review, but the full pipeline is better with it. See the edition setup guides for details.
+---
 
-## Who It's For
+If Turbo helps you ship, consider [sponsoring my open source work](https://github.com/sponsors/tobihagemann).
 
-Turbo is for experienced developers who want to move faster without sacrificing quality. That said, beginners are welcome too. Turbo is a great way to learn how a professional dev workflow looks. Just don't blindly trust outputs. Review what Claude produces, understand _why_ it made those choices, and build your own judgment alongside it.
-
-If your plan is vague, your architecture is unclear, and you skip every review finding, Turbo won't save you. Garbage in, garbage out.
-
-## The Puzzle Piece Philosophy
-
-Every skill is a self-contained piece. Pipeline skills like [`/finalize`](claude/skills/finalize/SKILL.md) and [`/audit`](claude/skills/audit/SKILL.md) compose them into workflows, but each piece works independently too.
-
-Want to swap a piece? For example:
-
-- Replace [`/consult-oracle`](claude/skills/consult-oracle/SKILL.md) with your own setup (it drives ChatGPT through a browser and needs a one-time sign-in)
-- Replace [`/commit-rules`](claude/skills/commit-rules/SKILL.md) or [`/changelog-rules`](claude/skills/changelog-rules/SKILL.md) with your team's conventions. The pipeline adapts.
-- Replace [`/code-style`](claude/skills/code-style/SKILL.md) with your team's style guide. The built-in one teaches general principles rather than opinionated rules, so it's a natural swap point.
-
-Skills communicate through standard interfaces: git staging area, PR state, and file conventions.
-
-## Sponsorship
-
-If Turbo has helped you ship faster and you're so inclined, I'd greatly appreciate it if you'd consider [sponsoring my open source work](https://github.com/sponsors/tobihagemann).
-
-## The Turboplan Pipeline
-
-Claude Code's built-in plan mode tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny, and it can feel too restrictive for iterative planning. Turbo replaces it with [`/turboplan`](claude/skills/turboplan/SKILL.md) as a universal entry point: whatever the size of the task, you start there. It analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality, with no need for plan mode to be active. Direct work chains through [`/discuss-change`](claude/skills/discuss-change/SKILL.md) and [`/implement`](claude/skills/implement/SKILL.md) to [`/finalize`](claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](claude/skills/implement-plan/SKILL.md) session.
-
-![How Turboplan Connects](assets/how-turboplan-connects.svg)
-
-[`/turboplan`](claude/skills/turboplan/SKILL.md) has two modes, named by what each one produces. Its complexity analysis recommends a mode, then you confirm the route:
-
-- **Direct mode** — Clear scope, with any remaining decisions small enough to settle in conversation. Hands off to [`/discuss-change`](claude/skills/discuss-change/SKILL.md), which escalates open product decisions, agrees the implementation shape with you, then runs [`/implement`](claude/skills/implement/SKILL.md), which loads [`/code-style`](claude/skills/code-style/SKILL.md) plus any task-specific skills, applies the change, smoke tests any UI/UX change and previews it for you to try, and offers [`/finalize`](claude/skills/finalize/SKILL.md), a quick close, or stopping. No plan file is written.
-- **Plan mode** — The approach warrants writing down before implementing, however large the work turns out to be. Runs [`/draft-plan`](claude/skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](claude/skills/refine-plan/SKILL.md) → [`/self-improve`](claude/skills/self-improve/SKILL.md). Halts after self-improve; you run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session.
-
-A plan states the deployment's bounds and, where the change has observable behavior, its acceptance criteria alongside the implementation steps. That gives [`/review-plan`](claude/skills/review-plan/SKILL.md) something concrete to judge proportionality against, so it can tell machinery the system needs from machinery it doesn't. [`/draft-plan`](claude/skills/draft-plan/SKILL.md) also takes a background document — a design doc, an issue, a written proposal — and treats decisions that document already settles as answered, while still confirming the deployment's bounds with you.
-
-Some questions can't be settled in prose: what a surface looks like, whether an interaction reads the way you expect. Both lanes offer [`/prototype`](claude/skills/prototype/SKILL.md) when a discussion question turns on one of those. It builds a self-contained page under `.turbo/prototypes/`, drives every control itself, and hands you the file to try, so the decisions that follow rest on something you've used instead of on faith. The approval gates in [`/draft-plan`](claude/skills/draft-plan/SKILL.md) and [`/discuss-change`](claude/skills/discuss-change/SKILL.md) offer the same path for an unknown you only spot when you read the summary.
-
-Every sub-skill works standalone too. Run [`/draft-plan`](claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file.
-
-## The Finalize Pipeline
-
-[`/finalize`](claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](claude/skills/implement/SKILL.md) / [`/implement-plan`](claude/skills/implement-plan/SKILL.md) chain into it automatically once a plan file's steps are done. Without a plan file, `/implement` asks first, offering [`/quick-finalize`](claude/skills/quick-finalize/SKILL.md) as a quick close or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
-
-![How Finalize Connects](assets/how-finalize-connects.svg)
-
-`/finalize` runs through these phases automatically:
-
-1. **Polish Code** — Iterative loop: stage → format → lint → test → review → evaluate → apply → smoke test → re-run until stable
-2. **Simplify Docs** — Strip unnecessary comments and documentation noise from the changed files
-3. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
-4. **Self-Improve** — Extract learnings, route to CLAUDE.md / AGENTS.md / memory / skills
-5. **Ship It** — Branch if needed, commit, push, create or update PR
-
-[`/quick-finalize`](claude/skills/quick-finalize/SKILL.md) is the sibling for changes that don't warrant the deep review loop. It stages, simplifies code and docs, runs the project's checks via [`/run-checks`](claude/skills/run-checks/SKILL.md), smoke tests, updates the changelog, self-improves, and ships. Same close-out, without the iterative bug hunt.
-
-## Self-Improvement
-
-[`/self-improve`](claude/skills/self-improve/SKILL.md) makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](claude/skills/finalize/SKILL.md) Phase 4). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Ask it to distill past sessions and it sweeps the project's earlier transcripts instead, skipping what a previous run already covered and treating guidance repeated across sessions as a documentation gap rather than one-off steering. Over time, Turbo gets better at your specific project.
-
-[`/note-improvement`](claude/skills/note-improvement/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests, and deliberate simplifications that accept a known ceiling. They're tracked in `.turbo/improvements.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
-
-When you're ready to act, [`/implement-improvements`](claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
-
-- **`direct`** → [`/implement`](claude/skills/implement/SKILL.md) for a clear-scope fix
-- **`investigate`** → [`/investigate`](claude/skills/investigate/SKILL.md), then [`/implement`](claude/skills/implement/SKILL.md)
-- **`plan`** → [`/turboplan`](claude/skills/turboplan/SKILL.md)
-
-## Out-of-Loop Pipelines
-
-Two pipelines run alongside the main loop rather than inside it. They share the same composition style as the plan-implement-finalize core.
-
-### Project-Wide Audit
-
-[`/audit`](claude/skills/audit/SKILL.md) fans out to all analysis skills in parallel (correctness, security, API usage, consistency, simplicity, test coverage, dependencies, tooling, dead code, agentic setup), evaluates the combined findings, and produces a health report at `.turbo/audit.md` with a dashboard and an interactive HTML version. Run it to assess codebase health before a major release, after onboarding to a new project, or on a regular cadence.
-
-[`/audit`](claude/skills/audit/SKILL.md) is analysis-only: it produces the report and stops there. When you're ready to act on findings, use [`/apply-findings`](claude/skills/apply-findings/SKILL.md) or address them manually.
-
-### Developer Onboarding
-
-[`/onboard`](claude/skills/onboard/SKILL.md) generates a comprehensive onboarding guide for new developers joining a project. It composes [`/map-codebase`](claude/skills/map-codebase/SKILL.md) (architecture), [`/review-tooling`](claude/skills/review-tooling/SKILL.md) (development workflow), and [`/review-agentic-setup`](claude/skills/review-agentic-setup/SKILL.md) (AI coding infrastructure) with inline agents for prerequisites, troubleshooting, and next steps (top GitHub issues). The result is `.turbo/onboarding.md` with an interactive HTML version.
-
-The guide covers both traditional onboarding (setup, build commands, tooling) and agentic onboarding (what CLAUDE.md/AGENTS.md cover, installed skills, MCP servers, Claude Code vs Codex CLI compatibility). If a [threat model](#project-wide-audit) exists, security considerations are included too.
-
-[`/map-codebase`](claude/skills/map-codebase/SKILL.md) also works standalone when you just need the architecture report without the full onboarding guide.
-
-## Browser and UI Testing
-
-[`/smoke-test`](claude/skills/smoke-test/SKILL.md) and [`/exploratory-test`](claude/skills/exploratory-test/SKILL.md) (Claude) / [`$smoke-test`](codex/skills/smoke-test/SKILL.md) and [`$exploratory-test`](codex/skills/exploratory-test/SKILL.md) (Codex) automate manual testing — the kind of hands-on verification you'd normally do yourself. The underlying tools differ per edition:
-
-For changes where you want to judge the feel yourself, [`/preview`](claude/skills/preview/SKILL.md) / [`$preview`](codex/skills/preview/SKILL.md) stands up the live app and hands it to you to try a UI/UX change firsthand, then waits for your verdict before continuing. `/implement` runs it automatically before `/finalize` when a change touches a user-facing surface, after `/smoke-test` has driven the flow and cleared what it could, so the app is already working when it reaches you. You can run it standalone any time you want to poke at the running app.
-
-**Claude Code:**
-
-- **[`/agent-browser`](https://github.com/vercel-labs/agent-browser) skill** — Browser automation with the most control for web app testing.
-- **`claude-in-chrome` MCP** — Built-in Claude Code browser automation using your real Chrome browser. Falls back to this when `/agent-browser` is not installed.
-- **`computer-use` MCP** — Built-in Claude Code screen control for native app and UI testing on macOS.
-
-**Codex:**
-
-- **`browser-use@openai-bundled` plugin** — Browser automation for web app testing. Bundled in Codex's `openai-bundled` marketplace.
-- **`computer-use@openai-bundled` plugin** — Screen control for native app and UI testing on macOS. Bundled in Codex's `openai-bundled` marketplace.
-
-## Prompt Examples
-
-These are prompts you can type directly into Claude Code or Codex (use `$skill-name` in Codex). Skill names work as natural words in your sentences.
-
-```
-# Planning a change (single entry — /turboplan routes based on complexity)
-/turboplan add a caching layer to the image pipeline  ← plan mode → draft → refine → halt; run /implement-plan after
-/turboplan build a notification system with backend, API, and UI  ← same route, larger plan
-/survey-patterns  ← pattern-ground an approach without drafting a plan
-/prototype  ← settle how a surface looks or an interaction feels before committing to it
-/implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
-
-# Investigating bugs
-tests are failing in the auth module, can you please /investigate?
-/investigate the app crashes when i click "save" after editing a profile
-
-# Reviewing code
-/review-code
-/review-pr for PR #42
-
-# Auditing project health
-/audit
-read @.turbo/audit.md and /apply-findings  ← follow-up session
-
-# Onboarding to a new project
-/onboard
-/map-codebase  ← architecture report only
-
-# Resolving PR feedback
-/resolve-pr-comments
-
-# Updating dependencies
-/update-dependencies
-
-# Working through the improvements backlog
-the error messages in this module are inconsistent, /note-improvement
-/implement-improvements  ← dedicated session
-
-# Testing manually
-/smoke-test
-/exploratory-test
-/preview  ← stand up the app so you can try a UI change yourself
-
-# Picking the next issue to work on
-/pick-next-issue
-
-# Filing an issue
-/create-issue for the flaky upload test
-
-# Extracting session learnings
-/self-improve
-
-# Saving session state before compacting
-/create-handoff
-
-# Creating a new skill
-/create-skill for a skill that <description>
-```
-
-## All Skills
-
-For the full skill listing with descriptions and dependencies, see the per-edition index:
-
-- **Claude Code** — [`claude/SKILL-INDEX.md`](claude/SKILL-INDEX.md) (`/skill-name` invocations)
-- **Codex** — [`codex/SKILL-INDEX.md`](codex/SKILL-INDEX.md) (`$skill-name` invocations)
-
-## License
-
-Distributed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Distributed under the [MIT License](LICENSE).
