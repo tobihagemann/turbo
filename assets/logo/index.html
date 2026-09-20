@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Turbo — Thunderbolt</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #080f16;
+      color: #e9eff4;
+      font:
+        16px/1.5 -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+    header,
+    main,
+    footer {
+      max-width: 1440px;
+      margin: auto;
+      padding: 40px 36px;
+    }
+    header {
+      padding-bottom: 28px;
+    }
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #eeb95d;
+    }
+    h1 {
+      font-size: clamp(38px, 5vw, 64px);
+      line-height: 1.08;
+      letter-spacing: -0.045em;
+      margin: 18px 0 14px;
+    }
+    header p {
+      color: #92a5b7;
+      max-width: 760px;
+      margin: 0;
+    }
+    .links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    a,
+    button {
+      font: inherit;
+      font-size: 13px;
+      color: #c7d6e4;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #fff;
+    }
+    .button,
+    button {
+      border: 1px solid #354555;
+      border-radius: 7px;
+      background: #142230;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    .button.primary {
+      background: #f5bb58;
+      color: #111820;
+      border-color: #f5bb58;
+      font-weight: 600;
+    }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid #f5bb58;
+      outline-offset: 5px;
+    }
+    main {
+      padding-top: 0;
+    }
+    .hero {
+      margin: 0;
+      border: 1px solid #26343f;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #09121a;
+    }
+    .hero img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .hero figcaption {
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: #8da2b5;
+      font-size: 12px;
+      border-top: 1px solid #26343f;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .panel {
+      border: 1px solid #26343f;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0e1923;
+    }
+    .panel h2 {
+      font-size: 17px;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .panel-head {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 22px 24px;
+    }
+    .panel-head button {
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+    .stage {
+      background: #09121a;
+      overflow: auto;
+      aspect-ratio: 1;
+    }
+    .stage img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .stage.light {
+      background: #eaf0f3;
+    }
+    .stage.actual img {
+      width: 2400px;
+      max-width: none;
+    }
+    .caption {
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: #8da2b5;
+      border-top: 1px solid #26343f;
+    }
+    .caption label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sizes {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 18px 24px;
+      border-top: 1px solid #26343f;
+      min-height: 120px;
+    }
+    .sizes img {
+      object-fit: contain;
+    }
+    .sizes span {
+      color: #8da2b5;
+      font-size: 12px;
+      margin-left: auto;
+    }
+    footer {
+      padding-top: 0;
+      color: #8095a8;
+      font-size: 12px;
+    }
+    footer a {
+      font-size: 12px;
+    }
+    @media (max-width: 800px) {
+      header,
+      main,
+      footer {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .hero figcaption {
+        flex-direction: column;
+        gap: 4px;
+      }
+      .panel-head {
+        padding: 18px;
+      }
+      .sizes {
+        gap: 12px;
+      }
+    }
+  </style>
+  <header>
+    <div class="eyebrow">Turbo / Thunderbolt</div>
+    <h1>Forged. Charged. Ready.</h1>
+    <p>
+      The Turbo lightning hammer: forged titanium, a gold bolt, and an
+      illuminated amber core.
+    </p>
+    <div class="links">
+      <a class="button primary" href="thunderbolt.blend" download
+        >Download Blender File</a
+      >
+      <a class="button" href="thunderbolt-hero-3200.png?v=4" download
+        >Download Turbo Lockup</a
+      >
+      <a class="button" href="thunderbolt-icon-2400.png?v=4" download
+        >Download Transparent Icon</a
+      >
+    </div>
+  </header>
+  <main>
+    <figure class="hero">
+      <img
+        src="thunderbolt-hero-3200.png?v=4"
+        width="3200"
+        height="2000"
+        alt="A silver lightning hammer with a gold bolt handle beside the italic Turbo wordmark on a dark background"
+      />
+      <figcaption>
+        <span>Thunderbolt × Turbo</span
+        ><span>3200 × 2000 · Cycles · 384 Samples</span>
+      </figcaption>
+    </figure>
+    <div class="grid">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Material &amp; Light</h2>
+          <a href="thunderbolt-dark-2400.png?v=4" download>Download PNG ↗</a>
+        </div>
+        <div class="stage" id="detail">
+          <img
+            loading="lazy"
+            src="thunderbolt-dark-2400.png?v=4"
+            width="2400"
+            height="2400"
+            alt="Close-up of the titanium hammer, inset fasteners, electrical core, and layered gold handle"
+          />
+        </div>
+        <div class="caption">
+          <span>2400 × 2400 · Dark Presentation</span
+          ><label><input id="actual" type="checkbox" />Actual Pixels</label>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Transparent Mark</h2>
+          <button id="surface" aria-pressed="false">Try Light Surface</button>
+        </div>
+        <div class="stage" id="transparent">
+          <img
+            loading="lazy"
+            src="thunderbolt-icon-2400.png?v=4"
+            width="2400"
+            height="2400"
+            alt="Transparent Thunderbolt mark without floating speed trails"
+          />
+        </div>
+        <div class="caption">
+          <span>2400 × 2400 · Transparent RGBA</span
+          ><a href="thunderbolt-icon-2400.png?v=4" download>Download PNG ↗</a>
+        </div>
+        <div class="sizes">
+          <img
+            src="thunderbolt-icon-64.png?v=5"
+            srcset="thunderbolt-icon-128.png?v=5 2x"
+            width="64"
+            height="64"
+            alt="Thunderbolt rendered at 64 pixels"
+          /><img
+            src="thunderbolt-icon-128.png?v=5"
+            srcset="thunderbolt-icon-256.png?v=5 2x"
+            width="128"
+            height="128"
+            alt="Thunderbolt rendered at 128 pixels"
+          /><span>Small-Size Check</span>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer>
+    Editable Blender geometry, procedural materials, and studio lighting. The
+    Turbo wordmark is mesh geometry; the .blend file needs no external fonts or
+    textures.
+  </footer>
+  <script>
+    document.querySelector("#surface").addEventListener("click", function () {
+      const light = document
+        .querySelector("#transparent")
+        .classList.toggle("light");
+      this.setAttribute("aria-pressed", light);
+      this.textContent = light ? "Try Dark Surface" : "Try Light Surface";
+    });
+    document.querySelector("#actual").addEventListener("change", function () {
+      const stage = document.querySelector("#detail");
+      stage.classList.toggle("actual", this.checked);
+      stage.scrollTo(
+        this.checked ? (stage.scrollWidth - stage.clientWidth) / 2 : 0,
+        this.checked ? (stage.scrollHeight - stage.clientHeight) * 0.28 : 0,
+      );
+    });
+  </script>
+</html>

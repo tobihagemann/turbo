@@ -1,4 +1,9 @@
-# Turbo
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/thunderbolt-readme-dark-1440.png">
+    <img src="assets/logo/thunderbolt-readme-light-1440.png" alt="Turbo" width="600">
+  </picture>
+</h1>
 
 **Reusable workflows for planning, building, reviewing, and shipping with AI coding agents.**
 
