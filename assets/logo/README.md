@@ -24,6 +24,8 @@ Icon Composer supplies the charcoal enclosure's exact shape and rim lighting.
 
 The 2048px artwork is placed at 50% on Apple's 1024 × 1024 design canvas with zero translation, preserving its size and position in the 2048px export. Glass effects on the artwork and group translucency are disabled to retain the Blender shading. Generation 27 is explicitly selected during export.
 
+A central radial amber glow sits behind the artwork, independent of the lightning geometry. Separate local bloom comes only from the outer sparks. `export.py` isolates their warm highlights in the outer canvas bands before blurring, so the inner core and bolt seam do not create uneven patches.
+
 The 26 and 27 native enclosure alpha masks were identical in a 2048px comparison. Their lighting differs.
 
 The Blender scene contains only the hammer and studio, with no external font or texture dependencies. The enclosure lives in the Icon Composer document.

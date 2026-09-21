@@ -26,6 +26,42 @@
         "enabled": false,
         "value": 0.3
       }
+    },
+    {
+      "layers": [
+        {
+          "glass": false,
+          "image-name": "outer-sparks-glow.png",
+          "name": "Outer Spark Bloom",
+          "position": {
+            "scale": 0.5,
+            "translation-in-points": [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "glass": false,
+          "image-name": "radial-glow.svg",
+          "name": "Central Amber Glow",
+          "position": {
+            "scale": 0.5,
+            "translation-in-points": [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      }
     }
   ],
   "supported-platforms": {
