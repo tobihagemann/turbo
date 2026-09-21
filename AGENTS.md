@@ -2,6 +2,8 @@
 
 Turbo is a modular collection of agentic coding skills with sibling editions for Claude Code and Codex. Skills connect into larger pipelines like `$finalize` and `$review-pr`. See [README.md](README.md) for an introduction and [docs/workflows.md](docs/workflows.md) for workflow details and diagrams.
 
+Each `docs/` guide answers one reader question: `workflows.md` (how it works), `examples.md` (what to type), `requirements.md` (what you need and what setup changes), `customization.md` (how to adapt and update). Place new doc content by the question it answers.
+
 ## Project Structure
 
 ```

@@ -1,6 +1,6 @@
 # Prompt Examples
 
-[← Back to Turbo](../README.md) · [Workflow guide](workflows.md)
+[← Back to Turbo](../README.md) · [Workflow guide](workflows.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
 These are prompts you can type directly into Claude Code or Codex (use `$skill-name` in Codex). Skill names work as natural words in your sentences.
 

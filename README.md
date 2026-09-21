@@ -12,7 +12,7 @@
 
 Turbo gives Claude Code and Codex a repeatable development process, packaged as Markdown skills. Use a skill for a single task, or combine them into a workflow that takes a change from idea to pull request.
 
-**[Claude Code](claude/):** production-tested · **[Codex](codex/):** experimental, with skill parity but less real-world use
+**[Claude Code](claude/SKILL-INDEX.md):** production-tested · **[Codex](codex/SKILL-INDEX.md):** experimental, with skill parity but less real-world use
 
 [Get started](#get-started) · [What you can do](#what-you-can-do) · [Browse the guides](#go-deeper)
 
@@ -28,9 +28,7 @@ Start with a change you want to make:
 /turboplan add password reset to the app
 ```
 
-Turbo assesses the scope and helps you settle the approach. Clear-scope changes proceed to implementation after you agree on the shape. When the approach needs a written plan, Turbo drafts and reviews one; you then run `/implement-plan` in a fresh session.
-
-Once a plan's steps are complete, `/finalize` runs checks, reviews and polishes the changes, updates documentation and the changelog, captures lessons, and takes you through shipping. For work without a plan file, `/implement` offers full finalization, a quicker close, or stopping. You can also run `/finalize` on work you built yourself.
+Turbo assesses the scope and helps you settle the approach. Clear-scope changes proceed to implementation once you agree on the shape; when the approach needs writing down, you get a reviewed plan to run with `/implement-plan` in a fresh session. `/finalize` then checks, reviews, and polishes the change and takes you through shipping. You can also run `/finalize` on work you built yourself.
 
 Examples use Claude Code's `/skill-name` syntax. In Codex, use `$skill-name`:
 
@@ -40,7 +38,15 @@ $turboplan add password reset to the app
 
 ## Get Started
 
-Paste this into Claude Code or Codex:
+What you'll need:
+
+- A Claude Code or Codex plan with headroom. Pipeline workflows are context-heavy, so higher-tier plans work best.
+- Codex (for the Claude Code edition) or Claude Code (for the Codex edition), which `/finalize` uses for peer review. You can swap in your own review setup.
+- The [GitHub CLI](https://cli.github.com/).
+
+See [requirements](docs/requirements.md) for what setup changes on your machine and what your project should have.
+
+Then paste this into Claude Code or Codex:
 
 ```text
 Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and follow the guide for your edition.
@@ -49,8 +55,6 @@ Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo 
 The agent selects your edition, installs the skills, and walks you through tools and configuration interactively.
 
 Prefer to read the steps first? Open the **[Claude Code setup](claude/SETUP.md)** or **[Codex setup](codex/SETUP.md)** guide.
-
-Pipeline workflows are context-heavy. Peer review uses the other coding agent, so access to both gives you the full workflow. You can replace those review skills to suit your setup. See [access and prerequisites](docs/customization.md#access-and-prerequisites) for details.
 
 ## What You Can Do
 
@@ -79,11 +83,11 @@ You stay involved in choosing the approach and reviewing the result. Turbo works
 
 ## Go Deeper
 
-- <a id="the-turboplan-pipeline"></a><a id="the-finalize-pipeline"></a>**[Workflow guide](docs/workflows.md)** — planning and finalization diagrams, self-improvement, audits, and onboarding.
-- <a id="browser-and-ui-testing"></a>**[Browser and UI testing](docs/workflows.md#browser-and-ui-testing)** — hands-on verification and trying changes yourself.
-- **[Customization and setup details](docs/customization.md)** — swap skills, understand harness instructions, and update your installation.
+- **[Workflow guide](docs/workflows.md)** — planning and finalization diagrams, self-improvement, audits, onboarding, and browser testing.
 - **[Prompt examples](docs/examples.md)** — requests you can copy into your next session.
-- <a id="all-skills"></a>**All skills:** [Claude Code index](claude/SKILL-INDEX.md) · [Codex index](codex/SKILL-INDEX.md) — descriptions and dependencies for every skill.
+- **[Requirements](docs/requirements.md)** — accounts, what setup changes, and the project infrastructure Turbo builds on.
+- **[Customization](docs/customization.md)** — swap skills, understand harness instructions, and update your installation.
+- **All skills:** [Claude Code index](claude/SKILL-INDEX.md) · [Codex index](codex/SKILL-INDEX.md) — descriptions and dependencies for every skill.
 
 ---
 

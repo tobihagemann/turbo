@@ -1,8 +1,8 @@
 # Workflows
 
-[← Back to Turbo](../README.md) · [Prompt examples](examples.md) · [Customization](customization.md)
+[← Back to Turbo](../README.md) · [Prompt examples](examples.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
-Start with `/turboplan`, implement the agreed change, then finalize. The sections below explain the routes, review loops, and supporting workflows. Examples use Claude Code syntax; use `$skill-name` in Codex. Each edition’s [skill index](../README.md#all-skills) links to its implementation.
+Start with `/turboplan`, implement the agreed change, then finalize. The sections below explain the routes, review loops, and supporting workflows. Examples use Claude Code syntax; use `$skill-name` in Codex. Each edition’s skill index ([Claude Code](../claude/SKILL-INDEX.md), [Codex](../codex/SKILL-INDEX.md)) links to its implementation.
 
 ## The Turboplan Pipeline
 
@@ -67,29 +67,8 @@ The guide covers both traditional onboarding (setup, build commands, tooling) an
 
 [`/map-codebase`](../claude/skills/map-codebase/SKILL.md) also works standalone when you just need the architecture report without the full onboarding guide.
 
-## Works Best With
-
-Turbo amplifies your existing process. It shines when your project has the right infrastructure in place:
-
-- **Tests** — The [`/polish-code`](../claude/skills/polish-code/SKILL.md) loop inside [`/finalize`](../claude/skills/finalize/SKILL.md) runs your test suite and reviews coverage gaps. Without tests, there's no safety net. If your project has none, [`/smoke-test`](../claude/skills/smoke-test/SKILL.md) can fill the gap by launching your app and verifying changes manually in the same loop, but real tests are always better. See [Browser and UI Testing](#browser-and-ui-testing) for the tools behind that verification.
-- **Linters and formatters** — The [`/polish-code`](../claude/skills/polish-code/SKILL.md) loop runs your formatter and linter before code review. If you don't have one, style issues slip through.
-- **Pre-commit hooks** — When [`/finalize`](../claude/skills/finalize/SKILL.md) commits, it triggers any pre-commit hooks you have configured and fixes hook failures before retrying. If your project uses tools like `husky`, `lint-staged`, or `pre-commit`, Turbo works with them automatically.
-- **Existing analysis tools** — Skills like [`/find-dead-code`](../claude/skills/find-dead-code/SKILL.md) and [`/assess-technical-debt`](../claude/skills/assess-technical-debt/SKILL.md) lean on integrated tools (`knip`, `vulture`, `periphery`, `lizard`, `jscpd`) when your project already has them.
-- **Dependencies** — [GitHub CLI](https://cli.github.com/) powers PR and issue operations. The Claude edition uses Codex for peer review; the Codex edition uses Claude for peer review. Everything works without peer review, but the full pipeline is better with it. See the edition setup guides for details.
-
 ## Browser and UI Testing
 
-[`/smoke-test`](../claude/skills/smoke-test/SKILL.md) and [`/exploratory-test`](../claude/skills/exploratory-test/SKILL.md) (Claude) / [`$smoke-test`](../codex/skills/smoke-test/SKILL.md) and [`$exploratory-test`](../codex/skills/exploratory-test/SKILL.md) (Codex) automate manual testing — the kind of hands-on verification you'd normally do yourself. The underlying tools differ per edition:
+[`/smoke-test`](../claude/skills/smoke-test/SKILL.md) and [`/exploratory-test`](../claude/skills/exploratory-test/SKILL.md) (Claude) / [`$smoke-test`](../codex/skills/smoke-test/SKILL.md) and [`$exploratory-test`](../codex/skills/exploratory-test/SKILL.md) (Codex) automate manual testing — the kind of hands-on verification you'd normally do yourself. See [Browser and UI Testing Tools](requirements.md#browser-and-ui-testing-tools) for what drives them in each edition.
 
 For changes where you want to judge the feel yourself, [`/preview`](../claude/skills/preview/SKILL.md) / [`$preview`](../codex/skills/preview/SKILL.md) stands up the live app and hands it to you to try a UI/UX change firsthand, then waits for your verdict before continuing. `/implement` runs it automatically before `/finalize` when a change touches a user-facing surface, after `/smoke-test` has driven the flow and cleared what it could, so the app is already working when it reaches you. You can run it standalone any time you want to poke at the running app.
-
-**Claude Code:**
-
-- **[`/agent-browser`](https://github.com/vercel-labs/agent-browser) skill** — Browser automation with the most control for web app testing.
-- **`claude-in-chrome` MCP** — Built-in Claude Code browser automation using your real Chrome browser. Falls back to this when `/agent-browser` is not installed.
-- **`computer-use` MCP** — Built-in Claude Code screen control for native app and UI testing on macOS.
-
-**Codex:**
-
-- **`browser-use@openai-bundled` plugin** — Browser automation for web app testing. Bundled in Codex's `openai-bundled` marketplace.
-- **`computer-use@openai-bundled` plugin** — Screen control for native app and UI testing on macOS. Bundled in Codex's `openai-bundled` marketplace.
