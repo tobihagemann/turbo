@@ -63,6 +63,8 @@ Run the `$implement` skill. The plan file, its file references, and its Verifica
 
 After `$implement` completes, set the plan's frontmatter `status:` to `done`. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip the status update.
 
+When the plan's Context names a larger source it implements part of (an assessment, a backlog, an issue), report the plan's completion separately from that source's: name the source's items the plan left out, and say whether another plan under `.turbo/plans/` covers them.
+
 If this run created a goal in Step 1, mark it complete with `update_goal`.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
