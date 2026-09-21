@@ -1,11 +1,14 @@
-<h1 align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/thunderbolt-readme-dark-1440.png">
-    <img src="assets/logo/thunderbolt-readme-light-1440.png" alt="Turbo" width="600">
-  </picture>
-</h1>
+<p align="center">
+  <img src="assets/logo/thunderbolt-icon-256.png" width="128" height="128" alt="Turbo lightning hammer">
+</p>
 
-**Reusable workflows for planning, building, reviewing, and shipping with AI coding agents.**
+<h1 align="center">Turbo</h1>
+
+<p align="center">
+  Reusable workflows for planning, building, reviewing, and shipping with AI coding agents.
+</p>
+
+---
 
 Turbo gives Claude Code and Codex a repeatable development process, packaged as Markdown skills. Use a skill for a single task, or combine them into a workflow that takes a change from idea to pull request.
 

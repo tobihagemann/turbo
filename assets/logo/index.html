@@ -84,27 +84,6 @@
     main {
       padding-top: 0;
     }
-    .hero {
-      margin: 0;
-      border: 1px solid #26343f;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #09121a;
-    }
-    .hero img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-    .hero figcaption {
-      padding: 18px 24px;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      color: #8da2b5;
-      font-size: 12px;
-      border-top: 1px solid #26343f;
-    }
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -148,7 +127,7 @@
       background: #eaf0f3;
     }
     .stage.actual img {
-      width: 2400px;
+      width: 2048px;
       max-width: none;
     }
     .caption {
@@ -199,10 +178,6 @@
       .grid {
         grid-template-columns: 1fr;
       }
-      .hero figcaption {
-        flex-direction: column;
-        gap: 4px;
-      }
       .panel-head {
         padding: 18px;
       }
@@ -215,82 +190,71 @@
     <div class="eyebrow">Turbo / Thunderbolt</div>
     <h1>Forged. Charged. Ready.</h1>
     <p>
-      The Turbo lightning hammer: forged titanium, a gold bolt, and an
+      The Turbo lightning hammer: forged titanium, a yellow-gold bolt, and an
       illuminated amber core.
     </p>
     <div class="links">
       <a class="button primary" href="thunderbolt.blend" download
         >Download Blender File</a
       >
-      <a class="button" href="thunderbolt-hero-3200.png?v=4" download
-        >Download Turbo Lockup</a
-      >
-      <a class="button" href="thunderbolt-icon-2400.png?v=4" download
-        >Download Transparent Icon</a
+      <a class="button" href="thunderbolt-icon-2048.png?v=macos27" download
+        >Download Icon</a
       >
     </div>
   </header>
   <main>
-    <figure class="hero">
-      <img
-        src="thunderbolt-hero-3200.png?v=4"
-        width="3200"
-        height="2000"
-        alt="A silver lightning hammer with a gold bolt handle beside the italic Turbo wordmark on a dark background"
-      />
-      <figcaption>
-        <span>Thunderbolt × Turbo</span
-        ><span>3200 × 2000 · Cycles · 384 Samples</span>
-      </figcaption>
-    </figure>
     <div class="grid">
       <section class="panel">
         <div class="panel-head">
-          <h2>Material &amp; Light</h2>
-          <a href="thunderbolt-dark-2400.png?v=4" download>Download PNG ↗</a>
+          <h2>Dark Surface</h2>
+          <a href="thunderbolt-icon-2048.png?v=macos27" download
+            >Download PNG ↗</a
+          >
         </div>
         <div class="stage" id="detail">
           <img
             loading="lazy"
-            src="thunderbolt-dark-2400.png?v=4"
-            width="2400"
-            height="2400"
-            alt="Close-up of the titanium hammer, inset fasteners, electrical core, and layered gold handle"
+            src="thunderbolt-icon-2048.png?v=macos27"
+            width="2048"
+            height="2048"
+            alt="Close-up of the titanium hammer, inset fasteners, electrical core, and yellow bolt with amber facets and electrical sparks"
           />
         </div>
         <div class="caption">
-          <span>2400 × 2400 · Dark Presentation</span
+          <span>2048 × 2048 · macOS 27 Enclosure</span
           ><label><input id="actual" type="checkbox" />Actual Pixels</label>
         </div>
       </section>
       <section class="panel">
         <div class="panel-head">
-          <h2>Transparent Mark</h2>
-          <button id="surface" aria-pressed="false">Try Light Surface</button>
+          <h2>Surface Preview</h2>
+          <button id="surface" aria-pressed="true">Try Dark Surface</button>
         </div>
-        <div class="stage" id="transparent">
+        <div class="stage light" id="transparent">
           <img
             loading="lazy"
-            src="thunderbolt-icon-2400.png?v=4"
-            width="2400"
-            height="2400"
-            alt="Transparent Thunderbolt mark without floating speed trails"
+            src="thunderbolt-icon-2048.png?v=macos27"
+            width="2048"
+            height="2048"
+            alt="Thunderbolt icon in a charcoal macOS 27 enclosure with electrical sparks and glow"
           />
         </div>
         <div class="caption">
-          <span>2400 × 2400 · Transparent RGBA</span
-          ><a href="thunderbolt-icon-2400.png?v=4" download>Download PNG ↗</a>
+          <span>2048 × 2048 · macOS 27 Enclosure</span
+          ><a href="thunderbolt-icon-2048.png?v=macos27" download
+            >Download PNG ↗</a
+          >
         </div>
         <div class="sizes">
           <img
-            src="thunderbolt-icon-64.png?v=5"
-            srcset="thunderbolt-icon-128.png?v=5 2x"
+            src="thunderbolt-icon-64.png?v=macos27"
+            srcset="thunderbolt-icon-128.png?v=macos27 2x"
             width="64"
             height="64"
             alt="Thunderbolt rendered at 64 pixels"
           /><img
-            src="thunderbolt-icon-128.png?v=5"
-            srcset="thunderbolt-icon-256.png?v=5 2x"
+            src="thunderbolt-icon-128.png?v=macos27"
+            srcset="thunderbolt-icon-256.png?v=macos27 2x"
             width="128"
             height="128"
             alt="Thunderbolt rendered at 128 pixels"
@@ -300,9 +264,9 @@
     </div>
   </main>
   <footer>
-    Editable Blender geometry, procedural materials, and studio lighting. The
-    Turbo wordmark is mesh geometry; the .blend file needs no external fonts or
-    textures.
+    Editable Blender geometry, procedural materials, and studio lighting. All
+    exports include electrical sparks and glow inside the native macOS 27
+    enclosure.
   </footer>
   <script>
     document.querySelector("#surface").addEventListener("click", function () {

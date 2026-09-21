@@ -1,56 +1,61 @@
 # Turbo Logo
 
-The Thunderbolt lightning hammer, rendered in Blender. Open `index.html` to inspect the exports, or open `thunderbolt.blend` in Blender 5.2.
+The Thunderbolt lightning hammer, rendered in Blender and enclosed by Apple's native macOS 27 Icon Composer renderer. Open `index.html` to inspect it on light and dark surfaces.
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `thunderbolt.blend` | Editable model, materials, lighting, camera, and compositor |
-| `thunderbolt-hero-3200.png` | 3200 × 2000 dark presentation with the **Turbo** wordmark |
-| `thunderbolt-dark-2400.png` | 2400 × 2400 close-up with electrical trails |
-| `thunderbolt-icon-2400.png` | 2400 × 2400 transparent icon with electrical glow, without floating trails |
-| `thunderbolt-icon-64.png`, `thunderbolt-icon-128.png`, `thunderbolt-icon-256.png` | Supersampled small icons; 128px and 256px also supply 2× display density |
-| `thunderbolt-readme-light-1440.png`, `thunderbolt-readme-dark-1440.png` | 1440 × 518 transparent README headers with theme-specific wordmarks |
-| `build.py`, `render.py` | Model generation and repeatable exports |
+| `thunderbolt.blend` | Editable hammer geometry, materials, lighting, camera, and compositor |
+| `thunderbolt.icon` | Editable Icon Composer document, including the transparent Blender artwork |
+| `thunderbolt-icon-2048.png` | 2048 × 2048 master with the macOS 27 enclosure |
+| `thunderbolt-icon-64.png`, `thunderbolt-icon-128.png`, `thunderbolt-icon-256.png` | Small icons; 128px and 256px also supply 2× display density |
+| `build.py`, `render.py`, `export.py` | Model generation, artwork rendering, and native icon exports |
 
 ## Construction
 
-Bevels and weighted normals remain editable.
+The bolt has a bright yellow raised face and amber sloping shoulders to catch metallic reflections. Its face and light channel use parallel offset outlines. The rear perimeter tapers inward to avoid protruding beyond the notch, and the collar covers the upper end of the raised face. Bevels and weighted normals remain editable.
 
-The bolt's face, raised inlay, and light channel are offsets of one outline, so corresponding edges remain parallel.
+Vents and charge indicators share a baseline; the four fasteners and two striking caps are mirrored. Three lit segments and one dark segment represent partial charge. The clockwise tilt, asymmetric bolt, right-side strike light, and trailing sparks express motion.
 
-The bolt's rear perimeter tapers inward to prevent its depth from protruding beyond the right-hand notch. Vents and charge indicators share a baseline; the four fasteners and two striking caps are mirrored. Three lit segments and one dark segment represent partial charge. The clockwise tilt, asymmetric bolt, right-side strike light, and trailing sparks express motion.
+The original full-length sparks balance the tilted hammer. The combined silhouette occupies 94% of the artwork canvas's longest dimension. The compositor adds emission-only glow, carried in the artwork's alpha channel; the outer 2% fades smoothly to avoid a hard cutoff.
 
-The **Turbo** wordmark uses Avenir Next Bold Italic outlines, converted to mesh. Materials are procedural. The Blender file has no external font or texture dependencies.
+Icon Composer supplies the charcoal enclosure's exact shape and rim lighting.
 
-The compositor adds glow from the emission pass only, preserving sharp lettering and metallic highlights. Transparent exports carry the glow in their alpha channel.
+The 2048px artwork is placed at 50% on Apple's 1024 × 1024 design canvas with zero translation, preserving its size and position in the 2048px export. Glass effects on the artwork and group translucency are disabled to retain the Blender shading. Generation 27 is explicitly selected during export.
 
-The dark square uses an optical vertical offset for balance. Icon framing centers the actual model geometry. Standalone icons occupy 80% of the canvas in their longest dimension, leaving about 10% on each side for breathing room and glow.
+The 26 and 27 native enclosure alpha masks were identical in a 2048px comparison. Their lighting differs.
 
-The README lockup uses the visible lettering height as its unit: icon height is 2× and the gap from the icon's outer geometry (including sparks) to the lettering is 0.5×. Both are vertically centered. A 0.25em outer margin accommodates glow. Geometry bounds determine the layout.
-
-The hammer's lights move and scale with the assembly to preserve its material finish. Separate lights retain the wordmark's illumination. The light-theme wordmark uses neutral charcoal and white lighting.
+The Blender scene contains only the hammer and studio, with no external font or texture dependencies. The enclosure lives in the Icon Composer document.
 
 ## Rendering
 
-From this directory:
+Requires Blender 5.2, ImageMagick (`magick` on PATH), and Xcode containing Icon Composer 27 at `/Applications/Xcode.app`.
+
+From this directory, rebuild the model and render its artwork:
 
 ```sh
-blender --background thunderbolt.blend --python render.py -- hero 3200 384
-blender --background thunderbolt.blend --python render.py -- dark 2400 384
-blender --background thunderbolt.blend --python render.py -- icon 2400 384
-blender --background thunderbolt.blend --python render.py -- icon 64 384
-blender --background thunderbolt.blend --python render.py -- icon 128 384
-blender --background thunderbolt.blend --python render.py -- icon 256 384
-blender --background thunderbolt.blend --python render.py -- readme-light 1440 384
-blender --background thunderbolt.blend --python render.py -- readme-dark 1440 384
+blender --background --factory-startup --python-exit-code 1 --python build.py
+blender --background thunderbolt.blend --python-exit-code 1 --python render.py -- 2048 384
 ```
 
-The default device is Metal on macOS. Append `CPU` for CPU rendering. Output files are written next to the Blender file as 16-bit RGBA PNGs; the README headers use 8-bit RGBA for smaller downloads. The studio uses Cycles, adaptive sampling, denoising, an orthographic camera, and Khronos PBR Neutral color management.
+Building overwrites the Blender file. Rendering writes the 16-bit RGBA artwork into `thunderbolt.icon/Assets/`, then exports the enclosed icon at the requested size.
 
-Small icons render at a minimum of 512px, and README headers render at twice their export dimensions. The renderer then uses ImageMagick (`magick` on PATH) to downsample the 16-bit intermediate with a Mitchell filter in linear RGB, preserving transparency. This smooths thin highlights and diagonal edges without additional sharpening. Intermediate renders are removed automatically.
+Arguments are output size (maximum 2048), samples, and optional `CPU` or `METAL` device; defaults are 2048, 384, and Metal.
 
-After rendering, optimize the PNGs with ImageOptim in lossless mode. Disable PNG metadata stripping to retain color-management information. The checked-in exports preserve the visible rendered colors and alpha values.
+Every artwork render uses 2048px to keep bloom consistent. The studio uses Cycles, adaptive sampling, denoising, an orthographic camera, and Khronos PBR Neutral color management.
 
-To regenerate geometry with `build.py`, first extract face 1 of the macOS `/System/Library/Fonts/Avenir Next.ttc` collection with fontTools into `.turbo/cache/turbo-logo/avenir-next-bold-italic.ttf`. Then run `blender --background --factory-startup --python-exit-code 1 --python assets/logo/build.py` from the repository root. This overwrites the generated Blender file; rendering the existing file requires no font preparation.
+Export all four PNGs from the saved artwork without rerendering Blender:
+
+```sh
+python3 export.py
+```
+
+Or pass specific sizes, for example `python3 export.py 128 256`. Icon Composer renders the enclosure at 2048px; ImageMagick downsamples with a Mitchell filter in linear RGB to smooth thin highlights and diagonal edges. Intermediate renders are removed automatically.
+
+After rendering, PNGs can be optimized losslessly with ImageOptim, retaining color-management metadata.
+
+## Apple References
+
+- [Icon Composer](https://developer.apple.com/icon-composer/)
+- [Creating Your App Icon Using Icon Composer](https://developer.apple.com/documentation/Xcode/creating-your-app-icon-using-icon-composer)

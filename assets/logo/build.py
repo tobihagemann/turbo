@@ -8,7 +8,6 @@ from mathutils import Matrix, Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "assets/logo"
-FONT = ROOT / ".turbo/cache/turbo-logo/avenir-next-bold-italic.ttf"
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
@@ -26,8 +25,7 @@ handle = collection("02 · Lightning Handle")
 electrics = collection("03 · Live Core")
 details = collection("04 · Machined Details")
 motion = collection("05 · Speed Trails")
-wordmark = collection("06 · Turbo Wordmark")
-studio = collection("07 · Studio")
+studio = collection("06 · Studio")
 root = bpy.data.objects.new("Thunderbolt · Assembly", None)
 scene.collection.objects.link(root)
 root.rotation_euler.z = math.radians(-13)
@@ -64,13 +62,15 @@ titanium = material(
 polished = material("Titanium · polished chamfers", (0.52, 0.72, 0.88), 0.96, 0.19)
 graphite = material("Graphite · ceramic", (0.018, 0.027, 0.038), 0.58, 0.31)
 black = material("Recess · carbon black", (0.005, 0.009, 0.015), 0.25, 0.34)
-gold = material("Gold · machined alloy", (0.95, 0.32, 0.004), 0.72, 0.24, texture=True)
-gold_edge = material("Gold · pale polished bevel", (1, 0.53, 0.018), 0.78, 0.2)
-gold_dark = material("Gold · anodized edge", (0.3, 0.105, 0.016), 0.82, 0.27)
+gold = material("Gold · machined alloy", (1, 0.60, 0.008), 0.72, 0.24, texture=True)
+gold_shoulder = material(
+    "Gold · amber shoulders", (0.95, 0.32, 0.004), 0.72, 0.24, texture=True
+)
+gold_edge = material("Gold · pale polished bevel", (1, 0.72, 0.035), 0.78, 0.2)
+gold_dark = material("Gold · anodized edge", (0.3, 0.16, 0.012), 0.82, 0.27)
 energy = material("Amber · charged plasma", (1, 0.30, 0.008), 0.15, 0.22, 6)
 white_core = material("Amber · white hot core", (1, 0.65, 0.09), 0.15, 0.2, 4)
 soft_energy = material("Amber · running light", (1, 0.38, 0.008), 0.3, 0.26, 3.5)
-pearl = material("Turbo · pearl titanium", (0.82, 0.88, 0.94), 0.55, 0.25)
 
 
 def link(obj, coll, mat=None, parent=root):
@@ -356,7 +356,7 @@ for i in range(4):
         0.005,
     )
 
-# The handle is a solid zigzag extrusion, with stepped alloy layers and a light channel.
+# Parallel offset outlines form a broad sloping shoulder around the bolt's raised face.
 bolt = [
     (-0.24, 0.79),
     (0.57, 0.79),
@@ -380,18 +380,20 @@ polygon(
     gold_edge,
     back_points=inset_polygon(bolt, 0.12),
 )
-polygon(
-    "Bolt · gold face",
-    inset_polygon(bolt, 0.016),
+bolt_face = polygon(
+    "Bolt · crowned gold face",
+    inset_polygon(bolt, 0.14),
     0.17,
-    0.27,
+    0.36,
     gold,
     handle,
     0.014,
     gold_edge,
+    back_points=inset_polygon(bolt, 0.016),
 )
-inlay = inset_polygon(bolt, 0.10)
-polygon("Bolt · raised pale gold spine", inlay, 0.27, 0.302, gold_edge, handle, 0.017)
+bolt_face.data.materials.append(gold_shoulder)
+for face in list(bolt_face.data.polygons)[2:]:
+    face.material_index = len(bolt_face.data.materials) - 1
 plate(
     "Handle · graphite collar",
     0.035,
@@ -399,7 +401,7 @@ plate(
     0.91,
     0.31,
     -0.30,
-    0.34,
+    0.40,
     graphite,
     handle,
     0.07,
@@ -412,7 +414,7 @@ plate(
     0.95,
     0.10,
     -0.31,
-    0.36,
+    0.42,
     titanium,
     handle,
     0.035,
@@ -423,7 +425,7 @@ channel_start = Vector(channel[1]).lerp(Vector(channel[2]), 0.13)
 channel_end = Vector(channel[3]).lerp(Vector(channel[4]), 0.86)
 tube(
     "Bolt · charged seam",
-    [(x, y, 0.32) for x, y in [channel_start, channel[2], channel[3], channel_end]],
+    [(x, y, 0.374) for x, y in [channel_start, channel[2], channel[3], channel_end]],
     0.012,
     soft_energy,
     electrics,
@@ -458,16 +460,16 @@ for x in (-1.31, 1.31):
 tube(
     "Wake · upper streak",
     [(-3.18, 0.60, 0.02), (-2.68, 0.86, 0.02), (-2.12, 1.13, 0.02)],
-    0.015,
-    soft_energy,
+    0.024,
+    energy,
     motion,
     [0.04, 0.55, 1],
 )
 tube(
     "Wake · lower streak",
     [(-3.05, 0.14, 0.02), (-2.71, 0.33, 0.02), (-2.25, 0.54, 0.02)],
-    0.010,
-    gold_edge,
+    0.016,
+    soft_energy,
     motion,
     [0.02, 0.7, 1],
 )
@@ -479,7 +481,7 @@ tube(
         (-2.22, 0.35, 0.07),
         (-1.66, 0.67, 0.07),
     ],
-    0.012,
+    0.022,
     energy,
     motion,
     [0.1, 0.9, 0.8, 0.25],
@@ -487,7 +489,7 @@ tube(
 tube(
     "Strike · electrical snap",
     [(2.12, 1.96, 0.05), (2.43, 2.18, 0.05), (2.38, 1.88, 0.05), (2.70, 2.10, 0.05)],
-    0.011,
+    0.021,
     energy,
     motion,
     [0.25, 0.9, 0.85, 0.1],
@@ -510,10 +512,35 @@ x = Vector((0, 1, 0)).cross(z).normalized()
 y = z.cross(x)
 camera.rotation_euler = Matrix((x, y, z)).transposed().to_euler()
 camera_data.type = "ORTHO"
-camera_data.ortho_scale = 7.3
-camera_data.shift_y = 0.05
 camera_data.lens = 70
 scene.camera = camera
+
+
+def projected_bounds(objects):
+    bpy.context.view_layer.update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    camera_inverse = camera.matrix_world.inverted()
+    points = []
+    for obj in objects:
+        if obj.type not in {"MESH", "CURVE"}:
+            continue
+        evaluated = obj.evaluated_get(depsgraph)
+        mesh = evaluated.to_mesh()
+        transform = camera_inverse @ evaluated.matrix_world
+        points.extend(transform @ v.co for v in mesh.vertices)
+        evaluated.to_mesh_clear()
+    return (
+        min(p.x for p in points),
+        max(p.x for p in points),
+        min(p.y for p in points),
+        max(p.y for p in points),
+    )
+
+
+x0, x1, y0, y1 = projected_bounds([obj for obj in scene.objects if obj.parent == root])
+camera_data.ortho_scale = max(x1 - x0, y1 - y0) / 0.94
+camera_data.shift_x = (x0 + x1) / (2 * camera_data.ortho_scale)
+camera_data.shift_y = (y0 + y1) / (2 * camera_data.ortho_scale)
 
 
 def area(name, loc, target, color, energy, size, size_y=None):
@@ -546,62 +573,6 @@ world.node_tree.nodes["Background"].inputs["Color"].default_value = (
 world.node_tree.nodes["Background"].inputs["Strength"].default_value = 0.32
 scene.world = world
 
-text_data = bpy.data.curves.new("Turbo · original outlined wordmark", "FONT")
-text_data.body = "Turbo"
-text_data.font = bpy.data.fonts.load(str(FONT))
-outline_font = text_data.font
-text_data.size = 2.5
-text_data.space_character = 0.97
-text_data.extrude = 0.018
-text_data.bevel_depth = 0.008
-text_data.bevel_resolution = 4
-text_data.resolution_u = 32
-text_obj = link(bpy.data.objects.new("Turbo", text_data), wordmark, pearl, parent=None)
-text_obj.parent = camera
-text_obj.location = (-0.35, -0.72, -24)
-text_obj.scale = (1.4, 1.4, 1.4)
-# Blender normalizes this font to its 1695-unit bounds, rather than its 1000-unit em.
-text_obj["em_size"] = text_data.size * text_obj.scale.y * 1000 / 1695
-bpy.ops.object.select_all(action="DESELECT")
-text_obj.select_set(True)
-bpy.context.view_layer.objects.active = text_obj
-bpy.ops.object.convert(target="MESH")
-bpy.data.fonts.remove(outline_font)
-wordmark.hide_render = True
-
-backdrop_mat = bpy.data.materials.new("Backdrop · midnight radial gradient")
-backdrop_mat.use_nodes = True
-nodes = backdrop_mat.node_tree.nodes
-nodes.clear()
-output = nodes.new("ShaderNodeOutputMaterial")
-em = nodes.new("ShaderNodeEmission")
-coord = nodes.new("ShaderNodeTexCoord")
-dist = nodes.new("ShaderNodeVectorMath")
-dist.operation = "DISTANCE"
-dist.inputs[1].default_value = (0.50, 0.52, 0)
-ramp = nodes.new("ShaderNodeValToRGB")
-ramp.color_ramp.elements[0].position = 0.015
-ramp.color_ramp.elements[0].color = (0.045, 0.023, 0.005, 1)
-ramp.color_ramp.elements[1].position = 0.22
-ramp.color_ramp.elements[1].color = (0.001, 0.002, 0.005, 1)
-middle = ramp.color_ramp.elements.new(0.10)
-middle.color = (0.007, 0.013, 0.022, 1)
-backdrop_mat.node_tree.links.new(coord.outputs["UV"], dist.inputs[0])
-backdrop_mat.node_tree.links.new(dist.outputs["Value"], ramp.inputs[0])
-backdrop_mat.node_tree.links.new(ramp.outputs[0], em.inputs[0])
-backdrop_mat.node_tree.links.new(em.outputs[0], output.inputs[0])
-bpy.ops.mesh.primitive_plane_add(size=2)
-backdrop = bpy.context.object
-backdrop.name = "Backdrop · dark presentation"
-for c in list(backdrop.users_collection):
-    c.objects.unlink(backdrop)
-link(backdrop, studio, backdrop_mat, parent=None)
-backdrop.parent = camera
-backdrop.location = (0, 0, -29)
-backdrop.scale = (15, 15, 15)
-backdrop.hide_render = True
-backdrop.visible_shadow = False
-
 scene.render.engine = "CYCLES"
 scene.cycles.samples = 384
 scene.cycles.use_denoising = True
@@ -615,10 +586,10 @@ prefs.get_devices()
 for device in prefs.devices:
     device.use = device.type == "METAL"
 scene.cycles.device = "GPU"
-scene.render.resolution_x = 2400
-scene.render.resolution_y = 2400
+scene.render.resolution_x = 2048
+scene.render.resolution_y = 2048
 scene.render.resolution_percentage = 100
-scene.render.film_transparent = False
+scene.render.film_transparent = True
 scene.render.image_settings.file_format = "PNG"
 scene.render.image_settings.color_mode = "RGBA"
 scene.render.image_settings.color_depth = "16"
@@ -641,8 +612,8 @@ glow = compositor.nodes.new("CompositorNodeGlare")
 glow.inputs["Type"].default_value = "Fog Glow"
 glow.inputs["Quality"].default_value = "High"
 glow.inputs["Threshold"].default_value = 0.7
-glow.inputs["Strength"].default_value = 1.8
-glow.inputs["Size"].default_value = 0.40
+glow.inputs["Strength"].default_value = 20.0
+glow.inputs["Size"].default_value = 0.55
 out = compositor.nodes.new("NodeGroupOutput")
 add = compositor.nodes.new("ShaderNodeMixRGB")
 add.blend_type = "ADD"
@@ -665,8 +636,7 @@ compositor.links.new(set_alpha.outputs["Image"], out.inputs["Image"])
 scene.compositing_node_group = compositor
 scene.render.use_compositing = True
 motion.hide_render = False
-backdrop.hide_render = False
-scene.render.filepath = str(OUT / "thunderbolt-dark-2400.png")
+scene.render.filepath = str(OUT / "thunderbolt-icon-2048.png")
 
 for screen in bpy.data.screens:
     for a in screen.areas:
@@ -677,8 +647,6 @@ for screen in bpy.data.screens:
 scene["Design"] = (
     "Thunderbolt: forged titanium T, recessed amber core, lightning-bolt gold handle."
 )
-scene["Wordmark"] = "Turbo · original Avenir Next Bold Italic, converted to mesh."
-scene["Render variants"] = "icon, dark, hero (see render.py)"
 bpy.ops.wm.save_as_mainfile(
     filepath=str(OUT / "thunderbolt.blend"), copy=True, compress=True
 )
