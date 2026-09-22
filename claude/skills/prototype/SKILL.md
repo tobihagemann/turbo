@@ -31,7 +31,7 @@ Write one self-contained `.html` file at the resolved path, with markup, styles,
 
 Build only what the Step 1 questions require. Hardcode the data behind them, stub anything that would cross a network boundary, and leave persistence out.
 
-When a Step 1 question compares alternatives, build every alternative into the same file behind a header toggle, kept visually separate from the design as prototype chrome, so the user compares them in place rather than across descriptions.
+When a Step 1 question compares alternatives, build every alternative into the same file behind a header toggle, kept visually separate from the design as prototype chrome, so the user compares them in place rather than across descriptions. Keep that chrome in normal document flow rather than `position: sticky` or `fixed`, where it covers the controls scrolled beneath it.
 
 ## Step 4: Operate It
 
