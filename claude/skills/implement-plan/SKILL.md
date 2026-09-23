@@ -57,7 +57,9 @@ Run the `/implement` skill. The plan file, its file references, and its Verifica
 
 ## Step 4: Update Plan Status
 
-After `/implement` completes, set the plan's frontmatter `status:` to `done`. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip the status update.
+After `/implement` completes, set the plan's frontmatter `status:` to `done` with the Edit tool. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip the status update.
+
+When that edit is refused while this session runs inside a linked worktree, report that the status update was not applied and name the edit to make from a session that can write to the main checkout: `status: done` in the resolved plan path.
 
 When the plan's Context names a larger source it implements part of (an assessment, a backlog, an issue), report the plan's completion separately from that source's: name the source's items the plan left out, and say whether another plan under `.turbo/plans/` covers them.
 

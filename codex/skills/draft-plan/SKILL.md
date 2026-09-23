@@ -106,7 +106,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 | **Data flow** | How does data move through the change? Any new boundaries or contracts? |
 | **Edge cases** | Partial failure, empty states, backward compatibility, concurrency |
 | **Tests** | Which existing test patterns apply? Where do new tests live? |
-| **Scope cut** | Anything to explicitly defer? |
+| **Scope cut** | Anything to explicitly defer? Keep in scope any items the change would otherwise leave as the last holdouts of the behavior it replaces, however small their payoff. |
 
 ### Discussion Guidelines
 

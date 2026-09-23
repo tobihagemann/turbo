@@ -23,7 +23,9 @@ If the work is anchored to an existing plan at `.turbo/plans/<slug>.md`, reuse t
 
 The user may pass an explicit slug or output path; honor it.
 
-The target path is `.turbo/handoff/<YYYY-MM-DD>-<slug>.md`. A generated slug takes `-2`, `-3`, and so on until the path is free. When the user supplied the slug or path and it already exists, use `request_user_input` to offer overwrite, a numeric suffix, or a different slug.
+Resolve the repo root with `git rev-parse --show-toplevel`, except inside a linked worktree — where `git rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir, so the handoff lands in the main checkout rather than in a worktree that is destroyed with its branch.
+
+The target path is `.turbo/handoff/<YYYY-MM-DD>-<slug>.md` under that root. A generated slug takes `-2`, `-3`, and so on until the path is free. When the user supplied the slug or path and it already exists, use `request_user_input` to offer overwrite, a numeric suffix, or a different slug.
 
 When an open decision will outlive the rest of the session's state, still unresolved while the work around it is finished, give it its own handoff. Everything else stays in a single file. Slug the split handoff for that decision rather than appending a collision suffix, and write it to stand alone.
 
@@ -43,13 +45,13 @@ Survey the conversation context for:
 - **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out
 - **Next step**: the first concrete action the new session should take. When the user has stated what they want to work on next, that intent leads and any work left in flight is ordered after it; say so in the same statement when that work should not resume at all
 
-Read `.turbo/improvements.md` if it exists and note any entry this handoff takes over, resolving it against the repo root from `git rev-parse --show-toplevel`, except inside a linked worktree — where `git rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir. When no entry clearly matches, leave the backlog alone.
+Read `.turbo/improvements.md` under the repo root resolved in Step 1 if it exists and note any entry this handoff takes over. When no entry clearly matches, leave the backlog alone.
 
 When something is genuinely unclear and would leave a gap in the handoff, use `request_user_input` to resolve it. Default to inferring quietly when the conversation makes the answer clear.
 
 ## Step 3: Write the Handoff File
 
-Create `.turbo/handoff/` if it does not exist. Write the file at the path picked in Step 1.
+Create the target path's `.turbo/handoff/` directory if it does not exist. Write the file at the path picked in Step 1.
 
 Lead with `# Handoff: <Task Title>`. Cover the items gathered in Step 2 in whatever structure fits the session — drafting, refining, implementing, and investigating sessions each have different shapes and don't all map to the same headings. Close with a clear statement of the next concrete action so the new session knows exactly what to do first.
 
