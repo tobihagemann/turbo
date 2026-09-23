@@ -83,6 +83,8 @@ Identify product or design decisions the user's request did not resolve. Escalat
 
 **Confirm external constraints before escalating.** When an option depends on a third-party API, service, or platform behaving a particular way, drop it unless that behavior is confirmed by current documentation.
 
+**Observe existing surfaces before escalating.** When an option concerns how an existing surface looks, observe it as it currently renders, by running the app or from a screenshot requested from the user, and drop any option its rendered state rules out.
+
 Output what is at stake as text first, even when the reading it came from is fresh in this conversation. When the decision turns on a failure or misuse scenario, that means the invariant the change would protect and what makes that scenario reachable given the existing guards. Then use `request_user_input` to present the decision as a concise trade-off with options. Mark the strongest option "(Recommended)" and place it first. Draft plan steps that depend on these decisions only after the user responds.
 
 Offer a **Get a second opinion** option whenever the decision is costly to reverse (it establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever no option earns "(Recommended)" with conviction. It runs the `$consult-claude` skill for what each option commits to, what reversing it costs, and what the prevailing convention is. Hold the concrete options to two so the question stays within the three-option limit. Then resolve the decision with that answer in hand, re-asking when the choice stays the user's.
@@ -109,6 +111,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 ### Discussion Guidelines
 
 - If a question can be answered by exploring the codebase, explore the codebase instead.
+- When a question concerns how an existing surface looks, observe it as it currently renders, by running the app or from a screenshot requested from the user, before framing options. Drop any option its rendered state rules out.
 - When a question defines a boundary, contract, or data shape, add a **Get a second opinion** option and hold the concrete options to two so the question stays within the three-option limit. It runs the `$consult-claude` skill for the soundest answer on technical merit alone, independent of the task's original scope; on a question of product intent, run it for what each answer commits to and what reversing it costs. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
 - When a question turns on how a surface looks or how an interaction behaves, and an answer in prose would leave the user guessing, add a **Prototype it first** option and hold the concrete options to two so the question stays within the three-option limit. It runs the `$prototype` skill on that unknown, then asks the question again with the prototype in hand.
 - Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
