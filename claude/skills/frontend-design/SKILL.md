@@ -13,7 +13,7 @@ Before coding, understand the context and commit to a clear aesthetic direction.
 
 Output three things as text before coding:
 
-- **Visual thesis**: one sentence describing mood, material, and energy (e.g., "brutally minimal dark interface with surgical precision" or "warm editorial magazine feel with generous whitespace")
+- **Visual thesis**: one sentence describing mood, material, and energy (e.g., "brutally minimal dark interface with surgical precision" or "high-contrast editorial magazine feel with oversized serif headlines")
 - **Content plan**: hero, support, detail, final CTA
 - **Interaction thesis**: 2-3 motion ideas that change the feel of the page
 
@@ -155,8 +155,11 @@ Never use generic AI-generated aesthetics:
 
 - Overused font families (Inter, Roboto, Arial, system fonts)
 - Cliched color schemes (particularly purple gradients on white backgrounds)
-- Predictable layouts and component patterns
-- Cookie-cutter design that lacks context-specific character
+- Cream or off-white page backgrounds
+- Italic accent words inside headings
+- Numbered section labels ("01 / 02 / 03")
+- Monospace labels
+- Pill-shaped buttons
 
 Reject these failures:
 
@@ -183,3 +186,4 @@ Before delivering, verify:
 - Are cards actually necessary?
 - Does motion improve hierarchy or atmosphere?
 - Would the design still feel premium if all decorative shadows were removed?
+- Would any styling choice carry over unchanged to an unrelated design without the visual thesis calling for it? Name it and replace it with one the thesis calls for.
