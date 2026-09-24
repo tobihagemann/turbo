@@ -34,14 +34,15 @@ State the resolved plan path before continuing, then read the file.
 Unless an explicit path or slug was passed, confirm the resolved plan still describes work that remains to be done:
 
 - **Already implemented** — the frontmatter `status:` is `done`
+- **Waiting on a gate** — the plan's Context states a gate that must pass before its work can start
 
-When the signal fires, output it as text. Then use `AskUserQuestion` to offer:
+When a signal fires, output it as text. Then use `AskUserQuestion` to offer:
 
-- **Implement anyway** — the marker is stale
-- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against this same signal
-- **Leave it unimplemented** — the plan needs revising first
+- **Implement anyway** — the marker is stale, or the gate has passed
+- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against these same signals
+- **Leave it unimplemented** — the plan needs revising first, or its gate has not passed
 
-On **Leave it unimplemented**, tell the user to bring the plan current with `/refine-plan` and run this skill again. Mark the remaining implement steps deleted, then use the TaskList tool and proceed to any remaining task.
+On **Leave it unimplemented**, tell the user to bring the plan current with `/refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Mark the remaining implement steps deleted, then use the TaskList tool and proceed to any remaining task.
 
 ## Step 2: Read Context Files
 

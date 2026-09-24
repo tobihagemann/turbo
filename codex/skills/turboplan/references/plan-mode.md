@@ -14,11 +14,11 @@ Use `update_plan` to track each phase, restating any remaining steps of a parent
 
 ## Phase 1: Run `$draft-plan` Skill
 
-Run the `$draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a path to a background document. Capture the resolved plan path from `$draft-plan`'s output for the next phases.
+Run the `$draft-plan` skill with the input. The input may be a freeform task description, an explicit slug, or a path to a background document. Capture the resolved plan path from `$draft-plan`'s output for the next phases, and the path of any gated plan it also wrote. When it wrote one, call `update_plan` to add an entry right after Phase 2 for running `$refine-plan` on the gated plan's path, restating any remaining steps of a parent workflow.
 
 ## Phase 2: Run `$refine-plan` Skill
 
-Run the `$refine-plan` skill with `<path>` from Phase 1.
+Run the `$refine-plan` skill with `<path>` from Phase 1. When Phase 1 captured a gated plan, run the `$refine-plan` skill again with that path once the first run finishes.
 
 ## Phase 3: Run `$self-improve` Skill
 
@@ -26,7 +26,7 @@ Run the `$self-improve` skill to compound planning learnings.
 
 ## Phase 4: Mark Plan Ready
 
-Update the plan's YAML frontmatter to `status: ready`.
+Update the YAML frontmatter of each plan from Phase 1 to `status: ready`.
 
 ## Phase 5: Summarize and Halt
 
@@ -37,6 +37,8 @@ Then halt with this message:
 > Plan ready at `<plan path>`.
 >
 > This is a good point to `/compact` before implementing. Then run `$implement-plan <slug>` to implement.
+
+When Phase 1 captured a gated plan, add a line to that message naming its path and the gate that must pass before running `$implement-plan` on it.
 
 ## Rules
 

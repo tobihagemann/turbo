@@ -34,14 +34,15 @@ State the resolved plan path before continuing, then read the file.
 Unless an explicit path or slug was passed, confirm the resolved plan still describes work that remains to be done:
 
 - **Already implemented** — the frontmatter `status:` is `done`
+- **Waiting on a gate** — the plan's Context states a gate that must pass before its work can start
 
-When the signal fires, output it as text. Then use `request_user_input` to offer:
+When a signal fires, output it as text. Then use `request_user_input` to offer:
 
-- **Implement anyway** — the marker is stale
-- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against this same signal
-- **Leave it unimplemented** — the plan needs revising first
+- **Implement anyway** — the marker is stale, or the gate has passed
+- **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against these same signals
+- **Leave it unimplemented** — the plan needs revising first, or its gate has not passed
 
-On **Leave it unimplemented**, tell the user to bring the plan current with `$refine-plan` and run this skill again. Call `update_plan` to drop the remaining implement steps, restating any remaining steps of a parent workflow, then continue with the next step of the active workflow.
+On **Leave it unimplemented**, tell the user to bring the plan current with `$refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Call `update_plan` to drop the remaining implement steps, restating any remaining steps of a parent workflow, then continue with the next step of the active workflow.
 
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the resolved plan's basename. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
