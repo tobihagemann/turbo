@@ -42,7 +42,7 @@ Otherwise, design targeted smoke tests. Each test should:
 
 Confirm any control, command, or other affordance a test names exists in the code before writing the test: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the test against the outcome to verify and leave the affordance to be found during execution.
 
-Confirm as well that the surface accepts a test's action in the state the test sets up. When the code refuses or swallows that action there, drive a state or entry point where the action goes through, or make the refusal itself the observation.
+Confirm as well that the surface accepts a test's action in the state the test sets up. When the code refuses or swallows that action there, drive a state or entry point where the action goes through, or make the refusal itself the observation. When a scenario claims an affordance is available in a state, drive each such affordance in that state to its first observable effect and make that effect the pass condition; a refusal or swallowed action there fails the scenario. For an affordance whose effect is not cleanly undoable, stop at its confirmation step and cancel it. When the affordance has no confirmation step, act on a record this run created, record it in **Owned cleanup**, and carry any write to a shared external system through the write enumeration and approval sequence this step requires for such writes; plan the scenario as unverified when no such record can be created.
 
 Output the plan as text:
 
