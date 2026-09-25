@@ -13,6 +13,7 @@ How to phrase tool invocations so the executing agent uses the right mechanism w
 - Using request_user_input
   - Output Content as Text Before request_user_input
   - Ask in the Reader's Vocabulary
+  - Recommend Only From What the Agent Can Observe
   - Gate Genuine Blockers; Leave the Agent's Own Judgment to the Agent
   - request_user_input Is Gated to Interactive Modes and the Main Conversation
 - Referencing MCP Tools
@@ -117,6 +118,13 @@ State the concrete problem in plain language as text before the gate, naming wha
 - ✓ **Good**: Options named for what is different afterward when the user picks them.
 
 When the user answers with a question instead of picking an option, answer it, then re-ask. Treat the question as evidence about the gate: one asking what a term or an option means says the wording was unreadable, so restate the problem plainly before re-asking. One asking something substantive the options left open says the restatement needs that information too.
+
+### Recommend Only From What the Agent Can Observe
+
+Base a gate's recommendation on a signal the agent can see in the session: files, command output, or a notice the harness injects. Runtime resource levels, such as how much of the agent's context window remains, are invisible to it except through such a notice. A proxy standing in for such a level reads as reasoned but recommends the wrong option whenever the proxy and the real state diverge. When nothing observable settles the choice, mark no option recommended. When an option only makes sense under unobservable state, gate that option on an injected signal rather than offering it everywhere.
+
+- ✗ **Avoid**: Recommending an option because an observable fact merely tends to co-occur with the state that would justify it.
+- ✓ **Good**: "When a notice that <condition> has arrived since <reset point>, offer <option>, marked recommended. Otherwise leave it out."
 
 ### Gate Genuine Blockers; Leave the Agent's Own Judgment to the Agent
 
