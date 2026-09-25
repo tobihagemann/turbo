@@ -13,6 +13,7 @@ claude/                   # Claude Code edition (canonical Claude tree)
 │   ├── scripts/          # Optional supporting scripts
 │   ├── references/       # Optional reference documentation
 │   └── assets/           # Optional templates or boilerplate
+├── hooks/                # Status-line and hook scripts
 ├── SETUP.md
 ├── UPDATE.md
 ├── MIGRATION.md
@@ -32,7 +33,10 @@ Each skill is self-contained. Skills compose other skills to any depth via `/ski
 - `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared. Per-edition state lives under `claude.{excludeSkills, lastUpdateHead, configVersion}`; the parallel `codex.*` object is present when the Codex edition is also installed.
 - `~/.turbo/repo/` — Local clone of the upstream turbo repo (skill source for install/update)
 - `~/.claude/skills/` — Installed Claude Code skills
+- `~/.claude/hooks/turbo/` — Installed status-line and hook scripts from `claude/hooks/`
 
 A change that leaves a `~/.turbo/config.json` key with no effect carries its own cleanup: add a `MIGRATION.md` entry deleting the key in each edition and bump the `Current version` in `UPDATE.md`. Dropping the key from `SETUP.md` only stops new installs from writing it, leaving it behind everywhere it was already written.
+
+The same holds for a `claude/hooks/` script that `settings.json` runs. Wiring a new one, or renaming or retiring one, takes a `SETUP.md` Step 4 change plus a `MIGRATION.md` entry that rewires existing installs, with a `Current version` bump.
 
 When working inside `claude/`, also see [`claude/CLAUDE.md`](claude/CLAUDE.md) for edition-specific rules.

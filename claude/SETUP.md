@@ -65,7 +65,7 @@ Example shape:
   "claude": {
     "excludeSkills": [],
     "lastUpdateHead": "<HEAD>",
-    "configVersion": 7
+    "configVersion": 8
   }
 }
 ```
@@ -126,17 +126,39 @@ npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browse
 
 ## Step 4: Configure Claude Code Settings
 
-Add both keys below to `~/.claude/settings.json`, merging each into the existing JSON when the file already has other settings.
+Add the keys below to `~/.claude/settings.json`, merging each into the existing JSON when the file already has other settings.
 
 ### Context Tracking
 
-Turbo workflows like `/finalize` consume significant context. Knowing how much context is left prevents unexpected compaction mid-workflow.
+Turbo workflows like `/finalize` consume significant context. A status line shows how much is left. A hook tells Claude once it drops to 20%, so review loops can offer a handoff and `/compact` before the session runs out.
+
+Copy the scripts:
+
+```bash
+mkdir -p ~/.claude/hooks/turbo
+cp ~/.turbo/repo/claude/hooks/* ~/.claude/hooks/turbo/
+```
+
+When the user already has a `statusLine` that runs something other than this script, use `AskUserQuestion` to ask whether to replace it, stating that keeping theirs leaves the context warning inactive. Append the `PostToolUse` entry to an existing `hooks.PostToolUse` array, and skip it when an entry already runs `context-warn.sh`.
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "jq -r '\"\\(.context_window.remaining_percentage | floor)% context left\"'"
+    "command": "bash ~/.claude/hooks/turbo/context-statusline.sh"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/turbo/context-warn.sh"
+          }
+        ]
+      }
+    ]
   }
 }
 ```

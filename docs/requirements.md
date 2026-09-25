@@ -20,7 +20,8 @@ The agent asks before changing user-level configuration. Setup touches:
 - Your skills directory: `~/.claude/skills/` (Claude Code) or `~/.agents/skills/` (Codex)
 - Your global instruction file: a few behavioral rules from `ADDITIONS.md` added to `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md` (see [Harness Instructions](customization.md#harness-instructions))
 - Your global gitignore: `.turbo/` added, so plans and reports stay out of your repos
-- Harness settings: a context status line and task tracking in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
+- Your hooks directory (Claude Code): the context status line and low-context warning scripts in `~/.claude/hooks/turbo/`
+- Harness settings: the status line, the warning hook, and task tracking in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
 - Optional steps you can decline: the oracle's own Chrome profile and a ChatGPT sign-in, and for Codex, importing Claude Code auto memory
 
 The [Claude Code setup](../claude/SETUP.md) and [Codex setup](../codex/SETUP.md) guides list every step.

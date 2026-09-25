@@ -109,3 +109,24 @@ npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser
 
 1. Read `~/.turbo/config.json`.
 2. Delete the `oracle.model` key, preserve every other key, and write the file back.
+
+## Version 8: Install the Context Warning
+
+**Condition:** `~/.claude/settings.json` has no `PostToolUse` hook whose command runs `~/.claude/hooks/turbo/context-warn.sh`, or either script is missing from `~/.claude/hooks/turbo/`.
+
+**Skip if:** The hook is configured and both scripts are present.
+
+### Steps
+
+`/polish-code` and `/refine-plan` offer a handoff and `/compact` when Claude is told the context window is running low. A status-line script records the remaining percentage, and a `PostToolUse` hook tells Claude once it drops to 20%.
+
+1. Copy the scripts from `origin/main`, since this migration runs before the pull:
+
+```bash
+mkdir -p ~/.claude/hooks/turbo
+git -C ~/.turbo/repo archive origin/main claude/hooks | tar -x --strip-components=2 -C ~/.claude/hooks/turbo
+```
+
+2. Confirm `context-statusline.sh` and `context-warn.sh` exist and are non-empty in `~/.claude/hooks/turbo/`. When either is missing, stop and report it before touching settings.
+3. Read `~/.claude/settings.json`, creating it as `{}` when it does not exist. When `statusLine` is absent or its command is Turbo's previous `jq -r '"\(.context_window.remaining_percentage | floor)% context left"'`, set `statusLine` to `{"type": "command", "command": "bash ~/.claude/hooks/turbo/context-statusline.sh"}`. When it already runs that script, leave it. Otherwise use `AskUserQuestion` to ask whether to replace the user's status line, stating that keeping it leaves the warning inactive.
+4. Unless an entry in `hooks.PostToolUse` already runs `context-warn.sh`, append one with matcher `""` running `bash ~/.claude/hooks/turbo/context-warn.sh`. Preserve every other key and write the file back.
