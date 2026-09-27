@@ -39,9 +39,9 @@ git diff origin/<base>...HEAD
 
 Check every Mermaid diagram in the body the same way, node by node and transition by transition. A diagram that omits a state still renders, so only the code reveals its staleness.
 
-If the body and its diagrams already describe the diff, the description is up to date. Say so and stop.
+If the body and its diagrams already describe the diff, the description is up to date. Say so, then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
-If what the body leaves undescribed is only trivial (formatting, typos, config-only), say so and stop. Proceed when the body omits, misstates, or still describes behavior the diff no longer contains.
+If what the body leaves undescribed is only trivial (formatting, typos, config-only), say so, then call `update_plan` to mark this step completed and continue with the next step of the active workflow. Proceed when the body omits, misstates, or still describes behavior the diff no longer contains.
 
 ## Step 4: Analyze the Full Diff
 
@@ -80,6 +80,8 @@ gh api --method PATCH "/repos/<owner>/<repo>/pulls/<PR_NUMBER>" \
   -F title=@.turbo/pr/<PR_NUMBER>-title.txt \
   -F body=@.turbo/pr/<PR_NUMBER>-body.md
 ```
+
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Diagrams
 

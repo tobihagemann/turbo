@@ -68,6 +68,8 @@ Include the Ceiling and Revisit lines when the entry records a deliberate simpli
 
 Tell the user the improvement was noted and where each entry was written.
 
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+
 ## Rules
 
 - Deduplicate before appending: check each target backlog for a similar entry and update it in place when one exists. When the existing entry predates the Type field, add a Type line while updating.

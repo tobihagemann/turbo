@@ -64,7 +64,9 @@ Categorize updates:
 
 If the discovery tool is not installed, suggest the installation command (see Step 2 notes column). If no tool exists for the ecosystem, fall back to manual version checking via web search.
 
-If no updates are available, report that dependencies are up to date.
+If no updates are available, report that dependencies are up to date. Otherwise, report each update in the output format below, followed by the Overall Verdict.
+
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Output Format
 

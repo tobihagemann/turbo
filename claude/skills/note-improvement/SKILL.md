@@ -70,6 +70,8 @@ Include the Ceiling and Revisit lines when the entry records a deliberate simpli
 
 Tell the user the improvement was noted and where each entry was written, or that it could not be persisted and is printed above.
 
+Then use the TaskList tool and proceed to any remaining task.
+
 ## Rules
 
 - Deduplicate before appending: check each target backlog for a similar entry and update it in place when one exists. When the existing entry predates the Type field, add a Type line while updating.

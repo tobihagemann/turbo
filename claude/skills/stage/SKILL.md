@@ -20,7 +20,7 @@ git add <file1> <file2> ...
 ```
 
 - Do not use `git add -A`, `git add .`, or `git add -u` — all three sweep in unrelated changes
-- If a file contains both relevant and unrelated changes, use `git add -p <file>` to stage only the relevant hunks
+- If a file contains both relevant and unrelated changes, write `git diff <file>` to a patch file, back the unrelated changes out of it (delete their `+` lines and turn their `-` lines into context lines), and stage it with `git apply --cached --recount <patch>`
 - Never stage files containing secrets (`.env`, credentials, API keys). Warn if detected.
 
 ## Step 3: Verify

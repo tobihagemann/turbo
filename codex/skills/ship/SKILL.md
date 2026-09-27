@@ -48,7 +48,7 @@ If the chosen option creates a PR and the current branch is the default branch:
 
 ## Step 3: Check for Unstaged Changes
 
-Run `git status` to check for unstaged changes. Stage by path the files that belong to the current changeset, using `git add -p <file>` for one that also carries unrelated changes. This catches files modified by auto-formatters that were not re-staged.
+Run `git status` to check for unstaged changes. Stage by path the files that belong to the current changeset; this catches files modified by auto-formatters that were not re-staged. When one also carries unrelated changes, write `git diff <file>` to a patch file, back the unrelated changes out of it (delete their `+` lines and turn their `-` lines into context lines), and stage it with `git apply --cached --recount <patch>`.
 
 ## Step 4: Run `$commit-rules` Skill
 
