@@ -25,14 +25,18 @@ Always check for project-specific testing skills or MCP tools first. Use the fal
 - **CLI tool** → direct terminal execution
 - **Library with no entry point** → report that smoke testing is not applicable and stop, unless the scope changes a check's configuration; then use direct terminal execution
 
-## Step 3: Plan Smoke Tests
+## Step 3: Run `$test-run-rules` Skill
+
+Run the `$test-run-rules` skill to load the rules for launching and driving the app.
+
+## Step 4: Plan Smoke Tests
 
 Before drafting tests, check whether there is something to exercise:
 
-- **The scope changes a check's configuration** (linter, formatter, type checker, or CI gate rules) — for that part of the scope, the check itself is the surface; plan tests against it and run them via the CLI Path in Step 4. Export the tree carrying the change to a scratch directory outside the checkout, add input there that each changed rule should flag or accept, and run the check on it. Pair each case with the same input under the configuration at the ref the resolved scope is measured against as its control, so a verdict the old configuration also produces is not credited to the change. Reach the check's installed toolchain and plugins from the scratch directory without installing into or modifying the checkout; when the check cannot run there, report the case unverified. When the change adds or narrows a suppression and the check reports unused suppressions, add a case with the suppressed cause removed and confirm the check reports the stale suppression.
-- **No user-visible change in the resolved scope** — look for an existing integration test target that covers the change and is not part of the default test suite (so it hasn't already run in this session). If one exists, run it via the Integration Test Path in Step 4. If nothing exists, report that there is no interactive surface to verify and no separate integration suite to fall back on, then stop.
-- **Required infrastructure cannot be stood up in this session** (backend service, auth provider, seed data, external dependency) — look for a stub before reporting blocked. When the dependency is reached through a client whose endpoint is runtime configuration, repoint that endpoint at a local stub; the same interception yields an artifact the system emits rather than provides (a token, a session identifier, a single-use link). Confine this to runtime configuration and leave the working tree unchanged. When the code under test makes the call itself, a **call-site stub** intercepts it without a second process: from the run, install a replacement into the running process that matches one destination and returns the response the scenario needs or delays the real one, gated on a flag the run can flip. Installing it from the run leaves the working tree unchanged as well. It lasts only as long as the process, so re-install it after anything that restarts or reloads it. When a stub works, record its response shapes and state transitions in the Setup contract's **Mock boundaries** item, along with the re-install condition for a call-site stub, and the PID and port of any stub process in **Owned cleanup**, then carry on with the plan. Report blocked when no stub applies or the ones that do fail, naming what is missing and what was tried, then stop.
-- **A test needs privileged state or a second participant** (an entitlement or plan tier, an elevated role, a second concurrent client or session) — provision it through a path the project already exposes for development, such as its own development-only endpoint, an administrative command, or a second client this run starts. Keep the test in the plan once provisioning succeeds, and record the granted state in the Setup contract's **Test identity** item and every session, role, and record this run creates in **Owned cleanup**. When the provisioning path writes to a shared external system, carry it through the write enumeration and approval sequence this step requires for such writes. Drop the test to unverified only after an attempt failed.
+- **The scope changes a check's configuration** (linter, formatter, type checker, or CI gate rules) — for that part of the scope, the check itself is the surface; plan tests against it and run them via the CLI Path in Step 5. Export the tree carrying the change to a scratch directory outside the checkout, add input there that each changed rule should flag or accept, and run the check on it. Pair each case with the same input under the configuration at the ref the resolved scope is measured against as its control, so a verdict the old configuration also produces is not credited to the change. Reach the check's installed toolchain and plugins from the scratch directory without installing into or modifying the checkout; when the check cannot run there, report the case unverified. When the change adds or narrows a suppression and the check reports unused suppressions, add a case with the suppressed cause removed and confirm the check reports the stale suppression.
+- **No user-visible change in the resolved scope** — look for an existing integration test target that covers the change and is not part of the default test suite (so it hasn't already run in this session). If one exists, run it via the Integration Test Path in Step 5. If nothing exists, report that there is no interactive surface to verify and no separate integration suite to fall back on, then stop.
+- **Required infrastructure cannot be stood up in this session** (backend service, auth provider, external dependency) — look for a stub under the test run rules before reporting blocked. When a stub works, record its response shapes and state transitions in the Setup contract's **Mock boundaries** item, along with the re-install condition for a call-site stub, and the PID and port of any stub process in **Owned cleanup**, then carry on with the plan. When the rules leave the scenario blocked, report blocked, naming what is missing and what was tried, then stop.
+- **A test needs privileged state or a second participant** (an entitlement or plan tier, an elevated role, seed data, a second concurrent client or session) — provision it under the test run rules. Keep the test in the plan once provisioning succeeds, and record the granted state in the Setup contract's **Test identity** item and every session, role, and record this run creates in **Owned cleanup**. Drop the test to unverified only after an attempt failed.
 
 Otherwise, design targeted smoke tests. Each test should:
 
@@ -42,7 +46,7 @@ Otherwise, design targeted smoke tests. Each test should:
 
 Confirm any control, command, or other affordance a test names exists in the code before writing the test: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the test against the outcome to verify and leave the affordance to be found during execution.
 
-Confirm as well that the surface accepts a test's action in the state the test sets up. When the code refuses or swallows that action there, drive a state or entry point where the action goes through, or make the refusal itself the observation. When a scenario claims an affordance is available in a state, drive each such affordance in that state to its first observable effect and make that effect the pass condition; a refusal or swallowed action there fails the scenario. For an affordance whose effect is not cleanly undoable, stop at its confirmation step and cancel it. When the affordance has no confirmation step, act on a record this run created, record it in **Owned cleanup**, and carry any write to a shared external system through the write enumeration and approval sequence this step requires for such writes; plan the scenario as unverified when no such record can be created.
+Confirm as well that the surface accepts a test's action in the state the test sets up. When the code refuses or swallows that action there, drive a state or entry point where the action goes through, or make the refusal itself the observation. When a scenario claims an affordance is available in a state, drive each such affordance in that state to its first observable effect and make that effect the pass condition; a refusal or swallowed action there fails the scenario. For an affordance whose effect is not cleanly undoable, stop at its confirmation step and cancel it. When the affordance has no confirmation step, act on a record this run created, record it in **Owned cleanup**, and carry any write to a shared external system through the test run rules' write sequence; plan the scenario as unverified when no such record can be created.
 
 Output the plan as text:
 
@@ -60,7 +64,7 @@ When another agent will execute this plan, append a **Setup contract** capturing
 
 - **Start environment** — commands and variables to bring up each service in isolation
 - **Test identity** — the account or credentials the run authenticates as
-- **Seed/reset** — operations that establish or restore baseline data, plus the enumerated write set when the plan authorizes writes
+- **Seed/reset** — operations that establish or restore baseline data, plus the enumeration, the pre-run manifest, and the revert procedure of every write the plan authorizes
 - **Required state** — fixtures or preconditions each scenario depends on, including the validation constraints any payload the plan injects must satisfy to reach the code under test
 - **Mock boundaries** — external services stubbed, with the response shapes and state transitions to return
 - **Owned cleanup** — named sessions, ports, PIDs, and scratch resources this run creates and must release
@@ -69,7 +73,7 @@ Include an item when the executor would otherwise derive it from application sou
 
 Write each precondition as an observation the executor makes rather than a fact it can rely on, and say what to do when it does not hold: name the substitute setup, or direct the executor to report the precondition as wrong rather than the scenario as failed.
 
-**When the scope's happy path writes to a shared external system and those writes are not cleanly undoable**, scope the plan to a path that provably cannot write: choose fixture data with nothing to act on, so the run still exercises wiring, auth, queries, guards, and failure isolation while writing nothing. Treat writes as not cleanly undoable whenever restoring the records leaves downstream effects the writes triggered in place. State that scoping choice in the plan so the executor does not widen it back. When the writing path must run, work through it in order. Determine the full write set without executing it: use a dry-run mode when one exists, otherwise trace the code path and enumerate every record it writes, including those reached through triggers, cascades, and hooks. State what the enumeration cannot settle rather than presenting it as complete. Pick the target whose writes are incidental to what the run verifies, weighing each candidate's write set against the coverage it adds. Then request approval via `request_user_input`, presenting the enumeration as what is being consented to, and request it again whenever the enumeration changes. When `request_user_input` does not reach the user, write nothing and report the approval as unresolved. Capture a pre-run manifest and write an ordered revert procedure; when another agent will execute the plan, carry the enumeration, the manifest, and the revert procedure in the Setup contract's **Seed/reset** item.
+**When the scope's happy path writes to a shared external system and those writes are not cleanly undoable**, scope the plan to a path that provably cannot write: choose fixture data with nothing to act on, as the test run rules direct. State that scoping choice in the plan so the executor does not widen it back. When the writing path must run, work through the test run rules' write sequence.
 
 **When a scenario's pass condition is that nothing happens** — no write, no call, no state change — pair it with a control that differs only in the dimension under test and whose expected outcome is that the effect does occur. A lone negative scenario cannot distinguish the behavior under test from a harness that never reached it. Pair each guard separately.
 
@@ -81,16 +85,16 @@ When the scenario drives one of the inputs below, establish while writing the pl
 Run the control through a stub that intercepts the mechanism, introducing one when the negative scenario was scoped by fixture data alone, so observing the effect there establishes that the interception point is reached:
 
 - **A call the code under test makes** — a call-site stub is the cheapest interception: keep it installed across both runs and vary only the dimension under test, so the control's call is observed at the stub instead of reaching the real dependency.
-- **No stub can intercept the mechanism** — carry the control through the write enumeration and approval sequence above, and record it in the plan as authorized scope rather than a widening.
+- **No stub can intercept the mechanism** — carry the control through the test run rules' write sequence, and record it in the plan as authorized scope rather than a widening.
 - **Neither control can run** — plan the negative scenario as inconclusive and say so.
 
-## Step 4: Execute
+## Step 5: Execute
 
 If a project-specific testing skill or MCP tool was identified in Step 2, use that. The paths below are fallbacks.
 
 ### Web App Path
 
-Reuse a running dev server only when this session started it. Otherwise start one on a port this run selected and wait for it to be ready. Confirm it bound to that port before sending it traffic — a failed bind leaves another agent's service answering. Move to another port when the port is taken; report the error and stop when the server itself failed to start. Use the `browser-use@openai-bundled` plugin to interact with the app.
+Start or reuse a dev server under the test run rules. Use the `browser-use@openai-bundled` plugin to interact with the app.
 
 Core verification loop per test:
 
@@ -126,7 +130,7 @@ Core verification loop per test:
 
 ### Integration Test Path
 
-Fallback when Step 3 routed here because nothing was interactive. Run the discovered target in its own process group under a timeout enforced from outside the runner. Run multiple integration targets sequentially when they reset or mutate a shared test database, even when the checks are otherwise independent. Tail output in a background shell for long-running suites so failures surface as they happen.
+Fallback when Step 4 routed here because nothing was interactive. Run multiple integration targets sequentially when they reset or mutate a shared test database, even when the checks are otherwise independent. Tail output in a background shell for long-running suites so failures surface as they happen.
 
 Core verification loop per run:
 
@@ -134,17 +138,15 @@ Core verification loop per run:
 2. Capture exit code and the relevant summary output
 3. Record pass/fail per named test when the output exposes them, otherwise overall
 
-Do not invent a target if none was found in Step 3 — that gate already stopped.
+Do not invent a target if none was found in Step 4 — that gate already stopped.
 
-## Step 5: Report
+## Step 6: Report
 
-Before reporting a planned test as unverified, retry its setup with the Step 3 techniques for blocked infrastructure and for privileged state, unless Step 3 already tried them and they failed. When the setup succeeds, run the test and record its result. Report a test as unverified only after that attempt, naming what was tried and what blocked it. Treat an existing unit test over the same behavior as no substitute: it leaves the interactive path unexercised.
+Record a test the test run rules leave blocked as **UNVERIFIED** and one they leave inconclusive as **INCONCLUSIVE**.
+
+Before reporting a planned test as unverified, retry its setup under the test run rules for unavailable infrastructure and for privileged state, unless Step 4 already tried them and they failed. When the setup succeeds, run the test and record its result. Report a test as unverified only after that attempt, naming what was tried and what blocked it. Treat an existing unit test over the same behavior as no substitute: it leaves the interactive path unexercised.
 
 Report a negative test and its control together: the negative reads as passed only when its control produced the effect, and as inconclusive otherwise.
-
-When a test names a control, command, or other affordance the app does not have, establish what the test verifies before recording a verdict. When the named mechanism is itself what the test verifies, its absence is a **FAIL**. When the mechanism is incidental to the outcome the test verifies, drive the affordance that delivers that outcome, record the verdict against it, and name the substitution in the result. Record **INCONCLUSIVE** when which of the two it is cannot be established.
-
-When a test depends on an input mode or device characteristic the browser emulates, confirm the page itself reports that capability before recording a verdict resting on it — a device preset may change only the viewport and the user agent. Record **INCONCLUSIVE**, naming the capability that could not be confirmed, when it cannot be established.
 
 Present a summary:
 
@@ -164,13 +166,6 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Always clean up: close only the browser sessions this run opened, by name, stop the dev servers, stubs, and test runners this skill started, and restore any configuration it repointed or extended. Capture the PID of each dev server, stub, and test runner this run starts and stop it by that PID rather than by a name or command-line pattern, which also matches an identically named process a concurrent agent is running. Stop the process group rather than the captured PID alone — a server started behind a wrapper outlives its parent, and a runner's spawned helpers outlive the runner. Before reporting cleanup complete, confirm each server and stub port released and no process from a stopped group still running, and report by PID any process that could not be stopped. When processes cannot be listed, report that check as unrun and name the groups. Never close all browser sessions at once — concurrent agents may share the browser daemon, so a blanket close is cross-agent destruction.
-- Isolate shared process state so concurrent or sub-agent runs don't collide: bind dev servers and services to unique ports, scope tmux sessions (`tmux -L <name>`), give each browser session a unique name so cleanup can target only its own, and write screenshots and other scratch state to absolute paths under a unique scratch directory outside the repository under test. Derive each such identifier once and reuse that exact value in every later command, writing it as a literal or reading it back from a note under the run's scratch directory. A value recomputed per shell, such as `$$`, differs between the command that creates a resource and the command that releases it, so cleanup releases something it never created and reports success while the real resource leaks. A port picked as unique may already be held by a concurrent agent, so check it before binding and move to another when it is taken, leaving the incumbent running. When a unique port moves a service off its default address, find the settings elsewhere in the stack that name that default, such as allowed origins and sign-in callback URLs, and bring each in line through runtime overrides, leaving the working tree unchanged: add the new address beside the default in a list, and replace the default only where no process outside this run reads the setting.
-- Never modify code. This skill is read-only verification, with one exception: a stub reached through runtime configuration, restored on cleanup. If a test fails, report the failure — do not attempt to fix it.
-- If the dev server fails to start, report the error and stop.
 - Keep tests focused on the determined scope.
-- Verify an observation before reporting it as pre-existing rather than introduced by the change, and state that verification. Read the file at the ref the resolved scope is measured against with `git show <ref>:<path>`: `HEAD` for uncommitted or staged work, the commit the work began from when it is already committed locally, or `origin/<base-branch>` for a PR, fetched first. Reporting an introduced defect as pre-existing drops it from scope silently, while the opposite error only adds noise.
 - When the scope has an interactive surface, drive that surface directly — a CLI command, HTTP request, or UI interaction — rather than importing an internal function to print its result or re-running the unit test suite. The Integration Test Path is the only sanctioned non-interactive fallback.
-- Tail app logs in a background shell for errors or warnings while verifying, so backend failures surface alongside UI checks.
-- After the last UI interaction, perform one additional log read or status check before reporting. Background-shell output that lands after the agent emits final text is not surfaced, so the extra action gives it time to appear in a polled read. Matters most when this skill runs inside a sub-agent. When this check targets a server or log process you did not start, report it as outstanding for the process owner rather than running it yourself; inability to read such a process is outstanding, not a smoke failure.
 - To diagnose failures, run the `$investigate` skill on the smoke test report.

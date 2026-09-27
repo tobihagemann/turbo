@@ -15,7 +15,7 @@ Available destinations:
 - **Auto memory** — The project-specific memory directory named by the active harness. An effective `autoMemoryDirectory` setting overrides its location; otherwise it normally lives at `<Claude config home>/projects/<encoded project root>/memory/`, where the config home is `CLAUDE_CONFIG_DIR` when set and `~/.claude` otherwise. The key replaces every character outside `A-Za-z0-9` with `-`, and long keys may be truncated and hashed, so prefer the exact harness-provided path over recomputing it. List the directory and read `MEMORY.md` if it exists.
 - **Skills** — Project skills at `skills/` or `.claude/skills/` (resolve symlinks)
 
-Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories but do not read them yet — Step 2 needs to run first so you know what to look for.
+Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories with the `description` frontmatter of each SKILL.md, but do not read the bodies yet — Step 2 needs to run first so you know what to look for.
 
 ### Skill Ownership Detection
 
@@ -79,7 +79,7 @@ Scan the full conversation with this priority:
 8. **Improvement opportunities** — Out-of-scope improvements noticed during work: code that could be refactored, missing tests, performance issues, readability concerns, or feature ideas that were intentionally skipped to stay focused. **Skipped findings count here**: when code simplification or code review identified a genuine improvement or issue but it was skipped for this session, route it as a project improvement so it isn't lost.
 9. **Trusted reviewer feedback** — Human PR review comments that reveal project conventions, patterns, or corrections. Trusted reviewers are repo collaborators with `admin` or `maintain` roles (determine via `gh api repos/{owner}/{repo}/collaborators --jq '.[] | select(.role_name == "admin" or .role_name == "maintain") | .login'`). Their feedback takes precedence over other reviewers and AI bots when there are contradictions.
 
-After scanning, read all skill SKILL.md files (they are small). This gives Step 4 full context for routing.
+After scanning, read the SKILL.md of every skill a candidate lesson could touch: the session skills, plus any skill whose description from Step 1 covers a lesson's domain. This gives Step 3 and Step 4 the context for filtering and routing.
 
 ## Step 3: Filter
 
@@ -87,7 +87,7 @@ Keep only lessons that are:
 - **Stable** — likely to remain true across future sessions
 - **Non-obvious** — Claude would not already know this
 - **Actionable** — can be expressed as a rule or instruction
-- **Not already documented** — absent from the files read in Steps 1 and 2, from each skill's `references/` and other supporting files, and from the project's own knowledge stores. Search all of those for each candidate's keywords rather than assuming. A lesson documented only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as undocumented for the subtree it actually applies to.
+- **Not already covered** — no rule in the files read in Steps 1 and 2, in the `references/` and other supporting files of the skills read in Step 2, or in the project's own knowledge stores already covers it, even as a special case. A lesson drawn from one incident is covered when an existing general rule, followed, would have prevented that incident; a workflow is covered only when an existing skill already encodes its steps. Search those sources for each candidate's keywords, then judge coverage by meaning, since a general rule rarely shares an incident's wording. When the covering rule was in context during the incident and still read past, because its wording, scope, or placement let the incident through, keep the lesson as a revision of that rule in place, adding no new rule; otherwise discard it. A lesson covered only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as uncovered for the subtree it actually applies to.
 - **Still a concern** — the issue is not already fixed by changes made in this session. If a bug was found and fixed, or a missing feature was added, future sessions will see the corrected code — they don't need a reminder about the old problem. **Exception: successful workflows and procedures are not "resolved" — they're skill candidates precisely because they worked and will need to be repeated.** When sweeping past sessions, judge this against the current state of the code and docs rather than against this session's changes.
 
 Discard anything session-specific, speculative, one-off, or already resolved by code changes in this session (but not successful workflows — see exception above). If no lessons survive filtering, tell the user and stop.
@@ -95,6 +95,8 @@ Discard anything session-specific, speculative, one-off, or already resolved by 
 ## Step 4: Route Each Lesson
 
 Assign each surviving lesson to exactly one destination.
+
+**Revisions:** A lesson Step 3 kept as a revision routes to the destination that holds the rule it revises, as an update-in-place, ahead of the skill-first rule and the table; only the package-managed skills rule outranks it. When the rule lives in a source that is not a routing destination, route the lesson by the rules below like any other.
 
 **Skill-first rule (mandatory):** Before consulting the table below, check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running /skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or CLAUDE.md — they belong in the skill they correct. This rule is not a preference; it is a hard constraint that takes precedence over the table rows below.
 

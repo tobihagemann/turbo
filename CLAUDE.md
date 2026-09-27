@@ -24,7 +24,7 @@ codex/                    # Codex edition (parallel tree)
 
 Each skill is self-contained. Skills compose other skills to any depth via `/skill-name` invocations. The key distinction is between analysis skills (return structured findings without acting) and workflow skills (compose analysis skills and act on results).
 
-`/smoke-test`, `/create-test-plan`, and `/exploratory-test` share one testing domain. Route a lesson that lands in `/smoke-test` to its siblings by kind: a scenario-design rule (what a test covers and what counts as a pass) also goes into `/create-test-plan`, and an execution rule (driving the running app and cleaning up after it) also goes into `/exploratory-test`.
+`/smoke-test`, `/create-test-plan`, and `/exploratory-test` share one testing domain. An execution rule (launching and driving the running app, and cleaning up after it) goes into `/test-run-rules` alone, which both test-running skills load. A scenario-design rule (what a test covers and what counts as a pass) that lands in `/smoke-test` also goes into `/create-test-plan`.
 
 @claude/SKILL-CONVENTIONS.md
 

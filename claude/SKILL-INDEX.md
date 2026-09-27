@@ -43,9 +43,9 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
 | [`/create-test-plan`](skills/create-test-plan/SKILL.md) | Generate a structured test plan at `.turbo/test-plans/<slug>.md` with four escalating levels | | [`/exploratory-test`](skills/exploratory-test/SKILL.md) |
-| [`/smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md) | [`/polish-code`](skills/polish-code/SKILL.md), [`/quick-finalize`](skills/quick-finalize/SKILL.md), [`/implement`](skills/implement/SKILL.md) |
+| [`/smoke-test`](skills/smoke-test/SKILL.md) | Launch the app and verify changes manually | [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md), [`/test-run-rules`](skills/test-run-rules/SKILL.md) | [`/polish-code`](skills/polish-code/SKILL.md), [`/quick-finalize`](skills/quick-finalize/SKILL.md), [`/implement`](skills/implement/SKILL.md) |
 | [`/preview`](skills/preview/SKILL.md) | Stand up the live app and hand it to the user to judge a UI/UX change firsthand | | [`/implement`](skills/implement/SKILL.md) |
-| [`/exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios, plus usability observations | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md), [`/user-experience`](skills/user-experience/SKILL.md) | |
+| [`/exploratory-test`](skills/exploratory-test/SKILL.md) | Multi-level exploratory testing: basic, complex, adversarial, and cross-cutting scenarios, plus usability observations | [`/create-test-plan`](skills/create-test-plan/SKILL.md), [`/agent-browser`](https://github.com/vercel-labs/agent-browser), [`/investigate`](skills/investigate/SKILL.md), [`/user-experience`](skills/user-experience/SKILL.md), [`/test-run-rules`](skills/test-run-rules/SKILL.md) | |
 
 ## Dependencies
 
@@ -102,6 +102,7 @@ Full listing of skills in the Claude Code edition of Turbo, grouped by category.
 | [`/github-voice`](skills/github-voice/SKILL.md) | Shared writing style rules for GitHub-facing output (PR comments, descriptions, titles, issues, proposals) | | [`/create-pr`](skills/create-pr/SKILL.md), [`/update-pr`](skills/update-pr/SKILL.md), [`/create-issue`](skills/create-issue/SKILL.md), [`/reply-to-pr-threads`](skills/reply-to-pr-threads/SKILL.md), [`/reply-to-pr-conversation`](skills/reply-to-pr-conversation/SKILL.md) |
 | [`/commit-rules`](skills/commit-rules/SKILL.md) | Shared commit message rules and technical constraints | | [`/commit-staged`](skills/commit-staged/SKILL.md), [`/ship`](skills/ship/SKILL.md), [`/split-and-ship`](skills/split-and-ship/SKILL.md) |
 | [`/changelog-rules`](skills/changelog-rules/SKILL.md) | Shared changelog conventions and formatting rules | | [`/create-changelog`](skills/create-changelog/SKILL.md), [`/update-changelog`](skills/update-changelog/SKILL.md) |
+| [`/test-run-rules`](skills/test-run-rules/SKILL.md) | Shared rules for test runs that drive the running app or run a test target: isolation, stubs, privileged state, approved writes, cleanup | | [`/smoke-test`](skills/smoke-test/SKILL.md), [`/exploratory-test`](skills/exploratory-test/SKILL.md) |
 
 ## Knowledge and Maintenance
 

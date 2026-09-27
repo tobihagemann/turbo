@@ -90,7 +90,7 @@ SKILL.md serves as an overview that points the agent to detailed materials as ne
 
 **Practical guidance:**
 
-- Keep SKILL.md body under 500 lines for optimal performance
+- Keep SKILL.md body under about 3,000 words (roughly 5k tokens) for optimal performance
 - Split content into separate files when approaching this limit
 - Use the patterns below to organize instructions, code, and resources effectively
 

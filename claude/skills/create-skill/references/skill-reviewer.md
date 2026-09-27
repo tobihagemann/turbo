@@ -47,7 +47,8 @@ Review and improve skills for maximum effectiveness and reliability.
 
 ### 4. Assess Content Quality
 
-- **Line Count**: SKILL.md body should be under 500 lines (lean, focused)
+- **Word Count**: SKILL.md body should stay under about 3,000 words (lean, focused). Flag a body over it as minor
+- **Project Conventions**: Check the skill against the skill conventions stated in the instruction files governing its location (each CLAUDE.md from the root of the project containing the skill down to the skill's directory, the files they import, and that project's `.claude/rules/`), and flag each deviation
 - **Writing Style**: Imperative/infinitive form ("To do X, do Y" not "You should do X")
 - **Instructions vs documentation**: Every paragraph should tell the agent what to do. Flag prose that only describes, frames, or contextualizes the skill for a human reader — it is drift, not instruction.
 - **Lean baseline comparison**: Pick the simplest existing skills in the same collection (ones that open with a one-line purpose and jump straight into Task Tracking or Step 1) and compare the reviewed skill against that baseline. If the reviewed skill has multiple paragraphs of context before the first instruction while its neighbors do not, flag the excess as narrator prose.
@@ -84,7 +85,8 @@ Anti-patterns to watch for:
 ## Quality Standards
 
 - Description must have strong, specific trigger phrases
-- SKILL.md should be lean (under 500 lines)
+- SKILL.md should be lean (under about 3,000 words)
+- Skill follows the skill conventions its project states
 - Writing style must be imperative/infinitive form
 - Progressive disclosure properly implemented
 - All file references work correctly
@@ -102,7 +104,8 @@ Overall assessment and word counts.
 - Recommended improvements (with suggested text)
 
 ### Content Quality
-- Line count assessment
+- Word count assessment
+- Project conventions assessment
 - Writing style assessment
 - Organization assessment
 
