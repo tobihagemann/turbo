@@ -87,7 +87,7 @@ Run the `$smoke-test` skill to produce the smoke test plan.
 
 Capture `git status --short`, `git diff HEAD | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning, and record all three outputs in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
 
-Delegate test execution to a Codex sub-agent with inherited model defaults. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context.
+Spawn a Codex sub-agent with inherited model defaults to execute the test plan. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context, and instruct it to read and follow `$test-run-rules` from the installed skill directory before executing the plan. State in its context that the writes the plan's Setup contract authorizes are already approved, and that any write outside that enumeration leaves its scenario blocked.
 
 **Verify the tree:** re-run all three commands when the sub-agent returns, including when it terminates early or reports incomplete results. Compare against `Pending smoke-test baseline`. Delete what the sub-agent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything that baseline already showed untouched. Clear the entry once the tree matches.
 
