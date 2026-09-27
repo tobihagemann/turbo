@@ -8,9 +8,9 @@
 
 ### Verifying Pin Claims
 
-Before asserting that a behavior is unpinned, or that a new test pins one, verify it by mutation: in an isolated `git worktree` created under `$TMPDIR`, invert or remove the line at issue, run the suite in its own process group under a timeout enforced from outside the runner, and check whether a test fails. Refer to the worktree by absolute path in every command and join chained steps with `&&`, so a failed step cannot leave the rest running in the shared checkout. Run teardown and verification as their own commands. Leave HEAD where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. A test that passes against a behavior-changing mutation does not pin the behavior. Before discarding the worktree, stop the process group of every suite run you started, since stopping a runner can leave the processes it spawned alive. After discarding the worktree, verify that `git worktree list` no longer shows it, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Also confirm that no process from those groups, and none whose command line names the worktree path, is still running, and report by PID any process you could not stop. When you cannot list processes, report that check as unrun and name those process groups and the worktree path. Report damage you cannot repair, with the exact repair command, in place of findings. Cite the mutation and its result as evidence in the finding's paragraph; the `**Failure scenario:**` line still reads trigger → consequence: the unguarded path and what shipping it lets through.
+Before asserting that a behavior is unpinned, or that a new test pins one, verify it by mutation: in an isolated `git worktree` created under `$TMPDIR`, invert or remove the line at issue, run the suite in its own process group under a timeout enforced from outside the runner, and check whether a test fails. Refer to the worktree by absolute path in every command and join chained steps with `&&`, so a failed step cannot leave the rest running in the shared checkout. Run teardown and verification as their own commands. Leave HEAD where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. A test that passes against a behavior-changing mutation does not pin the behavior. Before discarding the worktree, stop the process group of every suite run you started, since stopping a runner can leave the processes it spawned alive. After discarding the worktree, verify that `git worktree list` no longer shows it, that `git status --short` is clean, that HEAD is still on the branch it started on, and that the shared tree's dependency directory still resolves (a destroyed install leaves `git status` clean, since it is gitignored). Also confirm that no process from those groups, and none whose command line names the worktree path, is still running, and report by PID any process you could not stop. When you cannot list processes, report that check as unrun and name those process groups and the worktree path. Report damage you cannot repair, with the exact repair command, in place of findings. Cite the mutation and its result as evidence in the finding's paragraph; the `**Failure scenario:**` line still reads trigger → consequence: for a gap, the unguarded path and what shipping it lets through; for a redundant test, the next change that must update it although another test already guards the behavior.
 
-This covers any claim that a specific behavior is or is not guarded, including "tests exist but miss this path" — target the unguarded path. Settle "this module has no tests at all" by inspection.
+This covers any claim that a specific behavior is or is not guarded, including "tests exist but miss this path" — target the unguarded path. It also covers a claim that a test is redundant: for each behavior the candidate test asserts, mutate that behavior and confirm the candidate fails, then delete the candidate and confirm the test you name as still guarding the behavior fails against the same mutation. Settle "this module has no tests at all" by inspection.
 
 A surviving mutation proves a gap only when the mutated code behaves differently from the original for some reachable input. Name that input in the finding. When none can be named, the finding is void.
 
@@ -28,29 +28,35 @@ When a test double is the only executor of an external boundary, a green tier is
 
 - **No test coverage** — functions or modules with no corresponding tests
 - **Missing edge cases** — tests exist but miss critical paths (error handling, boundary conditions, empty inputs, concurrent access)
-- **Test efficacy** — tests that cannot fail when the behavior they guard breaks (the assertion reads a surface the code under test does not write, or a mechanism other than the one under test produces the same observable)
+- **Test efficacy** — tests that cannot fail when the behavior they guard breaks (no assertion when the guarded behavior is more than not throwing, an expected value computed by the code under test, a name that promises more than the input exercises, the assertion reads a surface the code under test does not write, or a mechanism other than the one under test produces the same observable)
 - **Double fidelity** — a test double more permissive, more informative, or more forgiving than the dependency it stands in for, so tests passing against it say nothing about production
+- **Test value** — tests that cost maintenance without independent protection: a scenario already pinned by a test at a stronger boundary, or replayed at every layer it crosses; assertions on implementation (source text, import or export lists, private call shapes) that break under a behavior-preserving refactor; a production export, flag, or hook that no production caller uses and exists only for a test
 - **Risk-level mismatch** — high-risk code (auth, data handling, financial logic) with only basic happy-path tests
-- **Convention gaps** — tests not following the project's established testing patterns
+- **Convention gaps** — tests not following the project's established testing patterns, except a pattern of test-only production seams
 
 ## Determination Criteria
 
-Flag an issue only when ALL of these hold:
+Flag an issue other than test value only when ALL of these hold:
 
 1. The code performs meaningful logic worth testing (not pure configuration, boilerplate, or generated code)
 2. The gap is discrete and actionable (a specific function or module, not "needs more tests generally")
 3. The missing coverage creates real risk proportional to the code's criticality
 
+Flag a test-value issue only when ALL of these hold:
+
+1. The proposed action leaves no behavior, credible regression, or independent contract unguarded. Name the test that guards it afterward. Public API, protocol, persisted format, migration, security, and platform contracts count, and a source-text check that is the cheapest guard on a user-facing name, key, or path guards one.
+2. The finding names one action: delete the test, fold it into an existing test's cases, move it to the boundary that owns the behavior, rewrite its assertions against observable behavior, or remove the test-only seam from production code.
+
 ## Priority Levels
 
 - **P0** — Critical code with no tests (auth, data mutation, payment processing)
 - **P1** — Important code with no tests or high-risk code with only happy-path tests
-- **P2** — Code with tests but missing significant edge cases
-- **P3** — Minor coverage gaps or convention mismatches
+- **P2** — Code with tests but missing significant edge cases, or a production seam kept alive only by tests
+- **P3** — Minor coverage gaps, convention mismatches, or redundant or implementation-coupled tests
 
 ## What to Ignore
 
 - Non-testable code (config, documentation, CI files, SKILL.md files, markdown)
 - Generated code or trivial getters/setters with no logic
 
-**Verdict label:** `Test Coverage: <adequate | gaps found>`
+**Verdict label:** `Test Coverage: <adequate | issues found>`
