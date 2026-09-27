@@ -1,11 +1,11 @@
 ---
 name: assess-technical-debt
-description: "Assess project-wide structural technical debt: complexity hotspots, deprecated API usage, duplication clusters, and architecture rot. Ranks findings by impact and refactor effort into a report at .turbo/technical-debt.md. Use when the user asks to \"assess technical debt\", \"find technical debt\", \"review technical debt\", \"what should we refactor\", \"find refactoring candidates\", \"where is the code rot\", or \"what's our worst code\". Analysis-only — does not modify code."
+description: "Assess project-wide structural technical debt: complexity hotspots, deprecated API usage, duplication clusters, architecture rot, and low-value tests. Ranks findings by impact and refactor effort into a report at .turbo/technical-debt.md. Use when the user asks to \"assess technical debt\", \"find technical debt\", \"review technical debt\", \"what should we refactor\", \"find refactoring candidates\", \"where is the code rot\", \"what's our worst code\", \"find low-value tests\", or \"which tests can we delete\". Analysis-only — does not modify code."
 ---
 
 # Assess Technical Debt
 
-Surface the structural debt that routine review keeps out of scope: long-lived complexity, deprecated APIs, duplication, and tangled architecture that need deliberate refactoring. Project-wide, analysis-only. Ranks each finding by impact and effort and writes `.turbo/technical-debt.md` and `.turbo/technical-debt.html`.
+Surface the structural debt that routine review keeps out of scope: long-lived complexity, deprecated APIs, duplication, tangled architecture, and low-value tests that need deliberate refactoring. Project-wide, analysis-only. Ranks each finding by impact and effort and writes `.turbo/technical-debt.md` and `.turbo/technical-debt.html`.
 
 ## Task Tracking
 
@@ -23,13 +23,13 @@ If `$ARGUMENTS` specifies paths, assess those directly (skip the question).
 
 Otherwise, use `request_user_input` to confirm scope:
 
-- **All source files** — assess the whole codebase
+- **Whole codebase** — assess all source and test files
 - **Specific paths** — user provides directories or file patterns
 
 Once scope is determined:
 
-1. Glob for source files in the selected scope. Exclude generated and vendored directories (`node_modules/`, `dist/`, `build/`, `vendor/`, `__pycache__/`, `.build/`, `DerivedData/`, `target/`, `.tox/`, and others appropriate to the project).
-2. Partition files by top-level source directory. If a single directory holds far more files than its siblings, sub-partition it by its immediate subdirectories.
+1. Glob for source and test files in the selected scope. Exclude generated and vendored directories (`node_modules/`, `dist/`, `build/`, `vendor/`, `__pycache__/`, `.build/`, `DerivedData/`, `target/`, `.tox/`, and others appropriate to the project).
+2. Partition files by top-level directory. If a single directory holds far more files than its siblings, sub-partition it by its immediate subdirectories.
 
 ## Step 2: Run Debt Analysis Agents
 
@@ -39,7 +39,7 @@ Launch the agents below with `spawn_agent` / `wait_agent` using inherited model 
 
 Expect (one per partition, plus one project-wide architecture agent) Codex sub-agent calls total. State the count explicitly before emitting the batch.
 
-- **Partition agents** — one per partition from Step 1. Each scans its files for complexity hotspots, deprecated API usage, and duplication, and notes coupling it observes reaching outside the partition. Pass the partition's file list and the full project root path.
+- **Partition agents** — one per partition from Step 1. Each scans its files for complexity hotspots, deprecated API usage, duplication, and low-value tests, and notes coupling it observes reaching outside the partition. Pass the partition's file list and the full project root path.
 - **Architecture agent** — one project-wide pass over the scoped tree for architecture rot: tangled module boundaries, circular dependencies, layering violations, and refactor candidates that span modules. Pass the partition map and the full project root path.
 
 If more partitions exist than fit a single fan-out, group related directories so the partition agents stay within a manageable batch, and note the grouping in the report.
@@ -75,6 +75,7 @@ Output the summary and priority matrix as text. Then write `.turbo/technical-deb
 | Deprecated API usage | <N> | <N> |
 | Duplication clusters | <N> | <N> |
 | Architecture rot | <N> | <N> |
+| Low-value tests | <N> | <N> |
 
 ## Priority Matrix
 
@@ -108,6 +109,9 @@ Ranked by impact against refactor effort. Take quick wins first; schedule strate
 <findings>
 
 ### Architecture Rot
+<findings>
+
+### Low-Value Tests
 <findings>
 
 ---

@@ -1,6 +1,6 @@
 # Debt Reviewer Guidelines
 
-Scan the assigned scope for structural technical debt and return structured findings. Cover the dimensions named in your prompt: partition agents cover complexity hotspots, deprecated API usage, and duplication; the architecture agent covers architecture rot project-wide. Do not modify code, propose a full implementation, or write files.
+Scan the assigned scope for structural technical debt and return structured findings. Cover the dimensions named in your prompt: partition agents cover complexity hotspots, deprecated API usage, duplication, and low-value tests; the architecture agent covers architecture rot project-wide. Leave the shared working tree unmodified, and do not propose a full implementation or write files outside an isolated worktree used for verification.
 
 ## Contents
 
@@ -10,6 +10,7 @@ Scan the assigned scope for structural technical debt and return structured find
 - Dimension 2: Deprecated API Usage
 - Dimension 3: Duplication Clusters
 - Dimension 4: Architecture Rot
+- Dimension 5: Low-Value Tests
 - Impact and Effort Rubric
 - Output Format
 
@@ -82,6 +83,25 @@ Look for:
 
 Report the modules involved, the dependency or boundary problem, and the refactor direction (introduce a boundary/interface, invert a dependency, extract a shared layer, merge or split modules).
 
+## Dimension 5: Low-Value Tests
+
+Tests that cost maintenance without independent protection. Cover the test files in your partition, and read across the tree for the production code they exercise and the tests that overlap them.
+
+Look for:
+
+- A scenario already pinned by a test at a stronger boundary, or replayed at every layer it crosses.
+- Assertions on implementation (source text, import or export lists, private call shapes) that break under a behavior-preserving refactor.
+- Production exports, flags, or hooks that no production caller uses and that exist only for tests.
+- Tests that cannot fail when the behavior they guard breaks: no assertion when the guarded behavior is more than not throwing, an expected value computed by the code under test, a mock that implements the asserted behavior, a name that promises more than the input exercises, an assertion that reads a surface the code under test does not write, or a mechanism other than the one under test producing the same observable.
+
+Report a redundant test scenario here rather than under Duplication Clusters; duplicated test setup, fixtures, and helpers stay under Duplication Clusters.
+
+Before flagging, read the complete test, the production code it exercises, and the tests that overlap it. Flag only when the recommended refactor removes no protection the tests provide today: name the test that guards the behavior afterward, or, for a test that cannot fail, state that it guards nothing. Public API, protocol, persisted format, migration, security, and platform contracts count as behavior, and a source-text check that is the cheapest guard on a user-facing name, key, or path guards one. A slow or static test is not low-value for that reason alone.
+
+When the suite can run in an isolated worktree, verify delete findings by mutation: for each behavior the candidate asserts, mutate that behavior and confirm the candidate fails, then delete the candidate and confirm the named test fails against the same mutation. For a test that cannot fail, confirm it passes against a mutation of the behavior it names. Before each suite run, confirm with `git diff` in the worktree that the mutation changed the intended file, and count a test as failing only when the suite reports it failing. For every other finding, and when the suite cannot run, state that the finding rests on inspection alone.
+
+Rate impact by how often the test must change for behavior-preserving edits and how much production surface its seam holds open. Report the test or cluster (all locations), the named guard, and one recommended refactor: delete the test, fold it into an existing test's cases, move it to the boundary that owns the behavior, rewrite its assertions against observable behavior, or remove the test-only seam from production code.
+
 ## Impact and Effort Rubric
 
 Tag every finding with both axes so the report can rank them.
@@ -108,9 +128,10 @@ Return findings as a single structured markdown block. Group by dimension; state
 ### <Dimension>
 
 **Finding:** <one-line summary>
-**Location:** <path:line or path (lines start-end); list all sites for duplication>
+**Location:** <path:line or path (lines start-end); list all sites for duplication and test clusters>
 **Impact:** <High|Medium|Low> — <why>
 **Effort:** <High|Medium|Low> — <why>
+**Guard:** <low-value tests only: the test that guards the behavior afterward, or "none: cannot fail"; mutation-verified or inspection alone>
 **Recommended refactor:** <the concrete change>
 
 (repeat per finding)
