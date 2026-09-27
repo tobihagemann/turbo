@@ -33,7 +33,7 @@ Turbo builds on infrastructure your project already has:
 - **Tests:** The [`/polish-code`](../claude/skills/polish-code/SKILL.md) loop inside [`/finalize`](../claude/skills/finalize/SKILL.md) runs your test suite and reviews coverage gaps. Without tests, there's no safety net. If your project has none, [`/smoke-test`](../claude/skills/smoke-test/SKILL.md) can fill the gap by launching your app and driving it through the [testing tools](#browser-and-ui-testing-tools) in the same loop, but real tests are always better.
 - **Linters and formatters:** The [`/polish-code`](../claude/skills/polish-code/SKILL.md) loop runs your formatter and linter before code review. If you don't have one, style issues slip through.
 - **Pre-commit hooks:** When [`/finalize`](../claude/skills/finalize/SKILL.md) commits, it triggers any pre-commit hooks you have configured and fixes hook failures before retrying. If your project uses tools like `husky`, `lint-staged`, or `pre-commit`, Turbo works with them automatically.
-- **Existing analysis tools:** Skills like [`/find-dead-code`](../claude/skills/find-dead-code/SKILL.md) and [`/assess-technical-debt`](../claude/skills/assess-technical-debt/SKILL.md) lean on integrated tools (`knip`, `vulture`, `periphery`, `lizard`, `jscpd`) when your project already has them.
+- **Existing analysis tools:** [`/assess-technical-debt`](../claude/skills/assess-technical-debt/SKILL.md) leans on integrated tools (`lizard`, `jscpd`) when your project already has them.
 
 ## Browser and UI Testing Tools
 

@@ -224,6 +224,6 @@ Present the user with a summary of how to get started:
 4. **Peer review:** Claude uses Codex as the independent reviewer through `/peer-review`.
 5. **Self-improvement:** Run `/self-improve` before context runs out to capture lessons for future sessions.
 6. **Track improvements:** When noticing something out of scope, run `/note-improvement` so it doesn't get lost.
-7. **Artifacts:** Plans, audit reports, and improvements live under `.turbo/`.
+7. **Artifacts:** Plans, reports, and improvements live under `.turbo/`.
 8. **Updating:** Run `/update-turbo` to update all skills from the local repo with conflict detection and changelog.
 9. **Browser and UI testing:** For web app testing, enable the `claude-in-chrome` MCP via `/mcp` or start Claude Code with `--chrome`. For native app testing on macOS, enable the `computer-use` MCP via `/mcp`. Both are per-project settings. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.

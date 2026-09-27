@@ -19,7 +19,7 @@ At the start, use `update_plan` to track each step, restating any remaining step
 6. Resolve ambiguities
 7. Run `$resolve-findings` skill
 8. Verify fixes
-9. Run `$answer-reviewer-questions` skill
+9. Answer reviewer questions
 10. Run `$reply-to-pr-threads` skill
 11. Run `$reply-to-pr-conversation` skill
 12. Summary
@@ -114,7 +114,7 @@ Whenever the item is costly to reverse (its resolution establishes a pattern oth
 
 If there are no accepted findings to implement, skip to Step 9.
 
-Run the `$resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. Its direct path commits and pushes before returning; Steps 10 and 11 replies reference that commit SHA.
+Run the `$resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. It commits and pushes before returning; Steps 10 and 11 replies reference that commit SHA.
 
 ## Step 8: Verify Fixes
 
@@ -126,13 +126,13 @@ For each finding that was fixed in Step 7, verify the fix actually addresses the
 
 If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 10 (for inline threads), Step 11 (for issue-comment findings), and Step 12 (for review-body findings) report it correctly.
 
-## Step 9: Run `$answer-reviewer-questions` Skill
+## Step 9: Answer Reviewer Questions
 
-Run the `$answer-reviewer-questions` skill on question items whose source is `inline-thread`. It produces raw answer text per thread.
+For each question item whose source is `inline-thread`, run the `$recall-reasoning` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the reasoning it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it finds no session history, compose the answer from the current code and record that grounding for Step 12. Leave out any mention of Codex, session history, or recalled reasoning, and leave voice rules and reply formatting to Step 10.
 
 Issue-comment questions are composed during Step 11's assembly and posted by `$reply-to-pr-conversation`. They have no file and line to ground with `$recall-reasoning`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 12.
 
-If there are no inline-thread questions, skip the skill invocation.
+If there are no inline-thread questions, skip this step.
 
 ## Step 10: Run `$reply-to-pr-threads` Skill
 
@@ -171,7 +171,7 @@ After processing all items, present a summary grouped by source.
 - Already addressed by commits (list file path, one-line summary, addressing commit SHA)
 - Fixed (change requests with accepted verdicts)
 - Skipped (false positives or disproportionate changes)
-- Questions answered (split into: answered from recalled transcript, answered from current code)
+- Questions answered (split into: answered from recalled session history, answered from current code)
 - Clarification questions posted
 
 **Review-body findings:**
@@ -193,6 +193,5 @@ After processing all items, present a summary grouped by source.
 ## Rules
 
 - Process inline threads in file order to minimize context switching. Handle review-body and issue-comment findings after inline threads.
-- Stale references and default-to-skip policy are handled by the `$evaluate-findings` skill.
 - When a thread has multiple comments (discussion), read the full thread before deciding.
 - The first comment in each thread is the original review comment; subsequent comments are replies.

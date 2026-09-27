@@ -243,6 +243,6 @@ Present the user with a summary of how to get started:
 4. **Peer review:** Codex uses Claude as the independent reviewer through `$peer-review`.
 5. **Self-improvement:** Run `$self-improve` before context runs out to capture lessons for future sessions.
 6. **Track improvements:** When noticing something out of scope, run `$note-improvement` so it doesn't get lost.
-7. **Artifacts:** Plans, audit reports, and improvements live under `.turbo/`.
+7. **Artifacts:** Plans, reports, and improvements live under `.turbo/`.
 8. **Updating:** Run `$update-turbo` to update installed Codex skills from the local repo with conflict detection and changelog.
 9. **Browser and UI testing:** For web app testing, enable the `browser-use@openai-bundled` plugin. For desktop UI testing, enable the `computer-use@openai-bundled` plugin. Both are bundled in Codex's `openai-bundled` marketplace. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.

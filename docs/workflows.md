@@ -49,24 +49,6 @@ When you're ready to act, [`/implement-improvements`](../claude/skills/implement
 - **`investigate`** → [`/investigate`](../claude/skills/investigate/SKILL.md), then [`/implement`](../claude/skills/implement/SKILL.md)
 - **`plan`** → [`/turboplan`](../claude/skills/turboplan/SKILL.md)
 
-## Out-of-Loop Pipelines
-
-Two pipelines run alongside the main loop rather than inside it. They share the same composition style as the plan-implement-finalize core.
-
-### Project-Wide Audit
-
-[`/audit`](../claude/skills/audit/SKILL.md) fans out to all analysis skills in parallel (correctness, security, API usage, consistency, simplicity, test coverage, dependencies, tooling, dead code, agentic setup), evaluates the combined findings, and produces a health report at `.turbo/audit.md` with a dashboard and an interactive HTML version. Run it to assess codebase health before a major release, after onboarding to a new project, or on a regular cadence.
-
-[`/audit`](../claude/skills/audit/SKILL.md) is analysis-only: it produces the report and stops there. When you're ready to act on findings, use [`/apply-findings`](../claude/skills/apply-findings/SKILL.md) or address them manually.
-
-### Developer Onboarding
-
-[`/onboard`](../claude/skills/onboard/SKILL.md) generates a comprehensive onboarding guide for new developers joining a project. It composes [`/map-codebase`](../claude/skills/map-codebase/SKILL.md) (architecture), [`/review-tooling`](../claude/skills/review-tooling/SKILL.md) (development workflow), and [`/review-agentic-setup`](../claude/skills/review-agentic-setup/SKILL.md) (AI coding infrastructure) with inline agents for prerequisites, troubleshooting, and next steps (top GitHub issues). The result is `.turbo/onboarding.md` with an interactive HTML version.
-
-The guide covers both traditional onboarding (setup, build commands, tooling) and agentic onboarding (what CLAUDE.md/AGENTS.md cover, installed skills, MCP servers, Claude Code vs Codex CLI compatibility). If a [threat model](../claude/skills/create-threat-model/SKILL.md) exists, security considerations are included too.
-
-[`/map-codebase`](../claude/skills/map-codebase/SKILL.md) also works standalone when you just need the architecture report without the full onboarding guide.
-
 ## Browser and UI Testing
 
 [`/smoke-test`](../claude/skills/smoke-test/SKILL.md) and [`/exploratory-test`](../claude/skills/exploratory-test/SKILL.md) (Claude) / [`$smoke-test`](../codex/skills/smoke-test/SKILL.md) and [`$exploratory-test`](../codex/skills/exploratory-test/SKILL.md) (Codex) automate manual testing — the kind of hands-on verification you'd normally do yourself. See [Browser and UI Testing Tools](requirements.md#browser-and-ui-testing-tools) for what drives them in each edition.

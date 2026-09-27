@@ -4,7 +4,7 @@
 
 ## The Puzzle Piece Philosophy
 
-Every skill is a self-contained piece. Pipeline skills like [`/finalize`](../claude/skills/finalize/SKILL.md) and [`/audit`](../claude/skills/audit/SKILL.md) compose them into workflows, but each piece works independently too.
+Every skill is a self-contained piece. Pipeline skills like [`/turboplan`](../claude/skills/turboplan/SKILL.md) and [`/finalize`](../claude/skills/finalize/SKILL.md) compose them into workflows, but each piece works independently too.
 
 Want to swap a piece? For example:
 

@@ -20,14 +20,6 @@ tests are failing in the auth module, can you please /investigate?
 /review-code
 /review-pr for PR #42
 
-# Auditing project health
-/audit
-read @.turbo/audit.md and /apply-findings  ← follow-up session
-
-# Onboarding to a new project
-/onboard
-/map-codebase  ← architecture report only
-
 # Resolving PR feedback
 /resolve-pr-comments
 

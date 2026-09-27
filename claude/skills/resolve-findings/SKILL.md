@@ -1,37 +1,35 @@
 ---
 name: resolve-findings
-description: "Choose an implementation path (direct or plan) for evaluated findings and dispatch it. Direct path applies fixes directly; plan path runs /turboplan. Use after /evaluate-findings has tagged findings and they need to be implemented, or when the user asks to \"resolve findings\", \"apply evaluated findings\", or \"dispatch findings to implementation\"."
+description: "Implement evaluated findings: load code-style rules, apply the accepted fixes, then close out the change with full or quick QA. Use after /evaluate-findings has tagged findings and they need to be implemented, or when the user asks to \"resolve findings\", \"apply evaluated findings\", or \"dispatch findings to implementation\"."
 ---
 
 # Resolve Findings
 
-Choose a path for evaluated findings and run it. Direct path applies fixes directly; plan path runs `/turboplan`.
+Apply evaluated findings and close out the change.
 
 ## Task Tracking
 
 At the start, use `TaskCreate` to create a task for each step:
 
-1. Choose path
-2. Run the chosen path
+1. Run `/code-style` skill
+2. Run `/apply-findings` skill
+3. Close out the change
 
-## Step 1: Choose Path
+## Step 1: Run `/code-style` Skill
 
-Present a summary of accepted findings (Apply verdict): count by complexity (mechanical fixes vs. architectural or design changes). Then use `AskUserQuestion` to let the user choose:
+Run the `/code-style` skill to load existence, reuse, mirror, and symmetry rules before editing.
 
-- **Plan** — Run `/turboplan` for drafting, refinement, approval, implementation, and finalize
-- **Direct** — Run `/apply-findings`, then close out the change
+## Step 2: Run `/apply-findings` Skill
 
-Suggest Plan when findings include complex or architectural changes. Suggest Direct when all findings are mechanical fixes.
+Run the `/apply-findings` skill on the evaluated findings.
 
-Add a **Get a second opinion** option whenever the findings would establish a pattern others will follow, change an interface, or commit to a data shape, and whenever neither path earns the suggestion with conviction. It runs the `/consult-codex` skill for which path the findings warrant on technical merit. Then resolve the path with that answer in hand, re-asking when the choice stays the user's.
+## Step 3: Close Out the Change
 
-## Step 2: Run the Chosen Path
+If no changes were made, skip this step.
 
-Read the reference file for the confirmed path and follow its phases:
+Use `AskUserQuestion` to choose how to close out the change:
 
-- **Direct path** — [references/direct-path.md](references/direct-path.md)
-- **Plan path** — [references/plan-path.md](references/plan-path.md)
-
-State the chosen path before continuing with the reference file.
+- **Full QA** — run the `/finalize` skill
+- **Quick close** — run the `/quick-finalize` skill
 
 Then use the TaskList tool and proceed to any remaining task.

@@ -111,7 +111,7 @@ Ranked by impact against refactor effort. Take quick wins first; schedule strate
 <findings>
 
 ---
-This assessment covers in-code structural debt. For dependency freshness, dead code, and diff-scoped bugs, run `/review-dependencies`, `/find-dead-code`, and `/review-code`.
+This assessment covers in-code structural debt. For dependency freshness and diff-scoped bugs, run `/review-dependencies` and `/review-code`.
 ```
 
 ## Step 5: Generate HTML Report

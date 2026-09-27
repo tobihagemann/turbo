@@ -66,8 +66,6 @@ You can start with any of these skills; you don't need to learn the whole pipeli
 | Understand a failing test or bug | `/investigate` | `$investigate` |
 | Review a pull request | `/review-pr` | `$review-pr` |
 | Finish and ship a change | `/finalize` | `$finalize` |
-| Check project health | `/audit` | `$audit` |
-| Get oriented in a new codebase | `/onboard` | `$onboard` |
 
 Skills also work naturally in a request: `tests are failing in the auth module, can you please /investigate?`
 
@@ -83,7 +81,7 @@ You stay involved in choosing the approach and reviewing the result. Turbo works
 
 ## Go Deeper
 
-- **[Workflow guide](docs/workflows.md)** — planning and finalization diagrams, self-improvement, audits, onboarding, and browser testing.
+- **[Workflow guide](docs/workflows.md)** — planning and finalization diagrams, self-improvement, and browser testing.
 - **[Prompt examples](docs/examples.md)** — requests you can copy into your next session.
 - **[Requirements](docs/requirements.md)** — accounts, what setup changes, and the project infrastructure Turbo builds on.
 - **[Customization](docs/customization.md)** — swap skills, understand harness instructions, and update your installation.
