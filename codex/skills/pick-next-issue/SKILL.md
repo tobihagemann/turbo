@@ -12,7 +12,7 @@ Rank open GitHub issues by engagement and plan the selected issue.
 Run `gh issue list` to fetch open issues with engagement data:
 
 ```bash
-gh issue list --state open --json number,title,url,reactionGroups,comments,labels,createdAt --limit 50
+gh issue list --state open --json number,title,body,url,reactionGroups,comments,labels,createdAt --limit 50
 ```
 
 Calculate an engagement score for each issue:

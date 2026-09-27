@@ -45,8 +45,7 @@ Take this step only when the user chose separate branches and PRs.
 
 ### Prepare the working tree
 
-1. Save all staged changes, then unstage everything (`git reset`)
-2. Stash all changes including untracked files (`git stash --include-untracked`) so files can be selectively restored per group
+Stash all changes including untracked files (`git stash --include-untracked`) without unstaging first.
 
 Verify `git stash list` shows the saved changes before proceeding.
 
@@ -59,7 +58,7 @@ For each group:
 1. **Determine branch**: If the current branch already has a PR and this group's changes align with the PR's purpose, stay on the current branch. Otherwise, use `request_user_input` to confirm the proposed branch name and create it from the appropriate base:
    - Group that builds on an earlier group: branch from that group's branch (stacked)
    - Group with no dependencies: branch from the default branch (independent)
-2. **Restore and stage** this group's files from the stash (`git checkout stash -- <files>` restores and stages in one operation). For files with hunks belonging to different groups, restore the file, then use `apply_patch` to remove the unwanted hunks before staging: for an independent group, remove every other group's hunks; for a stacked group, remove only later groups' hunks (earlier groups' hunks are already in its base). After committing, reset the working tree (`git checkout -- .`) to clean up before the next group.
+2. **Restore and stage** this group's files from the stash's staged snapshot (`git checkout 'stash^2' -- <files>` restores and stages in one operation). For files with hunks belonging to different groups, restore the file, use `apply_patch` to remove the unwanted hunks, then re-stage it (`git add <file>`): for an independent group, remove every other group's hunks; for a stacked group, remove only later groups' hunks (earlier groups' hunks are already in its base). After committing, reset the working tree (`git checkout -- .`) to clean up before the next group.
 3. **Commit and push**: run the `$commit-rules` skill to load commit message rules, commit the staged changes following them, then `git push`
 4. **Create or update PR**:
    - Staying on existing branch with a PR: run the `$update-pr` skill
@@ -79,8 +78,7 @@ Take this step only when the user chose to commit each group. This path stays on
 
 ### Prepare the working tree
 
-1. Save all staged changes, then unstage everything (`git reset`)
-2. Stash all changes including untracked files (`git stash --include-untracked`) so files can be selectively restored per group
+Stash all changes including untracked files (`git stash --include-untracked`) without unstaging first.
 
 Verify `git stash list` shows the saved changes before proceeding.
 
@@ -90,7 +88,7 @@ Run the `$commit-rules` skill to load commit message rules. Use `update_plan` to
 
 For each group:
 
-1. **Restore and stage** this group's files from the stash (`git checkout stash -- <files>` restores and stages in one operation). For files with hunks belonging to different groups, restore the file, then use `apply_patch` to remove the hunks that belong to later groups before staging.
+1. **Restore and stage** this group's files from the stash's staged snapshot (`git checkout 'stash^2' -- <files>` restores and stages in one operation). For files with hunks belonging to different groups, restore the file, use `apply_patch` to remove the hunks that belong to later groups, then re-stage it (`git add <file>`).
 2. **Commit** the staged changes with a message following the loaded rules. If a commit hook modifies files, re-stage them before retrying.
 3. Reset the working tree (`git checkout -- .`) to clean up before the next group.
 
@@ -105,7 +103,6 @@ Then call `update_plan` to mark this step completed and continue with the next s
 ## Rules
 
 - Run the `$commit-rules` skill before every commit; do not commit without loading it first.
-- Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report any stashed file that no group shipped, rather than discarding it. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery. A group whose PR was handed over for editing rather than posted is not a failure; record it in the summary and continue.
-- Stacked PRs target the previous group's branch. Independent PRs target the default branch.
+- Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report every stashed change that no group shipped, rather than discarding it: re-apply the unstaged changes with `git diff 'stash^2' stash | git apply --3way --allow-empty`, restore untracked files with `git checkout 'stash^3' -- <files>`, then unstage everything with `git reset -q`. Report any hunk that does not apply. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery. A group whose PR was handed over for editing rather than posted is not a failure; record it in the summary and continue.
 - For stacked groups, the PR description should note the dependency chain.
 - Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

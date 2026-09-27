@@ -1,6 +1,6 @@
 ---
 name: commit-rules
-description: "Shared commit message rules and technical constraints referenced by /stage-commit and /commit-staged. Not typically invoked directly."
+description: "Shared commit message rules and technical constraints for skills that write commits. Not typically invoked directly."
 ---
 
 # Commit Rules

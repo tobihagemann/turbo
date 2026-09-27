@@ -1,6 +1,6 @@
 # Problem Type Playbooks
 
-Type-specific investigation strategies. Load the playbook matching the classified type from Phase 1.
+Type-specific investigation strategies. Load the playbook matching the classified type from Step 1.
 
 ## Runtime Error
 

@@ -14,7 +14,7 @@ Before coding, understand the context and commit to a clear aesthetic direction.
 Output three things as text before coding:
 
 - **Visual thesis**: one sentence describing mood, material, and energy (e.g., "brutally minimal dark interface with surgical precision" or "high-contrast editorial magazine feel with oversized serif headlines")
-- **Content plan**: hero, support, detail, final CTA
+- **Content plan**: the sections in order (hero, support, detail, final CTA for a marketing page; the working surface first for product UI)
 - **Interaction thesis**: 2-3 motion ideas that change the feel of the page
 
 For each, consider:

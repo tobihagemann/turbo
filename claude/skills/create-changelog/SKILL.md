@@ -19,7 +19,7 @@ Use `git rev-parse --show-toplevel` to find the repository root. Look for the ch
 
 Collect release history from the most authoritative source available:
 
-1. **GitHub releases** (preferred): Run `gh release list --limit 100 --json tagName,name,publishedAt,body` to get release notes. For each release, parse the body into changelog entries.
+1. **GitHub releases** (preferred): Run `gh release list --limit 100 --json tagName,name,publishedAt` to list releases. For each release, read its notes with `gh release view <tag> --json body --jq .body` and parse them into changelog entries.
 2. **Git tags** (fallback): If no GitHub releases exist, run `git tag --sort=-v:refname` to list tags. For each consecutive tag pair, run `git log <older-tag>..<newer-tag> --oneline` to collect commit summaries.
 
 For each version, classify entries into the standard change types and apply the changelog-worthiness criteria per `/changelog-rules`.
