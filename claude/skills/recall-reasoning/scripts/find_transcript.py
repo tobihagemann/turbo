@@ -5,14 +5,16 @@ Usage:
   python3 scripts/find_transcript.py --commit <sha>
   python3 scripts/find_transcript.py --file <path>[:<line>]
   python3 scripts/find_transcript.py --file <path>:<line> --window-days 14
+  python3 scripts/find_transcript.py --phrase "<text from the passage>"
 
 Resolves a commit SHA (directly or via `git blame`), locates candidate Claude Code
 project transcript directories under the effective configuration home
 (`CLAUDE_CONFIG_DIR` or `~/.claude`), ranks candidate transcripts by time overlap and
 file/tool-use references, and extracts relevant user prompts and assistant text from
-the top candidate.
+the top candidate. With `--phrase`, skips git entirely and ranks the project's
+transcripts by mentions of the phrase instead, for changes with no commit to resolve.
 
-Output: JSON on stdout with commit metadata, candidate list, and excerpts.
+Output: JSON on stdout with commit metadata (null with `--phrase`), candidate list, and excerpts.
 Exit codes: 0 on success (even if no transcripts found), 1 on usage errors, 2 on git failures.
 """
 
@@ -21,6 +23,7 @@ import json
 import os
 import subprocess
 import sys
+from bisect import bisect_left
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -255,6 +258,78 @@ def score_transcript(records, commit_ts, touched_files):
     return score, reasons, relevant_indices
 
 
+def normalize_text(text):
+    """Collapse whitespace and case so a phrase matches across reflowed or recased copies."""
+    return ' '.join(text.split()).casefold()
+
+
+def iter_strings(value):
+    """Yield every string nested in a message part, including tool inputs and results in full."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for v in value.values():
+            yield from iter_strings(v)
+    elif isinstance(value, list):
+        for v in value:
+            yield from iter_strings(v)
+
+
+def score_phrase(records, phrase):
+    """Return (score, reasons, relevant_record_indices) for how often this transcript handles the phrase."""
+    needle = normalize_text(phrase)
+    hits = {'tool_use': 0, 'tool_result': 0, 'text': 0}
+    relevant_indices = []
+    last_match = None
+
+    def message_parts(record):
+        content = (record.get('message') or {}).get('content')
+        if isinstance(content, str):
+            return [{'type': 'text', 'text': content}]
+        if not isinstance(content, list):
+            return []
+        return [part for part in content if isinstance(part, dict)]
+
+    # Phrase lookups carry the phrase in their command and echo it in their output,
+    # so a session that ran one, including the running one, would match itself.
+    lookup_ids = set()
+    for r in records:
+        for part in message_parts(r):
+            if part.get('type') != 'tool_use':
+                continue
+            strings = list(iter_strings(part.get('input')))
+            is_lookup = any('find_transcript.py' in s for s in strings) and any('--phrase' in s for s in strings)
+            if is_lookup and part.get('id'):
+                lookup_ids.add(part['id'])
+
+    for idx, r in enumerate(records):
+        matched = False
+        for part in message_parts(r):
+            if part.get('id') in lookup_ids or part.get('tool_use_id') in lookup_ids:
+                continue
+            if not any(needle in normalize_text(s) for s in iter_strings(part)):
+                continue
+            kind = part.get('type')
+            hits[kind if kind in hits else 'text'] += 1
+            matched = True
+        if matched:
+            relevant_indices.append(idx)
+            last_match = r.get('timestamp') or last_match
+
+    # Tool calls carrying the phrase are edits or commands on the passage, the strongest signal.
+    score = 3 * hits['tool_use'] + hits['tool_result'] + hits['text']
+    reasons = []
+    if hits['tool_use']:
+        reasons.append(f'phrase in {hits["tool_use"]} tool call(s)')
+    if hits['tool_result']:
+        reasons.append(f'phrase in {hits["tool_result"]} tool result(s)')
+    if hits['text']:
+        reasons.append(f'phrase in {hits["text"]} message(s)')
+    if last_match:
+        reasons.append(f'last match at {last_match}')
+    return score, reasons, relevant_indices
+
+
 NOISE_PREFIXES = (
     '<command-message>',
     '<command-name>',
@@ -297,17 +372,19 @@ def clean_text(content, rtype):
     return text or None
 
 
-def extract_excerpts(records, relevant_indices, commit_ts, max_excerpts=40):
-    """Return reasoning-relevant excerpts.
+def extract_excerpts(records, relevant_indices, max_excerpts=40):
+    """Return reasoning-relevant excerpts in transcript order.
 
-    Always captures every non-sidechain user prompt in the session (the intent is gold),
-    plus substantive assistant text near relevant tool calls (filters out short transitions).
+    Draws on every non-sidechain user prompt in the session (the intent is gold), plus
+    substantive assistant text near relevant tool calls (filters out short transitions).
+    When the cap binds, records nearest a relevant one win, so a long session's early
+    prompts cannot crowd out the matches.
     """
     excerpts = []
-    seen = set()
+    relevant = sorted(set(relevant_indices))
 
     interesting = set()
-    for idx in relevant_indices:
+    for idx in relevant:
         for j in range(max(0, idx - 2), min(len(records), idx + 3)):
             interesting.add(j)
 
@@ -315,10 +392,13 @@ def extract_excerpts(records, relevant_indices, commit_ts, max_excerpts=40):
         if r.get('type') == 'user' and not r.get('isSidechain'):
             interesting.add(idx)
 
-    for idx in sorted(interesting):
-        if idx in seen:
-            continue
-        seen.add(idx)
+    def distance(idx):
+        if not relevant:
+            return 0
+        pos = bisect_left(relevant, idx)
+        return min(abs(idx - relevant[p]) for p in (pos - 1, pos) if 0 <= p < len(relevant))
+
+    for idx in sorted(interesting, key=lambda i: (distance(i), i)):
         r = records[idx]
         rtype = r.get('type')
         if rtype not in ('user', 'assistant'):
@@ -341,13 +421,48 @@ def extract_excerpts(records, relevant_indices, commit_ts, max_excerpts=40):
         if len(excerpts) >= max_excerpts:
             break
 
+    excerpts.sort(key=lambda e: e['index'])
     return excerpts
+
+
+def transcript_mtime(path):
+    return datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
+
+
+def rank_transcripts(paths, repo_root, score_records, limit):
+    """Score the project's transcripts; return (top candidates, directories holding project transcripts)."""
+    scored = []
+    matching_dirs = set()
+    for path in paths:
+        records = load_transcript_records(path)
+        if not records or not transcript_belongs_to_project(records, repo_root):
+            continue
+        matching_dirs.add(path.parent)
+        score, reasons, rel_idx = score_records(records)
+        if score <= 0:
+            continue
+        excerpts = extract_excerpts(records, rel_idx)
+        scored.append({
+            'session_id': path.stem,
+            'jsonl_path': str(path),
+            'mtime': transcript_mtime(path).isoformat(),
+            'score': score,
+            'match_reasons': reasons,
+            'excerpt_count': len(excerpts),
+            'excerpts': excerpts,
+        })
+
+    scored.sort(key=lambda c: c['score'], reverse=True)
+    return scored[:limit], sorted(matching_dirs)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--commit', help='commit SHA to look up (overrides --file)')
     parser.add_argument('--file', help='file path, optionally FILE:LINE to use git blame')
+    parser.add_argument('--phrase',
+                        help='distinctive text from the passage, for changes with no commit '
+                             '(overrides --commit and --file; works outside git)')
     parser.add_argument('--window-days', type=int, default=14,
                         help='max days between commit and transcript mtime (default 14)')
     parser.add_argument('--limit', type=int, default=3,
@@ -356,84 +471,70 @@ def main():
                         help='project directory (default: current working directory)')
     args = parser.parse_args()
 
-    if not args.commit and not args.file:
-        print('error: --commit or --file is required', file=sys.stderr)
+    if not args.commit and not args.file and not args.phrase:
+        print('error: --commit, --file, or --phrase is required', file=sys.stderr)
+        return 1
+    if args.phrase is not None and not args.phrase.strip():
+        print('error: --phrase must contain text', file=sys.stderr)
         return 1
 
     repo_root_raw = run_git(['rev-parse', '--show-toplevel'], cwd=args.cwd)
-    if repo_root_raw is None:
-        print('error: not a git repository', file=sys.stderr)
-        return 2
-    repo_root = Path(repo_root_raw.strip()).resolve()
 
-    sha = resolve_commit(args.commit, args.file, repo_root)
-    if sha is None:
-        print(json.dumps({
-            'status': 'no-commit',
-            'error': 'could not resolve a commit (blame returned no author, or commit not found)',
-        }))
-        return 0
+    if args.phrase:
+        # Outside git, the given directory stands in for the repo root.
+        repo_root = Path(repo_root_raw.strip() if repo_root_raw else args.cwd).resolve()
+        result = {'status': 'ok', 'commit': None, 'phrase': args.phrase}
+        keep_path = lambda path: True
+        score_records = lambda records: score_phrase(records, args.phrase)
+        no_match_error = 'no project transcript mentions the phrase'
+    else:
+        if repo_root_raw is None:
+            print('error: not a git repository', file=sys.stderr)
+            return 2
+        repo_root = Path(repo_root_raw.strip()).resolve()
 
-    meta = get_commit_meta(sha, repo_root)
-    if meta is None:
-        print(json.dumps({'status': 'no-commit', 'error': f'commit {sha} not found'}))
-        return 0
+        sha = resolve_commit(args.commit, args.file, repo_root)
+        if sha is None:
+            print(json.dumps({
+                'status': 'no-commit',
+                'error': 'could not resolve a commit (blame returned no author, or commit not found)',
+            }))
+            return 0
 
-    commit_ts = parse_timestamp(meta['timestamp'])
+        meta = get_commit_meta(sha, repo_root)
+        if meta is None:
+            print(json.dumps({'status': 'no-commit', 'error': f'commit {sha} not found'}))
+            return 0
+
+        commit_ts = parse_timestamp(meta['timestamp'])
+        window = timedelta(days=args.window_days)
+        result = {'status': 'ok', 'commit': meta}
+        # Coarse pre-filter: skip files whose mtime is far from the commit to avoid
+        # loading and parsing every historical transcript. score_transcript() uses
+        # the precise in-file timestamps for the final time-overlap check.
+        keep_path = lambda path: commit_ts is None or abs(transcript_mtime(path) - commit_ts) <= window
+        score_records = lambda records: score_transcript(records, commit_ts, meta['files'])
+        no_match_error = 'no transcript in the window matched the touched files'
+
+    result.update({'project_dir': None, 'project_dirs': [], 'candidates': []})
+
     storage_dirs = project_transcript_dirs()
-
-    result = {
-        'status': 'ok',
-        'commit': meta,
-        'project_dir': None,
-        'project_dirs': [],
-        'candidates': [],
-    }
-
     if not storage_dirs:
         result['status'] = 'no-transcripts'
         result['error'] = 'no Claude Code transcript directories under the effective config home'
         print(json.dumps(result, indent=2))
         return 0
 
-    touched = meta['files']
-    window = timedelta(days=args.window_days)
-    scored = []
-    matching_dirs = set()
-    for path in iter_transcripts(storage_dirs):
-        # Coarse pre-filter: skip files whose mtime is far from the commit to avoid
-        # loading and parsing every historical transcript. score_transcript() uses
-        # the precise in-file timestamps for the final time-overlap check.
-        mtime = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
-        if commit_ts is not None and abs(mtime - commit_ts) > window:
-            continue
-        records = load_transcript_records(path)
-        if not records or not transcript_belongs_to_project(records, repo_root):
-            continue
-        matching_dirs.add(path.parent)
-        score, reasons, rel_idx = score_transcript(records, commit_ts, touched)
-        if score <= 0:
-            continue
-        excerpts = extract_excerpts(records, rel_idx, commit_ts)
-        scored.append({
-            'session_id': path.stem,
-            'jsonl_path': str(path),
-            'mtime': mtime.isoformat(),
-            'score': score,
-            'match_reasons': reasons,
-            'excerpt_count': len(excerpts),
-            'excerpts': excerpts,
-        })
+    paths = [path for path in iter_transcripts(storage_dirs) if keep_path(path)]
+    candidates, matching_dirs = rank_transcripts(paths, repo_root, score_records, args.limit)
+    result['candidates'] = candidates
+    result['project_dirs'] = [str(path) for path in matching_dirs]
 
-    scored.sort(key=lambda c: c['score'], reverse=True)
-    result['candidates'] = scored[: args.limit]
-    result['project_dirs'] = [str(path) for path in sorted(matching_dirs)]
-
-    if not result['candidates']:
+    if not candidates:
         result['status'] = 'no-match'
-        result['error'] = 'no transcript in the window matched the touched files'
+        result['error'] = no_match_error
     else:
-        result['project_dir'] = str(Path(result['candidates'][0]['jsonl_path']).parent)
+        result['project_dir'] = str(Path(candidates[0]['jsonl_path']).parent)
 
     print(json.dumps(result, indent=2))
     return 0
