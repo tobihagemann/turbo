@@ -1,6 +1,6 @@
 ---
 name: preview
-description: "Stand up the project's live app and hand it to the user to try a change firsthand, then gate on their verdict before continuing. Use when the user asks to \"preview the change\", \"let me try it\", \"spin up the app so I can test it\", \"set it up so I can poke at it\", or before finalizing a UI/UX change that needs human eyes."
+description: "Stand up the project's live app and hand it to the user to try a change firsthand, then act on their verdict once they reply. Use when the user asks to \"preview the change\", \"let me try it\", \"spin up the app so I can test it\", \"set it up so I can poke at it\", or before finalizing a UI/UX change that needs human eyes."
 ---
 
 # Preview
@@ -42,13 +42,15 @@ Output as text:
 - What changed
 - Each scenario worth trying, as many as the change needs: numbered steps naming the exact controls and inputs, the result the scenario should produce, and the judgment the user is being asked to make
 - When a verification pass preceded this hand-over, what it could not cover: paths needing real credentials, external services, or state unavailable in this session
+- How to reply once they have tried it: say it looks good, adding whether to keep the app running or shut it down, or describe what needs changing
 
-## Step 5: Verdict Gate
+Then end the turn, leaving every process this skill started running.
 
-Use `request_user_input` to ask the user for their verdict after they have tried the app. Three options, with keeping the app running as the default:
+## Step 5: Act on the User's Reply
 
-- **Looks good, keep it running** — leave every process this skill started running so the user can keep using the app.
-- **Looks good, shut it down** — stop every process this skill started, and revert every override this skill made in a service that keeps running.
-- **Needs changes** — note what the user wants different, make the change, rebuild or refresh the running app so it is live, then repeat this step's gate. When the user's response or session context surfaces further open issues, resolve every known issue — fixing and re-verifying each — before re-asking the verdict; the gate re-fires only once no known issue remains.
+A goal continuation turn that carries no reply from the user is not a verdict: end it without calling any tool and without advancing.
+
+- **Needs changes** — make the change the user describes, then rebuild or refresh the running app so it is live. When the reply or session context surfaces further open issues, fix and re-verify each. Once no known issue remains, output what changed and the scenarios worth retrying, close with Step 4's reply guidance, and end the turn again.
+- **Looks good** — when the user asks to shut the app down, stop every process this skill started, and revert every override this skill made in a service that keeps running. Otherwise leave everything running.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
