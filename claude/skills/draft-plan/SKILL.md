@@ -17,7 +17,8 @@ Use `TaskCreate` to create a task for each step:
 4. Escalate product decisions
 5. Deep-dive discussion
 6. Draft and write the plan file
-7. Present summary and finalize
+7. Present summary
+8. Act on the user's reply
 
 ## Step 1: Capture the Task and Pick a Slug
 
@@ -186,15 +187,19 @@ Files to read in full before starting implementation:
 - **Context Files**: Curate the minimum set needed to become productive. Do not dump every file touched — only the ones that anchor understanding.
 - **Scope**: Plan content describes what to build. Do not embed task tracking, skill loading, `/finalize` invocation, test commands, or commit instructions in the plan content — those are execution-wrapper concerns. One plan file covers one implementation run. When later work must wait on an external gate the implementation cannot pass itself, such as a verified deploy of the earlier work, write that later work as a separate plan file with the same structure, rather than marking a stopping point inside one plan. Derive its slug from the later work with Step 1's rules and state its path before writing it. State the gate in the later plan's Context section, and name the later plan's path in the earlier plan's Context section. Plan size never justifies a second file.
 
-## Step 7: Present Summary and Finalize
+## Step 7: Present Summary
 
 Present a brief summary of the drafted plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template. When Step 6 also wrote a gated plan, summarize each file, and name which one to implement first and the gate the later one waits on.
 
-Then use `AskUserQuestion` to offer these paths:
+Close with how to reply: approve the plan as final, or describe what to change. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the plan text.
 
-- **Approve** (Recommended) — the plan is final.
-- **Revise** — the user describes what to change. Apply the edits to the affected plan file, then re-summarize and re-present.
-- **Prototype first** — offer this path when an unknown that only a built artifact settles is still open. Run the `/prototype` skill, apply what it settled to the plan file, then re-summarize and re-present. Mark it "(Recommended)" in place of Approve while such an unknown is open, since a surface or interaction pattern that is still unproven cannot be judged from the plan text.
+Then end the turn.
+
+## Step 8: Act on the User's Reply
+
+- **Revise** — apply the edits the user describes to the affected plan file. Then re-present Step 7's summary, close with its reply guidance, and end the turn again.
+- **Prototype first** — run the `/prototype` skill, then apply what it settled to the plan file. Then re-present Step 7's summary, close with its reply guidance, and end the turn again.
+- **Approve** — the plan is final.
 
 Then use the TaskList tool and proceed to any remaining task.
 
@@ -202,5 +207,5 @@ Then use the TaskList tool and proceed to any remaining task.
 
 - Never skip the pattern survey.
 - Never skip decision escalation for questions left unanswered. When entering from a Background Document as Input, questions the document already resolves are considered answered and may be skipped.
-- The plan file, any gated plan the Scope rule calls for, and any prototype the discussion or the finalize gate called for, are the only outputs. Do not write code, scaffolding, or other project files.
+- The plan file, any gated plan the Scope rule calls for, and any prototype the discussion or the user's reply to the summary called for, are the only outputs. Do not write code, scaffolding, or other project files.
 - Do not run `/review-plan` or any review skills here.

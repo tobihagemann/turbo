@@ -43,12 +43,16 @@ When a Step 1 question turns on how an interaction feels, such as a drag, scrub,
 
 ## Step 5: Hand It Over
 
-Give the user the file path, the Step 1 questions the prototype answers, and what to try for each. For a gesture driven move by move in Step 4, also give the largest change between consecutive moves in the values it recorded. Keep the prototype a local file the user opens themselves rather than publishing it through the Artifact tool. Then use `AskUserQuestion` for their verdict:
+Give the user the file path, the Step 1 questions the prototype answers, and what to try for each. For a gesture driven move by move in Step 4, also give the largest change between consecutive moves in the values it recorded. Keep the prototype a local file the user opens themselves rather than publishing it through the Artifact tool. Close with how to reply once they have tried it: say it settled the questions, or describe what to change.
 
-- **Settled** — the prototype answered the questions.
-- **Needs changes** — the user describes what to change. Return to Step 3 and continue from there, so every later round is driven in Step 4 before it reaches the user.
+Then end the turn.
 
-## Step 6: Record What It Settled
+## Step 6: Act on the User's Reply
+
+- **Needs changes** — return to Step 3 with the changes the user describes and continue from there, so every later round is driven in Step 4 before it reaches the user.
+- **Settled** — continue to Step 7.
+
+## Step 7: Record What It Settled
 
 Delete from the prototype file every approach it disproved, so that nothing which failed survives in the file as apparent implementation. Remove any comparison toggle along with the alternatives it switched between. Keep what the settled answers rest on.
 

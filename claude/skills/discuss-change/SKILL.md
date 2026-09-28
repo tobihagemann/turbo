@@ -15,7 +15,8 @@ Use `TaskCreate` to create a task for each step:
 2. Escalate product decisions
 3. Deep-dive discussion
 4. Confirm the shape
-5. Run `/implement` skill
+5. Act on the user's reply
+6. Run `/implement` skill
 
 ## Step 1: Capture the Task
 
@@ -71,21 +72,25 @@ Interview the user about the implementation shape until you reach shared underst
 
 ## Step 4: Confirm the Shape
 
-Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. This text is the change description Step 5 implements, so keep it concrete enough to act on.
+Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. This text is the change description Step 6 implements, so keep it concrete enough to act on.
 
-Then use `AskUserQuestion` to offer these paths:
+Close with how to reply: approve the shape as settled, or describe what to change. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the shape description.
 
-- **Approve** (Recommended) — the shape is settled.
-- **Revise** — the user describes what to change. Apply the correction, then re-present the shape.
-- **Prototype first** — offer this path when an unknown that only a built artifact settles is still open. Run the `/prototype` skill, fold what it settled into the shape, then re-present. Mark it "(Recommended)" in place of Approve while such an unknown is open, since a surface or interaction pattern that is still unproven cannot be judged from the shape description.
+Then end the turn.
 
-## Step 5: Run `/implement` Skill
+## Step 5: Act on the User's Reply
 
-Run the `/implement` skill. The shape confirmed in Step 4 is the change it applies.
+- **Revise** — apply the correction the user describes. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
+- **Prototype first** — run the `/prototype` skill, then fold what it settled into the shape. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
+- **Approve** — the shape is settled; continue to Step 6.
+
+## Step 6: Run `/implement` Skill
+
+Run the `/implement` skill. The shape the user approved is the change it applies.
 
 Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Confine Steps 1 through 4 to reading, discussion, confirmation, and any prototype those steps called for.
+- Confine Steps 1 through 5 to reading, discussion, confirmation, and any prototype those steps called for.
 - If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `/turboplan` for plan mode.
