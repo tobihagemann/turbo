@@ -30,8 +30,9 @@ Review the changes for code that should not exist:
 1. **Unrequested machinery**: an abstraction with one implementation, a configuration point with one caller, a factory for one product, a wrapper that only delegates, scaffolding for an anticipated requirement. Recommend deletion rather than simplification.
 2. **Unreachable defensive code**: a branch, guard, retry, or fallback for a state the surrounding code's own constraints rule out. When the callers cannot produce the input, the handling for it is dead on arrival.
 3. **Reinvented standard library or platform feature**: hand-rolled logic the language's standard library or the target platform already ships, or a new dependency for what an already-installed one covers. Name the replacement.
+4. **Tests in the wrong shape**: a production export, flag, or hook that exists only for a test to call, with no production caller and no public contract behind it. Recommend removing it and driving the test through a boundary production code already uses. For a test that repeats another test's contract, recommend folding its cases into that test. For an assertion on implementation (source text, import or export lists, private call shapes) that breaks under a behavior-preserving refactor, recommend rewriting it against observable behavior, unless it is the cheapest guard on a user-facing name, key, or path. Recommend these remedies rather than deleting a test outright.
 
-Trace the callers of any code proposed for deletion and confirm nothing depends on the behavior being removed. Input validation at trust boundaries, error handling that prevents data loss, security controls, accessibility affordances, and anything the request explicitly asked for outrank the three checks above.
+Trace the callers of any code proposed for deletion and confirm nothing depends on the behavior being removed. Input validation at trust boundaries, error handling that prevents data loss, security controls, accessibility affordances, and anything the request explicitly asked for outrank the four checks above.
 
 ### Agent 2: Code Reuse Review
 
