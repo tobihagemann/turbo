@@ -124,7 +124,7 @@ After every install command in this phase, run both checks below before any test
 
 ### Cautious Strategy
 
-First upgrade minor and patch only using the package manager's semver-respecting update command, then run tests. If tests fail, stop before proceeding with major upgrades.
+First upgrade minor and patch only using the package manager's semver-respecting update command, then run tests. If the test command exits nonzero, stop before proceeding with major upgrades.
 
 ### Major Version Upgrades
 

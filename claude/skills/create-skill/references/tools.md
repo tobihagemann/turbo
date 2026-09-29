@@ -120,6 +120,8 @@ The parenthetical names parameters and values directly, parallel to (`model: "op
 
 A skill that starts a long-running process should say to pass `run_in_background` alone, never with a trailing `&`. Backgrounding twice reports success within seconds while the process is either dead with its wrapper or orphaned still holding its port, so both a green exit code and a readiness probe can lie about it.
 
+When a skill is invoked with arguments, the harness replaces `$ARGUMENTS` and the 0-based positional placeholders `$0`…`$N` throughout the loaded `SKILL.md` body, fenced shell snippets included, while the file on disk stays unchanged. Keep positional parameters out of `SKILL.md` shell snippets, including awk field references like `$1`: use named variables, loop over explicit values, or move the logic into a file under `scripts/`, which the harness does not substitute.
+
 ## Using AskUserQuestion
 
 When a skill needs user input, reference the tool by name (`AskUserQuestion`) instead of vague phrasing like "ask the user" or "wait for user confirmation." Naming the tool directly ensures the executing Claude instance uses the right mechanism.

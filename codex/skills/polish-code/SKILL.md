@@ -75,7 +75,7 @@ A test that asserts only the direction of a numeric change passes on any movemen
 
 A test that genuinely cannot be made to fail does not pin the behavior; say so rather than counting it as coverage.
 
-After every mutation in this step, re-run whatever that mutation was checked against and confirm it passes again before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
+After every mutation in this step, re-run whatever that mutation was checked against and confirm it passes again and the test command itself exits 0, not a filter piped after it, before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
 
 A project command run to verify a fix writes to the shared tree the same way a mutation does. Establish whether it writes tracked files before running it, and read `git status --short` afterward: revert what it wrote, so files it regenerated are not swept into the changeset by the staging below.
 

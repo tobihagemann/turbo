@@ -135,8 +135,8 @@ Fallback when Step 4 routed here because nothing was interactive. Run multiple i
 Core verification loop per run:
 
 1. Run the command
-2. Capture exit code and the relevant summary output
-3. Record pass/fail per named test when the output exposes them, otherwise overall
+2. Capture the command's own exit code and its full summary output, never output filtered for selected summary lines
+3. Record pass/fail per named test when the output exposes them, otherwise overall. A nonzero exit fails the run even when every named test passed
 
 Do not invent a target if none was found in Step 4 — that gate already stopped.
 
