@@ -1,6 +1,6 @@
 ---
 name: update-dependencies
-description: "Upgrade project dependencies with breaking change research for major version updates. Use when the user asks to \"update dependencies\", \"upgrade packages\", \"upgrade dependencies\", \"update deps\", \"upgrade deps\", \"update npm deps\", \"update Swift packages\", \"cargo update\", \"go get updates\", \"bundle update\", or \"pip upgrade\"."
+description: "Upgrade project dependencies with breaking change research for major version updates. Use when the user asks to \"update dependencies\", \"upgrade packages\", \"upgrade dependencies\", \"update deps\", \"upgrade deps\", \"update npm deps\", \"update Swift packages\", \"cargo update\", \"go get updates\", \"bundle update\", \"pip upgrade\", or \"update GitHub Actions\"."
 ---
 
 # Update Dependencies
@@ -58,7 +58,7 @@ If the user picks **Major handling**, ask a follow-up:
 
 ## Phase 3: Research Breaking Changes
 
-For **each package with a major version update**:
+For **each package or CI action with a major version update**:
 
 ### Step 1: Calculate Version Gap
 
@@ -87,13 +87,15 @@ Use `rg` to find usage of deprecated or changed APIs. Document which files are a
 
 Then check the package's installed consumers: read their declared peer or compatibility ranges and flag any range that excludes the target version. Toolchain consumers such as linters, type checkers, and build tooling can block a major even when the project's own code and configuration are clean. Carry each one into Phase 4 as a blocker.
 
+A CI action that installs or runs the package counts as such a consumer. When a newer release of it supports the target, pair that bump with the package instead of carrying a blocker: Phase 4 presents the two together, and they are upgraded or skipped together.
+
 ## Phase 4: User Confirmation
 
 For each major update, present:
 - Package name and version transition
 - Breaking changes found (summarized)
 - Files potentially affected (count and list)
-- Consumers whose declared ranges block the upgrade, when Phase 3 found any
+- Consumers whose declared ranges block the upgrade, and CI action bumps paired with it, when Phase 3 found any
 
 Use `request_user_input` to confirm (Codex `request_user_input` allows up to 3 options per question, so the four actions are split across two questions):
 
@@ -115,12 +117,12 @@ If "Show details" selected, display full migration research, then ask again.
 
 ## Phase 5: Execute Upgrades
 
-Report an outdated CI action pin for the user to act on and leave the workflow file unchanged; this skill upgrades packages a manifest declares.
+Bump each outdated CI action ref in the file that declares it, under the chosen strategy. For a ref pinned to a commit SHA, resolve the target release tag to the commit it points to (for an annotated tag, follow the tag to its commit) and update the trailing version comment to match. For a tag ref, keep the ref's precision when the action publishes a tag at that precision for the target, otherwise use the full release tag.
 
 After every install command in this phase, run both checks below before any tests and before Phase 6.
 
 1. **Confirm the installed tree moved** — spot-check the resolved version of one or two upgraded packages in the installed dependency tree against the manifest. An install can record the new versions while leaving the installed packages on their old ones, which makes every later check report on the pre-upgrade tree. When the two disagree, force a clean resolve: use the package manager's lockfile-respecting install where it has one, otherwise clear the installed tree and install again. Re-check afterward.
-2. **Diff the package-manager configuration** — inspect the package-manager config files for entries the tool wrote on its own. A tool enforcing a safety guard, such as a minimum age before a release is installable or a provenance requirement, may record a per-package exclusion rather than refusing. Treat such an entry as the guard being bypassed: revert it, then pin the manifest to the newest version the guard admits, which resolves without an exclusion.
+2. **Diff the package-manager configuration** — inspect the package-manager config files for entries the tool wrote on its own. A tool enforcing a safety guard, such as a minimum age before a release is installable or a provenance requirement, may record a per-package exclusion rather than refusing. Treat such an entry as the guard being bypassed: revert it and lower the manifest constraint to the newest version the guard admits. When the lowered range still admits the rejected version, an existing lockfile keeps it: restore the lockfile from git (delete it when git does not track it), re-run the resolving install and any semver-respecting update command this phase already ran, and diff the configuration again.
 
 ### Cautious Strategy
 
@@ -180,7 +182,7 @@ When an upgraded package owns persisted schema, run the test tiers that exercise
 
 ### Step 3: Report Results
 
-Summarize: packages upgraded (count), breaking changes addressed (count), files modified (count), test results, remaining manual tasks.
+Summarize: packages upgraded (count), CI action refs bumped (count, unverified until the next CI run), breaking changes addressed (count), files modified (count), test results, remaining manual tasks.
 
 ### Step 4: Recommend Next Steps
 
