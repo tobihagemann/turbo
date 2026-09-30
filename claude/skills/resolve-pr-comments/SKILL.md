@@ -1,11 +1,11 @@
 ---
 name: resolve-pr-comments
-description: "Evaluate, fix, answer, and reply to GitHub pull request review comments and conversation comments. Handles both change requests (fix or skip) and reviewer questions (explain using reasoning recalled from past Claude Code transcripts). Use when the user asks to \"resolve PR comments\", \"fix review comments\", \"address PR feedback\", \"handle review comments\", \"address review feedback\", \"respond to PR comments\", \"answer review questions\", or \"address code review\"."
+description: "Evaluate, fix, answer, and reply to GitHub pull request review comments and conversation comments. Handles both change requests (fix or skip) and reviewer questions (explain using the rationale recalled from past Claude Code transcripts). Use when the user asks to \"resolve PR comments\", \"fix review comments\", \"address PR feedback\", \"handle review comments\", \"address review feedback\", \"respond to PR comments\", \"answer review questions\", or \"address code review\"."
 ---
 
 # Resolve PR Review Comments
 
-Fetch unresolved review comments from a GitHub PR (inline threads, review-body observations, and issue-comment observations from the PR conversation), evaluate each one, fix or skip based on confidence, answer reviewer questions using recalled implementation reasoning, and reply. Inline threads are answered with thread replies; issue-comment findings are answered with new PR conversation comments. Review-body findings flow through the same evaluate-and-fix pipeline; their outcomes land in the summary because a review body has no destination to post to.
+Fetch unresolved review comments from a GitHub PR (inline threads, review-body observations, and issue-comment observations from the PR conversation), evaluate each one, fix or skip based on confidence, answer reviewer questions using the recalled rationale behind the change, and reply. Inline threads are answered with thread replies; issue-comment findings are answered with new PR conversation comments. Review-body findings flow through the same evaluate-and-fix pipeline; their outcomes land in the summary because a review body has no destination to post to.
 
 ## Task Tracking
 
@@ -128,9 +128,9 @@ If the fix did not address the concern (wrong location, incomplete change, or th
 
 ## Step 9: Answer Reviewer Questions
 
-For each question item whose source is `inline-thread`, run the `/recall-reasoning` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the reasoning it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it returns no transcript, compose the answer from the current code and record that grounding for Step 12. Leave out any mention of Claude, transcripts, or recalled reasoning, and leave voice rules and reply formatting to Step 10.
+For each question item whose source is `inline-thread`, run the `/recall-rationale` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the rationale it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it returns no transcript, compose the answer from the current code and record that grounding for Step 12. Leave out any mention of Claude, transcripts, or recalled rationale, and leave voice rules and reply formatting to Step 10.
 
-Issue-comment questions are composed during Step 11's assembly and posted by `/reply-to-pr-conversation`. They have no file and line to ground with `/recall-reasoning`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 12.
+Issue-comment questions are composed during Step 11's assembly and posted by `/reply-to-pr-conversation`. They have no file and line to ground with `/recall-rationale`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 12.
 
 If there are no inline-thread questions, skip this step.
 

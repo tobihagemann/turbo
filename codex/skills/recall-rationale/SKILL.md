@@ -1,11 +1,11 @@
 ---
-name: recall-reasoning
-description: "Recall the reasoning behind a past change from Codex session history when available, falling back to commit diff and surrounding code. Use when the user asks to \"recall reasoning\", \"find reasoning\", \"look up reasoning\", \"recall implementation reasoning\", \"find the rationale\", \"why did I do X\", \"recall from transcripts\", or \"find the transcript for this commit\"."
+name: recall-rationale
+description: "Recall why a past change was made, drawing on Codex session history when available and falling back to commit diff and surrounding code. Use when the user asks to \"recall the rationale\", \"find the rationale\", \"look up the rationale\", \"why did I do X\", \"why did we do X\", \"why was this changed\", or \"find the transcript for this commit\"."
 ---
 
-# Recall Reasoning
+# Recall Rationale
 
-Recover the reasoning behind a change. Prefer Codex session history when it can be found; otherwise derive the explanation from git history and current code.
+Recover why a change was made. Prefer Codex session history when it can be found; otherwise derive the explanation from git history and current code.
 
 ## Inputs
 
@@ -54,13 +54,13 @@ If no matching session is found, continue with the fallback path.
 
 ## Step 3: Synthesize
 
-If session reasoning was found:
+If session rationale was found:
 
 - Lead with the **why**. The diff already shows the what.
-- Quote or paraphrase only the relevant reasoning.
+- Quote or paraphrase only the relevant rationale.
 - Keep the explanation to one or two paragraphs.
 
-If no session reasoning was found:
+If no session rationale was found:
 
 - Read the commit diff, when there is one, and the surrounding current code.
 - Infer the most likely rationale from the code, tests, plan/spec artifacts, and PR context.
@@ -68,16 +68,16 @@ If no session reasoning was found:
 
 ## Step 4: Output
 
-When session reasoning was found:
+When session rationale was found:
 
 ```markdown
 **Commit:** <short-sha> — <subject>
 **Session:** <session reference>
 
-<one or two paragraphs of reasoning>
+<one or two paragraphs of rationale>
 ```
 
-When no session reasoning was found:
+When no session rationale was found:
 
 ```markdown
 **Commit:** <short-sha> — <subject>

@@ -1,11 +1,11 @@
 ---
-name: recall-reasoning
-description: "Recall the reasoning behind a past change by locating the Claude Code transcript that produced it. Use when the user asks to \"recall reasoning\", \"find reasoning\", \"look up reasoning\", \"recall implementation reasoning\", \"find the rationale\", \"why did I do X\", \"recall from transcripts\", or \"find the transcript for this commit\"."
+name: recall-rationale
+description: "Recall why a past change was made by locating the Claude Code transcript that produced it. Use when the user asks to \"recall the rationale\", \"find the rationale\", \"look up the rationale\", \"why did I do X\", \"why did we do X\", \"why was this changed\", or \"find the transcript for this commit\"."
 ---
 
-# Recall Reasoning
+# Recall Rationale
 
-Locate the Claude Code transcript that produced a given change and extract the implementer's reasoning. Useful for answering reviewer questions, writing post-hoc explanations, or recovering forgotten context.
+Locate the Claude Code transcript that produced a given change and recover why it was made. Useful for answering reviewer questions, writing post-hoc explanations, or recovering forgotten context.
 
 ## Inputs
 
@@ -57,7 +57,7 @@ If `status` is `ok`:
 1. Start with the top candidate (highest score). Read its excerpts first.
 2. If the excerpts already explain the change, stop. If they are thin or ambiguous, read the full transcript at `jsonl_path` directly for more context.
 3. Ignore candidates with low scores or scores far below the top — they are false positives.
-4. When the reasoning spans multiple excerpts, quote the most specific one.
+4. When the rationale spans multiple excerpts, quote the most specific one.
 5. In phrase mode, the `last match at` reason marks the last time the session handled the passage. When the question is about the passage's current state, read the transcript around that point.
 
 Synthesize a concise summary tied to the question being answered:
@@ -66,17 +66,17 @@ Synthesize a concise summary tied to the question being answered:
 - Quote the implementer's own words when they already say it well.
 - Keep it to one or two paragraphs. Don't narrate the whole session.
 
-If `status` is anything other than `ok`, report that no reasoning was found and fall back to reading the commit diff, when there is one, and the surrounding code. Say so explicitly so it's clear whether the answer still holds up.
+If `status` is anything other than `ok`, report that no rationale was found and fall back to reading the commit diff, when there is one, and the surrounding code. Say so explicitly so it's clear whether the answer still holds up.
 
 ## Step 3: Output
 
-Return the reasoning in this shape:
+Return the rationale in this shape:
 
 ```
 **Commit:** <short-sha> — <subject>
 **Transcript:** <session-id> (score <N>)
 
-<one or two paragraphs of reasoning, quoting the implementer where useful>
+<one or two paragraphs of rationale, quoting the implementer where useful>
 ```
 
 If no transcript was found:

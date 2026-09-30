@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Find the Claude Code transcript that produced a given commit and extract reasoning excerpts.
+"""Find the Claude Code transcript that produced a given commit and excerpt the prompts and replies behind it.
 
 Usage:
   python3 scripts/find_transcript.py --commit <sha>
@@ -355,7 +355,7 @@ USER_NOISE_PREFIXES = (
 
 
 def clean_text(content, rtype):
-    """Extract and clean message text, returning None for non-reasoning content."""
+    """Extract and clean message text, returning None for tool results and noise."""
     text = extract_text(content).strip()
     if not text:
         return None
@@ -373,7 +373,7 @@ def clean_text(content, rtype):
 
 
 def extract_excerpts(records, relevant_indices, max_excerpts=40):
-    """Return reasoning-relevant excerpts in transcript order.
+    """Return excerpts relevant to the change in transcript order.
 
     Draws on every non-sidechain user prompt in the session (the intent is gold), plus
     substantive assistant text near relevant tool calls (filters out short transitions).
