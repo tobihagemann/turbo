@@ -41,6 +41,8 @@ Identify product or design decisions the request did not resolve. Escalate these
 
 **Observe existing surfaces before escalating.** When an option concerns how an existing surface looks, observe it as it currently renders, by running the app or from a screenshot requested from the user, and drop any option its rendered state rules out.
 
+**Apply the UX lens before escalating.** When a decision concerns what an interaction does for the person using the software, run the `/user-experience` skill on it first, and state each option as the behavior that person gets and the goal it serves. Leave the mechanism behind each behavior to Step 3.
+
 Output what is at stake as text first, even when the reading it came from is fresh in this conversation. When the decision turns on a failure or misuse scenario, that means the invariant the change would protect and what makes that scenario reachable given the existing guards. Then use `AskUserQuestion` to present the decision as a concise trade-off with options. Mark the strongest option "(Recommended)" and place it first.
 
 Offer a **Get a second opinion** option whenever the decision is costly to reverse (it establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever no option earns "(Recommended)" with conviction. It runs the `/consult-codex` skill for what each option commits to, what reversing it costs, and what the prevailing convention is. Hold the concrete options to three so the question stays within the four-option limit. Then resolve the decision with that answer in hand, re-asking when the choice stays the user's.

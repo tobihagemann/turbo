@@ -14,8 +14,9 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 1. Scope and partition
 2. Run debt analysis agents
 3. Run `$evaluate-findings` skill
-4. Rank and write markdown report
-5. Generate HTML report
+4. Resolve escalated findings
+5. Rank and write markdown report
+6. Generate HTML report
 
 ## Step 1: Scope and Partition
 
@@ -48,7 +49,19 @@ If more partitions exist than fit a single fan-out, group related directories so
 
 Aggregate all findings from all agents. Deduplicate items that surface in more than one agent (e.g., duplication a partition agent and the architecture agent both flag). Run the `$evaluate-findings` skill once on the combined set to verify each finding against the actual code and weed out false positives.
 
-## Step 4: Rank and Write Markdown Report
+## Step 4: Resolve Escalated Findings
+
+**Skip** when Step 3 assigned no Escalate verdict.
+
+For each finding with an Escalate verdict, output its technical detail as text first, including the fact that forces the choice. Then use `request_user_input` to state the question as the decision the user owns, offering the report outcomes the finding leaves open:
+
+- **Rank as debt** — the finding enters the priority matrix with its recommended refactor. When the finding carries competing refactors, offer each as its own option.
+- **Record as intentional** — the finding stays out of the priority matrix and is listed with the decision
+- **Get a second opinion** — run the `$consult-claude` skill for a second opinion on the choice, then ask again with that answer in hand. Offer it when the choice is costly to reverse (it establishes a pattern others will follow, defines an interface, or commits to a data shape), and whenever no option earns `(Recommended)` with conviction.
+
+Place the strongest option first and append `(Recommended)` to its label. When the choice hinges on product intent or domain knowledge you lack, say so instead of forcing a pick. Keep the question within three options: when the outcomes exceed that, offer the ones that fit the finding best, with the consultation option among them when it applies, and resolve a freeform answer naming an outcome left out the same way as a selected one.
+
+## Step 5: Rank and Write Markdown Report
 
 Assign each surviving finding an **impact** (maintenance drag, change risk, blast radius) and an **effort** (rough refactor size) per the rubric in [references/debt-reviewer.md](references/debt-reviewer.md). Sort findings into priority tiers:
 
@@ -56,6 +69,8 @@ Assign each surviving finding an **impact** (maintenance drag, change risk, blas
 - **Strategic refactors** — high impact, high effort
 - **Incremental** — low-to-medium impact, low effort
 - **Defer** — low impact, high effort
+
+Leave a finding recorded as intentional in Step 4 out of the Summary counts and the Priority Matrix, and list it under its dimension in Detailed Findings with that decision. Record the decision beside each escalated finding ranked as debt as well.
 
 Output the summary and priority matrix as text. Then write `.turbo/technical-debt.md` using the template below.
 
@@ -100,7 +115,7 @@ Ranked by impact against refactor effort. Take quick wins first; schedule strate
 ## Detailed Findings
 
 ### Complexity Hotspots
-<findings: location, description, impact, effort, recommended refactor>
+<findings: location, description, impact, effort, recommended refactor, and the recorded decision for an escalated finding>
 
 ### Deprecated API Usage
 <findings>
@@ -118,7 +133,7 @@ Ranked by impact against refactor effort. Take quick wins first; schedule strate
 This assessment covers in-code structural debt. For dependency freshness and diff-scoped bugs, run `$review-dependencies` and `$review-code`.
 ```
 
-## Step 5: Generate HTML Report
+## Step 6: Generate HTML Report
 
 Convert the markdown report into a styled, interactive HTML page.
 
@@ -130,7 +145,7 @@ Convert the markdown report into a styled, interactive HTML page.
    - Sticky navigation between sections
    - Collapsible dimension sections
    - `[hidden] { display: none !important; }` in the base styles, so a section whose own CSS sets a `display` value still hides
-   - Finding cards with location, impact, effort, and recommended refactor
+   - Finding cards with location, impact, effort, recommended refactor, and the recorded decision where one exists
    - Impact and effort badges with color-coding
    - Entrance animations and hover states
    - Print-friendly styles via `@media print`
