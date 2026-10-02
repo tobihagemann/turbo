@@ -66,7 +66,7 @@ A test that asserts only the direction of a numeric change passes on any movemen
 
 A test that genuinely cannot be made to fail does not pin the behavior; say so rather than counting it as coverage.
 
-After every mutation in this step, re-run whatever that mutation was checked against and confirm it passes again and the test command itself exits 0, not a filter piped after it, before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted.
+After every mutation in this step, re-run whatever that mutation was checked against and confirm it passes again and the test command itself exits 0, not a filter piped after it, before reporting the result. A clean `git status` looks identical whether the fix was restored or deleted. A run that a mutation made fail can leave behind what a passing run cleans up, such as temporary files and spawned processes. Before that re-run, clear what the failed run left, identified by what the run itself started or named. Leave anything whose origin that does not establish, and name it when reporting the result.
 
 A project command run to verify a fix writes to the shared tree the same way a mutation does. Establish whether it writes tracked files before running it, and read `git status --short` afterward: revert what it wrote, so files it regenerated are not swept into the changeset by the staging below.
 
@@ -76,11 +76,11 @@ Stage all changes made in this step before continuing.
 
 Run the `/smoke-test` skill to produce the smoke test plan.
 
-Capture `git status --short`, `git diff HEAD | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning.
+Capture `git status --short`, `git diff --cached | git hash-object --stdin`, `git diff | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning.
 
 Delegate test execution to an Agent tool call (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Pass the plan and the diff command (`git diff --cached`) to the subagent, and instruct it to invoke `/test-run-rules` via the Skill tool before executing the plan. State in its prompt that the writes the plan's Setup contract authorizes are already approved, and that any write outside that enumeration leaves its scenario blocked.
 
-**Verify the tree:** re-run all three commands when the subagent returns, including when it terminates early or reports incomplete results. Delete what the subagent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything the pre-spawn capture already showed untouched.
+**Verify the tree:** re-run all four commands when the subagent returns, including when it terminates early or reports incomplete results. Delete what the subagent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything the pre-spawn capture already showed untouched.
 
 If any test fails, fix the issues and stage the fixes.
 

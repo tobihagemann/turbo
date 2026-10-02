@@ -130,7 +130,7 @@ Add the keys below to `~/.claude/settings.json`, merging each into the existing 
 
 ### Context Tracking
 
-Turbo workflows like `/finalize` consume significant context. A status line shows how much is left. A hook tells Claude once it drops to 20%, so review loops can offer a handoff and `/compact` before the session runs out.
+Turbo workflows like `/finalize` consume significant context. A status line shows how much is left. A hook tells Claude once it drops to 20%, so skills can offer a handoff and `/compact` before the session runs out.
 
 Copy the scripts:
 

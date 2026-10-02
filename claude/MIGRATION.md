@@ -118,7 +118,7 @@ npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser
 
 ### Steps
 
-`/polish-code` and `/refine-plan` offer a handoff and `/compact` when Claude is told the context window is running low. A status-line script records the remaining percentage, and a `PostToolUse` hook tells Claude once it drops to 20%.
+`/polish-code`, `/refine-plan`, and `/implement` offer a handoff and `/compact` when Claude is told the context window is running low. A status-line script records the remaining percentage, and a `PostToolUse` hook tells Claude once it drops to 20%.
 
 1. Copy the scripts from `origin/main`, since this migration runs before the pull:
 

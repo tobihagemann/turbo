@@ -21,7 +21,7 @@ If the directory or a matching transcript cannot be found, report that in one li
 
 ### 2. Extract the User Side
 
-Each line is a record with `type`, `timestamp`, `sessionId`, and `isSidechain`. Conversation records are typed `user` and `assistant` and carry `message.content`, either a string or a list of parts typed `text`, `tool_use`, or `tool_result`. The remaining types hold harness state.
+Each line is a record with `type`, `timestamp`, `sessionId`, and `isSidechain`. Conversation records are typed `user` and `assistant` and carry `message.content`, either a string or a list of parts typed `text`, `thinking`, `tool_use`, or `tool_result`. A `thinking` part holds its text in a `thinking` field, which is often empty. The remaining types hold harness state.
 
 Two filters matter. Records with `isSidechain: true` are subagent conversations where the user never speaks. Many user records hold harness-injected text that reads like user speech: slash command wrappers, bash I/O, system reminders, cross-session notifications, and skill-loading preambles. Those wrappers still carry the arguments the user typed after a slash command, so salvage the arguments instead of dropping the record whole.
 
@@ -68,8 +68,8 @@ def flatten(content):
     if isinstance(content, str):
         parts = [content]
     else:
-        parts = [p.get("text", "") for p in content or []
-                 if isinstance(p, dict) and p.get("type") == "text"]
+        parts = [p.get("text") or p.get("thinking") or "" for p in content or []
+                 if isinstance(p, dict) and p.get("type") in ("text", "thinking")]
     return "\n".join(p for p in parts if p).strip()
 
 
