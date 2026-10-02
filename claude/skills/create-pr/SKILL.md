@@ -5,11 +5,11 @@ description: "Create a GitHub pull request with a drafted title and description.
 
 # Create Pull Request
 
-Draft a concise and descriptive title and a body for a PR. Explain the purpose of the changes, the problem they solve, and the general approach taken. When the changes involve clear runtime flows or state transitions, include Mermaid diagrams.
+Draft a concise and descriptive title and a body for a PR. Explain the purpose of the changes, the problem they solve, and the general approach taken. When the changes involve clear runtime flows or state transitions, include Mermaid diagrams. When they change a user-facing surface this session already captured, include screenshots.
 
 ## Step 1: Analyze Changes
 
-If git is in a feature branch, examine all commit messages and the full diff to understand the overall changes. Analyze the diff for framing and diagram opportunities.
+If git is in a feature branch, examine all commit messages and the full diff to understand the overall changes. Analyze the diff for framing, diagram, and screenshot opportunities.
 
 Source every claim about prior behavior from the base branch itself, by reading its code with `git show origin/<base>:<path>`. A long session leaves the working tree carrying intermediate states that were never the state this PR is measured against, and describing one of those as the prior behavior misleads the reviewer.
 
@@ -23,7 +23,7 @@ Run the `/github-voice` skill to load writing style rules.
 
 ## Step 3: Draft Title and Description
 
-Pick a framing, then draft a title and description in it, embedding any diagrams in the body. Output the drafted title and description as chat text so the user can review it.
+Pick a framing, then draft a title and description in it, embedding any diagrams and screenshots in the body. Output the drafted title and description as chat text so the user can review it, followed by the path of each capture that will upload, if any.
 
 ## Step 4: Confirm and Create
 
@@ -44,6 +44,13 @@ Use `AskUserQuestion` to choose among three outcomes, and act on the one selecte
 ```bash
 gh pr create --title "<TITLE>" --body-file .turbo/pr/<tag>-body.md
 ```
+
+When the body references captures, add one `--attach <path>` per capture, using the absolute path the body references. Take the list from the body file as it stands when posting, re-reading it after the user edits it.
+
+When the command reports a failed upload, act on what it printed, then report which captures the PR went up without:
+
+- **No PR URL** — nothing uploaded and no PR exists. Remove the screenshot table and its heading from the body file and run the command again without `--attach`.
+- **A PR URL** — the PR exists, and its body references the captures that did not upload by local path. Fetch the posted body with `gh pr view <PR_URL> --json body --jq .body`, remove each table column whose image is still a local path, write the result to the body file, and apply it with `gh pr edit <PR_URL> --body-file .turbo/pr/<tag>-body.md`.
 
 Do not set `--assignee` unless the user explicitly asks to assign someone. Reserve `--draft` for an explicit request for a draft pull request on GitHub.
 
@@ -120,6 +127,24 @@ stateDiagram-v2
 - Use descriptive labels on arrows (method names, HTTP verbs)
 - Place diagrams after the opening body text under a `## Flow` or `## State Machine` heading
 - One diagram per type max — don't include both unless the PR truly has both patterns
+
+## Screenshots
+
+Include screenshots when the PR changes a user-facing surface and this session already holds captures of that surface in its final state. Reuse those captures after viewing each one, keeping the fewest that show the change. Take no new captures: with none on hand, omit the section.
+
+Reference every kept capture in one row of a markdown table, with its caption in the header cell above it:
+
+```markdown
+| <caption> | <caption> |
+| --- | --- |
+| ![<caption>](<absolute path>) | ![<caption>](<absolute path>) |
+```
+
+### Rules
+
+- Use markdown image syntax with the capture's absolute path. `gh` points only markdown references at the uploaded asset, so a raw `<img>` tag keeps its local path.
+- Keep every capture in the table row. `gh` appends an attached file the body never references as its own paragraph.
+- Place the table after the opening body text under a `## Screenshots` heading, ahead of any diagram.
 
 ## Rules
 
