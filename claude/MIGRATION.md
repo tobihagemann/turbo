@@ -112,21 +112,30 @@ npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser
 
 ## Version 8: Install the Context Warning
 
-**Condition:** `~/.claude/settings.json` has no `PostToolUse` hook whose command runs `~/.claude/hooks/turbo/context-warn.sh`, or either script is missing from `~/.claude/hooks/turbo/`.
+**Condition:** Never.
 
-**Skip if:** The hook is configured and both scripts are present.
+**Skip if:** Always. Version 9 retires the scripts this migration installed.
+
+## Version 9: Replace the Context Warning with the Context Level Tool
+
+**Condition:** `~/.claude/settings.json` runs `context-warn.sh` from a `PostToolUse` hook, runs `context-statusline.sh` as its `statusLine`, or has Turbo's earlier `statusLine` command `jq -r '"\(.context_window.remaining_percentage | floor)% context left"'`, or `~/.claude/hooks/turbo/` exists.
+
+**Skip if:** None of those holds.
 
 ### Steps
 
-`/polish-code`, `/refine-plan`, and `/implement` offer a handoff and `/compact` when Claude is told the context window is running low. A status-line script records the remaining percentage, and a `PostToolUse` hook tells Claude once it drops to 20%.
+`/polish-code`, `/refine-plan`, and `/implement` now read the remaining context themselves, through a tool that the `/context-level` skill's bundled mod registers. The update installs that skill with the others. The status-line script and the `PostToolUse` hook it fed are retired.
 
-1. Copy the scripts from `origin/main`, since this migration runs before the pull:
+1. Read `context-statusline.sh` and `context-warn.sh` in `~/.claude/hooks/turbo/`, where present. A copy that differs from `git -C ~/.turbo/repo show a50569ea1259:claude/hooks/<file>`, the only version Turbo shipped, was customized: note what it changed, such as the threshold `context-warn.sh` compares against or the text the status line prints.
+2. Read `~/.claude/settings.json`. Remove every `hooks.PostToolUse` hook whose command runs `context-warn.sh`, then drop a matcher group left without hooks, a `PostToolUse` array left empty, and a `hooks` object left empty.
+3. When `statusLine` runs `context-statusline.sh` or is Turbo's earlier command, set it to the object below. Leave any other `statusLine` as it is. Preserve every other key and write the file back.
 
-```bash
-mkdir -p ~/.claude/hooks/turbo
-git -C ~/.turbo/repo archive origin/main claude/hooks | tar -x --strip-components=2 -C ~/.claude/hooks/turbo
+```json
+{
+  "type": "command",
+  "command": "jq -r '.context_window.remaining_percentage | if . == null then empty else \"\\(floor)% context left\" end'"
+}
 ```
 
-2. Confirm `context-statusline.sh` and `context-warn.sh` exist and are non-empty in `~/.claude/hooks/turbo/`. When either is missing, stop and report it before touching settings.
-3. Read `~/.claude/settings.json`, creating it as `{}` when it does not exist. When `statusLine` is absent or its command is Turbo's previous `jq -r '"\(.context_window.remaining_percentage | floor)% context left"'`, set `statusLine` to `{"type": "command", "command": "bash ~/.claude/hooks/turbo/context-statusline.sh"}`. When it already runs that script, leave it. Otherwise use `AskUserQuestion` to ask whether to replace the user's status line, stating that keeping it leaves the warning inactive.
-4. Unless an entry in `hooks.PostToolUse` already runs `context-warn.sh`, append one with matcher `""` running `bash ~/.claude/hooks/turbo/context-warn.sh`. Preserve every other key and write the file back.
+4. Delete `context-statusline.sh` and `context-warn.sh` from `~/.claude/hooks/turbo/`, then remove that directory when nothing else is in it.
+5. Tell the user that Claude gets the tool in the next Claude Code session after the update installs `/context-level`. For each customization noted in step 1, name it and where it goes now: a threshold in the low-context gates of `/implement`, `/refine-plan`, and `/polish-code`, a status line format in the `statusLine` command.

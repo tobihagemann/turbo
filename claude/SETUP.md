@@ -65,7 +65,7 @@ Example shape:
   "claude": {
     "excludeSkills": [],
     "lastUpdateHead": "<HEAD>",
-    "configVersion": 8
+    "configVersion": 9
   }
 }
 ```
@@ -130,35 +130,15 @@ Add the keys below to `~/.claude/settings.json`, merging each into the existing 
 
 ### Context Tracking
 
-Turbo workflows like `/finalize` consume significant context. A status line shows how much is left. A hook tells Claude once it drops to 20%, so skills can offer a handoff and `/compact` before the session runs out.
+Turbo workflows like `/finalize` consume significant context. A status line shows the user how much is left. Claude reads the same figure through the `/context-level` skill installed in Step 1, so skills can offer a handoff and `/compact` before the session runs out.
 
-Copy the scripts:
-
-```bash
-mkdir -p ~/.claude/hooks/turbo
-cp ~/.turbo/repo/claude/hooks/* ~/.claude/hooks/turbo/
-```
-
-When the user already has a `statusLine` that runs something other than this script, use `AskUserQuestion` to ask whether to replace it, stating that keeping theirs leaves the context warning inactive. Append the `PostToolUse` entry to an existing `hooks.PostToolUse` array, and skip it when an entry already runs `context-warn.sh`.
+Leave an existing `statusLine` in place.
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "bash ~/.claude/hooks/turbo/context-statusline.sh"
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/turbo/context-warn.sh"
-          }
-        ]
-      }
-    ]
+    "command": "jq -r '.context_window.remaining_percentage | if . == null then empty else \"\\(floor)% context left\" end'"
   }
 }
 ```

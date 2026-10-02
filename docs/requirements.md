@@ -8,6 +8,7 @@
 - **The other coding agent, for peer review.** `/finalize` uses it through [`/peer-review`](../claude/skills/peer-review/SKILL.md). The Claude edition uses the Codex CLI, which needs ChatGPT Plus or higher. The Codex edition uses the Claude Code CLI, which needs a Claude subscription.
 - **[GitHub CLI](https://cli.github.com/)** (required). Powers PR and issue operations.
 - **Node.js and `jq`.** Setup uses them to install the CLIs and copy the skills.
+- **A Claude Code release with [mods](https://claude.com/blog/claude-code-mods)** (Claude Code edition). [`/context-level`](../claude/skills/context-level/SKILL.md) bundles one, so Claude can read how much context is left and offer a handoff before a long workflow runs out.
 - **ChatGPT Pro or Business** (optional). Useful for [`/consult-oracle`](../claude/skills/consult-oracle/SKILL.md), which asks ChatGPT when you're completely stuck. The Pro tier is what reliably solves very hard problems.
 
 [`/peer-review`](../claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](../claude/skills/consult-oracle/SKILL.md) are designed to be swapped. If you don't have access, [replace them](customization.md#the-puzzle-piece-philosophy) with alternatives that work for you.
@@ -17,11 +18,10 @@
 The agent asks before changing user-level configuration. Setup touches:
 
 - `~/.turbo/`: a clone of this repo and a `config.json` for update state, skill exclusions, and optional settings
-- Your skills directory: `~/.claude/skills/` (Claude Code) or `~/.agents/skills/` (Codex)
+- Your skills directory: `~/.claude/skills/` (Claude Code) or `~/.agents/skills/` (Codex). Claude Code loads the mod bundled in `/context-level` from there
 - Your global instruction file: a few behavioral rules from `ADDITIONS.md` added to `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md` (see [Harness Instructions](customization.md#harness-instructions))
 - Your global gitignore: `.turbo/` added, so plans and reports stay out of your repos
-- Your hooks directory (Claude Code): the context status line and low-context warning scripts in `~/.claude/hooks/turbo/`
-- Harness settings: the status line, the warning hook, and task tracking in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
+- Harness settings: a context status line and task tracking in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
 - Optional steps you can decline: the oracle's own Chrome profile and a ChatGPT sign-in, and for Codex, importing Claude Code auto memory
 
 The [Claude Code setup](../claude/SETUP.md) and [Codex setup](../codex/SETUP.md) guides list every step.

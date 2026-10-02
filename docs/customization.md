@@ -21,4 +21,4 @@ Beyond skills, each edition ships an `ADDITIONS.md` (e.g. [`claude/ADDITIONS.md`
 
 ## Updating
 
-Run [`/update-turbo`](../claude/skills/update-turbo/SKILL.md) (Claude Code) or [`$update-turbo`](../codex/skills/update-turbo/SKILL.md) (Codex) to update all skills. It fetches the latest update instructions from GitHub, builds a changelog, handles conflict detection for customized skills, and manages exclusions. The Claude Code edition's context-tracking scripts in `~/.claude/hooks/turbo/` are yours to edit too: `/update-turbo` updates untouched copies and asks before changing one you've customized.
+Run [`/update-turbo`](../claude/skills/update-turbo/SKILL.md) (Claude Code) or [`$update-turbo`](../codex/skills/update-turbo/SKILL.md) (Codex) to update all skills. It fetches the latest update instructions from GitHub, builds a changelog, handles conflict detection for customized skills, and manages exclusions.

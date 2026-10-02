@@ -30,7 +30,7 @@ git -C ~/.turbo/repo fetch origin
 
 ### Step 2: Run Migrations
 
-**Current version: 8**
+**Current version: 9**
 
 Read `configVersion` from `~/.turbo/config.json`, looking at `claude.configVersion` first and falling back to top-level `configVersion` for legacy installs (default: `0` if missing). Migrations run before any head comparison so legacy users on a current commit still pick up schema migrations.
 
@@ -95,6 +95,8 @@ git -C ~/.turbo/repo show origin/main:claude/skills/<name>/SKILL.md
 
 Read both versions and write a concise, plain-language summary of what changed. Focus on what the change means for the user: new capabilities, changed behavior, renamed commands, removed features. Flag anything that could be a breaking change (renamed skills that other skills reference, removed steps, changed interfaces).
 
+When the `--name-status` output lists other changed files in the skill, such as a script or a bundled mod under `hooks/`, read those changes too and fold what they mean for the user into the summary.
+
 For added skills, read their new SKILL.md and summarize what they do.
 
 Also check for changes to `claude/ADDITIONS.md`:
@@ -104,14 +106,6 @@ git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..origin/main -- claude/
 ```
 
 If modified, read both versions and summarize what changed: new sections added, existing sections updated, or sections removed.
-
-Also check for changes to the hook scripts:
-
-```bash
-git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..origin/main -- claude/hooks/
-```
-
-For each changed script, summarize what its new behavior means for the user.
 
 ### Step 5: Present Changelog
 
@@ -138,9 +132,6 @@ Modified:
 CLAUDE.md Additions:
 - Updated "Skill Loading" — added new rule about X
 - New section "Section Name" — brief description
-
-Hook Scripts:
-- context-warn.sh — brief description of the change
 ```
 
 Then use `AskUserQuestion` to ask whether to proceed with the update. If the user declines, stop.
@@ -376,19 +367,7 @@ Apply to ~/.claude/CLAUDE.md?
 
 Never overwrite unrelated user instructions.
 
-### Step 5: Sync Hook Scripts
-
-Skip this step when `~/.claude/hooks/turbo/` does not exist: the user never set up the hooks.
-
-Otherwise, for each file under `claude/hooks/` that changed since `claude.lastUpdateHead` (detected in Phase 1 Step 4), classify the installed copy at `~/.claude/hooks/turbo/<file>`. A copy is untouched when its `git hash-object` matches a blob that `git -C ~/.turbo/repo log --format= --raw --no-abbrev origin/main -- claude/hooks/` lists, meaning some upstream version shipped it byte for byte.
-
-- **Not installed** — copy it in. This covers a file new upstream.
-- **Untouched** — copy `~/.turbo/repo/claude/hooks/<file>` over it.
-- **Customized** — use `AskUserQuestion` to offer Merge, Overwrite, or Keep. Offer Merge only when the file existed at `claude.lastUpdateHead`, merging against that version as the baseline the way Phase 3 Step 3 merges a file.
-
-Leave an installed file that was removed upstream in place.
-
-### Step 6: Save State
+### Step 5: Save State
 
 Write the new HEAD to `claude.lastUpdateHead`:
 

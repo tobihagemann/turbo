@@ -150,10 +150,10 @@ When the user answers with a question instead of picking an option, answer it, t
 
 ### Recommend Only From What the Agent Can Observe
 
-Base a gate's recommendation on a signal the agent can see in the session: files, command output, task state, or a notice the harness or a hook injects. Runtime resource levels, such as how much of the agent's context window remains, are invisible to it except through such a notice. A proxy standing in for such a level reads as reasoned but recommends the wrong option whenever the proxy and the real state diverge. When nothing observable settles the choice, mark no option recommended. When an option only makes sense under unobservable state, gate that option on an injected signal rather than offering it everywhere.
+Base a gate's recommendation on a signal the agent can see in the session: files, command output, task state, a tool's reading, or a notice the harness or a hook injects. Runtime resource levels, such as how much of the agent's context window remains, are invisible to it except through a tool that reads them or such a notice. A proxy standing in for such a level reads as reasoned but recommends the wrong option whenever the proxy and the real state diverge. When nothing observable settles the choice, mark no option recommended. When an option only makes sense under unobservable state, gate that option on a tool's reading or an injected notice rather than offering it everywhere.
 
 - ✗ **Avoid**: Recommending an option because an observable fact merely tends to co-occur with the state that would justify it.
-- ✓ **Good**: "When a notice that <condition> has arrived since <reset point>, offer <option>, marked recommended. Otherwise leave it out."
+- ✓ **Good**: "Call <tool>. When its reading is at or past <threshold>, offer <option>, marked recommended. Otherwise leave it out."
 
 ### Prefer AskUserQuestion Gates over Anti-Skip Prose Rules
 
@@ -185,9 +185,9 @@ Removing verbose "Do NOT" blocks and "Rules" sections that restate the anti-skip
 
 When referencing a *specific known* MCP (Model Context Protocol) tool, always use fully qualified tool names to avoid "tool not found" errors.
 
-**Format**: `ServerName:tool_name`
+**Format**: `mcp__<server>__<tool>`
 
-Where `ServerName` is the MCP server name and `tool_name` is the tool within that server. Without the server prefix, Claude may fail to locate the tool, especially when multiple MCP servers are available.
+Where `<server>` is the MCP server name and `<tool>` is the tool within that server. Without the server prefix, Claude may fail to locate the tool, especially when multiple MCP servers are available.
 
 When a skill needs a *category* of tool rather than a specific one (e.g., documentation lookup), reference the category generically. Different projects have different MCP servers installed.
 

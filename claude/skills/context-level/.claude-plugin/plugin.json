@@ -1,0 +1,8 @@
+{
+  "name": "context-level",
+  "version": "0.1.0",
+  "description": "Gives Claude a tool that reads how much of the context window remains.",
+  "author": {
+    "name": "Tobias Hagemann"
+  }
+}
