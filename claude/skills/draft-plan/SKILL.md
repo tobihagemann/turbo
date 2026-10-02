@@ -85,7 +85,7 @@ Identify product or design decisions the user's request did not resolve. Escalat
 
 **Confirm external constraints before escalating.** When an option depends on a third-party API, service, or platform behaving a particular way, drop it unless that behavior is confirmed by current documentation.
 
-**Observe existing surfaces before escalating.** When an option concerns how an existing surface looks, observe it as it currently renders, by running the app or from a screenshot requested from the user, and drop any option its rendered state rules out.
+**Observe existing surfaces before escalating.** When an option concerns how an existing surface looks, observe it as it currently renders, by running the app from the current code, or from a screenshot requested from the user, and drop any option its rendered state rules out.
 
 **Apply the UX lens before escalating.** When a decision concerns what an interaction does for the person using the software, run the `/user-experience` skill on it first, and state each option as the behavior that person gets and the goal it serves. Leave the mechanism behind each behavior to the plan.
 
@@ -115,7 +115,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 ### Discussion Guidelines
 
 - If a question can be answered by exploring the codebase, explore the codebase instead.
-- When a question concerns how an existing surface looks, observe it as it currently renders, by running the app or from a screenshot requested from the user, before framing options. Drop any option its rendered state rules out.
+- When a question concerns how an existing surface looks, observe it as it currently renders, by running the app from the current code, or from a screenshot requested from the user, before framing options. Drop any option its rendered state rules out.
 - When a question defines a boundary, contract, or data shape, add a **Get a second opinion** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/consult-codex` skill for the soundest answer on technical merit alone, independent of the task's original scope; on a question of product intent, run it for what each answer commits to and what reversing it costs. Then resolve the question with that answer in hand, re-asking when the choice stays the user's.
 - When a question turns on how a surface looks or how an interaction behaves, and an answer in prose would leave the user guessing, add a **Prototype it first** option and hold the concrete options to three so the question stays within the four-option limit. It runs the `/prototype` skill on that unknown, then asks the question again with the prototype in hand.
 - Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
