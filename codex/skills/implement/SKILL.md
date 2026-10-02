@@ -65,7 +65,7 @@ When no plan file governs the work, use `request_user_input` to offer three opti
 - **Quick close** — run the `$quick-finalize` skill
 - **Stop here** — leave the change as-is
 
-If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+If this run created a goal, follow the closing `update_plan` call below by mirroring it into the workflow file, setting `Status: closed`, and marking the goal complete with `update_goal`, in that order. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

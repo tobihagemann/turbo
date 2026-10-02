@@ -64,7 +64,7 @@ Write an updated title and body that:
 - **Preserves what still applies** — keep existing text that remains accurate
 - **Adds what's new** — integrate new changes naturally into the existing structure
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
-- **Scopes to the target repository** — write for someone who knows only the repository the PR targets; when the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body
+- **Scopes to the target repository** — write for someone who knows only the repository the PR targets; when the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body; describe the change on its own terms, without reference to how a different repository or product does it
 - **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
 
 ## Step 7: Confirm with User

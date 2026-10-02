@@ -47,7 +47,7 @@ Take this step only when the user chose separate branches and PRs.
 
 Stash all changes including untracked files (`git stash --include-untracked`) without unstaging first.
 
-Verify `git stash list` shows the saved changes before proceeding.
+Verify `git stash list` shows the saved changes and `git status --short` lists nothing the stash should have taken before proceeding. Entries for a submodule, a nested repository, or files a stashed ignore rule had hidden may remain. When either check fails, stop and report where the changes now are.
 
 ### Ship each group
 
@@ -80,7 +80,7 @@ Take this step only when the user chose to commit each group. This path stays on
 
 Stash all changes including untracked files (`git stash --include-untracked`) without unstaging first.
 
-Verify `git stash list` shows the saved changes before proceeding.
+Verify `git stash list` shows the saved changes and `git status --short` lists nothing the stash should have taken before proceeding. Entries for a submodule, a nested repository, or files a stashed ignore rule had hidden may remain. When either check fails, stop and report where the changes now are.
 
 ### Commit each group
 

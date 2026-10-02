@@ -31,7 +31,7 @@ Run the `$simplify-docs` skill on the staged changes (`git diff --cached`). Stag
 
 ## Phase 3: Run `$update-changelog` Skill
 
-Run the `$update-changelog` skill.
+Run the `$update-changelog` skill. Stage any edits it makes before continuing.
 
 ## Phase 4: Run `$self-improve` Skill
 
@@ -68,7 +68,7 @@ Use `request_user_input` to let the user choose whether to ship the changes toge
 - **Ship together** — ship all staged changes as one unit; run the `$ship` skill
 - **Split up** — ship each group as its own unit; run the `$split-and-ship` skill
 
-If this run created a goal, mark it complete with `update_goal`. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+If this run created a goal, follow the closing `update_plan` call below by mirroring it into the workflow file, setting `Status: closed`, and marking the goal complete with `update_goal`, in that order. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

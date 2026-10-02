@@ -27,7 +27,7 @@ Run the `/simplify-docs` skill on the staged changes (`git diff --cached`). Stag
 
 ## Phase 3: Run `/update-changelog` Skill
 
-Run the `/update-changelog` skill.
+Run the `/update-changelog` skill. Stage any edits it makes before continuing.
 
 ## Phase 4: Run `/self-improve` Skill
 
