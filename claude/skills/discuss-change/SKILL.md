@@ -74,7 +74,7 @@ Interview the user about the implementation shape until you reach shared underst
 
 ## Step 4: Confirm the Shape
 
-Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. This text is the change description Step 6 implements, so keep it concrete enough to act on.
+Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. Label any consistency or durability machinery the shape adds (a lease, lock, queue, versioning scheme, or new persistent entity) as machinery. For each, name the stated requirement or user decision that demands it, or say that none does, and state what dropping it would give up. This text is the change description Step 6 implements, so keep it concrete enough to act on.
 
 Close with how to reply: approve the shape as settled, or describe what to change. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the shape description.
 

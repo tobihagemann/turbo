@@ -69,4 +69,4 @@ When the plan's Context names a larger source it implements part of (an assessme
 - The plan file is read-only during execution. If revisions are needed, run `/refine-plan` or `/draft-plan` separately.
 - Never skip Step 2.
 - Never enumerate or execute the plan's Implementation Steps inline. The work runs through `/implement`. Restating steps as a turn-level narration counts as inline execution and bypasses the delegation.
-- If the plan's Implementation Steps or Verification include `git commit`, `git push`, or PR creation, halt before Step 3 and ask the user to remove them via `/refine-plan`.
+- If the plan's Implementation Steps or Verification include `git commit`, `git push`, or PR creation, halt before Step 3 and ask the user to remove them via `/refine-plan`. A Verification item that observes the result of a push without instructing one is not grounds to halt.
