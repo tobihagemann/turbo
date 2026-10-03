@@ -43,6 +43,8 @@ Every sub-skill works standalone too. Run [`/draft-plan`](../claude/skills/draft
 
 [`/note-improvement`](../claude/skills/note-improvement/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests, and deliberate simplifications that accept a known ceiling. They're tracked in `.turbo/improvements.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
 
+Backlogs collect entries that turn out not to matter. [`/triage-improvements`](../claude/skills/triage-improvements/SKILL.md) walks through them with you: it merges duplicates, states the user story or the simplification behind each entry, and asks whether to keep or drop it.
+
 When you're ready to act, [`/implement-improvements`](../claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
 
 - **`direct`** → [`/implement`](../claude/skills/implement/SKILL.md) for a clear-scope fix

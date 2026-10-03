@@ -28,6 +28,7 @@ tests are failing in the auth module, can you please /investigate?
 
 # Working through the improvements backlog
 the error messages in this module are inconsistent, /note-improvement
+/triage-improvements  ← keep or drop each entry
 /implement-improvements  ← dedicated session
 
 # Testing manually

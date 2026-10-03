@@ -72,7 +72,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Deduplicate before appending: check each target backlog for a similar entry and update it in place when one exists. When the existing entry predates the Type field, add a Type line while updating.
+- Deduplicate before appending: search each target backlog for the paths and symbols the new entry names and for entries on a similar subject, and update an existing entry in place when it covers the same improvement. When the existing entry predates the Type field, add a Type line while updating.
 - When updating an existing entry tagged with the legacy values `trivial` or `standard`, rewrite the Type to `direct` or `plan` respectively so the file converges on current vocabulary.
 - Keep entries concise. These are backlog items, not specs.
 - When a deliberate simplification's revisit condition is not yet knowable, record what would have to be observed to know it.

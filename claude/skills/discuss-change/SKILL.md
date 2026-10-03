@@ -74,9 +74,9 @@ Interview the user about the implementation shape until you reach shared underst
 
 ## Step 4: Confirm the Shape
 
-Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. Label any consistency or durability machinery the shape adds (a lease, lock, queue, versioning scheme, or new persistent entity) as machinery. For each, name the stated requirement or user decision that demands it, or say that none does, and state what dropping it would give up. This text is the change description Step 6 implements, so keep it concrete enough to act on.
+Output the agreed shape as text, short enough to read at a glance: what the change does, where it lands, the decisions resolved in Steps 2 and 3, how to tell it worked, and anything deliberately deferred. Label any consistency or durability machinery the shape adds (a lease, lock, queue, versioning scheme, or new persistent entity) as machinery. For each, name the stated requirement or user decision that demands it, or say that none does, and state what dropping it would give up. For each deferred item, state the user story it serves, or what it simplifies when it is a technical item, and recommend noting it for later or dropping it. Recommend noting only an item that serves a goal the person using the software actually has or that simplifies existing code. This text is the change description Step 6 implements, so keep it concrete enough to act on.
 
-Close with how to reply: approve the shape as settled, or describe what to change. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the shape description.
+Close with how to reply: approve the shape as settled, or describe what to change. When the shape defers items, add that an approval notes the ones recommended for noting and drops the rest, and can flip any of them. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the shape description.
 
 Then end the turn.
 
@@ -84,7 +84,7 @@ Then end the turn.
 
 - **Revise** — apply the correction the user describes. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
 - **Prototype first** — run the `/prototype` skill, then fold what it settled into the shape. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
-- **Approve** — the shape is settled; continue to Step 6.
+- **Approve** — the shape is settled, along with any deferred item the approval flips. Run the `/note-improvement` skill once for each deferred item settled as noted. Once every such item is noted, continue to Step 6.
 
 ## Step 6: Run `/implement` Skill
 
@@ -94,5 +94,5 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Confine Steps 1 through 5 to reading, discussion, confirmation, and any prototype those steps called for.
+- Confine Steps 1 through 5 to reading, discussion, confirmation, any prototype those steps called for, and the backlog entries Step 5 notes.
 - If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `/turboplan` for plan mode.
