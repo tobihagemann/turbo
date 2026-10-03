@@ -21,6 +21,8 @@ Some questions can't be settled in prose: what a surface looks like, whether an 
 
 Every sub-skill works standalone too. Run [`/draft-plan`](../claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](../claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file.
 
+In the Claude Code edition, [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) projects how much of the context window reading the plan's files will take before it reads most of them. Above a quarter of the window it shows you the figure and asks how to implement: in this session, which then likely needs a compaction before QA, or through one fresh subagent per plan step, each checked by the session before the next one starts.
+
 ## The Finalize Pipeline
 
 [`/finalize`](../claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](../claude/skills/implement/SKILL.md) / [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) chain into it automatically once a plan file's steps are done. Without a plan file, `/implement` asks first, offering [`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) as a quick close or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.

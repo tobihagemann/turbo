@@ -31,9 +31,31 @@ If unsure, do not load.
 
 ## Step 3: Make the Change
 
-Apply the change described by the current context — the user request, a prior skill's task description, or an improvement entry. Keep the edit scoped to what the context describes.
+**Unless one subagent per step was settled on for a plan that governs the work**, apply the change described by the current context — the user request, a prior skill's task description, or an improvement entry. Keep the edit scoped to what the context describes.
 
 When the fix changes how a value is constructed, grep for every other site that constructs it and fix the ones carrying the same defect; treat these siblings as part of the same change. If the scope balloons beyond what the context specified, stop and confirm scope before continuing.
+
+**When a plan governs the work and one subagent per step was settled on for it**, the Implementation Steps go to subagents, and this session reviews what each one returns. Use `TaskCreate` to create a task for each Implementation Step, then take them in order, one at a time.
+
+Before each spawn, capture `git status --short` and run `git stash create`, which snapshots the working tree without changing it and prints nothing when the tree is clean.
+
+Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Its prompt directs it to read [references/step-implementer.md](references/step-implementer.md), and gives:
+
+- The plan's path and the Implementation Step to implement
+- What earlier Implementation Steps changed that this one builds on
+- The task-specific skills from Step 2 that this Implementation Step's work matches
+- The checks it must pass
+- A cap on any verification whose count the plan leaves open, such as mutation runs
+
+When it reports, review what it changed against the plan: `git diff <snapshot>`, or `git diff HEAD` when the tree was clean, shows its changes to tracked files, and `git status --short` compared with the capture shows the files it added. Run the checks the prompt named. Then settle everything the report leaves open before the next Implementation Step starts:
+
+- Make a small correction in this session.
+- Give larger rework, or a block this session can clear, to a new subagent for the same Implementation Step, passing along what the first one reported.
+- Take a block or a deviation that changes what the plan delivers to the user with `AskUserQuestion`, and carry out the answer through one of the two routes above.
+
+Mark the Implementation Step's task completed once nothing is left open.
+
+When the user asks how a running subagent is doing, read its progress from the same comparison against the capture. When the user asks to change its course, message it with the SendMessage tool. After a subagent has reported, changes go through the routes above.
 
 ## Step 4: Run Verification
 
@@ -55,7 +77,7 @@ If Step 5 determined the change is user-facing, run the `/preview` skill so the 
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary.
 
-**Before starting QA, check for a context signal.** Call the `mcp__context-level__read` tool: a reading of 25% or less remaining is one. A request from the user to compact, arriving since the session last compacted, is the other. When the reading is 25% or less and the user has not asked to compact, use `AskUserQuestion` to ask whether to compact before QA: "Handoff, then compact", marked recommended, or keep going in this session. On "Handoff, then compact", or when the user asked to compact, run the `/create-handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what follows here: the `/finalize` skill when a plan file governs the work, naming the plan's path, and the choice among full QA, a quick close, and stopping otherwise. Use `TaskUpdate` to set this step's task description to that same next step, leave the task in progress, and end the turn in place of the TaskList call that closes this step, telling the user to run `/compact` and then reply "continue".
+**Before starting QA, check for a context signal.** Call the `mcp__context-level__read` tool: a reading of 50% or less remaining is one. A request from the user to compact, arriving since the session last compacted, is the other. When the reading is 50% or less and the user has not asked to compact, use `AskUserQuestion` to ask whether to compact before QA: "Handoff, then compact", marked recommended, or keep going in this session. On "Handoff, then compact", or when the user asked to compact, run the `/create-handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what follows here: the `/finalize` skill when a plan file governs the work, naming the plan's path, and the choice among full QA, a quick close, and stopping otherwise. Use `TaskUpdate` to set this step's task description to that same next step, leave the task in progress, and end the turn in place of the TaskList call that closes this step, telling the user to run `/compact` and then reply "continue".
 
 When a plan file governs the work, run the `/finalize` skill.
 

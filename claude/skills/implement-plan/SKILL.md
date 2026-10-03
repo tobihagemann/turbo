@@ -46,15 +46,24 @@ On **Leave it unimplemented**, tell the user to bring the plan current with `/re
 
 ## Step 2: Read Context Files
 
-Read in full:
+The read list, every file to read in full:
 
 - Every file listed in the plan's **Context Files** section
 - Files the user referenced in their original request (if any)
 - Every file path the plan references in the Context, Pattern Survey, and Implementation Steps sections
 
+Project the read's share of the context window before the bulk of it. With one Bash call, get the size in bytes of each read-list file that exists, and their total. Call the `mcp__context-level__read` tool, then read the plan's Context Files. Once those reads have returned, call the tool again. While the reading has dropped fewer than five percentage points and read-list files remain unread, read a further batch and call the tool again. The projection is the drop from the first reading to the last, multiplied by the total bytes over the bytes read so far.
+
+**When the projection is above 25%**, output as text that reading the plan's files is projected to take that share of the context window, with the number of files still unread. Then use `AskUserQuestion` to ask how to implement the plan:
+
+- **Implement in this session** — this session reads the remaining files and implements every step itself, and will likely need to compact before QA. Mark it recommended when the projection is 50% or less.
+- **One subagent per step** — the remaining files stay unread here, and each Implementation Step goes to a fresh subagent that reads what its step names. Every subagent gathers its own context, so the run takes longer and uses more tokens overall. Mark it recommended when the projection is above 50%.
+
+Read the remaining read-list files unless the answer was **One subagent per step**.
+
 ## Step 3: Run `/implement` Skill
 
-Run the `/implement` skill. The plan file, its file references, and its Verification section are already in conversation context from Step 1.
+Run the `/implement` skill. The plan file, its file references, and its Verification section are already in conversation context from Step 1. When Step 2 settled on one subagent per step, pass that choice along.
 
 ## Step 4: Update Plan Status
 
