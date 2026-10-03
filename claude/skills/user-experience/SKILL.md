@@ -25,6 +25,7 @@ Translate the need into the right solution rather than the first one that comes 
 
 - Check that the solution addresses the goal, not just the visible symptom.
 - Weigh whether the change adds a step, a screen, or a concept the user must learn, and whether that cost is justified.
+- Check whether an indicator or notice the change adds repeats what an existing surface already tells the user, and prefer relying on that surface.
 - Prefer the path that removes work for the user over one that adds configuration or choices.
 - Watch for solving a builder's convenience at the user's expense.
 

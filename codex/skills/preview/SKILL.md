@@ -40,7 +40,8 @@ Output as text:
 - The access point — the local URL and port for a web app, or confirmation that the window is open for a native app
 - When the surface sits behind a sign-in, each account to use with its password and the role that account holds, plus every key or code generated while bringing up the stack that the app requests during or after sign-in, such as on a new browser
 - What changed
-- Each scenario worth trying, as many as the change needs: numbered steps naming the exact controls and inputs, the result the scenario should produce, and the judgment the user is being asked to make
+- Each scenario worth trying, as many as the change needs: numbered steps naming the exact controls and inputs, the result to expect after each step, and the judgment the user is being asked to make. Write each scenario so one person can perform it at one device, one action after another. When a scenario depends on a state the user would not reach in ordinary use, open it with what that state is in the user's own terms and why it is worth looking at
+- Each case left out of the scenarios because one person cannot perform it that way
 - When a verification pass preceded this hand-over, what it could not cover: paths needing real credentials, external services, or state unavailable in this session
 - How to reply once they have tried it: say it looks good, adding whether to keep the app running or shut it down, or describe what needs changing
 

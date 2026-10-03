@@ -45,7 +45,7 @@ The piped form (`cat context.txt | codex exec "..."`) is safe — `cat` closes t
 
 ## Synchronous Execution
 
-Run codex via the Bash tool as a foreground call (do not set `run_in_background`). Set `timeout: 600000`, the Bash maximum. A larger value is not honored: the harness backgrounds the call immediately and hard-kills codex at 600s, truncating its output. Within a valid timeout, codex runs foreground and returns its result synchronously when it finishes in time.
+Run codex via the Bash tool as a foreground call (do not set `run_in_background`). Set `timeout: 600000`, the foreground maximum. A larger value is not honored: the harness backgrounds the call immediately and hard-kills codex at 600s, truncating its output. Within a valid timeout, codex runs foreground and returns its result synchronously when it finishes in time.
 
 Capture the `session id:` from the run's stderr chrome as it starts; it never appears in the `-o` file, and recovery depends on it. Do not pass `--ephemeral` when the run may need recovery, since it persists no session files.
 
