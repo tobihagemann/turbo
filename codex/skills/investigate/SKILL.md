@@ -92,6 +92,8 @@ Launch all investigation branches with `spawn_agent` / `wait_agent` using inheri
 - **Hypothesis branch (one per hypothesis):** Each receives the hypothesis, relevant file paths, what evidence to look for, and instructions to report **confirmed** / **refuted** / **inconclusive** with evidence. Budget: max 5 tool calls per branch.
 - **Claude consultation branch:** Run the `$consult-claude` skill with a focused prompt describing the problem, reproduction, and files examined. The external perspective can dig into patterns the hypothesis-driven branches miss. Run the `$evaluate-findings` skill on its output after the consultation returns.
 
+Once `wait_agent` has returned every hypothesis branch's report and only the Claude consultation branch has not reported, run the Step 4 actions that change nothing in the working tree, its git index, or anything the consultation's prompt points it at, and state each result as it lands. Then call `wait_agent` until the consultation's report arrives. The merge, every other Step 4 action, the Iteration decision, and the Investigation Report wait for that report.
+
 After all investigators complete, merge results. Claude findings that overlap with a confirmed hypothesis reinforce confidence. Novel Claude findings become additional hypotheses to test in Step 4.
 
 ## Step 4: Test

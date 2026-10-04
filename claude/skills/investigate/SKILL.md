@@ -92,6 +92,8 @@ Emit all Agent tool calls below in one assistant message. Each Agent call uses `
 - **Hypothesis Agent (one per hypothesis):** Each receives the hypothesis, relevant file paths, what evidence to look for, and instructions to report **confirmed** / **refuted** / **inconclusive** with evidence. Budget: max 5 tool calls per subagent.
 - **Codex Agent:** Launch one Agent whose prompt instructs the subagent to invoke `/consult-codex` via the Skill tool with a focused prompt describing the problem, reproduction, and files examined. The multi-turn conversation allows it to dig deeper into patterns the hypothesis-driven subagents miss. Run the `/evaluate-findings` skill on its output after the Agent returns.
 
+One exception to the wait: when every Hypothesis Agent has reported and only the Codex Agent has not, run the Step 4 actions that change nothing in the working tree, its git index, or anything the Codex Agent's prompt points it at, and state each result as it lands. The merge, every other Step 4 action, the Iteration decision, and the Investigation Report wait for the Codex Agent's report.
+
 Merge the investigators' results. Codex findings that overlap with a subagent's confirmed hypothesis reinforce confidence. Novel codex findings become additional hypotheses to test in Step 4.
 
 ## Step 4: Test
