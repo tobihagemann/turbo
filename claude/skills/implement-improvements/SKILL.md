@@ -28,12 +28,12 @@ Parse all entries, extracting for each:
 - **Category**
 - **Where** (file paths or areas)
 - **Why** (rationale)
-- **Ceiling** and **Revisit** (present when the entry records a deliberate simplification)
+- **Ceiling** and **Revisit** (present when the entry records a deliberate simplification; **Revisit** alone when the entry waits on an outside event)
 - **Noted** (date)
 
 ## Step 2: Validate and Classify
 
-Improvements drift: files get renamed, code gets refactored, issues get fixed as side effects of other work. Before routing, validate each improvement and classify any entry missing a Type.
+Improvements drift: files get renamed, code gets refactored, issues get fixed as side effects of other work. Before routing, validate each improvement and settle the Type of any entry whose Type is missing or wrong.
 
 ### Validate
 
@@ -41,7 +41,7 @@ For each entry, verify whether the specific problem or opportunity described sti
 
 1. **Files exist** — Do the referenced files/paths still exist? When one was renamed or its code moved, validate the entry at the current location instead. This check marks the entry stale only when the code it names is gone.
 2. **Problem persists** — Read the relevant code sections. Is the exact issue or opportunity described in the entry still present? Check the specific claims: if the entry says a function is uncalled, verify it has no callers; if it says error handling is missing, check whether it was added.
-3. **Revisit condition met** — For an entry carrying a Revisit field, check whether the recorded condition now holds. The shipped simplification is present by construction, so its presence alone says nothing about whether the fuller version is worth building yet.
+3. **Revisit condition met** — For an entry carrying a Revisit field, check whether the recorded condition now holds. A shipped simplification is present by construction, so its presence alone says nothing about whether the fuller version is worth building yet.
 4. **Stated scope matches the real gap** — For an entry claiming missing coverage, read what existing tests already pin before accepting its scope: a test that substitutes a test double at a boundary pins the behavior on one side of it and leaves the boundary itself unpinned, so a request to cover several variants often reduces to the single boundary they share. Before dropping an item on the grounds that an existing check covers it, confirm that the check pins that item through its own inputs or match patterns rather than inferring it from the check's name or description; an item no existing check pins stays in the entry's scope. Restate such an entry at its real scope, classify it Active, and use the restatement as its summary in Step 3.
 5. **Claimed consequence holds** — For an entry claiming that two paths behave differently, or that a change would alter observable behavior, verify the claimed difference itself by reading what each path actually returns, exercising both when reading cannot settle it, rather than confirming only that the code it points at exists. When the claim is that nothing but the case it names reaches or relies on the named code, read that code's own tests: they surface dependents an entry written from a single path routinely omits, and turning up none leaves the claim unproven. When the named code is present but its stated consequence is false, restate the entry at the benefit it actually delivers, classify it Active, and use the restatement as its summary in Step 3; classify it Stale when no benefit survives.
 
@@ -50,21 +50,21 @@ Before using a restatement as an entry's summary in Step 3, confirm each fact it
 Classify each entry as:
 
 - **Active** — The described problem or opportunity is confirmed present in the current code
-- **Deferred** — The entry carries a Revisit condition that does not yet hold; the shipped approach remains the right one
+- **Deferred** — The entry carries a Revisit condition that does not yet hold: the shipped approach remains the right one, or the event the entry waits on has not happened
 - **Stale** — The code the entry names no longer exists, the specific issue has been resolved, or the entry's premise never held (cite evidence: what changed and where, or why the claim is false)
 - **Unclear** — Cannot determine from code alone, needs user input
 
 When in doubt, classify as Active. The cost of re-examining a resolved issue is low; dismissing a valid improvement is high.
 
-### Classify type if missing
+### Classify or Correct the Type
 
-For any Active entry without a Type field, infer one on the fly. Base the classification on the code you just read during validation, not just the entry's one-line summary.
+For any Active entry without a Type field, infer one on the fly. For an Active entry whose Type the code read contradicts, correct it. Base the classification on the code you just read during validation, not just the entry's one-line summary.
 
 - **direct** — Clear scope and a known approach, ready to apply via `/implement`.
 - **investigate** — A symptom that needs root-cause analysis first: unclear root cause, performance question, intermittent bug, "something feels off".
 - **plan** — Everything else: the approach warrants writing down before implementing (multi-file refactor, test additions, feature work). Dispatched to `/turboplan`, which routes the work itself.
 
-Pick the type without asking the user. Default to `plan` when genuinely ambiguous.
+Pick the type without asking the user. Default to `plan` when a missing Type is genuinely ambiguous, and keep a recorded Type the code read does not contradict.
 
 ## Step 3: Recommend, Confirm, and Update the Backlog
 
@@ -118,7 +118,7 @@ Use `AskUserQuestion` to confirm. Combine into the same prompt:
 
 If the user confirmed stale removal, edit `.turbo/improvements.md` to delete the stale entries.
 
-Rewrite in `.turbo/improvements.md` each Active or Deferred entry whose path, scope, count, or consequence Step 2 corrected, changing only the fields the correction touches. When that changes an entry's summary, update each **Paired with** line in its counterpart entries that names the old title.
+Rewrite in `.turbo/improvements.md` each Active or Deferred entry whose path, scope, count, consequence, or Type Step 2 corrected, changing only the fields the correction touches. When that changes an entry's summary, update each **Paired with** line in its counterpart entries that names the old title.
 
 Compute the **working set** from the confirmed choice. If the working set is empty, stop.
 
@@ -137,10 +137,12 @@ State the chosen lane before continuing with the reference file.
 Edit `.turbo/improvements.md` to delete the working-set entries that the lane processed. "Processed" means:
 
 - **Direct lane** — entries whose fixes were applied
-- **Investigate lane** — entries whose concluded fixes were applied
+- **Investigate lane** — entries the applied fixes resolve in full
 - **Plan lane** — entries now captured in the plan produced by `/turboplan`; treat them as processed once the plan is written.
 
 Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
+
+Rewrite in place each entry the investigate lane investigated that stays in the backlog: restate its summary and **Where** as what remains to do, put what the investigation established in its **Why** (the root cause it confirmed, or the hypotheses it refuted when the cause stayed unresolved), and set the **Type** the remainder calls for. When the entry waits on an outside event, such as an upstream fix, record that event as its **Revisit**. When the rewrite changes the summary, update each **Paired with** line in counterpart entries that names the old title.
 
 When a processed entry carries a **Paired with** line, drop that reference from each counterpart entry it names, so no backlog is left pointing at an entry that no longer exists.
 

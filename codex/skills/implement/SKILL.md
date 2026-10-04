@@ -41,6 +41,8 @@ When the fix changes how a value is constructed, grep for every other site that 
 
 ## Step 4: Run Verification
 
+Before this step starts or uses a process that runs until it is stopped, such as a server or a watcher, run the `$test-run-rules` skill. Its rules verify without modifying code, so act on a failed check as this step directs.
+
 If a Verification section is in conversation context (e.g., from a plan file), execute the commands, smoke checks, or MCP tool invocations it specifies. If a check fails, run the `$investigate` skill. If a check is blocked by a dependency, unclear requirement, or environmental issue, use `request_user_input` to surface the blocker and let the user choose how to proceed. If no Verification section is in context, go straight to the configuration check below.
 
 When the change adds or documents a configuration override — an environment variable, build flag, or any setting a reader is told to set — prove that a supported path delivers it: set the value, run the build or process meant to consume it, and confirm the output changed. When no supported path delivers it, fix the path or drop the documentation before this step completes. Restore the setting afterwards, and rebuild or discard any output produced with the non-default value. Passing checks are no evidence here, since a default that matches the value already in use keeps a broken override invisible to every run that never asks for a different one.

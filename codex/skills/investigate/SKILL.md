@@ -171,4 +171,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 ## Rules
 
 - If the problem turns out to be environmental (wrong language runtime version, a declared dependency not installed locally, OS-specific), report that clearly — it may not require a code fix. A dependency the project never declared is a manifest defect, so report that as a code fix instead.
-- If the problem is in a dependency (not the project's code), document the dependency issue and suggest workaround options rather than patching the dependency.
+- If the problem is in a dependency (not the project's code), document the dependency issue and suggest the options that leave the dependency's code unmodified: workarounds, and a report upstream unless an existing issue covers the defect or the dependency's latest release no longer has it.
