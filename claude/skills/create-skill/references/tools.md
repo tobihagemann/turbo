@@ -35,6 +35,8 @@ A spawn returns immediately, so Agent calls emitted later in the same turn still
 
 Direct every dispatch instruction to omit the `name` parameter. Named and unnamed agents alike return a spawn receipt and report out of band; what naming changes is the payload. An unnamed agent's completion carries its full report. A named agent becomes an addressable teammate, and its completion arrives as an `idle_notification` wrapped in a `<teammate-message>` carrying a truncated summary and status in place of the report.
 
+The rule reaches one level down. A dispatched agent that splits its work across agents of its own and names them puts those agents on the main conversation's teammate channel, so their idle notifications reach the main conversation alongside the dispatched agent's own report. Where a dispatched agent's scope grows with the change or codebase it examines, so that it may split the work, have its prompt direct it to omit `name` on every Agent tool call it makes.
+
 Because the rule prevents the teammate channel from being used at all, dispatch instructions need no paired recovery text for it. Should a named agent ever idle, read what its summary carries and continue; answering with `SendMessage` only makes a finished agent re-idle without emitting text and invites a nudge loop. Keep that knowledge here rather than repeating it in every skill that spawns.
 
 Do not add file-based delivery fallbacks (having each agent `Write` its report to an agreed path) to work around this. Writing to disk masks the misread channel rather than fixing it, and the spawning agent still burns turns waiting on a report that already arrived.
@@ -42,6 +44,7 @@ Do not add file-based delivery fallbacks (having each agent `Write` its report t
 - ✗ **Avoid**: `Agent(name: "internal-reviewer", ...)` then nudging it when it idles.
 - ✓ **Good** (fan-out): "Each Agent call uses `model: "opus"` and no `name`."
 - ✓ **Good** (single agent): "Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported."
+- ✓ **Good** (agent that may fan out further): "Every agent's prompt must direct it to omit `name` on any Agent tool call it makes itself."
 
 ### Phrase Multi-Agent Parallel Dispatch Imperatively
 

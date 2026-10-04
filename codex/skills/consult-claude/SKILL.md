@@ -5,7 +5,7 @@ description: "Consult Claude Code for second opinions, brainstorming, or difficu
 
 # Consult Claude
 
-Use Claude Code as an external collaborator from Codex. Unlike `$peer-review`, this skill is conversational and exploratory.
+Use Claude Code as an external collaborator from Codex, in a conversational and exploratory exchange.
 
 ## Step 1: Define the Question
 
@@ -21,7 +21,7 @@ When Claude must judge claims against a source, state whether the material provi
 
 When the consultation concerns an artifact Claude can inspect itself, pass its path and let Claude choose how to inspect it, rather than attaching excerpts or other material extracted from it.
 
-When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out.
+When a recommendation is wanted, bar answers that appeal to scope: state that "out of scope" or "leave it alone" is not an acceptable argument on its own, and that recommending no change must be justified on technical merit. Demand one pick per decision, the reasoning, and the strongest counterargument to that pick, with hedging across options ruled out. When the question lists options, state that the pick may be a named alternative outside the list when it is sounder than every listed option.
 
 When the consultation runs until Claude approves, fix the line that ends every response: require every response to end with exactly one fixed line stating the verdict, in a designated positive or negative form, carrying nothing else, and require the response to state before that line what the verdict rests on: the artifacts, sources, and checks inspected. Stop consulting when that line reaches the positive form with that evidence stated, so a politely worded answer does not end the consultation early and agreement does not go unrecognized. Pair it with a compact output contract demanding that each finding ship a ready-to-paste replacement rather than an instruction, which keeps a round cheap enough to iterate.
 
