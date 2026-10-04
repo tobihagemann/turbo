@@ -71,6 +71,7 @@ Interview the user about the implementation shape until you reach shared underst
 - Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.
+- Before closing the discussion, hold each decision resolved in Step 2 or earlier in this step against the shape as it now stands: re-read what its chosen option was described as doing. Where a description no longer holds, name the claim that fails and re-ask that decision.
 - Stop once the shape is clear or the user signals readiness.
 
 ## Step 4: Confirm the Shape

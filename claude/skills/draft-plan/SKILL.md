@@ -123,6 +123,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 - Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.
+- Before closing the discussion, hold each decision resolved in Step 4 or earlier in this step against the shape as it now stands: re-read what its chosen option was described as doing. Where a description no longer holds, name the claim that fails and re-ask that decision.
 - When the shape is clear or the user signals readiness, confirm before drafting.
 
 ## Step 6: Draft and Write the Plan File
