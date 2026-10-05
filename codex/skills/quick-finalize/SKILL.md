@@ -35,7 +35,7 @@ Run the `$run-checks` skill. Stage any edits it makes before continuing.
 
 ## Phase 4: Run `$smoke-test` Skill
 
-Run the `$smoke-test` skill. It verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `$investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it to the end of the run and name it in the closing report as a case still left to the user, rather than treating it as a failure. Write it into the workflow file too, as a `Left to the user:` line below the checklist, and keep that line through every later mirror. Stage any edits before continuing.
+Run the `$smoke-test` skill. It verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `$investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it to the end of the run and name it in the closing report as a case still left to the user, rather than treating it as a failure. Write it into the workflow file too, as a `Left to the user:` line below the checklist, and keep that line through every later mirror. When a fix made here edited code, run the `$run-checks` skill again once no failure remains. Stage any edits before continuing.
 
 ## Phase 5: Run `$update-changelog` Skill
 

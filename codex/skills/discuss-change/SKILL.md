@@ -39,6 +39,8 @@ Identify product or design decisions the request did not resolve. Escalate these
 
 **Confirm external constraints before escalating.** When an option depends on a third-party API, service, or platform behaving a particular way, query documentation MCP tools (or web search as a fallback) and drop the option unless current documentation confirms that behavior.
 
+**Look up a named precedent before escalating.** When the request, or a document it points to, names a precedent the change is meant to follow, such as an existing product, a protocol, or a standard, look up how it behaves on the points the change touches, and frame options against what the lookup found. Mark as unverified only a claim about it that the lookup could not settle.
+
 **Observe existing surfaces before escalating.** When an option concerns how an existing surface looks, observe it as it currently renders, by running the app from the current code, or from a screenshot requested from the user, and drop any option its rendered state rules out.
 
 **Apply the UX lens before escalating.** When a decision concerns what an interaction does for the person using the software, run the `$user-experience` skill on it first, and state each option as the behavior that person gets and the goal it serves. Leave the mechanism behind each behavior to Step 3.

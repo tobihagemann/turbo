@@ -164,7 +164,7 @@ Run the `/run-checks` skill to execute the project's verification gate.
 
 ### Step 2: Exercise Upgraded Schema Against the Real Store
 
-When an upgraded package owns persisted schema, run the test tiers that exercise the real backing store rather than the default command alone. A tier that substitutes test doubles for the store passes on a schema the upgraded package no longer accepts. Diff the schema the package now generates against the one the project has migrated to; when they differ, return to Phase 6 for the migration the difference calls for, then re-run the tiers.
+When an upgraded package owns persisted schema, run the test tiers that exercise the real backing store rather than the default command alone. A tier that substitutes test doubles for the store passes on a schema the upgraded package no longer accepts. Diff the schema the package now generates against the one the project has migrated to; when they differ, return to Phase 6 for the migration the difference calls for, then run the `/run-checks` skill again and re-run the tiers.
 
 ### Step 3: Report Results
 

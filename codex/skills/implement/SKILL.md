@@ -45,13 +45,15 @@ Before this step starts or uses a process that runs until it is stopped, such as
 
 If a Verification section is in conversation context (e.g., from a plan file), execute the commands, smoke checks, or MCP tool invocations it specifies. If a check fails, run the `$investigate` skill. If a check is blocked by a dependency, unclear requirement, or environmental issue, use `request_user_input` to surface the blocker and let the user choose how to proceed. If no Verification section is in context, go straight to the configuration check below.
 
+When the Verification section lists both checks that can force code edits, such as a formatter or a linter, and a slow run, such as an integration suite, finish the edit-forcing checks and the edits they force before starting the slow run. When an edit lands after a slow run started, re-run it; when re-running is not practical in this session, state which part of the verification the final code did not get.
+
 When the change adds or documents a configuration override — an environment variable, build flag, or any setting a reader is told to set — prove that a supported path delivers it: set the value, run the build or process meant to consume it, and confirm the output changed. When no supported path delivers it, fix the path or drop the documentation before this step completes. Restore the setting afterwards, and rebuild or discard any output produced with the non-default value. Passing checks are no evidence here, since a default that matches the value already in use keeps a broken override invisible to every run that never asks for a different one.
 
 ## Step 5: Run `$smoke-test` Skill for UI/UX Changes
 
 If the change touches a user-facing surface (UI components, styles, templates, markup, user-facing routes or screens), run the `$smoke-test` skill. When that is unclear, use `request_user_input` to ask whether the change is user-facing rather than skipping silently. Skip this step for changes with no user-facing surface (backend-only, CLI, library, build or config).
 
-`$smoke-test` verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `$investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it into Step 6 rather than treating it as a failure.
+`$smoke-test` verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `$investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it into Step 6 rather than treating it as a failure. When a fix made here edited code, re-run the Step 4 checks it could affect once no failure remains; when re-running is not practical in this session, state which part of the verification the final code did not get.
 
 ## Step 6: Run `$preview` Skill for UI/UX Changes
 
