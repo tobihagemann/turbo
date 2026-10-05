@@ -61,9 +61,10 @@ Review the same changes for efficiency:
 2. **Algorithmic complexity**: nested iterations, repeated linear searches replaceable by sets/maps, missing early exits
 3. **Missed concurrency**: independent operations run sequentially when they could run in parallel
 4. **Hot-path bloat**: new blocking work added to startup or per-request hot paths
-5. **Unnecessary existence checks**: pre-checking file/resource existence before operating (TOCTOU anti-pattern) — operate directly and handle the error
-6. **Memory**: unbounded data structures, missing cleanup, resource leaks
-7. **Overly broad operations**: reading entire files when only a portion is needed, loading all items when filtering for one
+5. **Refresh cadence**: work triggered more often than its result can change, such as refetching rarely changing data on every event, request, or timer tick
+6. **Unnecessary existence checks**: pre-checking file/resource existence before operating (TOCTOU anti-pattern) — operate directly and handle the error
+7. **Memory**: unbounded data structures, missing cleanup, resource leaks
+8. **Overly broad operations**: reading entire files when only a portion is needed, loading all items when filtering for one
 
 ### Agent 5: Clarity and Standards Review
 
