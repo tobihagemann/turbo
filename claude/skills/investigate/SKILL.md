@@ -44,6 +44,14 @@ git blame -L <start>,<end> <file>
 
 If a known-good state exists (e.g., "this worked yesterday"), consider `git bisect` to pinpoint the breaking commit.
 
+When the problem description names a version, tag, or build that differs from the ref under investigation, resolve it to a ref and read what changed on the failing path between the two before generating hypotheses:
+
+```bash
+git diff <reported-ref>..HEAD -- <failing-path-files>
+```
+
+Read the full diff rather than its `--stat` summary. Carry each difference that could produce the symptom forward as a ranked hypothesis.
+
 ### Upstream Issue Search
 
 When the failure surfaces inside a third-party dependency, search its issue tracker for a distinctive string from the error before reading deeper into the dependency's code. An issue whose symptom matches often names the cause and the fix outright. Carry a match forward as a ranked hypothesis and test it.
