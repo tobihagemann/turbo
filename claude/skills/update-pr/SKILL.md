@@ -40,9 +40,9 @@ git diff origin/<base>...HEAD
 
 Check every Mermaid diagram in the body the same way, node by node and transition by transition. A diagram that omits a state still renders, so only the code reveals its staleness.
 
-If the body and its diagrams already describe the diff, and the session holds no capture of a changed user-facing surface that the body lacks or shows in an older state, the description is up to date. Say so, then use the TaskList tool and proceed to any remaining task.
+If the body and its diagrams already describe the diff, no embedded screenshot shows a look the PR has since reverted, and the session holds no final-state capture of an added or visually changed user-facing surface that the body lacks or shows in an older state, the description is up to date. Say so, then use the TaskList tool and proceed to any remaining task.
 
-If what the body leaves undescribed is only trivial (formatting, typos, config-only) and the session holds no such capture, say so, then use the TaskList tool and proceed to any remaining task. Proceed when the body omits, misstates, or still describes behavior the diff no longer contains.
+If what the body leaves undescribed is only trivial (formatting, typos, config-only), the body embeds no such screenshot, and the session holds no such capture, say so, then use the TaskList tool and proceed to any remaining task. Proceed when the body omits, misstates, or still describes behavior the diff no longer contains.
 
 ## Step 4: Analyze the Full Diff
 
@@ -67,7 +67,7 @@ Write an updated title and body that:
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
 - **Scopes to the target repository** — write for someone who knows only the repository the PR targets; when the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body; describe the change on its own terms, without reference to how a different repository or product does it
 - **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
-- **Updates screenshots** — leave the URL of each embedded image unaltered, removing an image only when the surface it shows is no longer part of the PR; add session captures as the Screenshots section directs, replacing an embedded screenshot only with a newer capture of the same surface
+- **Updates screenshots** — leave the URL of each embedded image unaltered, removing an image only when the surface it shows is no longer part of the PR or the PR has since reverted the look it shows; add session captures as the Screenshots section directs, replacing an embedded screenshot only with a newer capture of the same surface
 
 ## Step 7: Confirm with User
 
@@ -143,7 +143,7 @@ stateDiagram-v2
 
 ## Screenshots
 
-Include screenshots when the PR changes a user-facing surface and this session already holds captures of that surface in its final state. Reuse those captures after viewing each one, keeping the fewest that show the change. Take no new captures: with none on hand, leave the body's screenshots as they are.
+Include screenshots when the PR adds a user-facing surface or changes how one looks, and this session already holds captures of that surface in its final state. Reuse those captures after viewing each one, keeping the fewest that show the change. A change in when an existing surface appears leaves its look unchanged, so add no capture of it. Take no new captures: with none on hand, leave the body's screenshots as they are.
 
 Reference every kept capture in one row of a markdown table, with its caption in the header cell above it:
 

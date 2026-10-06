@@ -5,7 +5,7 @@ description: "Create a GitHub pull request with a drafted title and description.
 
 # Create Pull Request
 
-Draft a concise and descriptive title and a body for a PR. Explain the purpose of the changes, the problem they solve, and the general approach taken. When the changes involve clear runtime flows or state transitions, include Mermaid diagrams. When they change a user-facing surface this session already captured, include screenshots.
+Draft a concise and descriptive title and a body for a PR. Explain the purpose of the changes, the problem they solve, and the general approach taken. When the changes involve clear runtime flows or state transitions, include Mermaid diagrams. When they add a user-facing surface or change how one looks, and this session already captured it, include screenshots.
 
 ## Step 1: Analyze Changes
 
@@ -74,14 +74,14 @@ Use when the change delivers capability someone can name. Write each as `As a <p
 
 ### Before and After
 
-Use when the reviewer's question is what changed rather than what exists: several distinct fixes, or behavior that reads as a feature description unless the delta is spelled out. Give each item a Before line and an After line.
+Use when the reviewer's question is what changed rather than what exists: several distinct fixes, or behavior that reads as a feature description unless the delta is spelled out. Give each item a Before line and an After line. When a user would name what an item fixes, head the item with its user story in bold and list the Before and After lines beneath it. Any other item keeps a plain heading.
 
 Write Before lines in the past tense, with two exceptions. A sentence describing code the PR leaves alone stays present tense. A claim about what was merely possible stays modal ("could post"), never simple past, which asserts it happened.
 
 ### Rules
 
-- Raise each item to behavior a user or operator would notice. Mechanism the reviewer can read off the diff belongs in the diff.
-- Describe the net change against the base. Leave out what the session tried and weighed along the way.
+- Raise each item, heading included, to behavior a user or operator would notice. Mechanism the reviewer can read off the diff belongs in the diff.
+- Describe the net change against the base. Leave out what the session tried and weighed along the way, and what the PR leaves undone: follow-ups, problems found but not fixed, and notes that code it leaves alone still behaves as before. When the PR closes an issue, still state any part of that issue it does not deliver.
 - Write the body for someone who knows only the repository the PR targets. When the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body. Explaining a cause does not license importing those internals. State the observable outcome instead. Describe the change on its own terms, without reference to how a different repository or product does it.
 - When the PR closes an issue, open with `Closes #N`. Carry only what the issue does not already say: the interface being added, behavior a reviewer cannot infer from the diff, and above all any deviation from what the issue asked for. The issue carries the bug, its root cause, and the motivation; reference it rather than restating it.
 - After cutting for any rule above, re-read what remains. A claim whose setup lived in a cut passage no longer stands on its own.
@@ -130,7 +130,7 @@ stateDiagram-v2
 
 ## Screenshots
 
-Include screenshots when the PR changes a user-facing surface and this session already holds captures of that surface in its final state. Reuse those captures after viewing each one, keeping the fewest that show the change. Take no new captures: with none on hand, omit the section.
+Include screenshots when the PR adds a user-facing surface or changes how one looks, and this session already holds captures of that surface in its final state. Reuse those captures after viewing each one, keeping the fewest that show the change. A change in when an existing surface appears leaves its look unchanged, so add no capture of it. Take no new captures: with none on hand, omit the section.
 
 Reference every kept capture in one row of a markdown table, with its caption in the header cell above it:
 
