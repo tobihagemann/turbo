@@ -138,12 +138,14 @@ If there are no inline-thread questions, skip this step.
 
 Assemble the processed-thread list from inline-thread items only:
 
-- **fix** — inline threads with Apply verdicts whose fix was verified in Step 8. Payload: the commit SHA from Step 7.
+- **fix** — inline threads with Apply verdicts whose fix was verified in Step 8, leaving out threads whose first comment is from an AI-reviewer account as matched in Step 3. Payload: the commit SHA from Step 7.
 - **skip** — inline threads with Skip verdicts from `$evaluate-findings`, plus any downgraded in Step 8. Payload: the skip reasoning.
 - **answer** — inline-thread questions with answers composed in Step 9. Payload: the raw answer text.
 - **clarify** — inline threads reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
-Issue-comment findings go to Step 11. Review-body findings have no destination to post to, and Addressed inline threads already carry the reply naming the commit; both surface only in Step 12.
+Issue-comment findings go to Step 11. Review-body findings have no destination to post to, Addressed inline threads already carry the reply naming the commit, and fixed AI-reviewer threads are left for the reviewer to resolve on its next pass; all three surface only in Step 12.
+
+If there are no inline-thread items to reply to, skip the skill invocation.
 
 Run the `$reply-to-pr-threads` skill with the assembled list.
 
@@ -169,7 +171,7 @@ After processing all items, present a summary grouped by source.
 **Inline threads:**
 - Total unresolved threads found
 - Already addressed by commits (list file path, one-line summary, addressing commit SHA)
-- Fixed (change requests with accepted verdicts)
+- Fixed (change requests with accepted verdicts; list file path and addressing commit SHA, and mark AI-reviewer threads left without a reply)
 - Skipped (false positives or disproportionate changes)
 - Questions answered (split into: answered from recalled session history, answered from current code)
 - Clarification questions posted
