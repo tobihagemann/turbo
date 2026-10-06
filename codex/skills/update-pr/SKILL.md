@@ -71,7 +71,7 @@ Write an updated title and body that:
 
 ## Step 7: Confirm with User
 
-Output the drafted title and description as text, alongside the original for comparison, followed by the path of each capture that will upload, if any. Then use `request_user_input` for confirmation.
+Output the drafted title and description as text, alongside the original for comparison, followed by the path of each capture that will upload, if any. After that, name each added surface or changed look that neither those captures nor an embedded screenshot shows in its final state, if any, with the reason it goes unshown. Then use `request_user_input` for confirmation.
 
 ## Step 8: Apply the Update
 

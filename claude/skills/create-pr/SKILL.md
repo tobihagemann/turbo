@@ -23,7 +23,7 @@ Run the `/github-voice` skill to load writing style rules.
 
 ## Step 3: Draft Title and Description
 
-Pick a framing, then draft a title and description in it, embedding any diagrams and screenshots in the body. Output the drafted title and description as chat text so the user can review it, followed by the path of each capture that will upload, if any.
+Pick a framing, then draft a title and description in it, embedding any diagrams and screenshots in the body. Output the drafted title and description as chat text so the user can review it, followed by the path of each capture that will upload, if any. After that, name each added surface or changed look that none of those captures shows in its final state, if any, with the reason it goes unshown.
 
 ## Step 4: Confirm and Create
 
@@ -74,7 +74,7 @@ Use when the change delivers capability someone can name. Write each as `As a <p
 
 ### Before and After
 
-Use when the reviewer's question is what changed rather than what exists: several distinct fixes, or behavior that reads as a feature description unless the delta is spelled out. Give each item a Before line and an After line. When a user would name what an item fixes, head the item with its user story in bold and list the Before and After lines beneath it. Any other item keeps a plain heading.
+Use when the reviewer's question is what changed rather than what exists: several distinct fixes, or behavior that reads as a feature description unless the delta is spelled out. Give each item a Before line and an After line. Head each item with its user story in bold and list the Before and After lines beneath it. Reserve a plain heading, such as the name of the code the item touches, for an item that changes nothing a user or operator would notice.
 
 Write Before lines in the past tense, with two exceptions. A sentence describing code the PR leaves alone stays present tense. A claim about what was merely possible stays modal ("could post"), never simple past, which asserts it happened.
 
