@@ -17,6 +17,7 @@ When a command failed on a sandbox denial, whether it starts or reaches infrastr
 - Reuse a running dev server only when this session started it and has not handed it to the user to try. Otherwise start one on a port this run selected and wait for it to be ready. Confirm it bound to that port before sending it traffic — a failed bind leaves another agent's service answering. Move to another port when the port is taken; report the error and stop when the server itself failed to start.
 - Treat state the app persists at a fixed path, such as a data file or a local database, as shared with every other live instance of the app. When another live instance is using it, give this run's instance a copy of its own under the run's scratch subdirectory: repoint the path there through runtime configuration, or, when the path cannot be repointed and the app resolves it relative to its own tree, run the instance from a copy of the working tree placed there, uncommitted changes included. Leave the working tree unchanged. When neither separates the state, every scenario that writes to it is blocked: name the path.
 - Run each test runner this run starts in its own process group under a timeout enforced from outside the runner.
+- Scope a screen capture or recording this run takes to the surface under test, addressed by its identifier, whenever the capture tool can. A capture of the whole display holds whatever else is open on it and can miss a surface that is covered or not in front.
 
 ## Unavailable Infrastructure
 

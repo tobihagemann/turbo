@@ -97,6 +97,8 @@ Categories: refactor (N), performance (N), testing (N), docs (N)
 
 ### Recommend a Working Set
 
+When no entry is Active, skip the recommendation: a Deferred entry is not a candidate.
+
 Pick one specific working set tailored to the active entries. Read the entries again before recommending and weigh:
 
 - **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
@@ -112,9 +114,11 @@ State the recommendation as: lane + concrete working set (specific entries or a 
 
 Use `AskUserQuestion` to confirm. Combine into the same prompt:
 
-1. Confirm the recommended working set or pick one of the named alternatives
+1. Confirm the recommended working set or pick one of the named alternatives — include only when active entries exist
 2. Whether to remove stale entries — include only when stale entries exist
 3. Resolution for unclear items — include only when unclear entries exist
+
+Skip the call when no item applies.
 
 If the user confirmed stale removal, edit `.turbo/improvements.md` to delete the stale entries.
 

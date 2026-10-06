@@ -106,6 +106,7 @@ Assess whether:
 - Follow-up questions would improve the answer
 - The response contradicts known project facts (verify before accepting)
 - The recommendation would violate a documented constraint (follow up rather than discarding or adopting it)
+- The recommendation is conditional on a check not yet run that you can run yourself (run it before refining anything that depends on it, and open any follow-up with its result)
 
 If no follow-up is needed, skip to the Synthesize step.
 

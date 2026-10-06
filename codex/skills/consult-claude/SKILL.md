@@ -35,6 +35,8 @@ For follow-up questions, include Claude's previous answer and the new evidence g
 
 When the recommendation would violate a documented constraint, follow up rather than discarding or adopting it. Quote the constraint back and ask Claude to argue it out: whether the constraint is sound or was set without the problem Claude identified in view, whether that problem is reachable given code Claude may not have accounted for, and what the best fix that respects the constraint is. Ask it to quantify the exposure rather than assert it, and say that reversing its prior recommendation is acceptable.
 
+When the recommendation is conditional on a check not yet run that this session can run, run it before refining anything that depends on it, and open any follow-up with its result.
+
 When Claude marks a point as not verifiable from the material provided, check the complete source before following up, and quote the passage that settles it in the follow-up rather than arguing the point. When no passage settles it, the point stands.
 
 ## Step 3: Synthesize
