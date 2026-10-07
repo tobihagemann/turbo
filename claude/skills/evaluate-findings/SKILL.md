@@ -15,6 +15,8 @@ When several findings rest on a shared premise — for example a source-of-truth
 
 When a plan governs the work, re-read the decisions it records before adjudicating. Having read it earlier in the session does not count: once it falls out of context, a recorded decision is indistinguishable from no decision at all.
 
+When the repo keeps an improvements backlog (`.turbo/improvements.md` at the repo root or, inside a linked worktree, at the main checkout's root), search it before adjudicating for the paths and symbols the findings name and for entries on the same subject, leaving out any entry the work in hand sets out to implement. An entry that parks all or part of the change a finding asks for records a decision to defer it. When that finding holds and acting on it would make the change now, treat it as one that would reverse a decision the user made earlier, naming the entry as the original decision and quoting any condition it records for taking the change up. An entry that only shares the finding's area leaves the verdict to the finding's merits. In both cases, weigh what the entry records about that code when verifying the claim and assessing severity.
+
 For each finding:
 
 1. **Read the referenced code** at the mentioned location — include the full function or logical block, not just the flagged line

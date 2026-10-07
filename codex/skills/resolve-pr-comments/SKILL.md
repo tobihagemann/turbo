@@ -71,6 +71,8 @@ Run the `$interpret-feedback` skill on the union of:
 
 Skip AI-reviewer accounts — match by known login (e.g., `coderabbitai`, `copilot-pull-request-reviewer[bot]`), not the `[bot]` suffix alone. Their structured feedback routes directly to `$evaluate-findings`.
 
+If that leaves no items to interpret, skip the skill invocation.
+
 For inline threads, include the `diffHunk` so the interpreters can see the code the reviewer was looking at. For outdated comments where `line` is null, use `originalLine`. For review-body and issue-comment findings, provide the observation text and the PR's changed-file list as context.
 
 Tag each item with its `source` (`inline-thread`, `review-body`, or `issue-comment`) so later steps can route replies correctly.
@@ -88,7 +90,9 @@ Produce two lists. Each entry retains the `source` tag, identifier (thread id fo
 
 ## Step 5: Run `$evaluate-findings` Skill
 
-Run the `$evaluate-findings` skill on the change requests from Step 4 to triage each one. Questions are not evaluated here.
+If Step 4 produced no change requests and Step 3 routed no AI-reviewer items here, skip the skill invocation.
+
+Run the `$evaluate-findings` skill on the change requests from Step 4 and the AI-reviewer items Step 3 routed here, to triage each one. Questions are not evaluated here.
 
 Review-body and issue-comment findings have no file or line reference. Scope their assessment to the PR's changed files as a whole, and do not treat the absent code location as a "code has diverged" early exit.
 

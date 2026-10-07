@@ -85,15 +85,19 @@ Stage all changes made in this step before continuing.
 
 ## Step 6: Run `$smoke-test` Skill
 
+Capture `git status --short`, `git diff --cached | git hash-object --stdin`, `git diff | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning.
+
+When the ledger records a `Smoke-tested baseline`, compare it against the first three outputs and `git rev-parse HEAD`. When all four match, report the result recorded with that baseline as carried forward and close this step, running neither the `$smoke-test` skill nor a test run. On any difference, or with no such entry, continue.
+
 Run the `$smoke-test` skill to produce the smoke test plan.
 
-Capture `git status --short`, `git diff --cached | git hash-object --stdin`, `git diff | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning, and record all four outputs in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
+Record all four captured outputs in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
 
 Spawn a Codex sub-agent with inherited model defaults to execute the test plan. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context, and instruct it to read and follow `$test-run-rules` from the installed skill directory before executing the plan. State in its context that the writes the plan's Setup contract authorizes are already approved, and that any write outside that enumeration leaves its scenario blocked.
 
 **Verify the tree:** re-run all four commands when the sub-agent returns, including when it terminates early or reports incomplete results. Compare against `Pending smoke-test baseline`. Delete what the sub-agent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything that baseline already showed untouched. Clear the entry once the tree matches.
 
-If any test fails, fix the issues and stage the fixes.
+If any test fails, fix the issues and stage the fixes. When every planned test passed and the verification above found nothing to delete or revert, record the `Smoke-tested baseline` in the ledger, replacing any entry already there: the first three captured outputs, `git rev-parse HEAD`, and the result the run reported.
 
 ## Step 7: Re-run `$polish-code` Skill if Changed
 
@@ -120,7 +124,7 @@ Every stop this step reaches with changes pending names those unread files, by p
 
 **When the same class of defect recurs across iterations**, stop patching the individual instance and instead encode the root-cause invariant structurally — a shared guard or type, or a regression test that pins the class against the worked failures it must prevent. Recognize a class by its failure and what triggers it, so a further instance in another function or file counts as the class recurring. Count a defect that swings to the opposite failure after its fix, such as a check found too strict in one round and too lax in the next, as the same class recurring. In the same pass, audit the existing code against the newly encoded invariant and fix every instance it catches, including code written before it existed. When the recurring instance sits in code outside the changeset and so reaches the user as an escalated finding, make the invariant and that audit the remedy offered for it, with a fix to the individual instance as the narrower alternative. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 
-The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. The narrowed diff command only affects what `$review-code` reads. It does not affect which steps run or whether skills are invoked. When the classification above sends the run into another iteration, supply that iteration with every rejected and escalated verdict the ledger records, and every application the ledger records as narrowed, across this run and earlier iterations, as the already-adjudicated list for `$review-code`, one line each: the finding, its verdict, and the recorded reason. A narrowed application carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal the rule above depends on. Source it from the ledger rather than from in-context state, which compaction drops.
+The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations, apart from a smoke result Step 6 carries forward. The narrowed diff command only affects what `$review-code` reads. It does not affect which steps run or whether skills are invoked. When the classification above sends the run into another iteration, supply that iteration with every rejected and escalated verdict the ledger records, and every application the ledger records as narrowed, across this run and earlier iterations, as the already-adjudicated list for `$review-code`, one line each: the finding, its verdict, and the recorded reason. A narrowed application carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal the rule above depends on. Source it from the ledger rather than from in-context state, which compaction drops.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
@@ -129,3 +133,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 - Every step must run in every iteration. `$review-code` covers correctness, security, consistency, API usage, coverage, and simplicity across parallel internal reviewers plus peer review. `$evaluate-findings` is a judgment gate that must run before `$apply-findings`.
 - Each step must invoke its designated skill by reading and following that installed skill's instructions, not by substituting inline reasoning.
 - Re-invocations from Step 7 are full runs with fresh task tracking and complete skill invocations.
+- Step 6 carrying a smoke result forward on a matching baseline is the one exception to the rules above.

@@ -76,15 +76,17 @@ Stage all changes made in this step before continuing.
 
 ## Step 6: Run `/smoke-test` Skill
 
-Run the `/smoke-test` skill to produce the smoke test plan.
-
 Capture `git status --short`, `git diff --cached | git hash-object --stdin`, `git diff | git hash-object --stdin`, and `git symbolic-ref --short -q HEAD` before spawning.
+
+When this run was supplied a smoke baseline, compare it against the first three outputs and `git rev-parse HEAD`. When all four match, report the result recorded with that baseline as carried forward and close this step, running neither the `/smoke-test` skill nor a test run. On any difference, or with no baseline supplied, continue.
+
+Run the `/smoke-test` skill to produce the smoke test plan.
 
 Delegate test execution to an Agent tool call (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Pass the plan and the diff command (`git diff --cached`) to the subagent, and instruct it to invoke `/test-run-rules` via the Skill tool before executing the plan. State in its prompt that the writes the plan's Setup contract authorizes are already approved, and that any write outside that enumeration leaves its scenario blocked.
 
 **Verify the tree:** re-run all four commands when the subagent returns, including when it terminates early or reports incomplete results. Delete what the subagent created, revert what it modified or staged, and return HEAD to the captured branch, leaving everything the pre-spawn capture already showed untouched.
 
-If any test fails, fix the issues and stage the fixes.
+If any test fails, fix the issues and stage the fixes. When every planned test passed and the verification above found nothing to delete or revert, use `TaskUpdate` to add the smoke baseline to this run's Step 7 task description: the first three captured outputs, `git rev-parse HEAD`, and the result the run reported.
 
 ## Step 7: Re-run `/polish-code` Skill if Changed
 
@@ -115,7 +117,7 @@ Every stop this step reaches with changes pending names those unread files, by p
 
 **On "Handoff, then compact", or when the user asked to compact**, check first whether the gate's answer is stop iterating while TaskList shows no pending task that no `/polish-code` iteration created. Then nothing remains to resume: tell the user so and close this step without a handoff. Otherwise run the `/create-handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what the gate's answer leads to, and once the handoff is written, update this step's task as that branch says:
 
-- **Run another iteration** — the re-run. The handoff carries the number of the iteration about to run, the already-adjudicated list this step supplies to it, and its `/review-code` diff command. Use `TaskUpdate` to set this step's task description to the re-run: run `/polish-code` as that iteration with that diff command, reading the already-adjudicated list from the handoff at its path. Leave the task in progress.
+- **Run another iteration** — the re-run. The handoff carries the number of the iteration about to run, the already-adjudicated list this step supplies to it, the smoke baseline when Step 6 recorded one, and its `/review-code` diff command. Use `TaskUpdate` to set this step's task description to the re-run: run `/polish-code` as that iteration with that diff command, reading the already-adjudicated list and the smoke baseline from the handoff at its path. Leave the task in progress.
 - **Escalate to `/consult-oracle`** — the escalation. The handoff carries the summary above and the same state as on another iteration. Use `TaskUpdate` to set this step's task description to that escalation, reading that state from the handoff at its path. Leave the task in progress.
 - **Stop iterating, or no file was edited** — the first pending task that no `/polish-code` iteration created. The handoff carries the unread files this stop leaves, and the message ending the turn names them as every stop does. Mark this step's task completed, along with every Step 7 task earlier iterations left in progress.
 
@@ -123,7 +125,7 @@ Then end the turn in place of the TaskList call that closes this step, telling t
 
 **When the same class of defect recurs across iterations**, stop patching the individual instance and instead encode the root-cause invariant structurally — a shared guard or type, or a regression test that pins the class against the worked failures it must prevent. Recognize a class by its failure and what triggers it, so a further instance in another function or file counts as the class recurring. Count a defect that swings to the opposite failure after its fix, such as a check found too strict in one round and too lax in the next, as the same class recurring. In the same pass, audit the existing code against the newly encoded invariant and fix every instance it catches, including code written before it existed. When the recurring instance sits in code outside the changeset and so reaches the user as an escalated finding, make the invariant and that audit the remedy offered for it, with a fix to the individual instance as the narrower alternative. Treat recurrence on a new axis of the same invariant as a signal that the invariant is incomplete: widen it to cover the new axis rather than assuming the latest fix failed.
 
-The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations. The narrowed diff command only affects what `/review-code` reads. It does not affect which steps run or whether skills are invoked. Whichever gate above sends the run into another iteration, supply that iteration with every Skip and Escalate verdict recorded so far, and every Apply whose remedy Step 5 recorded as narrowed, across this run and earlier iterations, as the already-adjudicated list for `/review-code`, one line each: the finding, its verdict, and the recorded reason. For an Escalate the user resolved, the reason attributes to the user only what they decided; the details you picked while implementing it stay open to review. A narrowed Apply carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. Fresh task tracking leaves that list intact. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal the rule above depends on.
+The re-invocation is a full, fresh run of this skill. Every step (1-7) executes with its own task tracking and skill invocations, apart from a smoke result Step 6 carries forward. The narrowed diff command only affects what `/review-code` reads. It does not affect which steps run or whether skills are invoked. Whichever gate above sends the run into another iteration, supply that iteration with every Skip and Escalate verdict recorded so far, and every Apply whose remedy Step 5 recorded as narrowed, across this run and earlier iterations, as the already-adjudicated list for `/review-code`, one line each: the finding, its verdict, and the recorded reason. For an Escalate the user resolved, the reason attributes to the user only what they decided; the details you picked while implementing it stay open to review. A narrowed Apply carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. Fresh task tracking leaves that list intact. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal the rule above depends on. Supply the next iteration as well with the smoke baseline this run's Step 6 recorded, when it recorded one.
 
 Then use the TaskList tool and proceed to any remaining task.
 
@@ -132,3 +134,4 @@ Then use the TaskList tool and proceed to any remaining task.
 - Every step must run in every iteration. `/review-code` covers correctness, security, consistency, API usage, coverage, and simplicity across parallel internal reviewers plus peer review. `/evaluate-findings` is a judgment gate that must run before `/apply-findings`.
 - Each step must invoke its designated skill via the Skill tool, not be replaced by inline reasoning or agent calls.
 - Re-invocations from Step 7 are full runs with fresh task tracking and complete skill invocations.
+- Step 6 carrying a smoke result forward on a matching baseline is the one exception to the rules above.
