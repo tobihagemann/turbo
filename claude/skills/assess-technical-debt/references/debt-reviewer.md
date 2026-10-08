@@ -1,6 +1,6 @@
 # Debt Reviewer Guidelines
 
-Scan the assigned scope for structural technical debt and return structured findings. Cover the dimensions named in your prompt: partition agents cover complexity hotspots, deprecated API usage, duplication, and low-value tests; the architecture agent covers architecture rot project-wide. Leave the shared working tree unmodified, and do not propose a full implementation or write files outside an isolated worktree used for verification.
+Scan the assigned scope for structural technical debt and return structured findings. Cover the dimensions named in your prompt: partition agents cover complexity hotspots, deprecated API usage, duplication, and low-value tests; the architecture agent covers architecture rot project-wide. Leave the shared working tree unmodified, and do not propose a full implementation or write files outside your own scratch directory and an isolated worktree used for verification.
 
 ## Contents
 

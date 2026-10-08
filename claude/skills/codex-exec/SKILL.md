@@ -47,7 +47,7 @@ The piped form (`cat context.txt | codex exec "..."`) is safe — `cat` closes t
 
 Run codex via the Bash tool as a foreground call (do not set `run_in_background`). Set `timeout: 600000`, the foreground maximum. A larger value is not honored: the harness backgrounds the call immediately and hard-kills codex at 600s, truncating its output. Within a valid timeout, codex runs foreground and returns its result synchronously when it finishes in time.
 
-Capture the `session id:` from the run's stderr chrome as it starts; it never appears in the `-o` file, and recovery depends on it. Do not pass `--ephemeral` when the run may need recovery, since it persists no session files.
+Capture the `session id:` from the run's stderr chrome as it starts; it never appears in the `-o` file, and recovery depends on it. When filtering the run's output for it, use a filter that reads the stream to its end: one that exits early, such as `grep -m` or a trailing `head`, closes the pipe and kills the run. Do not pass `--ephemeral` when the run may need recovery, since it persists no session files.
 
 Give every run its own absolute `-o` path, named with a random tag so that runs spawned concurrently and successive runs in an iteration loop cannot collide on a path each derived independently. Pass it absolute: a relative path resolves against a working directory that drifts over a session, so the run does its work and exits having written no final message (`Failed to write last message file "<path>": No such file or directory`). A reused path holds the prior run's complete output until the current run exits, so an early read returns well-formed output from the wrong run; a fresh path turns that same read into a detectable empty one. Treat content in the `-o` file as final only once the run has exited.
 
@@ -56,13 +56,13 @@ A run that outlives the timeout is normally **force-backgrounded**: the result c
 Rarely the run is **hard-killed** instead, giving an error exit (code 143) reading `Command timed out after <duration>` with no task ID and no `-o` file. Do not re-run the prompt from scratch; that discards the work already done and hits the same ceiling. Resume the session with a fresh output path, asking for the findings as the final message rather than as a file write:
 
 ```bash
-codex exec --skip-git-repo-check -o <fresh-output-path> resume <session-id> \
+codex exec --skip-git-repo-check --sandbox <original-sandbox> -o <fresh-output-path> resume <session-id> \
   "Reply now with your complete findings as your final message." < /dev/null
 ```
 
-`resume` inherits the original session's sandbox, so pass `--sandbox` only to change it. When the kill left no session id in hand, recover it from the newest `~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-<timestamp>-<session-id>.jsonl` (the id is the UUID in the filename), listing a single day directory so the ordering is right. `codex exec resume --last` also works when no other codex run is in flight. Do not consult `~/.codex/session_index.jsonl`; it lags behind the rollout files.
+A resume turn takes its sandbox from its own command line rather than from the session, so pass the original run's `--sandbox` value again, ahead of the `resume` subcommand, which does not accept the flag after it. When the kill left no session id in hand, recover it from the newest `~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-<timestamp>-<session-id>.jsonl` (the id is the UUID in the filename), listing a single day directory so the ordering is right. `--last` in place of `<session-id>` also works when no other codex run is in flight. Do not consult `~/.codex/session_index.jsonl`; it lags behind the rollout files.
 
-A run can also exit 0 within the timeout without completing the task, its final message **asking for authorization** to take an approach its own instructions require it to clear first. Read the final message before treating the run as finished: the exit code and the well-formed message both read as success. Resume the session with the authorization as the prompt, per the form above. Do not re-run the original prompt; it reaches the same gate.
+A run can also exit 0 within the timeout without completing the task, its final message **asking for authorization** to take an approach its own instructions require it to clear first. Read the final message before treating the run as finished: the exit code and the well-formed message both read as success. Resume the session with the authorization as the prompt, per the form above, passing the `--sandbox` value the authorized approach needs. Do not re-run the original prompt; it reaches the same gate.
 
 Never wait with `Monitor` (it returns immediately, and events that arrive after your final text are dropped), and never return the task ID, an interim file snapshot, or `"Waiting for codex to finish"` as the result — each is a false-empty return.
 

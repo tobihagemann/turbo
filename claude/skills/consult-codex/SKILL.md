@@ -13,7 +13,7 @@ Identify the 2-5 files most relevant to the problem. Formulate a clear, specific
 
 ## Step 2: Start Session
 
-Run `codex exec` with `-o` to capture the response cleanly. Default to `-s read-only` for safety. Use `-s workspace-write` when the consultation requires running code, inspecting an artifact passed by path, or reading files outside the workspace, and tell Codex to keep any scratch files it writes under `.turbo/`.
+Run `codex exec` with `-o` to capture the response cleanly. Default to `-s read-only` for safety. Use `-s workspace-write` when the consultation requires running code, inspecting an artifact passed by path, or reading files outside the workspace, and tell Codex to keep any scratch files it writes under `.turbo/`. Pass the same `-s` value on every resume turn of the consultation: a resume turn takes its sandbox from its own command line, and without the flag it falls back to the codex config, where a trusted project runs workspace-write.
 
 Omit `-m`, leaving the consultation on codex's configured model. When the user named a model for this consultation, add `-m <model>` to every `codex exec` command in this skill, resume turns included, and pass the name verbatim.
 
@@ -91,7 +91,7 @@ cat "<prefix>-prompt.txt" | codex exec --skip-git-repo-check -s read-only -o "<p
 
 Parse the `session id:` line from the CLI output. This UUID is needed for follow-up turns.
 
-The `session id:` line appears only in the stderr chrome, never on stdout and never in the `-o` file. When a follow-up turn may be needed, do not discard stderr with `2>/dev/null` or capture stdout alone — either silently drops the session id and makes `resume` impossible. If output must be truncated, `2>&1 | grep` for `session id:` so the id is always retained.
+The `session id:` line appears only in the stderr chrome, never on stdout and never in the `-o` file. When a follow-up turn may be needed, do not discard stderr with `2>/dev/null` or capture stdout alone — either silently drops the session id and makes `resume` impossible. If output must be truncated, `2>&1 | grep` for `session id:` so the id is always retained. Use a filter that reads the stream to its end: one that exits early, such as `grep -m` or a trailing `head`, closes the pipe and kills the run.
 
 A grep filter also hides startup failures, whose messages carry neither `session id:` nor the word `error`, leaving a missing `-o` file as the only symptom. When the `-o` file is absent and the call returned promptly with neither a task ID nor a `Command timed out` error, codex aborted at startup: re-run with unfiltered stderr before diagnosing anything else.
 
@@ -115,18 +115,18 @@ If no follow-up is needed, skip to the Synthesize step.
 Resume the session with the parsed session ID (not `--last`, which is unsafe for parallel use). `<turn>` continues the count from Step 2, so the first follow-up writes `<prefix>-2.txt`:
 
 ```bash
-codex exec resume --skip-git-repo-check <session-id> -o "<prefix>-<turn>.txt" "<follow-up question>" < /dev/null
+codex exec --skip-git-repo-check -s read-only -o "<prefix>-<turn>.txt" resume <session-id> "<follow-up question>" < /dev/null
 ```
 
 When the follow-up carries text you did not author, or backticks, `$`, or straight double quotes, write it to a file with the Write tool and pass `-` so the prompt is read from stdin instead:
 
 ```bash
-cat "<prefix>-followup.txt" | codex exec resume --skip-git-repo-check <session-id> -o "<prefix>-<turn>.txt" -
+cat "<prefix>-followup.txt" | codex exec --skip-git-repo-check -s read-only -o "<prefix>-<turn>.txt" resume <session-id> -
 ```
 
 With `-`, stdin is the whole prompt rather than a `<stdin>` block appended to an argument, so instruction and context share the one file. Leave off `< /dev/null` here — the pipe supplies stdin, and `cat` sends EOF.
 
-The `-s` flag is not available for `resume`. It inherits sandbox settings from the original session.
+Carry the consultation's `-s` value on each resume turn, ahead of the `resume` subcommand, which does not accept the flag after it.
 
 When the consultation runs until Codex approves, open each resume turn by listing what was already applied, so Codex judges the current state rather than re-reporting findings that are already fixed. When a positive verdict arrives without stating what it rests on, resume to ask what was inspected and to inspect anything the verdict depends on that it has not yet checked, then apply the `<verdict_line>` termination rule to the verdict that follows. The 5-turn cap still binds: when it is reached without a positive verdict that states its evidence, carry the outstanding findings into Step 5 as unresolved and state that the consultation ended without approval.
 
@@ -158,5 +158,7 @@ When the consultation rewrote prose rather than answering a question, check the 
 Take the plainer sentences and keep the load-bearing why.
 
 Check separately whether the supporting material in a proposed replacement is already in use. The consultation sees only the files and excerpts the prompt showed it, so a replacement that introduces new material such as a citation, an example, or a quotation can reuse something the document already relies on elsewhere. Search the whole target document for that material before adopting it, and either discard the replacement or mark the reuse in the text.
+
+When an adopted pick's strongest counterargument names a case the pick leaves uncovered, record that case as a known limit of the pick wherever the pick is recorded in a plan or another artifact that governs the work.
 
 When the consultation was opened from a pending question, resolve that question with the answer in hand, re-asking the user when the choice stays theirs. Then use the TaskList tool and proceed to any remaining task.

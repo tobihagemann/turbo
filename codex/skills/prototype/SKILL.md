@@ -29,7 +29,7 @@ Write to `.turbo/prototypes/<slug>.html`, creating the directory when it does no
 
 Write one self-contained `.html` file at the resolved path, with markup, styles, script, and sample data inline. It runs from `file://` with no build step, no package install, and no dependency on the real application. Start the styles with `[hidden] { display: none !important; }`: an element whose own CSS sets any `display` value otherwise ignores the `hidden` attribute and paints anyway.
 
-Build only what the Step 1 questions require. Hardcode the data behind them, stub anything that would cross a network boundary, and leave persistence out.
+Build only what the Step 1 questions require. Hardcode the data behind them, stub anything that would cross a network boundary, and leave persistence out. Where answering a Step 1 question takes surroundings that question does not put under test, such as panels, controls, or affordances, match how the real application presents them.
 
 When a Step 1 question compares alternatives, build every alternative into the same file behind a header toggle, kept visually separate from the design as prototype chrome, so the user compares them in place rather than across descriptions. Label each position of the toggle by what the user will see or feel differ. When the user could not see or feel two alternatives differ, build one of them, leave the other out of the prototype, and say so when handing it over. Keep that chrome in normal document flow rather than `position: sticky` or `fixed`, where it covers the controls scrolled beneath it.
 
@@ -43,7 +43,7 @@ When a Step 1 question turns on how an interaction feels, such as a drag, scrub,
 
 ## Step 5: Hand It Over
 
-Give the user the file path, the Step 1 questions the prototype answers, and what to try for each. For a gesture driven move by move in Step 4, also give the largest change between consecutive moves in the values it recorded. Close with how to reply once they have tried it: say it settled the questions, or describe what to change.
+Give the user the file path, the Step 1 questions the prototype answers, and what to try for each. Name what the user might look for and not find, and where what they see or feel differs from how the real change will behave, as outside what the prototype asks them to judge. For a gesture driven move by move in Step 4, also give the largest change between consecutive moves in the values it recorded. Close with how to reply once they have tried it: say it settled the questions, or describe what to change.
 
 Then end the turn.
 
