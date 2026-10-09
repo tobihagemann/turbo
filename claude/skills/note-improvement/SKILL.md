@@ -20,7 +20,7 @@ Gather from context or `$ARGUMENTS`:
 - **Category**: One of `refactor`, `performance`, `reliability`, `readability`, `testing`, `docs`, `dx` (developer experience), or `feature`
 - **Where**: File path(s) and/or area of the codebase affected
 - **Why**: Brief rationale — what's the benefit?
-- **Ceiling** and **Revisit**: when the entry records a deliberate simplification, meaning a simpler approach was shipped in place of a fuller one and accepts a known limit — the limit the shipped approach accepts, and the condition that makes the fuller version worth building
+- **Ceiling** and **Revisit**: when the entry records a deliberate simplification, meaning a simpler approach was shipped in place of a fuller one and accepts a known limit — the limit the shipped approach accepts, and the condition that makes the fuller version worth building. **Revisit** alone when the entry waits on an outside event: that event
 
 ### Type criteria
 
@@ -35,7 +35,7 @@ When the criteria above clearly select one value, use it. Otherwise, use `AskUse
 - Append the entry to the `.turbo/improvements.md` of the repo whose files its **Where** names, which may not be the current repo.
 - When **Where** spans several repos, split it into one entry per repo and append each to its own repo. Give every entry the titles of all its counterparts so a reader of any one backlog finds the others.
 - Rewrite each split entry's **Where** so its paths read repo-local, matching the entries already in that backlog. Qualify any remaining reference that resolves only in another repo with the repo it lives in.
-- When a target repo is absent from disk, say so plainly and append its entry to the backlog of the repo root resolved in Step 1, naming the repo it was meant for.
+- When a target repo's checkout cannot be found on disk, use `AskUserQuestion` to ask where it is cloned, offering as the alternative to note its entry in the backlog of the repo root resolved in Step 1. Given a path, route the entry to the repo at that path. Without one, say that the checkout was not found and append the entry to that backlog, naming the repo it was meant for.
 - Write to any path outside the current working directory with the Edit or Write tool, the main checkout of the worktree this session runs in included. The Bash sandbox denies a shell append there, and a separately-issued verification command then prints the file's unchanged contents, which reads as success.
 - When that write is refused while this session runs inside a linked worktree, report that the entry cannot be persisted from here and print the fully formatted entry so it can be pasted in from a session that can write to the main checkout. Leave it out of the worktree's own `.turbo/`, which is gitignored and is destroyed with the worktree.
 
@@ -64,7 +64,7 @@ Out-of-scope improvement opportunities captured during work sessions. Review per
 - **Noted**: <YYYY-MM-DD>
 ```
 
-Include the Ceiling and Revisit lines when the entry records a deliberate simplification, and a Paired with line per counterpart when the entry is one half of a split; omit them otherwise. Append the new entry at the end of each target file.
+Include the Ceiling and Revisit lines when the entry records a deliberate simplification, the Revisit line alone when the entry waits on an outside event, and a Paired with line per counterpart when the entry is one half of a split; omit them otherwise. Append the new entry at the end of each target file.
 
 ## Step 4: Confirm
 

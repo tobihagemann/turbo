@@ -21,9 +21,9 @@ If `$investigate` surfaces complexity that exceeds a single-session fix (multi-s
 
 ## Phase 2: Run `$implement` Skill for the Concluded Fixes
 
-In the turn that invokes `$implement`, write out each investigation's concluded fix as an explicit bullet: summary + files + change description. Being explicit matters here because `$investigate`'s earlier output has likely displaced continuation context, so `$implement` needs a fresh, self-contained description.
+**When no investigation concluded a fix**, state that and leave `$implement` unrun.
 
-Then run the `$implement` skill.
+**Otherwise**, in the turn that invokes `$implement`, write out each concluded fix as an explicit bullet: summary + files + change description. Being explicit matters here because `$investigate`'s earlier output has likely displaced continuation context, so `$implement` needs a fresh, self-contained description. Then run the `$implement` skill.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

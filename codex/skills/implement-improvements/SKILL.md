@@ -141,12 +141,14 @@ State the chosen lane before continuing with the reference file.
 Edit `.turbo/improvements.md` to delete the working-set entries that the lane processed. "Processed" means:
 
 - **Direct lane** — entries whose fixes were applied
-- **Investigate lane** — entries the applied fixes resolve in full
+- **Investigate lane** — entries the applied fixes resolve in full, and entries whose investigation established that no defect exists
 - **Plan lane** — entries now captured in the plan produced by `$turboplan`; treat them as processed once the plan is written.
 
 Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
 
 Rewrite in place each entry the investigate lane investigated that stays in the backlog: restate its summary and **Where** as what remains to do, put what the investigation established in its **Why** (the root cause it confirmed, or the hypotheses it refuted when the cause stayed unresolved), and set the **Type** the remainder calls for. When the entry waits on an outside event, such as an upstream fix, record that event as its **Revisit**. When the rewrite changes the summary, update each **Paired with** line in counterpart entries that names the old title.
+
+When the restated **Where** names files in another repo, delete the entry in place of rewriting it, drop each **Paired with** reference to it from its counterpart entries, then run the `$note-improvement` skill for the entry as restated, with its **Category**, **Type**, **Why**, and any **Ceiling** or **Revisit**.
 
 When a processed entry carries a **Paired with** line, drop that reference from each counterpart entry it names, so no backlog is left pointing at an entry that no longer exists.
 
