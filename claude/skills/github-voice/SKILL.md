@@ -13,6 +13,7 @@ description: "Shared writing style rules for GitHub-facing output (PR comments, 
 - Leave evidence of correctness out of a PR body: a Verification section and test-count lines when CI runs the suite, and figures from a survey of live data. A statistic offered as reassurance reads as an open question rather than a finished change. Keep a measurement the change exists to produce.
 - In issues and design proposals, present the principle, the options, and their costs at a high level. Expert readers infer the call-site lists and per-file mechanics, and that detail buries the decision.
 - When explaining how the code works, describe its current behavior. Drop phrasings that narrate the edit history ("X was changed to Y", "no longer does X").
+- Keep one term per concept, preferring the name the code uses. Once a thing has a name, repeat that name instead of rotating synonyms, and refer to a code element by its identifier rather than a shorthand the text never introduces.
 - When the user has stated their reasoning in the conversation, mine it and write from that reasoning. A cleaner argument constructed afterwards reads as someone else's, however sound it is.
 - When the user supplies wording for the artifact, that wording is the draft. Keep their phrasing rather than sharpening it into something more precise, more formal, or more technically careful. Where the phrasing names an effect and the mechanism differs, state the mechanism separately. Flagging the deviation to the user does not license it.
 - Sound like the author, not like an AI assistant.

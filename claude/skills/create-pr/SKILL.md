@@ -80,7 +80,7 @@ Write Before lines in the past tense, with two exceptions. A sentence describing
 
 ### Rules
 
-- Raise each item, heading included, to behavior a user or operator would notice. Mechanism the reviewer can read off the diff belongs in the diff.
+- Raise each item, heading included, to behavior a user or operator would notice. Mechanism the reviewer can read off the diff belongs in the diff. Leave out which existing pattern or sibling the implementation is modeled on.
 - Describe the net change against the base. Leave out what the session tried and weighed along the way, and what the PR leaves undone: follow-ups, problems found but not fixed, and notes that code it leaves alone still behaves as before. When the PR closes an issue, still state any part of that issue it does not deliver.
 - Write the body for someone who knows only the repository the PR targets. When the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body. Explaining a cause does not license importing those internals. State the observable outcome instead. Describe the change on its own terms, without reference to how a different repository or product does it.
 - When the PR closes an issue, open with `Closes #N`. Carry only what the issue does not already say: the interface being added, behavior a reviewer cannot infer from the diff, and above all any deviation from what the issue asked for. The issue carries the bug, its root cause, and the motivation; reference it rather than restating it.
