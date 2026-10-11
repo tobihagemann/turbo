@@ -48,7 +48,7 @@ Choose fonts that are beautiful, unique, and interesting. Pair a distinctive dis
 
 ### Color and Theme
 
-Commit to a cohesive palette. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes. One accent color unless the product already has a strong system.
+Commit to a cohesive palette. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes. One accent color unless the product already has a strong system. Give each color one role, such as neutral base, brand, or action, and use it on every element in that role: when a color marks action, every interactive element takes it. A color added later gets a role of its own before it appears anywhere.
 
 ### Spatial Composition
 

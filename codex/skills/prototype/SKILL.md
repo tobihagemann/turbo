@@ -39,6 +39,8 @@ Open the file and drive it yourself before handing it over, using the `browser-u
 
 Exercise every control and flow that the Step 1 questions depend on, and confirm each one is reachable and responds. Fix whatever does not work and drive it again. A render or a screenshot leaves the controls untested, so it does not establish that the user can reach what they are being asked to judge.
 
+When the prototype carries a comparison toggle, drive each position under the conditions its Step 1 question names, such as a viewport width, and confirm the positions differ there in what the user will see or feel. When two do not, apply Step 3's rule for alternatives the user could not tell apart and drive the prototype again.
+
 When a Step 1 question turns on how an interaction feels, such as a drag, scrub, or resize, drive the gesture as one continuous sequence of many small pointer moves. After each move, record the position of every element that should stay put and the moved element's offset from the pointer. Treat any change between consecutive moves that the interaction does not call for as broken, fix it, and drive the sequence again.
 
 ## Step 5: Hand It Over
@@ -51,7 +53,7 @@ Then end the turn.
 
 A goal continuation turn that carries no reply from the user is not a verdict: end it without calling any tool and without advancing.
 
-- **Needs changes** — return to Step 3 with the changes the user describes and continue from there, so every later round is driven in Step 4 before it reaches the user.
+- **Needs changes** — return to Step 3 with the changes the user describes and continue from there, so every later round is driven in Step 4 before it reaches the user. Make those changes to what the prototype already holds, adding to it only what the user asks for.
 - **Settled** — continue to Step 7.
 
 ## Step 7: Record What It Settled
