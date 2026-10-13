@@ -12,6 +12,7 @@ Identify the plan's acceptance criteria and its stated bounds (Context or the or
 - **YAGNI** — Steps that build something no acceptance criterion asks for: unrequested features, premature abstractions, or scaffolding for anticipated work
 - **Design Direction** — Whether the chosen approach is the simplest safe option. Challenge assumptions the plan depends on and flag when a different approach would be safer or simpler
 - **Proportionality** — Steps whose machinery (leases, locks, queues, versioning schemes, state machines, new persistent entities) exceeds the failure modes and scale the plan's Context admits
+- **Unconsumed Capability** — A capability the plan builds for code outside the change, such as a caller or a consuming project, that nothing there uses and no plan for that code takes up. Read that code, and the plan for it when one exists. Flag it even when an acceptance criterion names the capability, naming deferral as the simpler approach
 - **Self-Referential Justification** — Mechanism justified by a failure mode that exists only because that mechanism is present. Trace each justification back to a criterion or bound; when the chain closes on itself, test whether cutting the mechanism removes its dependents rather than judging each link alone
 
 ## Determination Criteria
