@@ -36,6 +36,8 @@ Unless an explicit path or slug was passed, confirm the resolved plan still desc
 - **Already implemented** — the frontmatter `status:` is `done`
 - **Waiting on a gate** — the plan's Context states a gate that must pass before its work can start
 
+When you check whether a gate has passed, check each condition it names at its source of record, such as the remote's tags for another repository's release, rather than a local copy.
+
 When a signal fires, output it as text. Then use `request_user_input` to offer:
 
 - **Implement anyway** — the marker is stale, or the gate has passed

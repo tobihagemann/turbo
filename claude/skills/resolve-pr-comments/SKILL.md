@@ -20,9 +20,10 @@ At the start, use `TaskCreate` to create a task for each step:
 7. Run `/resolve-findings` skill
 8. Verify fixes
 9. Answer reviewer questions
-10. Run `/reply-to-pr-threads` skill
-11. Run `/reply-to-pr-conversation` skill
-12. Summary
+10. Wait for AI re-reviews
+11. Run `/reply-to-pr-threads` skill
+12. Run `/reply-to-pr-conversation` skill
+13. Summary
 
 ## Step 1: Fetch Comments
 
@@ -55,7 +56,7 @@ For every observation, check whether a subsequent commit already addresses it. C
 When an observation asserts a requirement or an intended behavior, compare that assertion against `meta.body`. The PR description is the author's own current statement of intent, so a description stating the opposite leaves a premise for Step 5 to settle. Record the contradiction against the observation and carry it forward, so Step 5 settles that premise once instead of re-deriving it for every finding the premise produced.
 
 Classify each observation:
-- **Addressed**: A subsequent commit resolves it. Record the commit SHA for the Step 12 summary.
+- **Addressed**: A subsequent commit resolves it. Record the commit SHA for the Step 13 summary.
 - **Unaddressed**: No subsequent commit resolves it. Carry into Step 3, tagged with its `source` (`review-body` or `issue-comment`), the author, the observation text, any recorded contradiction with the PR description, and (for review bodies) the review state.
 
 Review-body and issue-comment findings have no `diffHunk`, file path, or line reference. The downstream pipeline handles findings without a code location.
@@ -69,7 +70,7 @@ Run the `/interpret-feedback` skill on the union of:
 - Unaddressed review-body findings from Step 2
 - Unaddressed issue-comment findings from Step 2
 
-Skip AI-reviewer accounts — match by known login (e.g., `coderabbitai`, `copilot-pull-request-reviewer[bot]`), not the `[bot]` suffix alone. Their structured feedback routes directly to `/evaluate-findings`.
+Skip AI-reviewer accounts — match by known login (e.g., `coderabbitai`, `copilot-pull-request-reviewer`), not the `[bot]` suffix alone. Their structured feedback routes directly to `/evaluate-findings`.
 
 If that leaves no items to interpret, skip the skill invocation.
 
@@ -109,7 +110,7 @@ Output all escalated items as a numbered list. For each item, show:
 Then use `AskUserQuestion` to ask how to handle them. State each question as the decision the user owns: what the code should do. Leave the reviewer's wording and code location to the numbered list above. Per item, the options are:
 
 - **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent. Step 7 picks it up as an accepted finding.
-- **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 10 (inline threads) or Step 11 (issue comments)
+- **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 11 (inline threads) or Step 12 (issue comments)
 - **Skip**: Remove from processing
 
 Whenever the item is costly to reverse (its resolution establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever you cannot recommend one of the three with conviction, add a fourth **Get a second opinion** option. It runs the `/consult-codex` skill for the soundest resolution on technical merit alone, independent of the changeset's original scope, naming any scope cost with the answer. On an item that turns on product intent, run it for what each resolution commits to, what reversing it costs, and what the prevailing convention is. Then resolve the item with that answer in hand, re-asking when the choice stays the user's.
@@ -118,7 +119,7 @@ Whenever the item is costly to reverse (its resolution establishes a pattern oth
 
 If there are no accepted findings to implement, skip to Step 9.
 
-Run the `/resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. It commits and pushes before returning; Steps 10 and 11 replies reference that commit SHA.
+Run the `/resolve-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. It commits and pushes before returning; Steps 11 and 12 replies reference that commit SHA.
 
 ## Step 8: Verify Fixes
 
@@ -128,32 +129,43 @@ For each finding that was fixed in Step 7, verify the fix actually addresses the
 2. Compare against the reviewer's comment (and `diffHunk` when available).
 3. Confirm the specific concern is resolved.
 
-If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 10 (for inline threads), Step 11 (for issue-comment findings), and Step 12 (for review-body findings) report it correctly.
+If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 11 (for inline threads), Step 12 (for issue-comment findings), and Step 13 (for review-body findings) report it correctly.
 
 ## Step 9: Answer Reviewer Questions
 
-For each question item whose source is `inline-thread`, run the `/recall-rationale` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the rationale it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it returns no transcript, compose the answer from the current code and record that grounding for Step 12. Leave out any mention of Claude, transcripts, or recalled rationale, and leave voice rules and reply formatting to Step 10.
+For each question item whose source is `inline-thread`, run the `/recall-rationale` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the rationale it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it returns no transcript, compose the answer from the current code and record that grounding for Step 13. Leave out any mention of Claude, transcripts, or recalled rationale, and leave voice rules and reply formatting to Step 11.
 
-Issue-comment questions are composed during Step 11's assembly and posted by `/reply-to-pr-conversation`. They have no file and line to ground with `/recall-rationale`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 12.
+Issue-comment questions are composed during Step 12's assembly and posted by `/reply-to-pr-conversation`. They have no file and line to ground with `/recall-rationale`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 13.
 
 If there are no inline-thread questions, skip this step.
 
-## Step 10: Run `/reply-to-pr-threads` Skill
+## Step 10: Wait for AI Re-reviews
+
+Skip this step when Step 7 pushed no commit, or when no inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped.
+
+For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, or a queued or in-progress check or workflow run from it on that commit. When none is, skip the rest of this step.
+
+Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 1 for a later run; record both for the Step 13 summary.
+
+## Step 11: Run `/reply-to-pr-threads` Skill
 
 Assemble the processed-thread list from inline-thread items only:
 
-- **fix** — inline threads with Apply verdicts whose fix was verified in Step 8, leaving out threads whose first comment is from an AI-reviewer account as matched in Step 3. Payload: the commit SHA from Step 7.
+- **fix** — inline threads with Apply verdicts whose fix was verified in Step 8. Payload: the commit SHA from Step 7.
 - **skip** — inline threads with Skip verdicts from `/evaluate-findings`, plus any downgraded in Step 8. Payload: the skip reasoning.
 - **answer** — inline-thread questions with answers composed in Step 9. Payload: the raw answer text.
 - **clarify** — inline threads reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
+- **resolve-only** — still-unresolved Addressed inline threads from Step 2 whose first comment is from an AI-reviewer account, matched as in Step 3. Before including one, read the current code at the thread's path and confirm the specific concern is fixed; when it is not, leave the thread out and record what remains for Step 13. Payload: the addressing commit SHA.
 
-Issue-comment findings go to Step 11. Review-body findings have no destination to post to, Addressed inline threads already carry the reply naming the commit, and fixed AI-reviewer threads are left for the reviewer to resolve on its next pass; all three surface only in Step 12.
+Give each fix and skip entry whose first comment is from an AI-reviewer account as matched in Step 3 a resolution reason: `ADDRESSED` for a fix, `INVALID` for a skip that refuted the finding as incorrect, and `WONT_FIX` for a skip that declined a valid one. Give every resolve-only entry `ADDRESSED`. Give none to a thread downgraded in Step 8, to a skip that neither refuted nor declined the finding, or to any other thread, leaving it for its reviewer to resolve.
 
-If there are no inline-thread items to reply to, skip the skill invocation.
+Issue-comment findings go to Step 12. Review-body findings have no destination to post to, Addressed inline threads outside the resolve-only entries already carry the reply naming the commit, and threads Step 10 dropped were resolved during the wait; all three surface only in Step 13.
+
+If there are no inline-thread items to reply to or resolve, skip the skill invocation.
 
 Run the `/reply-to-pr-threads` skill with the assembled list.
 
-## Step 11: Run `/reply-to-pr-conversation` Skill
+## Step 12: Run `/reply-to-pr-conversation` Skill
 
 Assemble the processed-item list from issue-comment items only. Each entry includes the generated id, the author, the original comment body (for quoting), the category, and the per-category payload:
 
@@ -162,21 +174,25 @@ Assemble the processed-item list from issue-comment items only. Each entry inclu
 - **answer** — issue-comment questions. Compose a one-or-two-sentence answer from the reconciled intent from Step 3 and the PR's changed code. Payload: the composed answer.
 - **clarify** — issue-comment items reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
-Review-body findings have no destination to post to. Exclude them from this list; their triage status is reported in Step 12.
+Review-body findings have no destination to post to. Exclude them from this list; their triage status is reported in Step 13.
 
 If there are no issue-comment items to reply to, skip the skill invocation.
 
 Run the `/reply-to-pr-conversation` skill with the assembled list.
 
-## Step 12: Summary
+## Step 13: Summary
 
 After processing all items, present a summary grouped by source.
 
 **Inline threads:**
 - Total unresolved threads found
 - Already addressed by commits (list file path, one-line summary, addressing commit SHA)
-- Fixed (change requests with accepted verdicts; list file path and addressing commit SHA, and mark AI-reviewer threads left without a reply)
+- Fixed (change requests with accepted verdicts; list file path and addressing commit SHA)
 - Skipped (false positives or disproportionate changes)
+- Resolved during Step 10's wait (list file path)
+- Resolved by this run (list file path and resolution reason)
+- Addressed AI-reviewer threads left unresolved (list file path and what remains)
+- Arrived during Step 10's wait, left for a later run (list file path or review author)
 - Questions answered (split into: answered from recalled transcript, answered from current code)
 - Clarification questions posted
 
