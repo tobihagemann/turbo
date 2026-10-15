@@ -32,11 +32,16 @@ Run the `$review-dependencies` skill to detect package managers and discover ava
 
 Before summarizing, set aside packages whose version tracks a pinned runtime or platform rather than the newest release, such as runtime type definitions and platform SDKs. Find the pin the project declares (version manager file, `engines` field, container base image, CI setup step) and hold any version beyond it until the pin moves.
 
+A package whose newer releases raise their own declared runtime or platform minimum above the project's is not set aside on that basis.
+
 Present a summary showing:
 - Count and list of major updates (with current → target versions)
 - Count of minor updates
 - Count of patch updates
 - Packages set aside, each with the pin that governs it
+- Packages whose newer releases need a higher runtime or platform minimum, each with the minimum they need
+
+Before the strategy question, use `request_user_input` to ask for each package that needs a higher minimum whether to raise the project's minimum, naming the versions or devices that lose support and the dependents that must raise theirs in lockstep, or to cap the package at the last release the current minimum admits. Add a **Get a second opinion** option, which runs the `$consult-claude` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. Apply a raise only when the package is upgraded.
 
 Use `request_user_input` for upgrade strategy (Codex `request_user_input` allows up to 3 options per question, so the strategies are split across two questions):
 

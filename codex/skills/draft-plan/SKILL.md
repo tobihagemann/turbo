@@ -131,7 +131,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.
 - Before closing the discussion, hold each decision resolved in Step 4 or earlier in this step against the shape as it now stands: re-read what its chosen option was described as doing. Where a description no longer holds, name the claim that fails and re-ask that decision.
-- When the shape is clear or the user signals readiness, confirm before drafting.
+- When the shape is clear or the user signals readiness, confirm before drafting. The confirmation asks only whether to draft: first ask on its own, with its trade-off in each option, any design choice the summarized shape commits to that no earlier question asked, or drop it from the summary and leave it to the plan.
 
 ## Step 6: Draft and Write the Plan File
 
