@@ -187,7 +187,7 @@ It requires:
 Merge these values into the existing `~/.turbo/config.json`. Then run the one-time sign-in via the Bash tool (`timeout: 600000`); it blocks until sign-in completes:
 
 ```bash
-npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser -p "HI"
+npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-6-pro -p "HI"
 ```
 
 Have the user sign into ChatGPT in the window that opens.

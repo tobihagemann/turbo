@@ -49,9 +49,13 @@ Keep backticks, `$`, and straight double quotes out of `--prompt` even in text y
 
 If the run fails, retry the command once — same prompt, attachments, and timeout — when the failure looks transient, such as a browser challenge or automation error while the signed-in session is otherwise healthy. Report an authentication, browser-challenge, or permission blocker only after the retry reproduces it, and cite the failing output. Do not broaden permissions when the current context already has the access the run needs.
 
+When the failure says the requested model is missing from the model picker and lists the available options, the CLI's default target is out of date. Instead of the identical retry, re-run once with `--model gpt-6-pro`, and name that model in the Step 5 summary. A `Pro` entry in that list does not work as a `--model` value.
+
+A consult that outlives the timeout is normally moved to the background: the result carries a task ID, and the run continues to completion. Wait for the `<task-notification>` that reports completion, then read `<printed-path>`. Do not re-run the consult while it runs in the background, and never take the task ID, or `<printed-path>` read before that notification, as the answer. When the notification reports a failure, read the error from the task's output file and apply the retry rules above.
+
 ## Step 4: Follow Up
 
-Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Run via the Bash tool with the same settings as Step 3 (`timeout: 600000`, do not set `run_in_background`):
+Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Run via the Bash tool with the same settings as Step 3 (`timeout: 600000`, do not set `run_in_background`), and recover a backgrounded run the same way:
 
 ```bash
 python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output "<printed-path>"

@@ -49,6 +49,8 @@ Keep backticks, `$`, and straight double quotes out of `--prompt` even in text y
 
 If the run fails, retry the command once — same prompt, attachments, and timeout — when the failure looks transient, such as a browser challenge or automation error while the signed-in session is otherwise healthy. Report an authentication, browser-challenge, or permission blocker only after the retry reproduces it, and cite the failing output. Do not broaden permissions when the current context already has the access the run needs.
 
+When the failure says the requested model is missing from the model picker and lists the available options, the CLI's default target is out of date. Instead of the identical retry, re-run once with `--model gpt-6-pro`, and name that model in the Step 5 summary. A `Pro` entry in that list does not work as a `--model` value.
+
 ## Step 4: Follow Up
 
 Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Use the same generous timeout as Step 3 (60 minutes / 3600000ms):
