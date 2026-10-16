@@ -5,7 +5,7 @@ description: "Evaluate, fix, answer, and reply to GitHub pull request review com
 
 # Resolve PR Review Comments
 
-Fetch unresolved review comments from a GitHub PR (inline threads, review-body observations, and issue-comment observations from the PR conversation), evaluate each one, fix or skip based on confidence, answer reviewer questions using the recalled rationale behind the change, and reply. Inline threads are answered with thread replies; issue-comment findings are answered with new PR conversation comments. Review-body findings flow through the same evaluate-and-fix pipeline; their outcomes land in the summary because a review body has no destination to post to.
+Fetch unresolved review comments from a GitHub PR (inline threads, review-body observations, and issue-comment observations from the PR conversation), evaluate each one, fix or skip based on confidence, answer reviewer questions using the recalled rationale behind the change, and reply. Inline threads are answered with thread replies; issue-comment findings from people are answered with new PR conversation comments. Review-body findings and AI-reviewer issue comments flow through the same evaluate-and-fix pipeline; their outcomes land only in the summary.
 
 ## Task Tracking
 
@@ -110,10 +110,10 @@ Output all escalated items as a numbered list. For each item, show:
 Then use `AskUserQuestion` to ask how to handle them. State each question as the decision the user owns: what the code should do. Leave the reviewer's wording and code location to the numbered list above. Per item, the options are:
 
 - **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent. Step 7 picks it up as an accepted finding.
-- **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 11 (inline threads) or Step 12 (issue comments)
+- **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 11 (inline threads) or Step 12 (issue comments). Offer it only for an item one of those steps replies to.
 - **Skip**: Remove from processing
 
-Whenever the item is costly to reverse (its resolution establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever you cannot recommend one of the three with conviction, add a fourth **Get a second opinion** option. It runs the `/consult-codex` skill for the soundest resolution on technical merit alone, independent of the changeset's original scope, naming any scope cost with the answer. On an item that turns on product intent, run it for what each resolution commits to, what reversing it costs, and what the prevailing convention is. Then resolve the item with that answer in hand, re-asking when the choice stays the user's.
+Whenever the item is costly to reverse (its resolution establishes a pattern others will follow, defines an interface, commits to a data shape, or imports a pattern the codebase has not used), and whenever you cannot recommend one of the others with conviction, add a **Get a second opinion** option. It runs the `/consult-codex` skill for the soundest resolution on technical merit alone, independent of the changeset's original scope, naming any scope cost with the answer. On an item that turns on product intent, run it for what each resolution commits to, what reversing it costs, and what the prevailing convention is. Then resolve the item with that answer in hand, re-asking when the choice stays the user's.
 
 ## Step 7: Run `/resolve-findings` Skill
 
@@ -129,7 +129,7 @@ For each finding that was fixed in Step 7, verify the fix actually addresses the
 2. Compare against the reviewer's comment (and `diffHunk` when available).
 3. Confirm the specific concern is resolved.
 
-If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 11 (for inline threads), Step 12 (for issue-comment findings), and Step 13 (for review-body findings) report it correctly.
+If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 11 (for inline threads), Step 12 (for the issue-comment findings it replies to), and Step 13 (for the rest) report it correctly.
 
 ## Step 9: Answer Reviewer Questions
 
@@ -174,7 +174,7 @@ Assemble the processed-item list from issue-comment items only. Each entry inclu
 - **answer** — issue-comment questions. Compose a one-or-two-sentence answer from the reconciled intent from Step 3 and the PR's changed code. Payload: the composed answer.
 - **clarify** — issue-comment items reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
-Review-body findings have no destination to post to. Exclude them from this list; their triage status is reported in Step 13.
+Review-body findings have no destination to post to, and issue comments from AI-reviewer accounts, matched as in Step 3, get no conversation reply. Exclude both from this list; their triage status is reported in Step 13.
 
 If there are no issue-comment items to reply to, skip the skill invocation.
 
