@@ -25,7 +25,7 @@ Always check for project-specific testing skills or MCP tools first. Use the fal
 - **Web app** → `/agent-browser` skill if available, otherwise `claude-in-chrome` MCP
 - **UI/native app** → `computer-use` MCP
 - **CLI tool** → direct terminal execution
-- **Library with no entry point** → report that interactive testing is not applicable and stop
+- **Library with no entry point** → report that interactive testing is not applicable and stop, unless the scope changes a check's configuration; then use direct terminal execution for that part of the scope
 
 ## Step 3: Resolve the Output Path
 
@@ -66,6 +66,8 @@ Confirm any control, command, or other affordance a scenario names exists in the
 When a scenario claims an affordance is available in a state, make each such affordance's first observable effect in that state the expected outcome. For an affordance whose effect is not cleanly undoable, write the scenario to stop at its confirmation step and cancel it, or, when the affordance has none, to act on a record the executor creates for the scenario.
 
 When a scenario's pass condition is that nothing happens — no write, no call, no state change — pair it with a control that differs only in the dimension under test and whose expected outcome is that the effect does occur, since a lone negative scenario cannot distinguish the behavior under test from a harness that never reached it. When such a scenario injects a crafted payload, establish that the payload satisfies every validation layer between the injection point and the code under test, and state which layers the trace cannot settle: a payload rejected at a parse boundary produces the expected absence for the wrong reason. When the guard it targets rejects a repeat invocation, establish that the affordance the scenario drives can be invoked a second time, and name an entry point carrying no busy or pending state when the primary one has it: a repeat the entry surface refuses never reaches the guard.
+
+When the scope changes a check's configuration (linter, formatter, type checker, or CI gate rules), write that part's scenarios against the check itself and list direct terminal execution for them in the plan's Approach. Cover each changed rule with a scenario that exports the tree carrying the change to a scratch directory outside the checkout, adds input there that the rule should flag or accept, and runs the check on it, reaching the check's installed toolchain and plugins without installing into or modifying the checkout. Pair each with the same input under the configuration as it stood before the change as its control, naming that ref in the scenario's steps and writing that configuration into the exported tree beside the configuration it stands in for, so a verdict the old configuration also produces is not credited to the change. Include in each expected outcome that every run, the control included, processed a nonzero number of inputs, and state that a run processing none calls for fixing its setup and rerunning, and is inconclusive only when no fix gets the check to process any input. When the change adds or narrows a suppression and the check reports unused suppressions, add a scenario with the suppressed cause removed whose expected outcome is the stale-suppression report.
 
 ### Level 1: Basic Functionality
 
