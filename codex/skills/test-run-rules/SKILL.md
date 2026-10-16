@@ -40,6 +40,11 @@ When the writing path must run, work through it in order. Determine the full wri
 - When a scenario fails after an action aimed at an element, establish which element received the action before recording the failure: the element at the point of a click, or the element holding focus for typed input, read as the action ran where the tool allows, since afterward the surface may already have changed. When the run's own aim was off, restore the scenario's starting state, repeat the action the same way on the intended element, and record that result. When the app diverted the action from the intended element, record the failure. When what received the action cannot be established, the scenario is inconclusive: name the action.
 - Verify an observation before reporting it as pre-existing rather than introduced by the change, and state that verification. Read the file at the ref the change under test is measured against with `git show <ref>:<path>`: `HEAD` for uncommitted or staged work, the commit the work began from when it is already committed locally, or `origin/<base-branch>` for a PR, fetched first. Reporting an introduced defect as pre-existing drops it from scope silently, while the opposite error only adds noise.
 
+## Recording
+
+- Append each scenario's verdict, the evidence it rests on, and any observation the report carries for it to a results file in the run's scratch subdirectory as soon as the scenario finishes, and build the final report from that file.
+- Send long output, such as build and app logs, to files in that subdirectory and read from them what each step needs.
+
 ## Logs
 
 - Tail app logs in a background shell for errors or warnings while testing, so backend failures surface alongside the checks.
