@@ -58,7 +58,7 @@ When in doubt, classify as Active. The cost of re-examining a resolved issue is 
 
 ### Classify or Correct the Type
 
-For any Active entry without a Type field, infer one on the fly. For an Active entry whose Type the code read contradicts, correct it. Base the classification on the code you just read during validation, not just the entry's one-line summary.
+For any Active entry without a Type field, infer one on the fly. For an Active entry whose Type the code read contradicts, correct it. A recorded `investigate` is contradicted only when the code read settles the question the entry raises. Reading alone does not settle a question that turns on runtime behavior, such as ordering or timing. Base the classification on the code you just read during validation, not just the entry's one-line summary.
 
 - **direct** — Clear scope and a known approach, ready to apply via `/implement`.
 - **investigate** — A symptom that needs root-cause analysis first: unclear root cause, performance question, intermittent bug, "something feels off".
