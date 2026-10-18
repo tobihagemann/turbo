@@ -104,7 +104,7 @@ Pick one specific working set tailored to the active entries. Read the entries a
 - **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
 - **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger direct batch.
 - **Impact vs effort** — A reliability or correctness entry often outweighs lower-stakes cleanups even when it's a single entry.
-- **Lane shape** — Each lane batches a cluster, just in different shapes. Direct groups clear-scope fixes into one `/implement` run. Investigate dispatches `/investigate` per symptom, then shares one `/implement` for the concluded fixes. Plan hands a cohesive cluster to `/turboplan`, which routes it to a plan file.
+- **Lane shape** — Each lane batches a cluster, just in different shapes. Direct groups clear-scope fixes into one `/implement` run. Investigate dispatches `/investigate` per symptom, then shares one `/implement` for the concluded fixes. Plan hands a cohesive cluster to `/turboplan`, which routes the work itself.
 - **Unit of work size** — Right-size the session. Prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves a coherent unit of work; picking 1–2 entries off a cluster of 7 wastes the slot. Route any entry that turns out to be a clear-scope direct fix to the direct lane instead.
 - **Backlog state** — Heavy direct concentration calls for clearing the cluster; a long-deferred symptom often deserves the slot.
 
@@ -142,7 +142,7 @@ Edit `.turbo/improvements.md` to delete the working-set entries that the lane pr
 
 - **Direct lane** — entries whose fixes were applied
 - **Investigate lane** — entries the applied fixes resolve in full, and entries whose investigation established that no defect exists
-- **Plan lane** — entries now captured in the plan produced by `/turboplan`; treat them as processed once the plan is written.
+- **Plan lane** — entries captured in the plan `/turboplan` wrote, and entries whose fixes were applied in this session. Treat planned entries as processed once the plan is written.
 
 Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
 
