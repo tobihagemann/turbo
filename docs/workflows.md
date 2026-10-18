@@ -35,7 +35,7 @@ In the Claude Code edition, [`/implement-plan`](../claude/skills/implement-plan/
 2. **Simplify Docs** — Strip unnecessary comments and documentation noise from the changed files
 3. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
 4. **Self-Improve** — Extract learnings, route to CLAUDE.md / AGENTS.md / memory / skills
-5. **Ship It** — Branch if needed, commit, push, create or update PR
+5. **Ship It** — Branch if needed, commit, update an existing PR, push, then create a PR if none exists
 
 [`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) is the sibling for changes that don't warrant the deep review loop. It stages, simplifies code and docs, runs the project's checks via [`/run-checks`](../claude/skills/run-checks/SKILL.md), smoke tests, updates the changelog, self-improves, and ships. Same close-out, without the iterative bug hunt.
 

@@ -81,7 +81,7 @@ When the body references no capture by local path, update both in one command:
 
 ```bash
 gh api --method PATCH "/repos/<owner>/<repo>/pulls/<PR_NUMBER>" \
-  -F title=@.turbo/pr/<PR_NUMBER>-title.txt \
+  -f title="$(cat .turbo/pr/<PR_NUMBER>-title.txt)" \
   -F body=@.turbo/pr/<PR_NUMBER>-body.md
 ```
 
@@ -89,7 +89,7 @@ When it references captures by local path, send the title alone, then apply the 
 
 ```bash
 gh api --method PATCH "/repos/<owner>/<repo>/pulls/<PR_NUMBER>" \
-  -F title=@.turbo/pr/<PR_NUMBER>-title.txt
+  -f title="$(cat .turbo/pr/<PR_NUMBER>-title.txt)"
 gh pr edit <PR_NUMBER> --body-file .turbo/pr/<PR_NUMBER>-body.md --attach <path>
 ```
 

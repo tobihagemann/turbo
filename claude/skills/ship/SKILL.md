@@ -16,8 +16,9 @@ At the start, use `TaskCreate` to create a task for each phase:
 3. Stage unstaged changes
 4. Run `/commit-rules` skill
 5. Commit
-6. Push (if requested)
-7. Create or update PR (if requested)
+6. Update PR (if requested)
+7. Push (if requested)
+8. Create PR (if requested)
 
 ## Step 1: Determine Intent
 
@@ -60,7 +61,11 @@ Commit the already-staged changes (do not stage additional files) with a message
 
 If the commit fails due to a pre-commit hook (formatter, linter), fix the issues — or run the project's format/lint script to auto-fix — then **re-stage by path the files the hook modified** before retrying. Pre-commit hooks may modify files in the working tree without updating the staging area.
 
-## Step 6: Push (if Requested)
+## Step 6: Update PR (if Requested)
+
+If the chosen option updates the PR, run the `/update-pr` skill.
+
+## Step 7: Push (if Requested)
 
 If the chosen option includes pushing, push to the current branch's remote:
 
@@ -68,10 +73,9 @@ If the chosen option includes pushing, push to the current branch's remote:
 git push
 ```
 
-## Step 7: Create or Update PR (if Requested)
+## Step 8: Create PR (if Requested)
 
-- **Create PR** — run the `/create-pr` skill
-- **Update PR** — run the `/update-pr` skill
+If the chosen option creates a PR, run the `/create-pr` skill.
 
 When `/create-pr` hands the body file over for editing instead of posting, report that path and that no PR was opened.
 

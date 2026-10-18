@@ -59,10 +59,10 @@ For each group:
    - Group that builds on an earlier group: branch from that group's branch (stacked)
    - Group with no dependencies: branch from the default branch (independent)
 2. **Restore and stage** this group's files from the stash's staged snapshot (`git checkout 'stash^2' -- <files>` restores and stages in one operation). For files with hunks belonging to different groups, restore the file, use Edit to remove the unwanted hunks, then re-stage it (`git add <file>`): for an independent group, remove every other group's hunks; for a stacked group, remove only later groups' hunks (earlier groups' hunks are already in its base). After committing, reset the working tree (`git checkout -- .`) to clean up before the next group.
-3. **Commit and push**: run the `/commit-rules` skill to load commit message rules, commit the staged changes following them, then `git push`
-4. **Create or update PR**:
-   - Staying on existing branch with a PR: run the `/update-pr` skill
-   - New branch: run the `/create-pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
+3. **Commit**: run the `/commit-rules` skill to load commit message rules, then commit the staged changes following them
+4. **Push and create or update PR**:
+   - Staying on existing branch with a PR: run the `/update-pr` skill, then `git push`
+   - New branch: `git push`, then run the `/create-pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
 
 ### Clean up and summarize
 
