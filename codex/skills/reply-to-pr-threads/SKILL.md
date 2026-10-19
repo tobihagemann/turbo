@@ -1,11 +1,11 @@
 ---
 name: reply-to-pr-threads
-description: "Draft, confirm, and post replies to GitHub PR review threads. Handles per-category reply formatting, re-fetches thread resolution state so auto-resolved threads are skipped, posts via GraphQL, and resolves threads whose entry carries a resolution reason. Use when the user asks to \"reply to PR threads\", \"post PR thread replies\", or \"draft PR reply messages\"."
+description: "Draft, confirm, and post replies to GitHub PR review threads. Handles per-category reply formatting, re-fetches thread resolution state so auto-resolved threads are skipped, posts via GraphQL, resolves threads whose entry carries a resolution reason, and dismisses the code-scanning alert behind a thread whose entry carries an alert number. Use when the user asks to \"reply to PR threads\", \"post PR thread replies\", or \"draft PR reply messages\"."
 ---
 
 # Reply to PR Threads
 
-Draft replies for a processed review-thread list, confirm with the user, post the surviving drafts, and resolve threads whose entry carries a resolution reason.
+Draft replies for a processed review-thread list, confirm with the user, post the surviving drafts, dismiss the code-scanning alerts their entries name, and resolve threads whose entry carries a resolution reason.
 
 ## Step 1: Re-fetch Thread State
 
@@ -32,7 +32,7 @@ Run the `$github-voice` skill to load voice rules and the insider-vs-outsider de
 
 ## Step 3: Draft Replies
 
-Use the processed-thread list from conversation context. Each entry has: thread id, file path, line, category (`fix`, `skip`, `answer`, `clarify`, or `resolve-only`), and per-category payload. An entry may also carry a resolution reason: `ADDRESSED`, `WONT_FIX`, or `INVALID`.
+Use the processed-thread list from conversation context. Each entry has: thread id, file path, line, category (`fix`, `skip`, `answer`, `clarify`, or `resolve-only`), and per-category payload. An entry may also carry a resolution reason: `ADDRESSED`, `WONT_FIX`, or `INVALID`. A skip entry that carries a resolution reason may also carry a code-scanning alert number and a dismissal reason: `false positive`, `won't fix`, or `used in tests`. Its reply doubles as the alert's dismissal comment, so keep it within 280 characters.
 
 Keep every reply to one or two sentences. No bullet-point reasoning. No bolded labels.
 
@@ -62,14 +62,15 @@ Output all drafts as text, grouped by file:
 **Thread <id>** (<category>, line <line>)
 Reviewer: <original comment, truncated if long>
 Reply: <drafted reply>
+Dismiss: alert <alert-number>, <dismissal reason>
 Resolve: <resolution reason>
 ```
 
-Show the Reply line only for entries with a drafted reply, and the Resolve line only for entries that carry a resolution reason.
+Show the Reply line only for entries with a drafted reply, the Dismiss line only for entries that carry an alert number, and the Resolve line only for entries that carry a resolution reason.
 
 Then use `request_user_input` to ask whether to post. Offer:
 
-- **Post** — post all drafts as shown, and resolve the threads that show a Resolve line
+- **Post** — post all drafts as shown, dismiss the alerts that show a Dismiss line, and resolve the threads that show a Resolve line
 - **Cancel** — skip posting
 
 ## Step 5: Post Replies
@@ -86,6 +87,14 @@ mutation($threadId: ID!, $body: String!) {
 ```
 
 Substitute `<thread-id>` with the thread's id for each post.
+
+After posting the reply of an entry that carries an alert number, dismiss its alert with the reply as the dismissal comment:
+
+```bash
+gh api -X PATCH repos/{owner}/{repo}/code-scanning/alerts/<alert-number> -f state=dismissed -f dismissed_reason="<dismissal reason>" -F dismissed_comment=@.turbo/pr/thread-<thread-id>.md
+```
+
+Count the alert as dismissed only when the response's `state` is `dismissed`. Leave the thread of an alert that was not dismissed unresolved.
 
 After posting the reply of an entry that carries a resolution reason, and for each resolve-only entry, resolve its thread:
 
@@ -110,6 +119,9 @@ Where Outcome is one of:
 - **Posted** — the reply was posted
 - **Posted and resolved** — the reply was posted and the thread resolved; name the reason
 - **Posted, not resolved** — the reply was posted but the resolve failed; name the error
+- **Posted, dismissed, and resolved** — the reply was posted, the alert dismissed, and the thread resolved; name the dismissal reason
+- **Posted and dismissed, not resolved** — the reply was posted and the alert dismissed, but the resolve failed; name the dismissal reason and the error
+- **Posted, not dismissed** — the reply was posted but the dismissal failed, so the thread stays unresolved; name the error
 - **Resolved** — a resolve-only thread was resolved; name the reason
 - **Not resolved** — a resolve-only thread's resolve failed; name the error
 - **Skipped** — name the reason, such as auto-resolution between the re-fetch and the post
@@ -120,5 +132,5 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Resolve only the threads whose entry carries a resolution reason, and dismiss no review. Leave every other thread for its reviewer to resolve.
+- Resolve only the threads whose entry carries a resolution reason, dismiss only the alerts whose entry carries an alert number, and dismiss no review. Leave every other thread for its reviewer to resolve.
 - If a post mutation fails because the thread is already resolved, log the skip and continue with the rest.

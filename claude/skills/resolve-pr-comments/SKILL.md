@@ -70,7 +70,7 @@ Run the `/interpret-feedback` skill on the union of:
 - Unaddressed review-body findings from Step 2
 - Unaddressed issue-comment findings from Step 2
 
-Skip AI-reviewer accounts — match by known login (e.g., `coderabbitai`, `copilot-pull-request-reviewer`), not the `[bot]` suffix alone. Their structured feedback routes directly to `/evaluate-findings`.
+Skip AI-reviewer accounts — match by known login (e.g., `coderabbitai`, `copilot-pull-request-reviewer`, `github-advanced-security`), not the `[bot]` suffix alone. Their structured feedback routes directly to `/evaluate-findings`.
 
 If that leaves no items to interpret, skip the skill invocation.
 
@@ -143,7 +143,7 @@ If there are no inline-thread questions, skip this step.
 
 Skip this step when Step 7 pushed no commit, or when no inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped.
 
-For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, or a queued or in-progress check or workflow run from it on that commit. When none is, skip the rest of this step.
+For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, or a queued or in-progress check or workflow run from it on that commit. Leave `github-advanced-security` out of this check. When none is, skip the rest of this step.
 
 Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 1 for a later run; record both for the Step 13 summary.
 
@@ -158,6 +158,8 @@ Assemble the processed-thread list from inline-thread items only:
 - **resolve-only** — still-unresolved Addressed inline threads from Step 2 whose first comment is from an AI-reviewer account, matched as in Step 3. Before including one, read the current code at the thread's path and confirm the specific concern is fixed; when it is not, leave the thread out and record what remains for Step 13. Payload: the addressing commit SHA.
 
 Give each fix and skip entry whose first comment is from an AI-reviewer account as matched in Step 3 a resolution reason: `ADDRESSED` for a fix, `INVALID` for a skip that refuted the finding as incorrect, and `WONT_FIX` for a skip that declined a valid one. Give every resolve-only entry `ADDRESSED`. Give none to a thread downgraded in Step 8, to a skip that neither refuted nor declined the finding, or to any other thread, leaving it for its reviewer to resolve.
+
+A thread whose first comment is from `github-advanced-security` carries a code-scanning alert. Give each such skip entry that carries a resolution reason the alert number from the comment's `/security/code-scanning/<n>` link and a dismissal reason: `used in tests` when the flagged code runs only in tests, otherwise `false positive` for `INVALID` and `won't fix` for `WONT_FIX`.
 
 Issue-comment findings go to Step 12. Review-body findings have no destination to post to, Addressed inline threads outside the resolve-only entries already carry the reply naming the commit, and threads Step 10 dropped were resolved during the wait; all three surface only in Step 13.
 
@@ -190,7 +192,7 @@ After processing all items, present a summary grouped by source.
 - Fixed (change requests with accepted verdicts; list file path and addressing commit SHA)
 - Skipped (false positives or disproportionate changes)
 - Resolved during Step 10's wait (list file path)
-- Resolved by this run (list file path and resolution reason)
+- Resolved by this run (list file path, resolution reason, and any dismissed alert number)
 - Addressed AI-reviewer threads left unresolved (list file path and what remains)
 - Arrived during Step 10's wait, left for a later run (list file path or review author)
 - Questions answered (split into: answered from recalled transcript, answered from current code)
