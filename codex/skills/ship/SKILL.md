@@ -19,6 +19,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 6. Update PR (if requested)
 7. Push (if requested)
 8. Create PR (if requested)
+9. Link changelog entries to the PR (if needed)
 
 ## Step 1: Determine Intent
 
@@ -77,7 +78,11 @@ git push
 
 If the chosen option creates a PR, run the `$create-pr` skill.
 
-When `$create-pr` hands the body file over for editing instead of posting, report that path and that no PR was opened.
+When `$create-pr` hands the body file over for editing instead of posting, report that path and that no PR was opened yet, and leave Step 9 pending until the PR is posted or cancelled.
+
+## Step 9: Link Changelog Entries to the PR (if Needed)
+
+When Step 8 opened a PR, including one posted after the user edited its body, and this branch added Unreleased changelog entries that carry no PR reference while the changelog's earlier entries carry one, run the `$changelog-rules` skill and add to each of those entries the references it calls for with the new PR. Stage the changelog by path and commit it with a message following the commit rules Step 4 loaded, handling a pre-commit hook as Step 5 does, then push to the current branch's remote.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
