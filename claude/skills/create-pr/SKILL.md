@@ -52,6 +52,8 @@ When the command reports a failed upload, act on what it printed, then report wh
 - **No PR URL** — nothing uploaded and no PR exists. Remove the screenshot table and its heading from the body file and run the command again without `--attach`.
 - **A PR URL** — the PR exists, and its body references the captures that did not upload by local path. Fetch the posted body with `gh pr view <PR_URL> --json body --jq .body`, remove each table column whose image is still a local path, write the result to the body file, and apply it with `gh pr edit <PR_URL> --body-file .turbo/pr/<tag>-body.md`.
 
+When the user asks, before the PR is posted, to change content this session committed for it, fold the change into the commit that carries that content instead of adding a commit, and push with `--force-with-lease` when that commit was already pushed. Update the drafted title and the body file where the change alters what they describe, then return to this gate.
+
 Do not set `--assignee` unless the user explicitly asks to assign someone. Reserve `--draft` for an explicit request for a draft pull request on GitHub.
 
 Then use the TaskList tool and proceed to any remaining task.
