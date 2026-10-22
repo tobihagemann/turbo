@@ -103,6 +103,7 @@ Pick one specific working set tailored to the active entries. Read the entries a
 
 - **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
 - **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger direct batch.
+- **Supersession** — When an active entry's work, or the pending next step of an entry that lays out several, would rewrite, replace, or make moot the code other active entries target, that work can outweigh a direct batch on that code. When another working set is recommended or offered as an alternative and still includes entries it supersedes, mark those entries as likely discarded by that work.
 - **Impact vs effort** — A reliability or correctness entry often outweighs lower-stakes cleanups even when it's a single entry.
 - **Lane shape** — Each lane batches a cluster, just in different shapes. Direct groups clear-scope fixes into one `$implement` run. Investigate dispatches `$investigate` per symptom, then shares one `$implement` for the concluded fixes. Plan hands a cohesive cluster to `$turboplan`, which routes the work itself.
 - **Unit of work size** — Right-size the session. Prefer the whole cohesive cluster over a narrow filter unless the filter clearly preserves a coherent unit of work; picking 1–2 entries off a cluster of 7 wastes the slot. Route any entry that turns out to be a clear-scope direct fix to the direct lane instead.
@@ -144,7 +145,9 @@ Edit `.turbo/improvements.md` to delete the working-set entries that the lane pr
 - **Investigate lane** — entries the applied fixes resolve in full, and entries whose investigation established that no defect exists
 - **Plan lane** — entries captured in the plan `$turboplan` wrote, and entries whose fixes were applied in this session. Treat planned entries as processed once the plan is written.
 
-Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan). These stay in the backlog for a future run. Delete the file if no entries remain.
+Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan), and any entry of which the working set took only one step of several. These stay in the backlog for a future run. Delete the file if no entries remain.
+
+Rewrite in place each kept entry of which the working set took only one step: restate its summary and **Where** as the steps that remain. When the rewrite changes the summary, update each **Paired with** line in counterpart entries that names the old title.
 
 Rewrite in place each entry the investigate lane investigated that stays in the backlog: restate its summary and **Where** as what remains to do, put what the investigation established in its **Why** (the root cause it confirmed, or the hypotheses it refuted when the cause stayed unresolved), and set the **Type** the remainder calls for. When the entry waits on an outside event, such as an upstream fix, record that event as its **Revisit**. When the rewrite changes the summary, update each **Paired with** line in counterpart entries that names the old title.
 

@@ -18,7 +18,7 @@ State the task back in one sentence to confirm scope before searching.
 
 ## Step 2: Spawn Pattern Survey Subagent
 
-Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Its prompt must direct it to treat the shared working tree and its git index as read-only and to survey by reading and reasoning. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. The subagent's prompt must include:
+Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Its prompt must direct it to treat the shared working tree and its git index as read-only and to survey by reading and reasoning. Its prompt must also direct it to search the repository with a tool that skips gitignored files, such as `git grep --untracked` or the Grep tool, and to open or search a gitignored path only when its prompt or a file its prompt directs it to read names it, or when a dependency's installed source is needed to verify a claim, never one holding local configuration or credentials. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`. The subagent's prompt must include:
 
 1. The confirmed task description from Step 1
 2. An instruction to read [references/pattern-surveyor.md](references/pattern-surveyor.md) for survey guidelines, categories, and output format before searching
