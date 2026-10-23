@@ -67,7 +67,7 @@ Write an updated title and body that:
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
 - **Scopes to the target repository** — write for someone who knows only the repository the PR targets; when the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body; describe the change on its own terms, without reference to how a different repository or product does it
 - **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
-- **Updates screenshots** — leave the URL of each embedded image unaltered, removing an image only when the surface it shows is no longer part of the PR or the PR has since reverted the look it shows; add session captures as the Screenshots section directs, replacing an embedded screenshot only with a newer capture of the same surface
+- **Updates screenshots** — leave the URL and any set width of each embedded image unaltered, removing an image only when the surface it shows is no longer part of the PR or the PR has since reverted the look it shows; add session captures as the Screenshots section directs, replacing an embedded screenshot only with a newer capture of the same surface
 
 ## Step 7: Confirm with User
 
@@ -97,6 +97,8 @@ When `gh pr edit` reports a failed upload, act on what it printed, then report w
 
 - **No PR URL** — nothing uploaded and the body was not applied. Remove each capture the body file references by local path, taking its table column with it and the table and its heading when no column remains. Then run `gh pr edit <PR_NUMBER> --body-file .turbo/pr/<PR_NUMBER>-body.md` without `--attach`.
 - **A PR URL** — the body was applied, referencing the captures that did not upload by local path. Fetch the posted body with `gh pr view <PR_NUMBER> --json body --jq .body`, remove each table column whose image is still a local path, write the result to the body file, and apply it with the same command.
+
+When a capture this run uploaded was taken at a scale factor above 1, size it to its logical width. Take the scale factor as the capture's pixels per logical pixel of the surface it shows: the device scale factor it was captured at, unless it was captured at logical scale or resized since. When that is unknown, use its recorded pixel density divided by 72 dpi, provided that density is a whole multiple of 72. Leave a capture whose scale factor cannot be established as uploaded. Fetch the posted body with `gh pr view <PR_NUMBER> --json body --jq .body`, replace each such capture's markdown image, which now points at its uploaded asset, with `<img width="<pixel width ÷ scale factor, rounded>" alt="<caption>" src="<asset URL>">`, write the result to the body file, and apply it with `gh pr edit <PR_NUMBER> --body-file .turbo/pr/<PR_NUMBER>-body.md`.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
