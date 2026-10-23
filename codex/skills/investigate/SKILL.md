@@ -120,6 +120,8 @@ Verify each hypothesis with minimal, targeted actions:
 
 When read-only evidence cannot discriminate, construct minimal throwaway fixtures that vary one suspected variable at a time. Exercise the system's inputs, and leave the working tree and its git index unchanged. Label each fixture clearly, delete them once the experiment concludes, and report anything that could not be deleted. When a check edits a tracked file instead, such as adding temporary logging, remove the edit once the check concludes and confirm with `git diff -- <file>` that the file is back to its pre-check state before recording the result. Write to an external or live system only after explicit user approval via `request_user_input`, stating the target system, every record the write will touch including those reached through triggers, cascades, and hooks, and the cleanup plan. When `request_user_input` does not reach the user, write nothing and report the approval as unresolved.
 
+When a hypothesis names a timing window behind an intermittent failure, make the failing order deterministic in a throwaway copy of the test or operation, such as with a synchronous stall spanning that window, and confirm the copy fails with exactly the recorded symptom. Once it does, give as the report's reproduction command the command that runs the copy, with where the stall goes and how long it spans, so the copy can be rebuilt once deleted.
+
 Record each result:
 
 | Hypothesis | Verdict | Evidence |

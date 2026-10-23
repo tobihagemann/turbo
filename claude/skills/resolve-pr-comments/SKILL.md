@@ -143,7 +143,7 @@ If there are no inline-thread questions, skip this step.
 
 Skip this step when Step 7 pushed no commit, or when no inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped.
 
-For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, or a queued or in-progress check or workflow run from it on that commit. Leave `github-advanced-security` out of this check. When none is, skip the rest of this step.
+For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one, or until 3 minutes have passed since the push. When none has, skip the rest of this step.
 
 Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 1 for a later run; record both for the Step 13 summary.
 
