@@ -137,9 +137,8 @@ This assessment covers in-code structural debt. For dependency freshness and dif
 
 Convert the markdown report into a styled, interactive HTML page.
 
-1. Run the `/frontend-design` skill to load design principles.
-2. Read `.turbo/technical-debt.md` for the full report content.
-3. Write a self-contained `.turbo/technical-debt.html` (single file, no external dependencies beyond Google Fonts) that presents all findings from the markdown report with:
+1. Read `.turbo/technical-debt.md` for the full report content.
+2. Write a self-contained `.turbo/technical-debt.html` (single file, no external dependencies beyond Google Fonts) that presents all findings from the markdown report with:
    - Summary grid with per-dimension finding counts
    - Priority matrix laid out as an impact-by-effort quadrant, color-coded by tier (quick wins highlighted)
    - Sticky navigation between sections

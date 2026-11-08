@@ -15,10 +15,11 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 - **Unrequested machinery** — an abstraction with one implementation, a configuration point with one caller, a factory for one product, a wrapper that only delegates, scaffolding for an anticipated requirement; delete it rather than simplify it
 - **Unreachable defensive code** — a branch, guard, retry, or fallback for a state the surrounding code's own constraints rule out; when the callers cannot produce the input, the handling for it is dead on arrival
 - **Reinvented standard library or platform feature** — hand-rolled logic the language's standard library or the target platform already ships, or a new dependency for what an already-installed one covers; name the replacement
+- **Superseded implementation kept** — a new version added beside the one it replaces when every caller of the old version is inside this repository, often marked by a suffix such as `V2` or `New`; migrate the callers and delete the old version
 
 ### Reuse
 
-- **Duplicate functionality** — new functions that duplicate existing utilities; suggest the existing function to use instead
+- **Duplicate functionality** — new functions that duplicate existing utilities, unless written to replace them; suggest the existing function to use instead
 - **Inline logic that could use an existing utility** — hand-rolled string manipulation, manual path handling, custom environment checks, and similar patterns where a utility already exists
 
 ### Single-File Quality
@@ -28,6 +29,8 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 - **Copy-paste with slight variation** — near-duplicate code blocks within the same file that should be unified with a shared abstraction
 - **Leaky abstractions** — exposing internal details that should be encapsulated, or breaking existing abstraction boundaries
 - **Stringly-typed code** — raw strings used where constants, enums, or dedicated types already exist in the codebase
+- **Silenced type errors** — a cast, suppression directive, or non-null assertion that silences a type-checker error with no adjacent check or comment establishing the invariant that makes it safe
+- **Silent fallbacks** — a catch or fallback value that turns a failure of the primary path into a plausible-looking result, such as an empty collection or a default value, without surfacing the failure, when neither a stated requirement nor the surrounding design calls for degraded behavior; surface the failure rather than remove the handling
 - **Unnecessary wrapper nesting** — container elements or wrapper layers that add no structural or layout value
 
 ### Efficiency
@@ -47,7 +50,7 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 - **Unnecessary complexity** — deep nesting, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 - **Unclear code** — overly compact one-liners that sacrifice readability; explicit code is better than clever code
 - **Over-simplification** — too many concerns combined into a single function or component, helpful abstractions removed that were aiding code organization, "fewer lines" prioritized over readability
-- **Dead weight** — code no longer reached by any path, and variables, imports, or parameters the change orphaned
+- **Dead weight** — code no longer reached by any path; variables, imports, or parameters the change orphaned; and debug prints or logging left behind from tracing execution
 
 ### Altitude and Fix-Depth
 

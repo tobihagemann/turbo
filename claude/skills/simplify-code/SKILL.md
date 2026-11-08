@@ -30,16 +30,17 @@ Review the changes for code that should not exist:
 1. **Unrequested machinery**: an abstraction with one implementation, a configuration point with one caller, a factory for one product, a wrapper that only delegates, scaffolding for an anticipated requirement. Recommend deletion rather than simplification.
 2. **Unreachable defensive code**: a branch, guard, retry, or fallback for a state the surrounding code's own constraints rule out. When the callers cannot produce the input, the handling for it is dead on arrival.
 3. **Reinvented standard library or platform feature**: hand-rolled logic the language's standard library or the target platform already ships, or a new dependency for what an already-installed one covers. Name the replacement.
-4. **Tests in the wrong shape**: a production export, flag, or hook that exists only for a test to call, with no production caller and no public contract behind it. Recommend removing it and driving the test through a boundary production code already uses. For a test that repeats another test's contract, recommend folding its cases into that test. For an assertion on implementation (source text, import or export lists, private call shapes) that breaks under a behavior-preserving refactor, recommend rewriting it against observable behavior, unless it is the cheapest guard on a user-facing name, key, or path. Recommend these remedies rather than deleting a test outright.
+4. **Superseded implementation kept**: a new version added beside the one it replaces when every caller of the old version is inside this repository, often marked by a suffix such as `V2` or `New`. Recommend migrating the callers and deleting the old version.
+5. **Tests in the wrong shape**: a production export, flag, or hook that exists only for a test to call, with no production caller and no public contract behind it. Recommend removing it and driving the test through a boundary production code already uses. For a test that repeats another test's contract, recommend folding its cases into that test. For an assertion on implementation (source text, import or export lists, private call shapes) that breaks under a behavior-preserving refactor, recommend rewriting it against observable behavior, unless it is the cheapest guard on a user-facing name, key, or path. Recommend these remedies rather than deleting a test outright.
 
-Trace the callers of any code proposed for deletion and confirm nothing depends on the behavior being removed. Input validation at trust boundaries, error handling that prevents data loss, security controls, accessibility affordances, and anything the request explicitly asked for outrank the four checks above.
+Trace the callers of any code proposed for deletion and confirm nothing depends on the behavior being removed. Input validation at trust boundaries, error handling that prevents data loss, security controls, accessibility affordances, and anything the request explicitly asked for outrank the checks above.
 
 ### Agent 2: Code Reuse Review
 
 For each change:
 
 1. **Search for existing utilities and helpers** that could replace newly written code. Look for similar patterns elsewhere in the codebase — common locations are utility directories, shared modules, and files adjacent to the changed ones.
-2. **Flag any new function that duplicates existing functionality.** Suggest the existing function to use instead.
+2. **Flag any new function that duplicates existing functionality**, unless it is written to replace that function. Suggest the existing function to use instead.
 3. **Flag any inline logic that could use an existing utility** — hand-rolled string manipulation, manual path handling, custom environment checks, and similar patterns are common candidates.
 
 ### Agent 3: Code Quality Review
@@ -51,7 +52,9 @@ Review the same changes for hacky patterns:
 3. **Copy-paste with slight variation**: near-duplicate code blocks that should be unified with a shared abstraction
 4. **Leaky abstractions**: exposing internal details that should be encapsulated, or breaking existing abstraction boundaries
 5. **Stringly-typed code**: using raw strings where constants, enums, or dedicated types already exist in the codebase
-6. **Unnecessary wrapper nesting**: container elements or wrapper layers that add no structural or layout value
+6. **Silenced type errors**: a cast, suppression directive, or non-null assertion that silences a type-checker error with no adjacent check or comment establishing the invariant that makes it safe
+7. **Silent fallbacks**: a catch or fallback value that turns a failure of the primary path into a plausible-looking result, such as an empty collection or a default value, without surfacing the failure. Flag it only when neither a stated requirement nor the surrounding design calls for degraded behavior, and recommend surfacing the failure rather than removing the handling
+8. **Unnecessary wrapper nesting**: container elements or wrapper layers that add no structural or layout value
 
 ### Agent 4: Efficiency Review
 
@@ -74,7 +77,7 @@ Review the same changes for clarity, standards, and balance:
 2. **Unnecessary complexity**: deep nesting, unclear variable or function names, nested conditionals 3+ levels deep (ternary chains like `a ? x : b ? y : ...`, nested if/else, or nested switch — flatten with early returns, guard clauses, a lookup table, or an if/else-if cascade), redundant boolean comparisons (e.g., `x == true` instead of `x`)
 3. **Unclear code**: choose clarity over brevity — explicit code is better than overly compact code. Consolidate related logic, but not at the cost of readability
 4. **Over-simplification**: overly clever solutions that are hard to understand, too many concerns combined into single functions or components, "fewer lines" prioritized over readability (dense one-liners), helpful abstractions removed that were aiding code organization
-5. **Dead weight**: code no longer reached by any path, and variables, imports, or parameters the change orphaned
+5. **Dead weight**: code no longer reached by any path; variables, imports, or parameters the change orphaned; and debug prints or logging left behind from tracing execution
 6. **Unnecessary comments**: comments explaining WHAT the code does, narrating the change, or referencing the task/caller — delete; keep only non-obvious WHY (hidden constraints, subtle invariants, workarounds)
 
 ### Agent 6: Altitude and Fix-Depth Review
