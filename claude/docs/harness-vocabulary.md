@@ -9,7 +9,8 @@ When porting a Codex skill into the Claude Code edition, translate Codex terms t
 | `spawn_agent` / `wait_agent` | Agent tool (with optional `subagent_type`) |
 | read/invoke installed skill instructions | Skill tool |
 | `apply_patch` (V4A diff envelope) | `Edit` / `Write` |
-| `~/.agents/skills` | `~/.claude/skills` |
+| `~/.agents/skills` (user scope) | `~/.claude/skills` (user scope) |
+| plugin skills in `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/skills/` | plugin skills in the installed plugin's `skills/`, reached through `${CLAUDE_SKILL_DIR}` |
 | `AGENTS.md` (Codex project instructions) | `CLAUDE.md` |
 | `$skill-name` invocation | `/skill-name` invocation |
 

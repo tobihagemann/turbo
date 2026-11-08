@@ -1,6 +1,6 @@
 # Codex Skill Index
 
-Full listing of skills in the Codex edition of Turbo, grouped by category. Skill descriptions are summarized; see each `SKILL.md` for the full description and trigger phrases.
+Full listing of skills in the Codex edition of Turbo, the human-gated agentic software factory, grouped by category. Skill descriptions are summarized; see each `SKILL.md` for the full description and trigger phrases.
 
 ## Pipelines
 
@@ -108,7 +108,7 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
-| [`$self-improve`](skills/self-improve/SKILL.md) | Extract learnings from the current session, or sweep past sessions, to AGENTS.md, memory, or skills | [`$contribute-turbo`](skills/contribute-turbo/SKILL.md), [`$create-skill`](skills/create-skill/SKILL.md), [`$note-improvement`](skills/note-improvement/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md), [`$finalize`](skills/finalize/SKILL.md), [`$quick-finalize`](skills/quick-finalize/SKILL.md) |
+| [`$self-improve`](skills/self-improve/SKILL.md) | Extract learnings from the current session, or sweep past sessions, to AGENTS.md, memory, or skills; hands Turbo skill lessons to a Turbo checkout or upstream | [`$contribute-turbo`](skills/contribute-turbo/SKILL.md), [`$create-skill`](skills/create-skill/SKILL.md), [`$note-improvement`](skills/note-improvement/SKILL.md) | [`$turboplan`](skills/turboplan/SKILL.md), [`$finalize`](skills/finalize/SKILL.md), [`$quick-finalize`](skills/quick-finalize/SKILL.md) |
 | [`$note-improvement`](skills/note-improvement/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/improvements.md` | | [`$apply-findings`](skills/apply-findings/SKILL.md), [`$self-improve`](skills/self-improve/SKILL.md), [`$simplify-code`](skills/simplify-code/SKILL.md), [`$draft-plan`](skills/draft-plan/SKILL.md), [`$discuss-change`](skills/discuss-change/SKILL.md), [`$implement-improvements`](skills/implement-improvements/SKILL.md) |
 | [`$triage-improvements`](skills/triage-improvements/SKILL.md) | Triage the `.turbo/improvements.md` backlog: merge duplicates, then keep or drop each entry on its user story or the simplification it delivers | | |
 | [`$implement-improvements`](skills/implement-improvements/SKILL.md) | Validate improvements and run one lane per session (direct, investigate, or plan) | [`$implement`](skills/implement/SKILL.md), [`$investigate`](skills/investigate/SKILL.md), [`$turboplan`](skills/turboplan/SKILL.md), [`$note-improvement`](skills/note-improvement/SKILL.md) | |
@@ -118,7 +118,6 @@ Full listing of skills in the Codex edition of Turbo, grouped by category. Skill
 | [`$understand-change`](skills/understand-change/SKILL.md) | Teach the user to deeply understand a change through interactive tutoring: restate, drill why/what/how, and quiz until mastery | | |
 | [`$create-skill`](skills/create-skill/SKILL.md) | Create or update a skill with proper structure | [`$evaluate-findings`](skills/evaluate-findings/SKILL.md), [`$apply-findings`](skills/apply-findings/SKILL.md) | [`$create-project-skills`](skills/create-project-skills/SKILL.md), [`$self-improve`](skills/self-improve/SKILL.md) |
 | [`$create-project-skills`](skills/create-project-skills/SKILL.md) | Scan the codebase and generate project-specific skills that capture inferred conventions | [`$create-skill`](skills/create-skill/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md) | |
-| [`$update-turbo`](skills/update-turbo/SKILL.md) | Update Turbo Codex skills with always-latest instructions fetched from GitHub | | |
 | [`$contribute-turbo`](skills/contribute-turbo/SKILL.md) | Propose a turbo skill improvement upstream as a GitHub issue | [`$create-issue`](skills/create-issue/SKILL.md) | [`$self-improve`](skills/self-improve/SKILL.md) |
 | [`$create-changelog`](skills/create-changelog/SKILL.md) | Create a CHANGELOG.md with version history backfilled from GitHub releases or git tags | [`$changelog-rules`](skills/changelog-rules/SKILL.md) | |
 | [`$update-changelog`](skills/update-changelog/SKILL.md) | Update the Unreleased section of CHANGELOG.md based on current changes (no-op if no changelog) | [`$changelog-rules`](skills/changelog-rules/SKILL.md) | [`$finalize`](skills/finalize/SKILL.md), [`$quick-finalize`](skills/quick-finalize/SKILL.md) |

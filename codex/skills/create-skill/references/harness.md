@@ -21,6 +21,7 @@ Quick reference for the Codex CLI harness: canonical tool names, limits, and dis
 - User-scope: `~/.agents/skills/` (canonical per Codex `core-skills` loader).
 - Project-scope: `.agents/skills/` walked from project root down to cwd; closer directories take precedence.
 - Admin-scope: `/etc/codex/skills/`.
+- Plugin-scope: a plugin's `skills/` folder, copied into a versioned cache under `~/.codex/plugins/cache/`, named `<plugin>:<skill>`. No variable is known to expand inside `SKILL.md` (`PLUGIN_ROOT` reaches plugin hook commands only), so a skill resolves its own directory from the `SKILL.md` it was loaded from.
 - Skills invoked as `$skill-name` (slash form also works); `SKILL.md` frontmatter requires `name` and `description`.
 
 **AGENTS.md hierarchy:**

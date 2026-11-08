@@ -2,7 +2,7 @@
 
 [← Back to Turbo](../README.md) · [Prompt examples](examples.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
-Start with `/turboplan`, implement the agreed change, then finalize. The sections below explain the routes, review loops, and supporting workflows. Examples use Claude Code syntax; use `$skill-name` in Codex. Each edition’s skill index ([Claude Code](../claude/SKILL-INDEX.md), [Codex](../codex/SKILL-INDEX.md)) links to its implementation.
+Turbo runs a change through the stages of a human-gated software factory. You shape it with `/turboplan`, the agreed change gets built, and `/finalize` checks, reviews, and ships it. Your judgment comes at the start and the end. The sections below explain the routes, review loops, and supporting workflows. Examples use Claude Code syntax; use `$skill-name` in Codex. Each edition’s skill index ([Claude Code](../claude/SKILL-INDEX.md), [Codex](../codex/SKILL-INDEX.md)) links to its implementation.
 
 ## The Turboplan Pipeline
 

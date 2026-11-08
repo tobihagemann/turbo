@@ -52,7 +52,7 @@ Emit all extraction Agent tool calls below in one assistant message. Each Agent 
 - Name its assigned category
 - Include the stack summary and directory map from Step 1
 - Include the list of conventions already documented in `CLAUDE.md` and `.claude/rules/` so duplicates are skipped
-- Instruct the agent to read [references/pattern-extractor.md](references/pattern-extractor.md) as its role brief and return findings in the format defined at the end of that file
+- Instruct the agent to read `${CLAUDE_SKILL_DIR}/references/pattern-extractor.md` as its role brief and return findings in the format defined at the end of that file
 
 ## Step 3: Evaluate Patterns
 

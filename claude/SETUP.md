@@ -2,73 +2,20 @@
 
 Walk the user through setting up Turbo step by step. Use `AskUserQuestion` to confirm each step before proceeding.
 
-## Step 1: Install Turbo Skills
+## Step 1: Install the Turbo Plugin
 
-### Clone the Repo
+When `~/.turbo/config.json` holds `claude.lastUpdateHead` or a top-level `lastUpdateHead`, Turbo is already installed as copied skills. Follow [`UPDATE.md`](UPDATE.md) instead of this step, then continue with Step 2.
 
-```bash
-git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+Otherwise, ask the user to run these in Claude Code, since writes under `~/.claude/plugins` are theirs to make:
+
+```text
+/plugin marketplace add tobihagemann/turbo
+/plugin install turbo@turbo
 ```
 
-Clone the upstream URL: `/update-turbo` pulls from `origin`. Keep any fork or development checkout of Turbo outside `~/.turbo/repo`.
+Then have them open `/plugin` → Marketplaces and switch on auto-update for the `turbo` marketplace. Third-party marketplaces do not update on their own, and Turbo ships its changes to `main`.
 
-### Excluded Skills
-
-Read `~/.turbo/config.json` and check for a `claude.excludeSkills` array. If it exists, those skills should be excluded from installation. Example config:
-
-```json
-{
-  "claude": {
-    "excludeSkills": ["codex", "oracle"]
-  }
-}
-```
-
-### Copy Skills
-
-Copy each skill directory from the local repo to the global skills directory, skipping any skills in `claude.excludeSkills`:
-
-```bash
-mkdir -p ~/.claude/skills
-exclude=$(jq -r '.claude.excludeSkills // [] | .[]' ~/.turbo/config.json 2>/dev/null)
-for skill in ~/.turbo/repo/claude/skills/*; do
-  [ -d "$skill" ] || continue
-  name=$(basename "$skill")
-  echo "$exclude" | grep -qxF "$name" && continue
-  cp -R "$skill" ~/.claude/skills/
-done
-```
-
-Many skills depend on each other, so installing only a subset will leave gaps in pipelines like `/finalize`.
-
-Verify installation by confirming the skill directories exist in `~/.claude/skills/`.
-
-### Initialize Config
-
-Create or update `~/.turbo/config.json`:
-
-```bash
-mkdir -p ~/.turbo
-```
-
-Set:
-- `claude.excludeSkills` to the exclusion list
-- `claude.lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
-- `claude.configVersion` to the highest version number in `~/.turbo/repo/claude/MIGRATION.md`
-
-Preserve any existing config values (`oracle`, `codex` if the Codex edition is also installed).
-
-Example shape:
-
-```json
-{
-  "claude": {
-    "excludeSkills": [],
-    "lastUpdateHead": "<HEAD>",
-    "configVersion": 9
-  }
-}
-```
+The plugin carries every skill, injects Turbo's rules into each session, and shows how much context is left under the prompt. Skills answer to `/<skill>` and to `/turbo:<skill>`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
@@ -124,30 +71,11 @@ Use `AskUserQuestion` to ask whether the user wants to install agent-browser for
 npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser --agent claude-code -y -g
 ```
 
-## Step 4: Configure Claude Code Settings
-
-Add the keys below to `~/.claude/settings.json`, merging each into the existing JSON when the file already has other settings.
-
-### Context Tracking
-
-Turbo workflows like `/finalize` consume significant context. A status line shows the user how much is left. Claude reads the same figure through the `/context-level` skill installed in Step 1, so skills can offer a handoff and `/compact` before the session runs out.
-
-Leave an existing `statusLine` in place.
-
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "jq -r '.context_window.remaining_percentage | if . == null then empty else \"\\(floor)% context left\" end'"
-  }
-}
-```
-
-The user should now see something like `92% context left` at the bottom of the Claude Code terminal.
-
-### Task Tracking Tools
+## Step 4: Enable Task Tracking Tools
 
 Turbo workflows track their phases with `TaskCreate`. Claude Code leaves the task tools out on newer models unless this environment variable is set, so tracking silently does nothing without it.
+
+Merge this into `~/.claude/settings.json`, keeping the file's other settings:
 
 ```json
 {
@@ -159,13 +87,7 @@ Turbo workflows track their phases with `TaskCreate`. Claude Code leaves the tas
 
 The user needs to restart Claude Code before the tools appear.
 
-## Step 5: Add CLAUDE.md Additions
-
-Read [`ADDITIONS.md`](ADDITIONS.md) from `~/.turbo/repo/claude/` and add each `##` section to `~/.claude/CLAUDE.md` as a `#` section. Create the file if it doesn't exist.
-
-These additions are kept in sync by `/update-turbo` for future updates.
-
-## Step 6: Oracle Setup
+## Step 5: Oracle Setup
 
 Use `AskUserQuestion` to ask whether the user wants to set up oracle. Explain that `/consult-oracle` consults ChatGPT when completely stuck on a problem, but everything works without it. If the user declines, skip this step.
 
@@ -184,7 +106,7 @@ It requires:
 }
 ```
 
-Merge these values into the existing `~/.turbo/config.json`. Then run the one-time sign-in via the Bash tool (`timeout: 600000`); it blocks until sign-in completes:
+Merge these values into `~/.turbo/config.json`, creating it when it does not exist. Then run the one-time sign-in via the Bash tool (`timeout: 600000`); it blocks until sign-in completes:
 
 ```bash
 npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-6-pro -p "HI"
@@ -193,6 +115,10 @@ npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser
 Have the user sign into ChatGPT in the window that opens.
 
 See the [consult-oracle skill](skills/consult-oracle/SKILL.md) for details.
+
+## Step 6: Working on Turbo (Optional)
+
+For someone who wants to change Turbo itself or run a fork, point them at [Customization](../docs/customization.md), which covers loading a clone as the plugin and sending lessons to it.
 
 ## Step 7: Quick Onboarding
 
@@ -205,5 +131,5 @@ Present the user with a summary of how to get started:
 5. **Self-improvement:** Run `/self-improve` before context runs out to capture lessons for future sessions.
 6. **Track improvements:** When noticing something out of scope, run `/note-improvement` so it doesn't get lost.
 7. **Artifacts:** Plans, reports, and improvements live under `.turbo/`.
-8. **Updating:** Run `/update-turbo` to update all skills from the local repo with conflict detection and changelog.
+8. **Updating:** Updates arrive through the marketplace auto-update switched on in Step 1. Without it, run `/plugin marketplace update turbo` and restart Claude Code.
 9. **Browser and UI testing:** For web app testing, enable the `claude-in-chrome` MCP via `/mcp` or start Claude Code with `--chrome`. For native app testing on macOS, enable the `computer-use` MCP via `/mcp`. Both are per-project settings. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.

@@ -5,22 +5,18 @@
 <h1 align="center">Turbo</h1>
 
 <p align="center">
-  Reusable workflows for planning, building, reviewing, and shipping with AI coding agents.
+  A human-gated agentic software factory for Claude Code and Codex.
 </p>
 
 ---
 
-Turbo gives Claude Code and Codex a repeatable development process, packaged as Markdown skills. Use a skill for a single task, or combine them into a workflow that takes a change from idea to pull request.
+Turbo turns your coding agent into a one-person software factory. You decide what to build before any code exists and judge the result at the end. In between, skills shape the change, build it, check it, review it, and ship it. Each session teaches the next. A human holds both gates, so nothing ships that nobody looked at.
 
 **[Claude Code](claude/SKILL-INDEX.md):** production-tested · **[Codex](codex/SKILL-INDEX.md):** experimental, with skill parity but less real-world use
 
-[Get started](#get-started) · [What you can do](#what-you-can-do) · [Browse the guides](#go-deeper)
+[Get started](#get-started) · [The factory](#the-factory) · [What you can do](#what-you-can-do) · [Browse the guides](#go-deeper)
 
-## From Idea to Pull Request
-
-```text
-Plan  →  Implement  →  Finalize
-```
+## The Factory
 
 Start with a change you want to make:
 
@@ -28,7 +24,17 @@ Start with a change you want to make:
 /turboplan add password reset to the app
 ```
 
-Turbo assesses the scope and helps you settle the approach. Clear-scope changes proceed to implementation once you agree on the shape; when the approach needs writing down, you get a reviewed plan to run with `/implement-plan` in a fresh session. `/finalize` then checks, reviews, and polishes the change and takes you through shipping. You can also run `/finalize` on work you built yourself.
+The change moves through seven stages. You decide at Shape and judge at Try and Ship. The skills run the rest.
+
+| Stage | What happens | Skills |
+|---|---|---|
+| **Shape** | Settle what to build and how. You approve the shape or the plan before any code is written. | [`/turboplan`](claude/skills/turboplan/SKILL.md) · [`/discuss-change`](claude/skills/discuss-change/SKILL.md) · [`/draft-plan`](claude/skills/draft-plan/SKILL.md) |
+| **Build** | Make the change, step by step. | [`/implement`](claude/skills/implement/SKILL.md) · [`/implement-plan`](claude/skills/implement-plan/SKILL.md) |
+| **Check** | Run the project's own checks and drive the running app. | [`/run-checks`](claude/skills/run-checks/SKILL.md) · [`/smoke-test`](claude/skills/smoke-test/SKILL.md) |
+| **Review** | Review and polish in a loop, with a second agent as peer reviewer. | [`/review-code`](claude/skills/review-code/SKILL.md) · [`/polish-code`](claude/skills/polish-code/SKILL.md) · [`/peer-review`](claude/skills/peer-review/SKILL.md) |
+| **Try** | You try a user-facing change in the live app and say whether it's right. | [`/preview`](claude/skills/preview/SKILL.md) |
+| **Ship** | Commit, push, and open the pull request once you approve. | [`/finalize`](claude/skills/finalize/SKILL.md) · [`/ship`](claude/skills/ship/SKILL.md) |
+| **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/self-improve`](claude/skills/self-improve/SKILL.md) |
 
 Examples use Claude Code's `/skill-name` syntax. In Codex, use `$skill-name`:
 
@@ -46,15 +52,31 @@ What you'll need:
 
 See [requirements](docs/requirements.md) for what setup changes on your machine and what your project should have.
 
-Then paste this into Claude Code or Codex:
+**Claude Code:** install the plugin, then open `/plugin` → Marketplaces and switch on auto-update for `turbo`.
+
+```text
+/plugin marketplace add tobihagemann/turbo
+/plugin install turbo@turbo
+```
+
+**Codex:** install the plugin, then trust Turbo's hook when Codex asks at its next start.
+
+```bash
+codex plugin marketplace add tobihagemann/turbo
+codex plugin add turbo@turbo
+```
+
+Then paste this into Claude Code or Codex for the remaining one-time steps (prerequisites, settings, and optional extras):
 
 ```text
 Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo and follow the guide for your edition.
 ```
 
-The agent selects your edition, installs the skills, and walks you through tools and configuration interactively.
-
 Prefer to read the steps first? Open the **[Claude Code setup](claude/SETUP.md)** or **[Codex setup](codex/SETUP.md)** guide.
+
+Every skill also answers to `/turbo:<skill>` (`$turbo:<skill>` in Codex), which helps when another plugin uses the same name.
+
+Installed Turbo before it shipped as a plugin? Run `/update-turbo` (or `$update-turbo`) once. It moves you to the plugin and keeps your edited skills unless you choose otherwise.
 
 ## What You Can Do
 
@@ -74,7 +96,7 @@ See [more prompt examples](docs/examples.md) for dependency updates, UI testing,
 ## Why Turbo
 
 - **A process you can repeat.** Planning, investigation, review, and shipping workflows are written down as skills, so you can invoke them without rebuilding the prompt each time. They use your project's existing tests, linters, formatters, and hooks.
-- **Pieces you can replace.** Use individual skills or compose them into larger workflows. Swap review tools, commit conventions, or code-style guidance for your own. The skills are plain Markdown using the harness's native tools.
+- **Pieces you can swap.** Use individual skills or compose them into larger workflows. A skill of your own with the same name takes over that piece, inside Claude Code pipelines too. The skills are plain Markdown using the harness's native tools.
 - **Lessons carried forward.** `/self-improve` captures corrections and project conventions in instructions, memory, and skills, so future sessions can build on what you've learned.
 
 You stay involved in choosing the approach and reviewing the result. Turbo works best alongside the checks and engineering judgment you already bring to a project.
@@ -84,7 +106,7 @@ You stay involved in choosing the approach and reviewing the result. Turbo works
 - **[Workflow guide](docs/workflows.md)** — planning and finalization diagrams, self-improvement, and browser testing.
 - **[Prompt examples](docs/examples.md)** — requests you can copy into your next session.
 - **[Requirements](docs/requirements.md)** — accounts, what setup changes, and the project infrastructure Turbo builds on.
-- **[Customization](docs/customization.md)** — swap skills, understand harness instructions, and update your installation.
+- **[Customization](docs/customization.md)** — override skills, update the plugin, and work on Turbo or a fork.
 - **All skills:** [Claude Code index](claude/SKILL-INDEX.md) · [Codex index](codex/SKILL-INDEX.md) — descriptions and dependencies for every skill.
 
 ---

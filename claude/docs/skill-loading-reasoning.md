@@ -66,7 +66,7 @@ Separately, the stop problem breaks any workflow skill that chains multiple sub-
 
 ## Solution
 
-Rules under the Skill Loading section of CLAUDE.md cover six concerns:
+Rules under the Skill Loading section of the Turbo rules ([`claude/ADDITIONS.md`](../ADDITIONS.md), which the plugin injects into every session) cover six concerns:
 
 - **Invocation discipline** — every skill load goes through the Skill tool. No substitution by executing steps from memory, even if the skill was loaded earlier, including skills invoked by other skills or by themselves.
 - **Scope of "already running"** — the phrase only means don't call a skill in the same turn where its `<command-name>` tag already appeared.
@@ -81,7 +81,7 @@ The first five concerns address the skip problem from complementary angles. The 
 
 The task-list-check rule alone turned out to be insufficient. After it shipped, the stop problem still occurred in sessions where the rule was in context and the task list was visible. A single prose rule can't reliably override a strong emergent "turn-boundary" signal. The mitigation is layered:
 
-- **Global rule in CLAUDE.md** — the task-list-check baseline applies to every skill completion, anywhere in the conversation.
+- **Global rule in the Turbo rules** — the task-list-check baseline applies to every skill completion, anywhere in the conversation.
 - **Per-skill continuation line** — child skills with explicit numbered steps end their last step with: *"Then use the TaskList tool and proceed to any remaining task."* Placing the cue at the exact moment execution ends (not buried in a trailing Rules section) puts it where the stop-decision gets made. The tool call is a concrete required action that breaks the end-of-turn pull more reliably than the earlier prose phrasing *"check your task list for remaining tasks and proceed"* — with the prose form, the stop problem still occurred even when the rule was in context and the task list was visible. See the corresponding convention in `SKILL-CONVENTIONS.md`.
 - **Continuation framing in child skills** — child skills frame the body in second-person, agent-facing voice: the same agent continuing through more prompting. Third-party framing like *"Return findings to the caller"* or *"Return results for the main agent to act on"* reads as an end-of-turn signal — "caller" and "main agent" are themselves part of the problem, since there is no caller in a function-call sense, only the same agent continuing.
 - **Bounded terminal output** — where the last step produces a report, it specifies a table with stated row and cell bounds rather than a prose summary. A large prose deliverable reads as the turn's product and competes for the position the continuation cue occupies; a bounded table does not. This layer addresses what the agent emits; the other three address where the cue sits.

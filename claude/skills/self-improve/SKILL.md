@@ -17,17 +17,19 @@ Available destinations:
 
 Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. List all skill directories with the `description` frontmatter of each SKILL.md, but do not read the bodies yet — Step 2 needs to run first so you know what to look for.
 
+Read the top-level `checkout` key from `~/.turbo/config.json` when the file exists. When it names a directory holding `claude/skills/`, that directory is the user's Turbo clone or fork. Treat any other value as unset, and say so in the Step 5 routing plan.
+
 ### Skill Ownership Detection
 
-Classify every skill this session touched:
+When `${CLAUDE_SKILL_DIR}/../../.claude-plugin/plugin.json` exists and names the plugin `turbo`, the Turbo plugin's skills folder is `${CLAUDE_SKILL_DIR}/..`. Otherwise this skill runs from an override or a leftover copy, no folder is known to be Turbo's, and only a `turbo:` invocation marks a turbo skill. Classify every skill this session touched by where it was loaded from, never by its name alone:
 
 - Skills that live in the project are user/project skills
-- If `~/.turbo/repo/` exists, list directories in `~/.turbo/repo/claude/skills/`; any skill in `~/.claude/skills/` with a matching directory there is a turbo skill
-- For every other skill in `~/.claude/skills/`, read `~/.agents/.skill-lock.json`. Its top-level `skills` object is keyed by skill name, and a skill listed there was installed from a source that replaces it wholesale on its next update. Match on the resolved path rather than the name alone, against the entry's `skillPath`, so a local fork that replaced the installed copy is not mistaken for it. A skill that matches is package-managed. The signal runs one way: absence from the file leaves ownership genuinely open, so carry an unlisted skill into Step 4 as ownership-unresolved
+- A skill is a turbo skill when it ran as `turbo:<name>`, or when the base directory its load reported, or the path its `SKILL.md` was read from, lies in the Turbo plugin's skills folder. A same-named skill loaded from `~/.claude/skills/` or the project overrides the Turbo skill, and its lessons go to that override
+- For every skill in `~/.claude/skills/` not classified as turbo, overrides included, read `~/.agents/.skill-lock.json`. Its top-level `skills` object is keyed by skill name, and a skill listed there was installed from a source that replaces it wholesale on its next update. Match on the resolved path rather than the name alone, against the entry's `skillPath`, so a local fork that replaced the installed copy is not mistaken for it. A skill that matches is package-managed. The signal runs one way: absence from the file leaves ownership genuinely open, so carry an unlisted skill into Step 4 as ownership-unresolved
 
-**Verification rule (mandatory before routing in Step 4):** For every candidate skill that is about to be routed as turbo, confirm with a fresh `test -d ~/.turbo/repo/claude/skills/<name>` check that the skill actually lives in the turbo repo. Do not rely on remembered listings from earlier in the session, filename hits in grep output, or assumptions based on where a SKILL.md was read from. A miss here mislabels a user/project skill as turbo, triggers the contribution flow unnecessarily, and can introduce session-specific content into a shared skill — so the check is not optional.
+**Verification rule (mandatory before routing in Step 4):** For every candidate skill that is about to be routed as turbo and ran in this session, find the load that ran it in this session's record: a `turbo:` Skill tool invocation, the base directory a load reported, or a `SKILL.md` read. Confirm that the load came from the Turbo plugin's skills folder. For a candidate that did not run, confirm that `<Turbo plugin's skills folder>/<name>/SKILL.md` exists and that no skill of that name exists in `~/.claude/skills/` or the project. Do not rely on a name match, remembered listings from earlier in the session, or filename hits in grep output: a personal or project skill of the same name is an override, not the turbo skill. A miss here mislabels a user/project skill as turbo, sends its lesson to a handoff or an upstream proposal unnecessarily, and can introduce session-specific content into a shared skill — so the check is not optional.
 
-**Exception:** If the current project IS the turbo repo (i.e., the working directory contains this skill collection), route turbo skill lessons through the **Existing user/project skill** destination in Step 4 — edits go directly to `claude/skills/<name>/` in the project, with no installed-copy indirection and no contribution flow.
+**Exception:** If the current project IS the turbo repo (i.e., the working directory contains this skill collection), route turbo skill lessons through the **Existing user/project skill** destination in Step 4 — edits go directly to `claude/skills/<name>/` in the project, with no handoff and no contribution flow.
 
 ## Step 2: Gather Session Evidence and Scan for Lessons
 
@@ -39,7 +41,7 @@ When it starts from a summary of earlier work instead, recover the compacted tur
 
 1. The absolute path of the project root
 2. A distinctive phrase from the visible conversation, for confirming which transcript belongs to this session
-3. An instruction to read [references/transcript-miner.md](references/transcript-miner.md) for transcript location, extraction, and output format
+3. An instruction to read `${CLAUDE_SKILL_DIR}/references/transcript-miner.md` for transcript location, extraction, and output format
 
 Treat the returned items as raw evidence for the scan below.
 
@@ -53,7 +55,7 @@ Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report befo
 
 1. The absolute path of the project root
 2. The confirmed cutoff as an ISO-8601 timestamp, or that there is none
-3. An instruction to read [references/transcript-miner.md](references/transcript-miner.md) and follow its sweep process
+3. An instruction to read `${CLAUDE_SKILL_DIR}/references/transcript-miner.md` and follow its sweep process
 
 Treat the returned items as raw evidence for the scan below.
 
@@ -61,7 +63,7 @@ Treat the returned items as raw evidence for the scan below.
 
 Before scanning for lessons, identify which skills were loaded during this session:
 
-- Scan the conversation for Skill tool invocations and SKILL.md reads from `~/.claude/skills/`
+- Scan the conversation for Skill tool invocations, `turbo:`-prefixed ones included, the base directory each skill load reported, and SKILL.md reads from `~/.claude/skills/` or the Turbo plugin's skills folder
 - Build a list of session skills, marking each as turbo, user/project, package-managed, or ownership-unresolved (using the detection from Step 1)
 - This list informs routing in Step 4: when a lesson clearly arose from a specific skill's workflow, that skill is the natural routing target
 
@@ -96,7 +98,7 @@ Discard anything session-specific, speculative, one-off, or already resolved by 
 
 Assign each surviving lesson to exactly one destination.
 
-**Revisions:** A lesson Step 3 kept as a revision routes to the destination that holds the rule it revises, as an update-in-place, ahead of the skill-first rule and the table; only the package-managed skills rule outranks it. When the rule lives in a source that is not a routing destination, route the lesson by the rules below like any other.
+**Revisions:** A lesson Step 3 kept as a revision routes to the destination that holds the rule it revises, as an update-in-place, ahead of the skill-first rule and the table; only the package-managed skills rule outranks it. When the rule lives in a source that is not a routing destination, route the lesson by the rules below like any other. When the rule lives in a turbo skill, its destination is **Existing turbo skill**, or **Existing user/project skill** under Step 1's turbo repo exception: the revision goes where any other lesson for that skill goes, never into the plugin's copy.
 
 **Skill-first rule (mandatory):** Before consulting the table below, check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running /skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or CLAUDE.md — they belong in the skill they correct. This rule is not a preference; it is a hard constraint that takes precedence over the table rows below.
 
@@ -105,11 +107,11 @@ Assign each surviving lesson to exactly one destination.
 | Destination | Criteria |
 |---|---|
 | **Project improvements** | Actionable improvement to existing **code**: refactoring, performance, reliability, readability, testing, or DX. Not for documentation fixes — factual errors in CLAUDE.md belong in the **Project CLAUDE.md / AGENTS.md** row. Route to `.turbo/improvements.md` via the `/note-improvement` skill. |
-| **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). A lesson the package-managed skills rule sends here stays here, whatever domain it overlaps. |
+| **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). A lesson the package-managed skills rule sends here stays here, whatever domain it overlaps, as does a turbo skill lesson the user declines to propose upstream in Step 6. |
 | **Project CLAUDE.md / AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. Also factual corrections to CLAUDE.md content (wrong commands, outdated paths, incorrect conventions) — fix these directly, do not defer to Project improvements. When the lesson applies only to one subtree, route it to the nearest enclosing CLAUDE.md/AGENTS.md; reserve the root file for project-wide decisions. |
 | **Existing user/project skill** | Lesson would improve a skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any skill whose *domain* covers the lesson — not just the skill worked on in this session. Changes go to the skill file directly. No contribution flow. |
 | **New skill** | A cohesive body of knowledge emerged that deserves its own on-demand context. The test: would this knowledge be too large for a CLAUDE.md section, and should it only be loaded when relevant? See the skill categories table below. |
-| **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, run `test -d ~/.turbo/repo/claude/skills/<name>`; if the directory does not exist, route to the Existing user/project skill destination instead, subject to the package-managed skills rule above.** Changes go to the installed copy at `~/.claude/skills/`, and are flagged for contribution (see Step 6). |
+| **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, apply Step 1's verification rule; when the skill's load did not come from the Turbo plugin's skills folder, route to the Existing user/project skill destination instead, subject to the package-managed skills rule above.** Changes are not applied in this session: they go into a handoff in the Turbo checkout when `checkout` is set, and are offered upstream otherwise (see Step 6). |
 | **No destination** | Does not clearly fit any destination. Drop it. Routing a weak lesson is worse than losing it. |
 
 **Skill categories:**
@@ -144,9 +146,10 @@ Output a table as text before making any changes:
 | 2 | The /create-pr skill should... | ~/.claude/skills/create-pr | Update Step 2 |
 | 3 | Multi-step deploy workflow | New project skill | Create new skill |
 | 4 | User prefers short commit msgs | Auto memory | Update <resolved memory target> |
+| 5 | /finalize should skip step 3 when... | Turbo skill: finalize | Handoff to Turbo checkout |
 ```
 
-For each lesson, show: concise summary, exact target file/skill, and whether it's an append, update-in-place, or new creation. For Auto memory, name the resolved project-memory target so the approval covers the durable write at that path.
+For each lesson, show: concise summary, exact target file/skill, and whether it's an append, update-in-place, or new creation. For Auto memory, name the resolved project-memory target so the approval covers the durable write at that path. Turbo skill lessons show `Handoff to Turbo checkout` as the action when `checkout` is set, and `Propose upstream` otherwise, naming the Auto memory target that receives the lesson if the user declines to propose it.
 
 Then use `AskUserQuestion` with these options: **Approve** or **Reject**.
 
@@ -159,11 +162,12 @@ Apply approved changes in order:
 3. **Updates to CLAUDE.md / AGENTS.md** — Read the target file selected in Step 4 (the root file or a nested subtree file), find the right section, append or update in place. Match the tone and format already present.
 4. **Updates to user/project skills** — Run the `/create-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
 5. **New skills** — Run the `/create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
-6. **Updates to turbo skills** — For each lesson routed to a turbo skill:
-   1. Read `~/.turbo/repo/claude/SKILL-CONVENTIONS.md` so turbo-specific conventions are in context before any editing.
-   2. Run the `/create-skill` skill to update the installed copy at `~/.claude/skills/<name>/`.
-
-   Once every turbo skill edit is in place and reviewed, use `AskUserQuestion` to ask "These turbo skill improvements could benefit other users. Propose them upstream?" When the user confirms, run the `/contribute-turbo` skill once for all of them.
+6. **Turbo skill lessons** — Edit no file in the Turbo plugin's skills folder: a plugin update replaces it.
+   - **When `checkout` is set:** write every lesson routed to a turbo skill into one handoff file with the Write tool, at `<checkout>/.turbo/handoff/<YYYY-MM-DD>-turbo-lessons-<slug>.md`, where `<slug>` names the lessons' common subject. When that path already exists, append `-2`, `-3`, and so on to the slug until it is free. State the resolved path before writing. Record for each lesson:
+     - Which turbo skill it targets, as a path under `claude/skills/<name>/` in the checkout
+     - The change to make and where in the file it belongs
+     - The session evidence that motivated it (the correction, failure, or repeated guidance)
+   - **When `checkout` is unset:** use `AskUserQuestion` to ask whether to propose each turbo skill lesson upstream, since it could benefit other users. Ask one question per lesson, at most four per call. Write each lesson the user leaves out to **Auto memory** as in item 2, recording the turbo skill it applies to. Then, when any lesson remains to propose, run the `/contribute-turbo` skill once for all of them, passing each lesson's target skill, change, and evidence.
 
 Then use the TaskList tool and proceed to any remaining task.
 

@@ -20,17 +20,17 @@ If only a file is given, `git blame` resolves the commit that last touched the l
 
 ## Step 1: Resolve the Commit and Run the Script
 
-Call `scripts/find_transcript.py` with either `--commit <sha>` or `--file <path>[:<line>]`. Pass `--cwd /path/to/repo` when searching a different repo than the current working directory.
+Call `${CLAUDE_SKILL_DIR}/scripts/find_transcript.py` with either `--commit <sha>` or `--file <path>[:<line>]`. Pass `--cwd /path/to/repo` when searching a different repo than the current working directory.
 
 ```bash
-python3 <skill-dir>/scripts/find_transcript.py --file <path>:<line>
-python3 <skill-dir>/scripts/find_transcript.py --commit <sha>
+python3 ${CLAUDE_SKILL_DIR}/scripts/find_transcript.py --file <path>:<line>
+python3 ${CLAUDE_SKILL_DIR}/scripts/find_transcript.py --commit <sha>
 ```
 
 When there is no commit to resolve, because the project is not a git repository or `--file` returns `no-commit` for an uncommitted line, run `--phrase` with a distinctive stretch of the passage's current text, taken from a single line, instead. It skips git, ranks the project's transcripts by how often they handle the phrase, and returns the same JSON with `commit: null`.
 
 ```bash
-python3 <skill-dir>/scripts/find_transcript.py --phrase "<distinctive text from the passage>"
+python3 ${CLAUDE_SKILL_DIR}/scripts/find_transcript.py --phrase "<distinctive text from the passage>"
 ```
 
 With `--commit` or `--file`, the script:

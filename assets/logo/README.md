@@ -1,6 +1,6 @@
 # Turbo Logo
 
-The Thunderbolt lightning hammer, rendered in Blender and enclosed by Apple's native macOS 27 Icon Composer renderer. Open `index.html` to inspect it on light and dark surfaces.
+The Thunderbolt lightning hammer marks Turbo, a human-gated agentic software factory. It is rendered in Blender and enclosed by Apple's native macOS 27 Icon Composer renderer. Open `index.html` to inspect it on light and dark surfaces.
 
 ## Files
 

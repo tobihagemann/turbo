@@ -6,85 +6,27 @@ Walk the user through setting up the Codex edition of Turbo step by step. Ask be
 
 Track these setup phases with the Codex plan tool:
 
-1. Install Turbo Codex skills
+1. Install the Turbo plugin
 2. Add `.turbo` to global gitignore
 3. Install prerequisites
 4. Enable structured user input in Default mode
 5. Raise concurrent subagent limit
-6. Add AGENTS.md additions
-7. Oracle setup
+6. Oracle setup
+7. Working on Turbo
 8. Quick onboarding
 
-## Step 1: Install Turbo Codex Skills
+## Step 1: Install the Turbo Plugin
 
-### Clone the Repo
+When `~/.turbo/config.json` holds `codex.lastUpdateHead`, Turbo is already installed as copied skills. Follow [`UPDATE.md`](UPDATE.md) instead of this step, then continue with Step 2.
 
-```bash
-git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
-```
-
-Clone the upstream URL: `$update-turbo` pulls from `origin`. Keep any fork or development checkout of Turbo outside `~/.turbo/repo`.
-
-### Excluded Skills
-
-Read `~/.turbo/config.json` and check for a `codex.excludeSkills` array. If it exists, those skills should be excluded from installation. Example config:
-
-```json
-{
-  "codex": {
-    "excludeSkills": ["oracle"]
-  }
-}
-```
-
-### Install Skills
-
-Install Codex skills into `~/.agents/skills`, skipping any in `codex.excludeSkills`:
+Otherwise, ask the user to run these in a terminal outside the session, since Codex's sandbox protects `~/.codex`:
 
 ```bash
-mkdir -p ~/.agents/skills
-exclude=$(jq -r '.codex.excludeSkills // [] | .[]' ~/.turbo/config.json 2>/dev/null)
-for skill in ~/.turbo/repo/codex/skills/*; do
-  [ -d "$skill" ] || continue
-  name=$(basename "$skill")
-  echo "$exclude" | grep -qxF "$name" && continue
-  cp -R "$skill" ~/.agents/skills/
-done
+codex plugin marketplace add tobihagemann/turbo
+codex plugin add turbo@turbo
 ```
 
-Many skills depend on each other, so installing only a subset can leave gaps in pipelines like `$finalize`.
-
-Verify installation by confirming the skill directories exist in `~/.agents/skills/`.
-
-### Initialize Config
-
-Create or update `~/.turbo/config.json`:
-
-```bash
-mkdir -p ~/.turbo
-```
-
-Set:
-
-- `codex.excludeSkills` to any excluded Codex skill names
-- `codex.lastUpdateHead` to the current HEAD: `git -C ~/.turbo/repo rev-parse HEAD`
-- `codex.configVersion` to the highest version number in `~/.turbo/repo/codex/MIGRATION.md`
-- `codex.sharedClaudeAutoMemory` to its existing boolean value, or `false` when the key is absent or invalid
-
-Preserve any existing config values (`oracle`, `claude` if the Claude edition is also installed).
-
-Example shape:
-
-```json
-{
-  "codex": {
-    "excludeSkills": [],
-    "lastUpdateHead": "<HEAD>",
-    "configVersion": 5,
-    "sharedClaudeAutoMemory": false
-  }
-}
-```
+The plugin carries every skill and a `SessionStart` hook that loads Turbo's rules into each session, after compaction too. Codex runs a plugin's hooks only once the user trusts them: ask the user to trust Turbo's hook when Codex asks at its next start, or later under `/hooks`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
@@ -134,7 +76,7 @@ Smoke-test print mode in the current project: `claude -p "hello" < /dev/null` sh
 
 ### Shared Claude Code Auto Memory (Optional)
 
-Ask the user whether to let `$self-improve` use Claude Code project memory as a shared source for Codex. When rerunning setup, show the current `codex.sharedClaudeAutoMemory` value and let the user keep or change it. Preserve every other key whenever changing the preference.
+Ask the user whether to let `$self-improve` use Claude Code project memory as a shared source for Codex. When rerunning setup, show the current `codex.sharedClaudeAutoMemory` value in `~/.turbo/config.json` and let the user keep or change it. Create the file when it does not exist, and preserve every other key whenever changing the preference.
 
 If declined, set the preference to `false` and skip the rest of this section. `$self-improve` then bypasses shared-source discovery and retains its harness-memory fallback.
 
@@ -193,18 +135,7 @@ The Codex hard ceiling is 64. Per OpenAI ([issue #11965](https://github.com/open
 
 This setting cannot be combined with `[features.multi_agent_v2]` — Codex rejects the config at startup if both are present.
 
-## Step 6: Add AGENTS.md Additions
-
-Read [`ADDITIONS.md`](ADDITIONS.md) from `~/.turbo/repo/codex/` and add the sections to the user's Codex instructions:
-
-- **User-global setup:** append to `~/.codex/AGENTS.md` (create the file if missing). This is the global instruction file Codex loads regardless of project.
-- **Project-local setup:** append to the repository's root `AGENTS.md`. Codex walks from the project root down to the current working directory and merges every `AGENTS.md` it finds along the way. This is a one-time install: `$update-turbo` syncs only the user-global copy, so you maintain project-local additions yourself.
-
-Codex caps the combined instruction set at `project_doc_max_bytes` (32 KiB by default), so keep the additions focused. `AGENTS.override.md` at any level *replaces* the `AGENTS.md` at that level — do not introduce one as a workaround for merge friction.
-
-Do not overwrite existing user instructions. Merge by section heading.
-
-## Step 7: Oracle Setup
+## Step 6: Oracle Setup
 
 Ask the user whether they want to set up the oracle. Explain that `$consult-oracle` consults ChatGPT when completely stuck on a problem, but everything works without it. If the user declines, skip this step.
 
@@ -223,7 +154,7 @@ It requires:
 }
 ```
 
-Merge these values into the existing `~/.turbo/config.json`. The `oracle` object lives at the top level (shared across editions). Then run the one-time sign-in with a generous timeout (60 minutes / 3600000ms); it blocks until sign-in completes:
+Merge these values into `~/.turbo/config.json`, creating it when it does not exist. The `oracle` object lives at the top level (shared across editions). Then run the one-time sign-in with a generous timeout (60 minutes / 3600000ms); it blocks until sign-in completes:
 
 ```bash
 npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser-keep-browser --model gpt-6-pro -p "HI"
@@ -232,6 +163,10 @@ npx -y @steipete/oracle@latest --engine browser --browser-manual-login --browser
 Have the user sign into ChatGPT in the window that opens.
 
 See the [consult-oracle skill](skills/consult-oracle/SKILL.md) for details.
+
+## Step 7: Working on Turbo (Optional)
+
+For someone who wants to change Turbo itself or run a fork, point them at [Customization](../docs/customization.md), which covers installing a clone as the plugin and sending lessons to it.
 
 ## Step 8: Quick Onboarding
 
@@ -244,5 +179,5 @@ Present the user with a summary of how to get started:
 5. **Self-improvement:** Run `$self-improve` before context runs out to capture lessons for future sessions.
 6. **Track improvements:** When noticing something out of scope, run `$note-improvement` so it doesn't get lost.
 7. **Artifacts:** Plans, reports, and improvements live under `.turbo/`.
-8. **Updating:** Run `$update-turbo` to update installed Codex skills from the local repo with conflict detection and changelog.
+8. **Updating:** Codex does not update plugins on its own. See [Customization](../docs/customization.md#updating) for the update commands.
 9. **Browser and UI testing:** For web app testing, enable the `browser-use@openai-bundled` plugin. For desktop UI testing, enable the `computer-use@openai-bundled` plugin. Both are bundled in Codex's `openai-bundled` marketplace. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.

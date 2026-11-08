@@ -9,36 +9,17 @@ Propose an improvement to a turbo skill as an issue on `tobihagemann/turbo`.
 
 ## Step 1: Identify the Proposed Change
 
-Confirm the local repo exists:
+Take the proposed changes from the lessons passed in: each names the turbo skill it targets, the change, and the session evidence behind it. Without them, take the proposed changes from conversation context. When neither describes a change to a turbo skill, tell the user there is nothing to contribute and stop.
+
+Read each target skill's current text upstream, so each change is stated against the file as it stands on `main`:
 
 ```bash
-test -d ~/.turbo/repo
+gh api repos/tobihagemann/turbo/contents/codex/skills/<name>/SKILL.md -H 'Accept: application/vnd.github.raw'
 ```
 
-If it does not, tell the user to run the Turbo setup first and stop.
+Leave out a change whose target skill does not exist upstream, and tell the user.
 
-Detect skills whose installed copy has drifted from the repo baseline:
-
-```bash
-for skill in ~/.agents/skills/*/; do
-  name=$(basename "$skill")
-  repo_dir=~/.turbo/repo/codex/skills/"$name"
-  [ -d "$repo_dir" ] || continue
-  diff -rq "$skill" "$repo_dir" >/dev/null 2>&1 && continue
-  echo "$name"
-done
-```
-
-For each drifted skill, read both versions of every file that differs and the single version of every file present on one side only. Classify each hunk and each one-sided file:
-
-- **Correction** — a session edit meant to improve the skill upstream. Include it in the proposal.
-- **Customization** — a persistent local addition that belongs to this machine only (extra workflow steps, personal paths, machine-specific notes, internal references). Leave it out of the proposal.
-- **Upstream-newer** — content the repo copy carries and the installed copy lacks, left behind by a Skip or Exclude during an earlier update. Leave it out of the proposal.
-- **Ambiguous** — use `request_user_input` to confirm classification.
-
-When no corrections survive classification, take the proposed change from conversation context instead. When the conversation describes no change either, tell the user there is nothing to contribute and stop.
-
-Present the corrections in a summary table:
+Present the changes in a summary table:
 
 ```
 | # | Skill | Change Summary |
@@ -47,7 +28,7 @@ Present the corrections in a summary table:
 | 2 | $self-improve | Clarified routing for trusted reviewer feedback |
 ```
 
-Use `request_user_input` to confirm which corrections to propose.
+Use `request_user_input` to confirm which changes to propose.
 
 ## Step 2: Craft Contribution Context
 

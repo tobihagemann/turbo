@@ -9,10 +9,10 @@ Fetch unresolved review comments, top-level review body comments, and PR convers
 
 ## Step 1: Fetch Comments
 
-Auto-detect owner, repo, and PR number from current branch if not provided. Then run `scripts/fetch-pr-data.sh`, which handles full pagination (review threads, inner comment pages for long threads, reviews, issue comments) and emits a single merged JSON document:
+Auto-detect owner, repo, and PR number from current branch if not provided. Then run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh`, which handles full pagination (review threads, inner comment pages for long threads, reviews, issue comments) and emits a single merged JSON document:
 
 ```bash
-bash <skill-dir>/scripts/fetch-pr-data.sh <owner> <repo> <pr_number>
+bash ${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh <owner> <repo> <pr_number>
 ```
 
 Output shape:

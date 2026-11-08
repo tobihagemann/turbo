@@ -1,26 +1,30 @@
-# Update Turbo
+# Migrate to the Turbo Plugin
 
-Update installed Turbo skills from the local repo at `~/.turbo/repo/` with a dynamic changelog and interactive conflict resolution.
+Move a copy install, where setup and `/update-turbo` copied skills into `~/.claude/skills`, onto the Turbo plugin. Every step is safe to re-run.
 
-Every `<rev>:<path>` argument below is a hazard when a shell variable holds the rev: brace it as `${var}:<path>`. In zsh, a colon directly after a parameter name introduces a modifier, and every path in this document begins with `c`, which zsh consumes as the `:c` modifier. The ref silently loses that character and fails to resolve. Double quotes do not prevent this; the braces do.
+Before any step changes or removes a file or folder, copy it into one backup folder for this run, `~/.turbo/backup/<timestamp>/`, with `<timestamp>` taken once from `date +%Y%m%d-%H%M%S`. Inside it, mirror each item's path under the home folder: `~/.claude/skills/<name>` goes to `<backup>/.claude/skills/<name>`, `~/.turbo/repo` to `<backup>/.turbo/repo`. Back up only the file or folder a step names, never all of `~/.claude`, which holds the user's login and session data. State the backup path at the start and in the final report. Never delete what is not first in the backup.
 
-## Phase 1: Analysis
+Brace a shell variable that holds a rev in any `<rev>:<path>` argument as `${var}:<path>`: zsh reads a colon after a bare parameter name as a modifier and mangles or rejects the ref.
 
-### Step 1: Fetch
+## Step 1: Check the Install
 
-Confirm the clone tracks upstream:
+Read `~/.turbo/config.json`. When the file is missing, or holds neither `claude.lastUpdateHead` nor a top-level `lastUpdateHead`, report that no copy install is left to migrate and stop.
 
-```bash
-git -C ~/.turbo/repo remote get-url origin
-```
-
-If it prints anything other than `https://github.com/tobihagemann/turbo.git`, the clone points at a fork left over from an earlier setup. Stop, and tell the user to move any local work into a checkout outside `~/.turbo/repo` and replace the clone before re-running:
+Otherwise, confirm the clone tracks upstream:
 
 ```bash
-git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+git -C ~/.turbo/repo config --get remote.origin.url
 ```
 
-Installed skills live outside this clone, so replacing it loses no customizations.
+Upstream is `https://github.com/tobihagemann/turbo` or `git@github.com:tobihagemann/turbo`, with or without a trailing `.git`. Any other URL means the clone points at a fork left over from an earlier setup. When it does, or when `~/.turbo/repo` is missing, use `AskUserQuestion` to offer:
+
+- **Clone upstream** — once the user has moved any local work they want to keep out of the old clone, move it into the backup and clone upstream in its place, then continue:
+
+  ```bash
+  git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+  ```
+
+- **Stop** — leave everything as it is.
 
 Then fetch:
 
@@ -28,354 +32,75 @@ Then fetch:
 git -C ~/.turbo/repo fetch origin
 ```
 
-### Step 2: Run Migrations
+The baseline is the commit the copies were installed from. Take it from `claude.lastUpdateHead`, falling back to the top-level `lastUpdateHead`. Confirm the clone holds it with `git -C ~/.turbo/repo cat-file -e "${base}^{commit}"`, branching on the exit code; when it does not, the baseline is unknown. A baseline from before the edition split keeps its skills under `skills/` rather than `claude/skills/`: check with `git -C ~/.turbo/repo cat-file -e "${base}:claude/skills"`, branching on the exit code.
 
-**Current version: 9**
+## Step 2: Install the Plugin
 
-Read `configVersion` from `~/.turbo/config.json`, looking at `claude.configVersion` first and falling back to top-level `configVersion` for legacy installs (default: `0` if missing). Migrations run before any head comparison so legacy users on a current commit still pick up schema migrations.
+Ask the user to run these in Claude Code, since writes under `~/.claude/plugins` are theirs to make:
 
-If `configVersion` equals the current version, skip to Step 3.
+```text
+/plugin marketplace add tobihagemann/turbo
+/plugin install turbo@turbo
+```
 
-Otherwise, read `MIGRATION.md` from `origin`:
+Then have them switch on auto-update for the `turbo` marketplace under `/plugin` → Marketplaces; third-party marketplaces do not update on their own. Use `AskUserQuestion` to wait until they report the plugin installed, with stopping the migration as the other option.
+
+## Step 3: Remove the Copied Skills
+
+Export the upstream skill trees under your scratchpad directory, creating each target folder first:
 
 ```bash
-git -C ~/.turbo/repo show origin/main:claude/MIGRATION.md
+mkdir -p <tmp>/new <tmp>/old
+git -C ~/.turbo/repo archive origin/main:claude/skills | tar -x -C <tmp>/new
+git -C ~/.turbo/repo archive "${base}:<baseline skills folder>" | tar -x -C <tmp>/old
 ```
 
-For each migration where the version number is greater than `configVersion`, in ascending order:
+Each skill lands at `<tmp>/new/<name>` and `<tmp>/old/<name>`. Skip the second export when the baseline is unknown.
 
-1. Check the migration's **Condition**. If the condition is not met and a **Skip if** clause applies, skip it.
-2. Otherwise, follow the migration's **Steps**.
-3. After completing (or skipping) the migration, continue to the next one.
+Every folder in `~/.claude/skills` whose name exists in either tree is a Turbo copy. A skill Turbo has since retired, such as `update-turbo`, exists only in the baseline tree and still counts. Classify each copy against the tree versions with `git diff --no-index --quiet -- <tree version> <copy>`, exit 0 meaning identical. For a symlink, as an install through `npx skills` left one, compare `<copy>/`: the trailing slash compares the target's contents. A difference limited to `.DS_Store` files or `__pycache__` folders counts as identical.
 
-After all migrations are processed, set `claude.configVersion` to the current version in `~/.turbo/config.json`.
+- **Unmodified** — identical to the skill in either tree. Move it to the backup.
+- **Edited** — identical to neither. Write a one-line summary of what differs from the closest upstream version. Search the copy for references that stop working on the plugin: `mcp__context-level__read`, which becomes `mcp__turbo__context-level`; `~/.turbo/repo`; and paths into another Turbo skill's folder under `~/.claude/skills/`.
 
-If any migration initialized config and reported completion (e.g., a first-time migration that sets up the repo), stop here. The user can run `/update-turbo` again to continue with the normal update flow.
+When the baseline is unknown, a copy that matches neither tree may still be an untouched older version. Before classifying it Edited, compare it against every distinct version of that skill in the history of `origin/main` (`git -C ~/.turbo/repo log --format=%H origin/main -- claude/skills/<name> skills/<name>`), and count it Unmodified when one matches. Take the set of Turbo names from every skill folder that ever existed under `claude/skills/` or `skills/` on `origin/main`, so a retired skill such as `update-turbo` still counts.
 
-### Step 3: Compare State
+When no copy comes out identical to anything, suspect the comparison paths before asking about any copy.
 
-Read from `~/.turbo/config.json`:
+Ask about the edited copies with `AskUserQuestion`, one question per copy and at most four questions per call. Each question names the copy, gives its summary, and lists every stale reference found with its replacement: the new tool name, or a rewrite by hand for the clone and the other skills' paths, since the plugin's install path changes with every update. For the `context-level` copy, add that moving it also removes the separate mod it carried, which the plugin replaces. Offer:
 
-- `claude.excludeSkills` (default: `[]`)
-- `claude.lastUpdateHead` — the commit hash from the last update
+- **Keep as an override** — the copy keeps the skill's name, in pipelines too, and stops receiving Turbo's changes. Rewrite nothing in it.
+- **Move to the backup** — the plugin's version takes over.
 
-Compare `claude.lastUpdateHead` with the fetched main HEAD:
+Any answer other than **Move to the backup** keeps the copy.
 
-```bash
-git -C ~/.turbo/repo rev-parse origin/main
-```
+Whenever a symlinked copy moves to the backup, copy its resolved contents with `cp -RL <copy> <backup path>`, then remove only the link with `unlink <copy>`, leaving the target in place: a Codex install may own it.
 
-If they match, report that Turbo is already up to date and stop.
+## Step 4: Remove Turbo's Rules from CLAUDE.md
 
-### Step 4: Build Changelog
+Skip this step when `~/.claude/CLAUDE.md` does not exist.
 
-The changelog is for user-facing display only. Destructive behavior in Phase 3 is driven by Phase 2's audit matrix, not by these categories.
+Collect every version of the Turbo rules on `origin/main`: list the commits with `git -C ~/.turbo/repo log --format=%H origin/main -- claude/ADDITIONS.md CLAUDE-ADDITIONS.md`, and read each at whichever of the two paths exists there, skipping a commit where neither does. Take the section names from every `##` heading in any version.
 
-Use local git commands to detect changes since `claude.lastUpdateHead`. The angle-bracket `<lastUpdateHead>` in the snippets below is the shell placeholder for that value.
+Back up `~/.claude/CLAUDE.md`. A section runs from its `#` heading to the next `#` heading. For each section whose heading matches one of those names, remove every non-blank line that matches a line from that section in any version. Compare lines after trimming surrounding whitespace, dropping a leading list marker (`-`, `*`, or `+`), and treating `*` and `_` emphasis markers as the same. Keep the remaining lines under their heading, and drop the heading when no non-blank line remains. Report the lines kept.
 
-```bash
-# Changed skill files
-git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..origin/main -- claude/skills/
+## Step 5: Clean Up Settings
 
-# Commit history for context
-git -C ~/.turbo/repo log --oneline <lastUpdateHead>..origin/main -- claude/skills/
-```
+Back up `~/.claude/settings.json` when it exists, then:
 
-From the `--name-status` output, each entry has a status (`A` added, `D` deleted, `M` modified, `R` renamed with old path). Group by skill name (extract from `claude/skills/<name>/...`).
+1. Remove `statusLine` only when its command is one Turbo installed: `jq -r '.context_window.remaining_percentage | if . == null then empty else "\(floor)% context left" end'`, the earlier `jq -r '"\(.context_window.remaining_percentage | floor)% context left"'`, or one running `context-statusline.sh`.
+2. Remove every `hooks.PostToolUse` hook whose command runs `context-warn.sh`, then drop a matcher group left without hooks, a `PostToolUse` array left empty, and a `hooks` object left empty.
+3. Set `env.CLAUDE_CODE_ENABLE_TODO_TOOLS` to the string `"1"` when it is not already. Create the file with just that key when it does not exist.
 
-For each modified or renamed skill, read both versions of the SKILL.md:
+Preserve every other key. Move `~/.claude/hooks/turbo/` to the backup when it exists.
 
-```bash
-# Old version
-git -C ~/.turbo/repo show <lastUpdateHead>:claude/skills/<name>/SKILL.md
+## Step 6: Retire the Clone
 
-# New version
-git -C ~/.turbo/repo show origin/main:claude/skills/<name>/SKILL.md
-```
+When the config holds no `codex.lastUpdateHead`, nothing needs `~/.turbo/repo` any longer. Use `AskUserQuestion` to offer moving it to the backup or keeping it, naming any copy kept in Step 3 that still references it. When the config does hold one, keep the clone and say that the Codex copy install still uses it.
 
-Read both versions and write a concise, plain-language summary of what changed. Focus on what the change means for the user: new capabilities, changed behavior, renamed commands, removed features. Flag anything that could be a breaking change (renamed skills that other skills reference, removed steps, changed interfaces).
+## Step 7: Clean Up the Turbo Config
 
-When the `--name-status` output lists other changed files in the skill, such as a script or a bundled mod under `hooks/`, read those changes too and fold what they mean for the user into the summary.
+Back up `~/.turbo/config.json`. Note the names in `claude.excludeSkills`, or in a top-level `excludeSkills` on an install from before the edition split, for the report, since the plugin now provides those skills too. Delete `claude.excludeSkills`, `claude.lastUpdateHead`, and `claude.configVersion`, then the `claude` object when it is left empty, then the top-level `lastUpdateHead`. Keep every other key: `oracle`, the whole `codex` object, and keys an older install left at the top level (`excludeSkills`, `configVersion`, `repoMode`).
 
-For added skills, read their new SKILL.md and summarize what they do.
+## Step 8: Report
 
-Also check for changes to `claude/ADDITIONS.md`:
-
-```bash
-git -C ~/.turbo/repo diff --name-status <lastUpdateHead>..origin/main -- claude/ADDITIONS.md
-```
-
-If modified, read both versions and summarize what changed: new sections added, existing sections updated, or sections removed.
-
-### Step 5: Present Changelog
-
-Output the changelog as text. Example format:
-
-```
-Turbo Update Available
-
-Added:
-- /new-skill — Brief description of what it does
-
-Removed:
-- /old-skill
-
-Renamed:
-- /old-name → /new-name
-
-Modified:
-- /skill-a — Now launches 4 review agents instead of 3, adds clarity review
-- /skill-b — Delegates to /review-code instead of running review inline
-
-⚠ Breaking: /old-name renamed to /new-name — update any custom workflows
-
-CLAUDE.md Additions:
-- Updated "Skill Loading" — added new rule about X
-- New section "Section Name" — brief description
-```
-
-Then use `AskUserQuestion` to ask whether to proceed with the update. If the user declines, stop.
-
-## Phase 2: Resolution
-
-### Step 1: Build the Audit Matrix
-
-Detection runs over **every** skill in the union of installed, old upstream, and new upstream — independent of the changelog. Phase 3's destructive operations gate strictly on the matrix, so any deviation between an installed skill and its old upstream baseline surfaces here, not in Phase 3.
-
-Materialize the old upstream skill tree once under your scratchpad directory. `<tmp>` below stands for that path.
-
-```bash
-git -C ~/.turbo/repo archive <lastUpdateHead> -- claude/skills/ 2>/dev/null | tar -x -C "<tmp>"
-mkdir -p "<tmp>/claude/skills"
-```
-
-The trailing `mkdir -p` handles the case where `<lastUpdateHead>` predates the `claude/skills/` path: the archive emits no entries and the directory wouldn't otherwise exist, which would cause the diff step below to error on a missing path. With an empty old-upstream tree, every installed skill routes into the **Collision** category (old absent, new present, installed present) and the user is asked once per skill whether to overwrite with the fresh upstream.
-
-Enumerate the union of skill names from three sources, deduplicated:
-
-```bash
-# Old upstream
-git -C ~/.turbo/repo ls-tree -d --name-only <lastUpdateHead> -- claude/skills/ | xargs -n1 basename
-# New upstream
-git -C ~/.turbo/repo ls-tree -d --name-only origin/main -- claude/skills/ | xargs -n1 basename
-# Installed
-ls -1 ~/.claude/skills/ 2>/dev/null
-```
-
-**Detect skill renames** before flag computation. A skill rename is signaled when `git diff --name-status -M` reports an `R` status on a `SKILL.md` between two skill directories:
-
-```bash
-git -C ~/.turbo/repo diff --name-status -M <lastUpdateHead>..origin/main -- claude/skills/ |
-  awk -F'\t' '/^R/ && $2 ~ "^claude/skills/[^/]+/SKILL\\.md$" && $3 ~ "^claude/skills/[^/]+/SKILL\\.md$" {
-    old=$2; new=$3
-    sub("claude/skills/", "", old); sub("/SKILL.md", "", old)
-    sub("claude/skills/", "", new); sub("/SKILL.md", "", new)
-    print old "\t" new
-  }'
-```
-
-Build a map of `(old → new)` pairs. For names appearing as either side of a rename, categorize as **Renamed** and skip the standard 4-flag matrix below for both old and new names. A Renamed entry has two sub-cases:
-
-| Sub-case | Detection | Default |
-|---|---|---|
-| **Renamed, clean** | `git diff --no-index --quiet -- "<tmp>/claude/skills/<old-name>" ~/.claude/skills/<old-name>` exits 0 | Auto-migrate in Phase 3 |
-| **Renamed, customized** | same diff exits 1 | Ask user (Migrate / Skip / Exclude) |
-
-If git's rename detection threshold isn't met (e.g., the rename also rewrote `SKILL.md` substantially), the rename falls through to the standard matrix as Removed-upstream + New-upstream — data is still safe (Removed-upstream prompts on customized installs); the UX just doesn't recognize the rename.
-
-For each remaining `<name>` (i.e., names not paired in the rename map), compute four flags. Brace any rev variable in the `cat-file` probes below: their errors are suppressed, so an unbraced rev makes `old_exists` come back false for every skill and routes each one into **Collision**.
-
-| Flag | How |
-|---|---|
-| `old_exists` | `git -C ~/.turbo/repo cat-file -e <lastUpdateHead>:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
-| `new_exists` | `git -C ~/.turbo/repo cat-file -e origin/main:claude/skills/<name>/SKILL.md 2>/dev/null` (exit 0 means exists) |
-| `installed_exists` | `test -d ~/.claude/skills/<name>` |
-| `clean` | only when `old_exists` and `installed_exists` are both true: `git diff --no-index --quiet -- "<tmp>/claude/skills/<name>" ~/.claude/skills/<name>` (exit 0 → clean, exit 1 → customized) |
-
-Use `git diff --no-index` rather than POSIX `diff -rq`. Git diff understands file modes (regular vs executable), symlinks, and gitlinks; POSIX diff misses mode and symlink target changes.
-
-Combine the flags into one of these categories:
-
-| `old_exists` | `new_exists` | `installed_exists` | `clean` | Category |
-|---|---|---|---|---|
-| ✓ | ✓ | ✓ | ✓ | **Modified, clean** |
-| ✓ | ✓ | ✓ | ✗ | **Modified, customized** |
-| ✓ | ✗ | ✓ | ✓ | **Removed upstream, clean** |
-| ✓ | ✗ | ✓ | ✗ | **Removed upstream, customized** |
-| ✗ | ✓ | ✓ | — | **Collision** |
-| ✗ | ✓ | ✗ | — | **New upstream** |
-| ✗ | ✗ | ✓ | — | **User-local** |
-| ✓ | ✓ | ✗ | — | **User-uninstalled** |
-| ✓ | ✗ | ✗ | — | **Already gone** |
-
-When `old_exists` and `new_exists` are both true and the upstream content is identical between `<lastUpdateHead>` and `origin/main` for that skill, mark the entry as **No-op** regardless of the `clean` flag — the skill didn't actually change upstream.
-
-Before continuing, confirm the probes actually ran: every name from the old-upstream enumeration must have `old_exists` true, and every name from the new-upstream enumeration must have `new_exists` true. Only installed-only names may have both false. A violation means the flag computation is broken, not that the skills are missing. Stop here, report which of the two causes below applies, and leave `claude.lastUpdateHead` unchanged so a corrected run can retry.
-
-First, a mangled `<rev>:<path>` ref, per the bracing note at the top. Second, a loop that never iterated: zsh does not word-split unquoted parameter expansions at all, so `for n in $NAMES` runs once with the entire list as a single value and every probe fails against that one bogus name. Iterate with `for n in ${(f)NAMES}` to split on newlines, or capture the enumeration to a file and read it with `while IFS= read -r n; do ... done < "$file"`.
-
-### Step 2: Resolve
-
-For each category that requires user input, use `AskUserQuestion`. Auto-handled categories (no prompt): **Modified, clean**, **Removed upstream, clean**, **Renamed, clean**, **New upstream**, **User-local**, **User-uninstalled**, **Already gone**, **No-op**.
-
-**Modified, customized**
-
-```
-/<skill-name> has upstream changes, but you've customized your local copy.
-
-What changed upstream:
-- [summary from changelog]
-
-Options:
-1. Merge — apply upstream changes while preserving your customizations
-2. Overwrite — replace with upstream version (customizations will be lost)
-3. Skip — keep your version unchanged
-4. Exclude — skip and exclude from future updates
-```
-
-**Removed upstream, customized**
-
-```
-/<skill-name> was removed upstream, but you've customized your local copy.
-
-Options:
-1. Remove — delete the customized installed copy
-2. Keep — leave it installed; will surface again on the next update
-3. Exclude — leave it installed and exclude from future updates
-```
-
-**Collision** (a locally installed skill shares a name with a NEW upstream skill)
-
-```
-/<skill-name> is locally installed but is also a NEW upstream skill of the same name. They are different things at the same path.
-
-Options:
-1. Overwrite — replace your local version with the upstream skill
-2. Keep — keep your local version, skip installing the upstream one
-3. Exclude — keep your local and exclude this name from future updates
-```
-
-**Renamed, customized**
-
-```
-/<old-name> was renamed upstream to /<new-name>, but you've customized your local copy.
-
-What changed in the upstream rename:
-- [summary from changelog]
-
-Options:
-1. Migrate — rename your installed copy to /<new-name>, then merge your customizations into the new upstream version
-2. Skip — leave /<old-name> installed at the old name, don't install /<new-name>
-3. Exclude — same as Skip, plus exclude both names from future updates
-```
-
-### Step 3: Save Customized Content
-
-Before proceeding to Phase 3, snapshot the entire installed directory of every skill where the user chose **Merge** (Modified-customized) or **Migrate** (Renamed-customized). The saved tree must include any customized files under `scripts/`, `references/`, `assets/`, or net-new paths the user added.
-
-```bash
-# For Modified-customized + Merge:
-saved="<tmp>/saved/<name>"
-mkdir -p "$(dirname "$saved")"
-cp -r ~/.claude/skills/<name>/ "$saved"
-
-# For Renamed-customized + Migrate (key the snapshot under the NEW name so Phase 3 Step 3 finds it next to the fresh install):
-saved="<tmp>/saved/<new-name>"
-mkdir -p "$(dirname "$saved")"
-cp -r ~/.claude/skills/<old-name>/ "$saved"
-```
-
-## Phase 3: Execution
-
-### Step 1: Pull
-
-Pull the latest changes into the local repo:
-
-```bash
-git -C ~/.turbo/repo pull origin main
-```
-
-### Step 2: Apply Matrix Actions
-
-Build the exclusion set from `claude.excludeSkills` plus any skill where the user chose Exclude in Phase 2.
-
-For each skill in the audit matrix that is not excluded, execute the action determined by its category:
-
-| Category | Action |
-|---|---|
-| Modified, clean | `rm -rf ~/.claude/skills/<name>` && `cp -r ~/.turbo/repo/claude/skills/<name> ~/.claude/skills/<name>` |
-| Modified, customized + Merge | `rm -rf ~/.claude/skills/<name>` && `cp -r ~/.turbo/repo/claude/skills/<name> ~/.claude/skills/<name>` (Step 3 then re-applies the saved customizations) |
-| Modified, customized + Overwrite | same as Modified, clean |
-| Modified, customized + Skip | no action |
-| Removed upstream, clean | `rm -rf ~/.claude/skills/<name>`, warn the user |
-| Removed upstream, customized + Remove | `rm -rf ~/.claude/skills/<name>` |
-| Removed upstream, customized + Keep | no action |
-| Collision + Overwrite | `rm -rf ~/.claude/skills/<name>` && `cp -r ~/.turbo/repo/claude/skills/<name> ~/.claude/skills/<name>` |
-| Collision + Keep | no action |
-| Renamed, clean | `rm -rf ~/.claude/skills/<old-name>` && `cp -r ~/.turbo/repo/claude/skills/<new-name> ~/.claude/skills/<new-name>` |
-| Renamed, customized + Migrate | `rm -rf ~/.claude/skills/<old-name>` && `cp -r ~/.turbo/repo/claude/skills/<new-name> ~/.claude/skills/<new-name>` (Step 3 then re-applies the saved customizations to the new path) |
-| Renamed, customized + Skip | no action |
-| New upstream | `cp -r ~/.turbo/repo/claude/skills/<name> ~/.claude/skills/<name>` |
-| User-local, User-uninstalled, Already gone, No-op | no action |
-
-A denied `rm -rf` exits non-zero and prints `Permission denied`, or `Operation not permitted` under a sandbox; `-f` suppresses only its nonexistent-path error. Chain each pair as `rm -rf <dest> && cp -r <src> <dest>` so a denied removal cannot be followed by a copy. An unchained `cp` after a failed removal copies into the surviving destination, leaving the old content at `<dest>` and the new content one level down at `<dest>/<name>`. Before retrying a failed apply, inspect the install for nested `<name>/<name>` directories and for skills whose content is still the old version.
-
-### Step 3: Merge Customized Skills
-
-For each skill where the user chose **Merge** (Modified-customized) or **Migrate** (Renamed-customized):
-
-1. After Phase 3 Step 2's rm + cp, the install holds the fresh upstream version. Identify the three relevant trees per case:
-
-   | User choice | Install path | Saved tree | Old upstream baseline |
-   |---|---|---|---|
-   | Merge (Modified) | `~/.claude/skills/<name>/` | `<tmp>/saved/<name>/` | `<tmp>/claude/skills/<name>/` |
-   | Migrate (Renamed) | `~/.claude/skills/<new-name>/` | `<tmp>/saved/<new-name>/` | `<tmp>/claude/skills/<old-name>/` |
-
-2. Walk the saved customized tree. For each file path relative to the skill root:
-   - **Present in saved, absent in fresh upstream** — net-new user file. Copy back to the install verbatim.
-   - **Present in saved, present in fresh upstream, byte-identical to old upstream baseline** — file is uncustomized at this path. Leave the fresh upstream version in place.
-   - **Present in saved, present in fresh upstream, differs from old upstream baseline** — customized file. Launch an agent with three inputs (saved customized version, old upstream baseline at that path, fresh upstream version now installed). Instruct it to preserve the user's customizations while incorporating upstream changes. The agent writes the merged result back to the install path.
-   - **Absent in saved, present in fresh upstream** — user deleted this file. Use `AskUserQuestion` to decide: restore from upstream or honor the deletion.
-
-### Step 4: Sync CLAUDE.md Additions
-
-If `claude/ADDITIONS.md` changed since `claude.lastUpdateHead` (detected in Phase 1 Step 4):
-
-1. Read `claude/ADDITIONS.md` from `~/.turbo/repo/`
-2. Read `~/.claude/CLAUDE.md`
-3. For each `##` section in `claude/ADDITIONS.md`:
-   - If no matching `#` section exists in the user's file → **new**
-   - If a matching section exists but content differs → **changed**
-   - If content matches → skip
-4. If there are new or changed sections, use `AskUserQuestion`:
-
-```
-CLAUDE.md additions updated:
-
-New:
-- "Section Name" — brief description
-
-Changed:
-- "Section Name" — what changed
-
-Apply to ~/.claude/CLAUDE.md?
-```
-
-5. If approved, update `~/.claude/CLAUDE.md`:
-   - Append new sections as `#` headers
-   - Replace changed sections with the updated content
-
-Never overwrite unrelated user instructions.
-
-### Step 5: Save State
-
-Write the new HEAD to `claude.lastUpdateHead`:
-
-```bash
-head=$(git -C ~/.turbo/repo rev-parse HEAD)
-jq --arg head "$head" '.claude.lastUpdateHead = $head' ~/.turbo/config.json > "<tmp>/config.json" && mv "<tmp>/config.json" ~/.turbo/config.json
-```
-
-If Phase 2 added new exclusions, merge them into `claude.excludeSkills` via Edit.
-
-Report a summary of what was updated.
+Report the backup path, the copies moved, the copies kept as overrides with any stale references still in them, the formerly excluded skills, the CLAUDE.md lines kept, and the settings and config keys changed. Tell the user to restart Claude Code, after which the plugin's skills, rules, and context reading load. To work on Turbo itself or a fork, point them at https://github.com/tobihagemann/turbo/blob/main/docs/customization.md.

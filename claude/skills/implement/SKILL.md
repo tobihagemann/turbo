@@ -39,7 +39,7 @@ When the fix changes how a value is constructed, grep for every other site that 
 
 Before each spawn, capture `git status --short` and run `git stash create`, which snapshots the working tree without changing it and prints nothing when the tree is clean.
 
-Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Its prompt directs it to read [references/step-implementer.md](references/step-implementer.md), and gives:
+Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Its prompt directs it to read `${CLAUDE_SKILL_DIR}/references/step-implementer.md`, and gives:
 
 - The plan's path and the Implementation Step to implement
 - What earlier Implementation Steps changed that this one builds on
@@ -81,7 +81,7 @@ If Step 5 determined the change is user-facing, run the `/preview` skill so the 
 
 When a plan file governs the work, hold this step until every Implementation Step has been applied, and continue to the next Implementation Step at every earlier boundary.
 
-**Before starting QA, check for a context signal.** Call the `mcp__context-level__read` tool: a reading of 50% or less remaining is one. A request from the user to compact, arriving since the session last compacted, is the other. When the reading is 50% or less and the user has not asked to compact, use `AskUserQuestion` to ask whether to compact before QA: "Handoff, then compact", marked recommended, or keep going in this session. On "Handoff, then compact", or when the user asked to compact, run the `/create-handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what follows here: the `/finalize` skill when a plan file governs the work, naming the plan's path, and the choice among full QA, a quick close, and stopping otherwise. Use `TaskUpdate` to set this step's task description to that same next step, leave the task in progress, and end the turn in place of the TaskList call that closes this step, telling the user to run `/compact` and then reply "continue".
+**Before starting QA, check for a context signal.** Call the `mcp__turbo__context-level` tool: a reading of 50% or less remaining is one. A request from the user to compact, arriving since the session last compacted, is the other. When the reading is 50% or less and the user has not asked to compact, use `AskUserQuestion` to ask whether to compact before QA: "Handoff, then compact", marked recommended, or keep going in this session. On "Handoff, then compact", or when the user asked to compact, run the `/create-handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what follows here: the `/finalize` skill when a plan file governs the work, naming the plan's path, and the choice among full QA, a quick close, and stopping otherwise. Use `TaskUpdate` to set this step's task description to that same next step, leave the task in progress, and end the turn in place of the TaskList call that closes this step, telling the user to run `/compact` and then reply "continue".
 
 When a plan file governs the work, run the `/finalize` skill.
 

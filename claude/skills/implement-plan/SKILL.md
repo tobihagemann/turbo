@@ -54,7 +54,7 @@ The read list, every file to read in full:
 - Files the user referenced in their original request (if any)
 - Every file path the plan references in the Context, Pattern Survey, and Implementation Steps sections
 
-Project the read's share of the context window before the bulk of it. With one Bash call, get the size in bytes of each read-list file that exists, and their total. Call the `mcp__context-level__read` tool, then read the plan's Context Files. Once those reads have returned, call the tool again. While the reading has dropped fewer than five percentage points and read-list files remain unread, read a further batch and call the tool again. The projection is the drop from the first reading to the last, multiplied by the total bytes over the bytes read so far.
+Project the read's share of the context window before the bulk of it. With one Bash call, get the size in bytes of each read-list file that exists, and their total. Call the `mcp__turbo__context-level` tool, then read the plan's Context Files. Once those reads have returned, call the tool again. While the reading has dropped fewer than five percentage points and read-list files remain unread, read a further batch and call the tool again. The projection is the drop from the first reading to the last, multiplied by the total bytes over the bytes read so far.
 
 **When the projection is above 25%**, output as text that reading the plan's files is projected to take that share of the context window, with the number of files still unread. Then use `AskUserQuestion` to ask how to implement the plan:
 

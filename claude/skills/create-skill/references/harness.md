@@ -20,6 +20,7 @@ Quick reference for the Claude Code harness: canonical tool names, limits, and d
 
 - User-scope: `~/.claude/skills/`.
 - Project-scope: `.claude/skills/` (cwd).
+- Plugin-scope: a plugin's `skills/` folder, named `<plugin>:<skill>`. The bare `/<skill>` name also reaches a plugin skill, whether typed or invoked from a sibling skill in the same plugin. A same-named user or project skill takes the bare name in both cases. `${CLAUDE_SKILL_DIR}` in a plugin `SKILL.md` expands to that skill's own folder.
 - Skills invoked as `/skill-name`; `SKILL.md` frontmatter requires `name` and `description`.
 
 **CLAUDE.md hierarchy:** Auto-loaded from each ancestor of the cwd up through the home directory. Project-root `CLAUDE.md` is the canonical project instruction file; `~/.claude/CLAUDE.md` is the user-global file.

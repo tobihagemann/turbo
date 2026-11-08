@@ -1,8 +1,4 @@
-# Codex Additions
-
-Turbo-recommended additions for Codex instructions. For project-local setup, merge these sections into `AGENTS.md`. For user-global setup, merge them into the user's configured Codex instruction file.
-
-Each `##` section below maps to a same-named section in the target instruction file.
+# Turbo Rules
 
 ## Skill Loading
 

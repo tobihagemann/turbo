@@ -33,7 +33,7 @@ Write a clear, specific problem description. Include what has already been tried
 
 ## Step 3: Run the Oracle
 
-Use a generous timeout (60 minutes / 3600000ms). The script loads `chatgptUrl` from `~/.turbo/config.json` automatically and consults through the oracle's own signed-in ChatGPT profile. Generate a random tag and persist the response:
+Resolve the absolute path of this skill's directory, the directory of the `SKILL.md` loaded for this run, and use it as `<this skill's directory>` in every command below. Use a generous timeout (60 minutes / 3600000ms). The script loads `chatgptUrl` from `~/.turbo/config.json` automatically and consults through the oracle's own signed-in ChatGPT profile. Generate a random tag and persist the response:
 
 ```bash
 ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p "$PWD/.turbo/oracle" && echo "$PWD/.turbo/oracle/$ORACLE_TAG.txt"
@@ -42,7 +42,7 @@ ORACLE_TAG=$(head -c 4 /dev/urandom | xxd -p) && mkdir -p "$PWD/.turbo/oracle" &
 Substitute the printed value for `<printed-path>` in the command below and on every follow-up turn. Shell variables do not survive between shell calls, and an earlier `cd` in a compound command leaves the session in a different directory, so a relative path resolves against that directory instead.
 
 ```bash
-python3 scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output "<printed-path>"
+python3 <this skill's directory>/scripts/run_oracle.py --prompt "<problem description>" --file <relevant files...> --write-output "<printed-path>"
 ```
 
 Keep backticks, `$`, and straight double quotes out of `--prompt` even in text you wrote: the first two stay live inside the quotes, and a double quote ends them. Text you did not author — a diff, file contents, an error trace, command output — goes in a file passed with `--file`, written with `apply_patch`, as does any title or passage the prompt would otherwise quote. This holds on follow-up turns too.
@@ -56,10 +56,10 @@ When the failure says the requested model is missing from the model picker and l
 Resume the same ChatGPT conversation with `--followup` and the session slug. The prior turn's attached files and context persist, so re-attaching the full diff each turn is unnecessary. Use the same generous timeout as Step 3 (60 minutes / 3600000ms):
 
 ```bash
-python3 scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output "<printed-path>"
+python3 <this skill's directory>/scripts/run_oracle.py --followup "<session-slug>" --prompt "<follow-up>" --write-output "<printed-path>"
 ```
 
-Find the slug with `python3 scripts/run_oracle.py status` (the Slug column; follow-ups nest under their parent session) or from the directory names under `~/.oracle/sessions/`.
+Find the slug with `python3 <this skill's directory>/scripts/run_oracle.py status` (the Slug column; follow-ups nest under their parent session) or from the directory names under `~/.oracle/sessions/`.
 
 Reuse the chat for a multi-turn review of the same code; start a fresh session (Step 3) for an unrelated question. Cap at 5 turns to prevent runaway conversations.
 

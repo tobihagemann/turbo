@@ -1,24 +1,27 @@
 # Turbo
 
-Turbo is a modular collection of agentic coding skills with sibling editions for Claude Code and Codex. Skills connect into larger pipelines like `$finalize` and `$review-pr`. See [README.md](README.md) for an introduction and [docs/workflows.md](docs/workflows.md) for workflow details and diagrams.
+Turbo is a human-gated agentic software factory, shipped as a plugin with sibling editions for Claude Code and Codex. The human decides what to build and judges the result, and skills shape, build, check, review, try, ship, and learn in between. Skills connect into larger pipelines like `$finalize` and `$review-pr`. See [README.md](README.md) for an introduction and [docs/workflows.md](docs/workflows.md) for workflow details and diagrams.
 
 Each `docs/` guide answers one reader question: `workflows.md` (how it works), `examples.md` (what to type), `requirements.md` (what you need and what setup changes), `customization.md` (how to adapt and update). Place new doc content by the question it answers.
 
 ## Project Structure
 
 ```
-codex/                    # Codex edition (canonical Codex tree)
+.agents/plugins/          # Codex marketplace (one plugin, `turbo`, sourced from codex/)
+.claude-plugin/           # Claude Code marketplace (one plugin, `turbo`, sourced from claude/)
+codex/                    # Codex edition and plugin root (canonical Codex tree)
+├── .codex-plugin/        # Plugin manifest
 ├── skills/<skill-name>/
 │   ├── SKILL.md          # Skill definition (YAML frontmatter + markdown body)
 │   ├── scripts/          # Optional supporting scripts
 │   ├── references/       # Optional reference documentation
 │   └── assets/           # Optional templates or boilerplate
+├── hooks/                # SessionStart hook that loads ADDITIONS.md into every session
 ├── SETUP.md
-├── UPDATE.md
-├── MIGRATION.md
-├── ADDITIONS.md
+├── UPDATE.md             # One-time migration from a copy install to the plugin
+├── ADDITIONS.md          # Turbo rules the hook injects
 └── SKILL-CONVENTIONS.md
-claude/                   # Claude Code edition (parallel tree)
+claude/                   # Claude Code edition and plugin root (parallel tree; hooks/, tests/, and types/ hold the mod)
 ```
 
 Each skill is self-contained. Skills compose other skills to any depth via `$skill-name` invocations. The key distinction is between analysis skills (return structured findings without acting) and workflow skills (compose analysis skills and act on results).
@@ -29,10 +32,8 @@ For Codex skill conventions, see [`codex/SKILL-CONVENTIONS.md`](codex/SKILL-CONV
 
 ## Key Files
 
-- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared. Per-edition state lives under `codex.{excludeSkills, lastUpdateHead, configVersion, sharedClaudeAutoMemory}`; the parallel `claude.*` object is present when the Claude edition is also installed.
-- `~/.turbo/repo/` — Local clone of the upstream turbo repo (skill source for install/update)
-- `~/.agents/skills/` — Installed Codex skills
+- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared, and top-level `checkout` names a Turbo clone or fork that `$self-improve` hands Turbo skill lessons to. `codex.sharedClaudeAutoMemory` is this edition's shared-memory preference.
 
-A change that leaves a `~/.turbo/config.json` key with no effect carries its own cleanup: add a `MIGRATION.md` entry deleting the key in each edition and bump the `Current version` in `UPDATE.md`. Dropping the key from `SETUP.md` only stops new installs from writing it, leaving it behind everywhere it was already written.
+A setting Turbo requires goes into `SETUP.md`. When the harness lets the plugin observe it, as the Claude mod observes an environment variable, the mod or the Codex `SessionStart` hook also checks it at startup and tells the user what is missing. A setting the plugin cannot observe, such as a Codex `config.toml` key, lives in `SETUP.md` alone. A retired key or setting is dropped from `SETUP.md` and left behind on existing installs.
 
 When working inside `codex/`, also see [`codex/AGENTS.md`](codex/AGENTS.md) for edition-specific rules.

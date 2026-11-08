@@ -102,7 +102,9 @@ At the start of Step 5, track each remaining step with the Codex plan tool, rest
 
 ## Step 5: Review the Skill
 
-After writing all files, spawn a Codex sub-agent (inherited model defaults) to review the skill. The reviewer should read [references/skill-reviewer.md](references/skill-reviewer.md) for review guidelines, read all skill files, and produce a review report following the format in the guidelines. Its prompt must direct it to treat the shared working tree and its git index as read-only and to review by reading and reasoning; fixes happen in Step 7. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
+Resolve the absolute path of this skill's directory, the directory of the `SKILL.md` loaded for this run, and use it as `<this skill's directory>` below.
+
+After writing all files, spawn a Codex sub-agent (inherited model defaults) to review the skill. The reviewer should read `<this skill's directory>/references/skill-reviewer.md` for review guidelines, read all skill files, and produce a review report following the format in the guidelines. Its prompt must direct it to treat the shared working tree and its git index as read-only and to review by reading and reasoning; fixes happen in Step 7. HEAD stays where it is: read other refs with `git show <ref>:<path>` rather than `git checkout` or `git switch`.
 
 - **For new skills**, frame the review as open-ended: propose improvements, convention checks, writing quality.
 - **For modified skills** (simplification, restructuring, bug fix), frame the review as regression-focused: check whether the change broke anything. Tell the reviewer not to propose new features.

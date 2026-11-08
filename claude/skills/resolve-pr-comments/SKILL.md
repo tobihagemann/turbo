@@ -27,10 +27,10 @@ At the start, use `TaskCreate` to create a task for each step:
 
 ## Step 1: Fetch Comments
 
-Auto-detect owner, repo, and PR number from current branch if not provided. Then run `scripts/fetch-pr-data.sh`, which handles full pagination (reviews, review threads, inner comment pages for long threads, issue comments, commits) and emits a single merged JSON document:
+Auto-detect owner, repo, and PR number from current branch if not provided. Then run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh`, which handles full pagination (reviews, review threads, inner comment pages for long threads, issue comments, commits) and emits a single merged JSON document:
 
 ```bash
-bash <skill-dir>/scripts/fetch-pr-data.sh <owner> <repo> <pr_number>
+bash ${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh <owner> <repo> <pr_number>
 ```
 
 Output shape:
@@ -145,7 +145,7 @@ Skip this step when Step 7 pushed no commit, or when no inline thread whose firs
 
 For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one, or until 3 minutes have passed since the push. When none has, skip the rest of this step.
 
-Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 1 for a later run; record both for the Step 13 summary.
+Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 1 for a later run; record both for the Step 13 summary.
 
 ## Step 11: Run `/reply-to-pr-threads` Skill
 

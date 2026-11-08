@@ -1,18 +1,32 @@
-# Update Turbo (Edition Migration)
+# Update Turbo (Pre-Split Installs)
 
-The Turbo repo has been split into per-edition trees. Skills now live under `claude/skills/` and `codex/skills/`. The legacy root `skills/` directory has been removed.
+This file is reached by an installed `update-turbo` skill from before the repo split into `claude/` and `codex/` editions. It leads into the one-time migration to the Turbo plugin. Touch no skill folder here: the migration decides what happens to every copied skill, the installed `update-turbo` included.
 
-If you reached this file via an installed Claude Code `update-turbo` skill that points at `~/.turbo/repo/UPDATE.md`, your installed skill is the legacy pre-split version. Migrate it before resuming the normal update flow. (The Codex edition was added after the split, so Codex installs go straight to [`codex/UPDATE.md`](codex/UPDATE.md) and never reach this file.)
+## Step 1: Check the Clone
 
-## Migration Steps (Claude Code Only)
+Confirm the clone tracks upstream:
 
-1. Reinstall the path-aware skills from the canonical Claude edition tree:
+```bash
+git -C ~/.turbo/repo config --get remote.origin.url
+```
 
-   ```bash
-   for skill in update-turbo contribute-turbo self-improve; do
-     rm -rf ~/.claude/skills/$skill
-     cp -R ~/.turbo/repo/claude/skills/$skill ~/.claude/skills/$skill
-   done
-   ```
+Upstream is `https://github.com/tobihagemann/turbo` or `git@github.com:tobihagemann/turbo`, with or without a trailing `.git`. Any other URL means the clone points at a fork left over from an earlier setup. Use `AskUserQuestion` to offer:
 
-2. Tell the user the migration is complete and they should re-run `/update-turbo` to perform the regular update. The newly-installed skill will read [`claude/UPDATE.md`](claude/UPDATE.md) instead of this file.
+- **Clone upstream** — once the user has moved any local work they want to keep out of the old clone, move it to `~/.turbo/backup/<timestamp>/.turbo/repo`, with `<timestamp>` from `date +%Y%m%d-%H%M%S`, and clone upstream in its place. Then continue with Step 2 in this same run.
+
+  ```bash
+  git clone https://github.com/tobihagemann/turbo.git ~/.turbo/repo
+  ```
+
+- **Stop** — leave everything as it is.
+
+## Step 2: Follow the Migration Guide
+
+Fetch `origin` and read the Claude Code migration guide:
+
+```bash
+git -C ~/.turbo/repo fetch origin
+git -C ~/.turbo/repo show origin/main:claude/UPDATE.md
+```
+
+Follow it from the start.

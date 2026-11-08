@@ -7,8 +7,8 @@
 - **A coding agent plan with headroom.** Pipeline workflows are context-heavy. Both editions work best with higher-tier plans, such as Claude Max or ChatGPT Pro.
 - **The other coding agent, for peer review.** `/finalize` uses it through [`/peer-review`](../claude/skills/peer-review/SKILL.md). The Claude edition uses the Codex CLI, which needs ChatGPT Plus or higher. The Codex edition uses the Claude Code CLI, which needs a Claude subscription.
 - **[GitHub CLI](https://cli.github.com/)** (required). Powers PR and issue operations.
-- **Node.js and `jq`.** Setup uses them to install the CLIs and copy the skills.
-- **A Claude Code release with [mods](https://claude.com/blog/claude-code-mods)** (Claude Code edition). [`/context-level`](../claude/skills/context-level/SKILL.md) bundles one, so Claude can read how much context is left and offer a handoff before a long workflow runs out.
+- **Node.js and `jq`.** Setup uses Node.js to install the CLIs, and the PR comment skills use `jq` to page through review threads.
+- **A Claude Code release with [mods](https://claude.com/blog/claude-code-mods)** (Claude Code edition). The plugin's mod injects Turbo's rules, shows how much context is left, and lets Claude read that figure through [`/context-level`](../claude/skills/context-level/SKILL.md) to offer a handoff before a long workflow runs out.
 - **ChatGPT Pro or Business** (optional). Useful for [`/consult-oracle`](../claude/skills/consult-oracle/SKILL.md), which asks ChatGPT when you're completely stuck. The Pro tier is what reliably solves very hard problems.
 
 [`/peer-review`](../claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](../claude/skills/consult-oracle/SKILL.md) are designed to be swapped. If you don't have access, [replace them](customization.md#the-puzzle-piece-philosophy) with alternatives that work for you.
@@ -17,11 +17,10 @@
 
 The agent asks before changing user-level configuration. Setup touches:
 
-- `~/.turbo/`: a clone of this repo and a `config.json` for update state, skill exclusions, and optional settings
-- Your skills directory: `~/.claude/skills/` (Claude Code) or `~/.agents/skills/` (Codex). Claude Code loads the mod bundled in `/context-level` from there
-- Your global instruction file: a few behavioral rules from `ADDITIONS.md` added to `~/.claude/CLAUDE.md` or `~/.codex/AGENTS.md` (see [Harness Instructions](customization.md#harness-instructions))
+- The Turbo plugin, installed through your harness's plugin manager. Claude Code keeps it under `~/.claude/plugins/`, Codex under `~/.codex/plugins/`. It carries every skill and loads Turbo's rules into each session (see [Harness Instructions](customization.md#harness-instructions)); your own instruction files stay untouched
 - Your global gitignore: `.turbo/` added, so plans and reports stay out of your repos
-- Harness settings: a context status line and task tracking in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
+- Harness settings: the task tracking variable in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
+- `~/.turbo/config.json`, only for optional settings: the oracle, Codex's shared auto memory, and a Turbo checkout if you work on Turbo
 - Optional steps you can decline: the oracle's own Chrome profile and a ChatGPT sign-in, and for Codex, importing Claude Code auto memory
 
 The [Claude Code setup](../claude/SETUP.md) and [Codex setup](../codex/SETUP.md) guides list every step.

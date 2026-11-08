@@ -1,8 +1,4 @@
-# CLAUDE.md Additions
-
-Turbo-recommended additions for `~/.claude/CLAUDE.md`. Managed during [setup](SETUP.md) and [`/update-turbo`](UPDATE.md).
-
-Each `##` section below maps to a `#` section in `~/.claude/CLAUDE.md`.
+# Turbo Rules
 
 ## Skill Loading
 
