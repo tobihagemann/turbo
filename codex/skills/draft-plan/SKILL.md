@@ -205,7 +205,9 @@ Files to read in full before starting implementation:
 
 Present a brief summary of the drafted plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to read the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template. When Step 6 also wrote a gated plan, summarize each file, and name which one to implement first and the gate the later one waits on.
 
-Close with how to reply: approve the plan as final, or describe what to change. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the plan text.
+Then list what the plans leave out that Step 6 has not already noted, leaving aside work a gated plan carries: each deferred item, including a request the user raised that the plan does not cover. For each, state the user story it serves, or what it simplifies when it is a technical item, and recommend noting it for later or dropping it. Recommend noting only an item that serves a goal the person using the software actually has or that simplifies existing code.
+
+Close with how to reply: approve the plan as final, or describe what to change. When the summary lists left-out items, add that an approval notes the ones recommended for noting and drops the rest, and can flip any of them. When an unknown that only a built artifact settles is still open, also offer prototyping it first, and recommend that over approving, since a surface or interaction pattern that is still unproven cannot be judged from the plan text.
 
 Then end the turn.
 
@@ -215,7 +217,7 @@ A goal continuation turn that carries no reply from the user is not an approval:
 
 - **Revise** — apply the edits the user describes to the affected plan file. Then re-present Step 7's summary, close with its reply guidance, and end the turn again.
 - **Prototype first** — run the `$prototype` skill, then apply what it settled to the plan file. Then re-present Step 7's summary, close with its reply guidance, and end the turn again.
-- **Approve** — the plan is final.
+- **Approve** — the plan is final, along with any left-out item the approval flips. Run the `$note-improvement` skill once for each left-out item settled as noted.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
@@ -223,5 +225,5 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 - Never skip the pattern survey.
 - Never skip decision escalation for questions left unanswered. When entering from a Background Document as Input, questions the document already resolves are considered answered and may be skipped.
-- The plan file, any gated plan the Scope rule calls for, any backlog entry for work a decision deferred, workflow-state bookkeeping under `.turbo/`, and any prototype the discussion or the user's reply to the summary called for are the only outputs. Do not write code, scaffolding, or other project files.
+- The plan file, any gated plan the Scope rule calls for, any backlog entry for work a decision deferred or Step 8 settled as noted, workflow-state bookkeeping under `.turbo/`, and any prototype the discussion or the user's reply to the summary called for are the only outputs. Do not write code, scaffolding, or other project files.
 - Do not run `$review-plan` or any review skills here.
