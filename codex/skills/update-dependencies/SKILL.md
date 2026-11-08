@@ -18,7 +18,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 3. Research breaking changes
 4. User confirmation
 5. Execute upgrades
-6. Apply migrations
+6. Apply migrations and sync out-of-manifest records
 7. Run `$run-checks` skill
 8. Exercise upgraded schema against the real store
 9. Report results
@@ -137,7 +137,7 @@ Under every strategy, run the package manager's semver-respecting update command
 
 Update the manifest file (version constraint) and run the install/resolve command. For package managers with a dedicated upgrade command, use it. For others (Swift PM, Maven, Gradle), edit the manifest directly.
 
-## Phase 6: Apply Migrations
+## Phase 6: Apply Migrations and Sync Out-of-Manifest Records
 
 ### Step 1: Run Codemods (if Available)
 
@@ -174,6 +174,15 @@ Some packages pin their version outside the manifest, beyond the package manager
 - CI container images whose tag must track the package — e.g. a Playwright image tag kept in lockstep with the installed `@playwright/test` version.
 - Base images and tool versions in `Dockerfile`, `.devcontainer/`, and `docker-compose.yml`.
 - Pinned tool versions in CI setup steps (`actions/setup-node` `node-version`, `setup-python`, toolchain files).
+
+### Step 6: Refresh Bundled License Inventories
+
+When the repository commits a third-party license inventory or bundled license and notice texts, such as a licenses folder, an acknowledgements file, or an in-app credits list, refresh it for every package whose resolved version changed. Find it with `rg -il --hidden "licen[cs]e|NOTICE|acknowledg|third.party"`, and follow any refresh procedure the project records beside it, such as a README in that folder. When a script or tool generates the inventory, re-run it instead of editing by hand, then compare its output with the committed copy.
+
+- Update the recorded versions and revisions from the resolved lockfile.
+- Re-copy the unmodified upstream license and notice texts from the resolved revisions and compare them with the bundled copies. Include code a package vendors from another project, whose revision can move on a patch release.
+
+When a package's license, or the license of code it vendors, changed, use `request_user_input` before accepting the new text: adopt the new license, updating every project license text, attribution, and license exception written for the old one, or cap the package at the last release under the old license. Add a **Get a second opinion** option, which runs the `$consult-claude` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. On adopt, raise the package's manifest floor to the first release under the new license, as Step 3 does. On cap, write the cap into the manifest constraint, re-run the install, run Phase 5's two checks, revert the Phase 6 changes made for the newer release, and refresh the inventory for the capped release.
 
 ## Phase 7: Verification
 
