@@ -110,14 +110,14 @@ If "Show details" selected, display full migration research, then ask again.
 
 Bump each outdated CI action ref in the file that declares it, under the chosen strategy. For a ref pinned to a commit SHA, resolve the target release tag to the commit it points to (for an annotated tag, follow the tag to its commit) and update the trailing version comment to match. For a tag ref, keep the ref's precision when the action publishes a tag at that precision for the target, otherwise use the full release tag.
 
-After every install command in this phase, run both checks below before any tests and before Phase 6.
+After every install or update command in this phase, run both checks below before any tests and before Phase 6.
 
-1. **Confirm the installed tree moved** — spot-check the resolved version of one or two upgraded packages in the installed dependency tree against the manifest. An install can record the new versions while leaving the installed packages on their old ones, which makes every later check report on the pre-upgrade tree. When the two disagree, force a clean resolve: use the package manager's lockfile-respecting install where it has one, otherwise clear the installed tree and install again. Re-check afterward.
+1. **Confirm the installed tree moved** — spot-check the resolved version of one or two upgraded packages in the installed dependency tree against the manifest, or against the lockfile after an update command. An install can record the new versions while leaving the installed packages on their old ones, which makes every later check report on the pre-upgrade tree. When the two disagree, force a clean resolve: use the package manager's lockfile-respecting install where it has one, otherwise clear the installed tree and install again. Re-check afterward.
 2. **Diff the package-manager configuration** — inspect the package-manager config files for entries the tool wrote on its own. A tool enforcing a safety guard, such as a minimum age before a release is installable or a provenance requirement, may record a per-package exclusion rather than refusing. Treat such an entry as the guard being bypassed: revert it and lower the manifest constraint to the newest version the guard admits. When the lowered range still admits the rejected version, an existing lockfile keeps it: restore the lockfile from git (delete it when git does not track it), re-run the resolving install and any semver-respecting update command this phase already ran, and diff the configuration again.
 
-### Cautious Strategy
+### Minor and Patch Updates
 
-First upgrade minor and patch only using the package manager's semver-respecting update command, then run tests. If the test command exits nonzero, stop before proceeding with major upgrades.
+Under every strategy, run the package manager's semver-respecting update command, where it has one, so direct and indirect dependencies advance within their declared ranges. When a filter was given, limit the command to the filtered packages. Before running it, write each Phase 2 cap, and each Phase 2 hold whose declared range admits a release beyond its pin, into that package's manifest constraint. Under Cautious, run it before any major upgrade, then run tests; if the test command exits nonzero, stop before proceeding with major upgrades. Under every other strategy, run it after the major upgrades' install, or alone when no major is being upgraded.
 
 ### Major Version Upgrades
 
@@ -181,6 +181,8 @@ If any migrations could not be automated:
 - List specific changes the user needs to review
 - Highlight deprecated patterns that need attention
 - Note any runtime behavior changes to watch for
+
+Include every open item in the printed report. Whether or not any migration remains, ask about each open item that waits on a user decision through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/note-improvement` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's two checks after any install, then run the `/run-checks` skill again and update the report.
 
 ## Error Handling
 
