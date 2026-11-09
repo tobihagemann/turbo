@@ -1,6 +1,6 @@
 # Customization
 
-[← Back to Turbo](../README.md) · [Workflow guide](workflows.md) · [Prompt examples](examples.md) · [Requirements](requirements.md)
+[← Back to Turbo](../README.md) · [Workflow guide](workflows.md) · [Prompt examples](examples.md) · [Requirements](requirements.md) · [Claude Code mod](claude-code-mod.md)
 
 ## The Puzzle Piece Philosophy
 
