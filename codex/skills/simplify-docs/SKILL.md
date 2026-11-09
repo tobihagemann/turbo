@@ -1,6 +1,6 @@
 ---
 name: simplify-docs
-description: "Run a multi-agent review of code comments and markdown documentation for unnecessary content, then fix the issues. Covers comments that misdescribe the code, what-restating comments, name-mirroring doc comments, status-update prose, and other documentation noise. Use when the user asks to \"simplify docs\", \"simplify documentation\", \"clean up comments\", \"clean up docs\", \"review documentation\", \"strip unnecessary comments\", \"fix stale comments\", \"reduce doc noise\", or \"run simplify-docs\"."
+description: "Review code comments and markdown docs for noise, misdescriptions, and stale content, then fix them. Use when the user asks to \"simplify docs\", \"clean up comments\", or \"fix stale comments\"."
 ---
 
 # Simplify Docs

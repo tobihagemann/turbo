@@ -1,6 +1,6 @@
 ---
 name: split-and-ship
-description: "Execute an approved split plan, shipping each change group separately as its own branch and PR or as sequential commits on the current branch. Use when the user asks to \"split and ship\", \"ship the split plan\", \"create separate PRs\", or \"split changes into branches\"."
+description: "Ship an approved split plan as one branch and PR per change group, or as sequential commits. Use when the user asks to \"split and ship\" or \"create separate PRs\"."
 ---
 
 # Split and Ship

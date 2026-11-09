@@ -1,6 +1,6 @@
 ---
 name: stage-commit
-description: "Stage files and create a commit in one step with a message matching existing commit style. Use when the user asks to \"stage and commit\", \"add and commit\", \"commit my changes\", or \"commit these changes\"."
+description: "Stage files and commit with a message matching existing commit style. Use when the user asks to \"stage and commit\", \"add and commit\", \"commit my changes\", or \"commit these changes\"."
 ---
 
 # Stage and Commit Changes

@@ -1,6 +1,6 @@
 ---
 name: implement-findings
-description: "Implement evaluated findings: load code-style rules, apply the accepted fixes, then close out the change with full or quick QA. Use after /evaluate-findings has tagged findings and they need to be implemented, or when the user asks to \"resolve findings\", \"implement findings\", \"apply evaluated findings\", or \"dispatch findings to implementation\"."
+description: "Implement evaluated findings: apply the accepted fixes, then close out with full or quick QA. Use when the user asks to \"implement findings\" or \"resolve findings\"."
 ---
 
 # Implement Findings

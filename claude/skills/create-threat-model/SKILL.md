@@ -1,6 +1,6 @@
 ---
 name: create-threat-model
-description: "Analyze a codebase and produce a structured threat model at .turbo/threat-model.md covering assets, trust boundaries, attack surfaces with existing mitigations, attacker stories, and calibrated severity. Use when the user asks to \"create a threat model\", \"threat model\", \"threat model this codebase\", \"security analysis\", \"analyze the attack surface\", \"what are the threats\", or \"identify security risks\"."
+description: "Write .turbo/threat-model.md: assets, trust boundaries, attack surfaces, severity. Use when the user asks to \"create a threat model\", \"analyze the attack surface\", or \"identify security risks\"."
 ---
 
 # Create Threat Model

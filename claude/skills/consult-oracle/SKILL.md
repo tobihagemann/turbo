@@ -1,6 +1,6 @@
 ---
 name: consult-oracle
-description: "Consult ChatGPT Pro via ChatGPT browser automation for problems that resist standard approaches. Use when stuck on a very hard problem, when standard approaches have failed, when multiple debugging attempts haven't worked, or when the user says \"ask the oracle\", \"consult oracle\", \"consult chatgpt\", \"I'm completely stuck\", \"I've tried everything\", or \"nothing is working\"."
+description: "Consult ChatGPT Pro through browser automation on a problem standard approaches failed to crack. Use when stuck, or when the user asks to \"ask the oracle\" or \"consult chatgpt\"."
 ---
 
 # Consult Oracle

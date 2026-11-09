@@ -1,6 +1,6 @@
 ---
 name: polish-code
-description: "Stage, format, lint, test, review, smoke test, and re-run itself until stable. Use when the user asks to \"polish code\", \"refine code\", \"iterate on code quality\", \"review loop\", \"clean up, test, and review loop\", or \"run the polish loop\"."
+description: "Stage, format, lint, test, review, smoke test, and re-run until stable. Use when the user asks to \"polish code\", \"refine code\", \"iterate on code quality\", \"review loop\", or \"run the polish loop\"."
 ---
 
 # Polish Code

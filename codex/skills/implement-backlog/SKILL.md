@@ -1,6 +1,6 @@
 ---
 name: implement-backlog
-description: "Validate improvements from .turbo/backlog.md, recommend a working set tailored to what's in the backlog, and run one lane: direct fixes, investigation, or planned work. One lane per session. Use when the user asks to \"implement improvements\", \"implement the backlog\", \"work on improvements\", \"address improvements\", \"process improvement backlog\", \"tackle improvements\", or \"implement noted improvements\"."
+description: "Validate .turbo/backlog.md entries, recommend a working set, and run one lane: direct, investigate, or plan. Use when the user asks to \"implement the backlog\" or \"implement improvements\"."
 ---
 
 # Implement Backlog

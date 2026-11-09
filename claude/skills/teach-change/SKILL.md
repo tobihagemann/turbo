@@ -1,6 +1,6 @@
 ---
 name: teach-change
-description: "Teach the user to deeply understand a change through interactive tutoring: restating understanding, drilling into why/what/how, and quizzing until mastery. The active counterpart to a one-shot explanation. Use when the user asks to \"understand this change\", \"teach me this change\", \"help me understand what changed\", \"walk me through this change\", \"make sure I understand this\", \"quiz me on this\", or \"teach me what we did\"."
+description: "Teach the user a change through interactive tutoring and quizzing until mastery. Use when the user asks to \"teach me this change\", \"help me understand what changed\", or \"quiz me on this\"."
 ---
 
 # Teach Change

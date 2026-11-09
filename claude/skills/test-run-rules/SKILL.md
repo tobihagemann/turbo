@@ -1,6 +1,6 @@
 ---
 name: test-run-rules
-description: "Shared rules for test runs that drive the running app or run a test target: isolation from concurrent runs, stubs for infrastructure that cannot be stood up, provisioning privileged state, approval before writes to shared external systems, and cleanup of only what the run created. Not typically invoked directly."
+description: "Shared rules for test runs: isolation, stubs, privileged state, approval before shared writes, and cleanup. Not typically invoked directly."
 ---
 
 # Test Run Rules

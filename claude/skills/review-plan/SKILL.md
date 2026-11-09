@@ -1,6 +1,6 @@
 ---
 name: review-plan
-description: "Review a plan by running internal reviews and a peer review in parallel and returning combined findings. Use when the user asks to \"review my plan\", \"check my plan\", \"critique my plan\", or wants feedback on a plan."
+description: "Review a plan with internal and peer reviews in parallel and return combined findings. Use when the user asks to \"review my plan\", \"check my plan\", or \"critique my plan\"."
 ---
 
 # Review Plan

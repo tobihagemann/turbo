@@ -1,6 +1,6 @@
 ---
 name: run-checks
-description: "Run the project's full verification gate: every check the project defines as a pass/fail condition, built from its CI config, check scripts, and configured tools, or from a formatter-linter-test baseline when it declares none. Use when the user asks to \"run checks\", \"run the verification gate\", \"run lint and tests\", \"run the test suite\", \"check that this passes\", \"does this pass CI\", or \"run the project's checks\"."
+description: "Run the project's verification gate, built from its CI config, check scripts, and tools. Use when the user asks to \"run checks\", \"run lint and tests\", \"run the test suite\", or \"does this pass CI\"."
 ---
 
 # Run Checks

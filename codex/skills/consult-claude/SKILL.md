@@ -1,6 +1,6 @@
 ---
 name: consult-claude
-description: "Consult Claude Code for second opinions, brainstorming, or difficult debugging from Codex. Use when the user asks to \"consult claude\", \"ask claude\", \"get claude's opinion\", \"brainstorm with claude\", or \"discuss with claude\"."
+description: "Consult Claude Code for second opinions, brainstorming, or hard debugging. Use when the user asks to \"consult claude\", \"ask claude\", \"get claude's opinion\", or \"brainstorm with claude\"."
 ---
 
 # Consult Claude

@@ -1,6 +1,6 @@
 ---
 name: create-project-skills
-description: "Scans an existing codebase and generates project-specific skills that capture inferred conventions such as naming, file organization, framework usage, data access, error handling, and testing style. Writes into the project's chosen skill directory (e.g., `.claude/skills/`, `.agents/skills/`, or a custom path). Use when the user asks to \"extract skills from the codebase\", \"create project skills\", \"infer project conventions as skills\", \"codify patterns as skills\", or \"mine the repo for best practices\"."
+description: "Scan a codebase and generate project skills capturing its inferred conventions. Use when the user asks to \"create project skills\", \"extract skills from the codebase\", or \"codify patterns as skills\"."
 ---
 
 # Create Project Skills

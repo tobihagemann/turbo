@@ -42,7 +42,7 @@ Review and improve skills for maximum effectiveness and reliability.
 - **Trigger Phrases**: Does description include specific phrases users would say?
 - **Third Person**: Avoids first/second person ("I can help you", "You can use this"). Imperative form ("Use when...") is fine.
 - **Specificity**: Concrete scenarios, not vague
-- **Length**: Appropriate (not too short <50 chars, not too long >1024 chars for description)
+- **Length**: Flag a description under 50 characters or over 200 characters, counting the parsed value without its quotes and escape backslashes
 - **Example Triggers**: Lists specific user queries that should trigger skill
 
 ### 4. Assess Content Quality

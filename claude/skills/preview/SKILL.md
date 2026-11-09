@@ -1,6 +1,6 @@
 ---
 name: preview
-description: "Stand up the project's live app and hand it to the user to try a change firsthand, then act on their verdict once they reply. Use when the user asks to \"preview the change\", \"let me try it\", \"spin up the app so I can test it\", \"set it up so I can poke at it\", or before finalizing a UI/UX change that needs human eyes."
+description: "Stand up the live app for the user to try a change firsthand, then act on their verdict. Use when the user asks to \"preview the change\", \"let me try it\", or \"spin up the app so I can test it\"."
 ---
 
 # Preview

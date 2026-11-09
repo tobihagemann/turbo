@@ -1,6 +1,6 @@
 ---
 name: survey-patterns
-description: "Survey the codebase for analogous features, reusable utilities, and existing patterns relevant to a proposed change, reading any source the task names outside this repo. Returns structured findings without writing code. Use when the user asks to \"survey patterns\", \"find existing patterns\", \"look for analogous features\", \"check how similar things are done\", \"find prior art for this change\", or needs pattern context before planning a change."
+description: "Survey the codebase for analogous features, reusable utilities, and existing patterns before a change. Use when the user asks to \"survey patterns\", \"find existing patterns\", or \"find prior art\"."
 ---
 
 # Survey Patterns

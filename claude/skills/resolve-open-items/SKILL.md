@@ -1,6 +1,6 @@
 ---
 name: resolve-open-items
-description: "Walk the open items listed above the prompt (the decisions and actions only the user can take) and settle each through AskUserQuestion with the recommendation first. Use when the user asks to \"resolve open items\", \"walk the open items\", \"go through the open items\", \"settle the open decisions\", or \"what's waiting on me\"."
+description: "Walk the open items listed above the prompt and settle each through AskUserQuestion. Use when the user asks to \"resolve open items\", \"walk the open items\", or \"what's waiting on me\"."
 ---
 
 # Resolve Open Items

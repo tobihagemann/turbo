@@ -1,6 +1,6 @@
 ---
 name: pick-next-issue
-description: "Fetch and rank open GitHub issues by community engagement, present the top 3 candidates, and plan implementation for the selected issue. Use when the user asks to \"pick next issue\", \"next issue\", \"which issue should I work on\", \"top issues\", \"most popular issues\", \"prioritize issues\", or \"what should I work on next\"."
+description: "Rank open GitHub issues by engagement, present the top 3, and plan the selected one. Use when the user asks to \"pick next issue\", \"which issue should I work on\", or \"what should I work on next\"."
 ---
 
 # Pick Next Issue

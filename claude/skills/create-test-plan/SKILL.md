@@ -1,6 +1,6 @@
 ---
 name: create-test-plan
-description: "Analyze what changed and generate a structured test plan at .turbo/test-plans/<slug>.md covering four escalating levels: basic functionality, complex operations, adversarial testing, and cross-cutting scenarios. Use when the user asks to \"create a test plan\", \"plan tests\", \"what should I test\", \"generate test scenarios\", \"test plan for this PR\", or \"what are the test cases\"."
+description: "Generate a four-level test plan at .turbo/test-plans/[slug].md from what changed. Use when the user asks to \"create a test plan\", \"what should I test\", \"list test cases\", or \"test plan for this PR\"."
 ---
 
 # Create Test Plan

@@ -1,6 +1,6 @@
 ---
 name: write-skill
-description: "Create a new skill or update an existing skill that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations. Use when the user asks to \"create a skill\", \"make a new skill\", \"build a skill\", \"scaffold a skill\", \"write a skill for...\", or \"new skill that does...\"."
+description: "Create or update a skill that extends Codex's capabilities. Use when the user asks to \"create a skill\", \"make a new skill\", \"write a skill for...\", or \"update this skill\"."
 ---
 
 # Write Skill

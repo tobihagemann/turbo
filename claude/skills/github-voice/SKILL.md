@@ -1,6 +1,6 @@
 ---
 name: github-voice
-description: "Shared writing style rules for GitHub-facing output (PR comments, PR descriptions, PR titles, issues, design proposals). Differentiates insider vs outsider voice based on author association. Not typically invoked directly — loaded by other skills before composing GitHub text."
+description: "Shared writing style for GitHub-facing text (PRs, comments, issues), with insider vs outsider voice. Not typically invoked directly."
 ---
 
 # GitHub Voice

@@ -1,6 +1,6 @@
 ---
 name: apply-findings
-description: "Apply findings by making the suggested code changes. Applies accepted verdicts, escalates ambiguous findings to the user, and offers to note genuine improvements for later. Use when the user asks to \"apply findings\", \"apply fixes\", \"apply suggestions\", \"apply accepted findings\", \"fix the findings\", or \"apply the review results\"."
+description: "Apply accepted review findings as code changes, escalating ambiguous ones to the user. Use when the user asks to \"apply findings\", \"apply fixes\", or \"apply the review results\"."
 ---
 
 # Apply Findings

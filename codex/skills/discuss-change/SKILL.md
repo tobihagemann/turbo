@@ -1,6 +1,6 @@
 ---
 name: discuss-change
-description: "Align on the shape of a change through an interview, then implement it. Escalates open product decisions and settles the implementation shape in conversation. Use when the user asks to \"discuss this change\", \"align on this change first\", \"ask me questions first\", \"interview me then implement\", \"agree on the approach before coding\", or wants the shape of a single change settled before any code is written."
+description: "Align on the shape of a change through an interview, then implement it. Use when the user asks to \"discuss this change\", \"ask me questions first\", or \"agree on the approach before coding\"."
 ---
 
 # Discuss Change

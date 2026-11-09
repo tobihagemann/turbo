@@ -1,6 +1,6 @@
 ---
 name: reply-to-pr-threads
-description: "Draft, confirm, and post replies to GitHub PR review threads. Handles per-category reply formatting, re-fetches thread resolution state so auto-resolved threads are skipped, posts via GraphQL, resolves threads whose entry carries a resolution reason, and dismisses the code-scanning alert behind a thread whose entry carries an alert number. Use when the user asks to \"reply to PR threads\", \"post PR thread replies\", or \"draft PR reply messages\"."
+description: "Draft, confirm, and post replies to GitHub PR review threads, resolving those whose entry carries a resolution reason. Use when the user asks to \"reply to PR threads\" or \"post PR thread replies\"."
 ---
 
 # Reply to PR Threads

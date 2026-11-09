@@ -1,6 +1,6 @@
 ---
 name: update-changelog
-description: "Update the Unreleased section of CHANGELOG.md based on current changes. No-op if CHANGELOG.md does not exist. Use when the user asks to \"update changelog\", \"add to changelog\", \"update the changelog\", \"changelog entry\", \"add changelog entry\", or \"log this change\"."
+description: "Update the Unreleased section of an existing CHANGELOG.md from current changes. Use when the user asks to \"update changelog\", \"add changelog entry\", or \"log this change\"."
 ---
 
 # Update Changelog

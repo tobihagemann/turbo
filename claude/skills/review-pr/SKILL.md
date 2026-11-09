@@ -1,6 +1,6 @@
 ---
 name: review-pr
-description: "Review a pull request by fetching PR comments, running a comprehensive code review, evaluating findings, and dispatching to implementation. Use when the user asks to \"review PR\", \"review pull request\", \"review this PR\", \"check PR before merging\", or \"full PR review\"."
+description: "Review a pull request: fetch its comments, run a full code review, evaluate findings, and implement them. Use when the user asks to \"review PR\", \"review this PR\", or \"check PR before merging\"."
 ---
 
 # Review PR

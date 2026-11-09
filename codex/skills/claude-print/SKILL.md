@@ -1,6 +1,6 @@
 ---
 name: claude-print
-description: "Run a non-interactive Claude Code print-mode call from Codex. Use when the user asks to \"claude print\", \"ask claude\", \"run claude\", \"consult claude\", or when a Codex Turbo skill needs Claude as an independent peer reviewer."
+description: "Run a non-interactive Claude Code print-mode call, including as a peer reviewer. Use when the user asks to \"claude print\" or \"run claude\"."
 ---
 
 # Claude Print

@@ -1,6 +1,6 @@
 ---
 name: resolve-pr-comments
-description: "Evaluate, fix, answer, and reply to GitHub pull request review comments and conversation comments. Handles both change requests (fix or skip) and reviewer questions (explain using the rationale recalled from past Codex session history). Use when the user asks to \"resolve PR comments\", \"fix review comments\", \"address PR feedback\", \"handle review comments\", \"address review feedback\", \"respond to PR comments\", \"answer review questions\", or \"address code review\"."
+description: "Evaluate, fix, answer, and reply to GitHub PR review and conversation comments. Use when the user asks to \"resolve PR comments\", \"address PR feedback\", or \"answer review questions\"."
 ---
 
 # Resolve PR Review Comments

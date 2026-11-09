@@ -1,6 +1,6 @@
 ---
 name: interpret-feedback
-description: "Interpret third-party feedback by running parallel internal and peer interpretations to surface intent, correctness concerns, and ambiguities. Use when the user asks to \"interpret feedback\", \"interpret comments\", \"what does this feedback mean\", \"clarify reviewer intent\", \"understand this review\", or \"interpret these suggestions\"."
+description: "Interpret third-party feedback with parallel internal and peer readings to surface intent, soundness, and ambiguities. Use when the user asks to \"interpret feedback\" or \"what does this feedback mean\"."
 ---
 
 # Interpret Feedback

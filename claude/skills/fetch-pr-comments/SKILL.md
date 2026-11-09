@@ -1,6 +1,6 @@
 ---
 name: fetch-pr-comments
-description: "Fetch and summarize review feedback and conversation from a GitHub PR (unresolved review threads, review bodies, and PR conversation comments) without making changes. Use when the user asks to \"fetch PR comments\", \"show PR comments\", \"check PR for unresolved comments\", \"list review comments\", \"what comments are on the PR\", \"show unresolved threads\", or \"summarize PR feedback\"."
+description: "Fetch and summarize unresolved review threads and conversation on a GitHub PR without changing anything. Use when the user asks to \"fetch PR comments\" or \"show unresolved threads\"."
 ---
 
 # Fetch PR Comments

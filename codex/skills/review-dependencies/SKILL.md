@@ -1,6 +1,6 @@
 ---
 name: review-dependencies
-description: "Detect package managers and CI action pins, then discover outdated or vulnerable dependencies. Returns structured findings without upgrading. Use when the user asks to \"review dependencies\", \"check for outdated packages\", \"check dependencies\", \"scan dependencies\", \"dependency review\", \"check for outdated GitHub Actions\", or \"are my workflow actions up to date\"."
+description: "Find outdated or vulnerable dependencies and GitHub Actions pins without upgrading them. Use when the user asks to \"review dependencies\", \"check for outdated packages\", or \"scan dependencies\"."
 ---
 
 # Review Dependencies

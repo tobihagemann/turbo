@@ -1,6 +1,6 @@
 ---
 name: backlog
-description: "Capture an out-of-scope improvement opportunity so it doesn't get lost. Use when the user asks to \"note improvement\", \"save improvement\", \"track this for later\", \"remember this improvement\", \"note this idea\", \"log improvement\", \"backlog this\", or \"park this idea\". Also invoke proactively when noticing something improvable during work that falls outside the current task's scope, or after deliberately shipping a simpler approach that accepts a known ceiling — briefly mention it to the user and offer to note it."
+description: "Capture an out-of-scope improvement or accepted simplification in .turbo/backlog.md. Use proactively mid-task, or when the user asks to \"backlog this\", \"note this idea\", or \"track this for later\"."
 ---
 
 # Backlog

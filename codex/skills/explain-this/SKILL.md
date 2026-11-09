@@ -1,6 +1,6 @@
 ---
 name: explain-this
-description: "Explain whatever the user is pointing at right now in plain language: a pending question, a piece of code, an error, a command output, or an artifact like a plan or findings report. Use when the user asks to \"explain this\", \"what am I being asked\", \"what's happening right now\", \"help me understand this\", \"what does this mean\", \"what does this error mean\", \"what is this code doing\", or \"what do these options mean\"."
+description: "Explain what the user is pointing at in plain language: a question, code, an error, output, or a plan. Use when the user asks to \"explain this\", \"what does this mean\", or \"what am I being asked\"."
 ---
 
 # Explain This

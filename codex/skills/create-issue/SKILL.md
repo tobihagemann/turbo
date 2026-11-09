@@ -1,6 +1,6 @@
 ---
 name: create-issue
-description: "Create a GitHub issue with a drafted title and body. Use when the user asks to \"create an issue\", \"file an issue\", \"open an issue\", \"submit an issue\", \"report a bug\", \"file a bug report\", \"file a feature request\", or \"file a design proposal\"."
+description: "Create a GitHub issue with a drafted title and body. Use when the user asks to \"create an issue\", \"file an issue\", \"open an issue\", \"report a bug\", or \"file a feature request\"."
 ---
 
 # Create Issue

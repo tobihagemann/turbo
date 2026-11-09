@@ -1,6 +1,6 @@
 ---
 name: reply-to-pr-conversation
-description: "Draft, confirm, and post a single conversational reply to GitHub PR conversation comments (issue comments). The reply addresses all tracked items in one natural-prose message. Use when the user asks to \"reply to PR conversation\", \"post PR conversation replies\", or \"draft PR conversation messages\"."
+description: "Draft, confirm, and post one conversational reply to GitHub PR conversation comments. Use when the user asks to \"reply to PR conversation\" or \"post PR conversation replies\"."
 ---
 
 # Reply to PR Conversation

@@ -1,6 +1,6 @@
 ---
 name: quick-finalize
-description: "Close out a change without the deep review loop: stage, simplify code and docs, run the project's checks, smoke test, update the changelog, self-improve, and ship. Use when the user asks to \"quick finalize\", \"quickly finalize\", \"finalize quickly\", \"light finalize\", \"wrap this up quickly\", \"close this out without the full review\", or \"ship this without the deep pass\"."
+description: "Close out a change without the deep review loop: simplify, run checks, smoke test, changelog, and ship. Use when the user asks to \"quick finalize\" or \"wrap this up quickly\"."
 ---
 
 # Quick Finalize

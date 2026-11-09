@@ -29,7 +29,9 @@ The SKILL.md frontmatter requires two fields:
 
 - Must be non-empty
 - Maximum 1024 characters
-- Cannot contain XML tags
+- Stay within 200 characters of the parsed value
+- Among the trigger phrases, keep one built on the skill's name and spend the rest on phrasings a user would type that the summary's own words do not already cover
+- Cannot contain XML tags or angle brackets; write a placeholder in square brackets, such as `[slug]`
 - Should describe what the Skill does and when to use it
 
 **Quoting values**: Quote frontmatter values that contain YAML special characters. Unquoted `: ` (colon-space) breaks parsing. When in doubt, wrap the value in double quotes and escape inner quotes with `\"`.

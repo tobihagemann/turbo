@@ -1,6 +1,6 @@
 ---
 name: contribute
-description: "Propose a turbo skill improvement upstream by filing a GitHub issue against the turbo repo. Use when the user asks to \"contribute to turbo\", \"submit turbo changes\", \"contribute back\", \"suggest a turbo improvement\", or \"upstream my changes\"."
+description: "Propose a turbo skill improvement as a GitHub issue on the turbo repo. Use when the user asks to \"contribute to turbo\", \"contribute back\", or \"upstream my changes\"."
 ---
 
 # Contribute

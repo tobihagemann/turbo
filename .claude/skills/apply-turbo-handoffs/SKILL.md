@@ -1,6 +1,6 @@
 ---
 name: apply-turbo-handoffs
-description: "Audit the turbo skill lessons that /self-improve writes into this repo's .turbo/handoff/ from other projects, apply the ones the user approves, delete the consumed handoffs, and commit and push. Use when the user asks to \"read .turbo/handoff and let me know what you think\", \"read the handoff files and let me know what you think\", \"review the lesson handoffs\", \"apply the self-improve handoffs\", or \"process the turbo handoffs\"."
+description: "Audit the turbo lessons /self-improve wrote to .turbo/handoff/ and apply approved ones. Use when the user asks to \"read .turbo/handoff and let me know what you think\" or \"process the turbo handoffs\"."
 ---
 
 # Apply Turbo Handoffs

@@ -1,6 +1,6 @@
 ---
 name: code-style
-description: "Enforce existence, reuse, mirror, and symmetry principles to keep new code minimal and consistent with surrounding code. Use when writing new code in an existing codebase, adding new features, refactoring, or making any code changes."
+description: "Enforce existence, reuse, mirror, and symmetry principles so new code stays minimal and consistent. Use when writing, changing, or refactoring code in an existing codebase."
 ---
 
 # Code Style: Exist, Reuse, Mirror, Symmetry

@@ -1,6 +1,6 @@
 ---
 name: exploratory-test
-description: "Execute multi-level exploratory testing of the app covering basic functionality, complex operations, adversarial testing, and cross-cutting scenarios, plus usability observations through a UX lens reported separately from defects. Deeper than $smoke-test. Use when the user asks to \"exploratory test\", \"test thoroughly\", \"test all scenarios\", \"deep test\", \"test edge cases\", \"test everything\", \"break it\", \"find bugs by testing\", \"test usability\", or \"check the UX while testing\"."
+description: "Run multi-level exploratory testing of the app, deeper than a smoke test, with usability notes. Use when the user asks to \"exploratory test\", \"test thoroughly\", \"test edge cases\", or \"break it\"."
 ---
 
 # Exploratory Test

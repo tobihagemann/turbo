@@ -1,6 +1,6 @@
 ---
 name: draft-plan
-description: "Produce an implementation plan at .turbo/plans/<slug>.md. Use when the user asks to \"draft a plan\", \"draft the plan\", \"write an implementation plan\", \"plan this change\", \"create an implementation plan\", or needs a first-draft plan file before refinement."
+description: "Produce an implementation plan at .turbo/plans/[slug].md. Use when the user asks to \"draft a plan\", \"write an implementation plan\", \"plan this change\", or needs a first-draft plan file."
 ---
 
 # Draft Plan

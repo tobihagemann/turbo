@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Create the current branch's GitHub pull request with a drafted title and description, or update the title and description of the one that already exists to reflect the branch. Use when the user asks to \"create a PR\", \"create a pull request\", \"open a PR\", \"submit a PR\", \"update the PR\", \"update PR description\", \"update PR title\", \"refresh PR description\", or \"sync PR with changes\"."
+description: "Create or update the current branch's GitHub pull request with a drafted title and description. Use when the user asks to \"create a PR\", \"open a PR\", \"update the PR\", or \"update PR description\"."
 ---
 
 # Pull Request

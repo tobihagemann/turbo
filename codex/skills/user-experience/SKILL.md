@@ -1,6 +1,6 @@
 ---
 name: user-experience
-description: "Apply a UX lens to a user-facing change: whether it serves the user's real goal and whether the path through it holds together, using the Understanding, Bridging, and Flowing contexts. Use when scoping, planning, or assessing any change that affects what a user sees or does. Loaded as a lens during planning and assessment."
+description: "Apply a UX lens to a user-facing change: whether it serves the user's real goal and whether the path holds together. Use when scoping, planning, or assessing a change to what users see or do."
 ---
 
 # User Experience

@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: "Build a self-contained local prototype at .turbo/prototypes/<slug>.html, drive it, and hand it to the user to settle unknowns that prose cannot answer. Use when the user asks to \"prototype this\", \"build a prototype\", \"mock this up\", \"show me what it would look like\", \"let me try the interaction first\", or when a decision waits on seeing a surface or using it firsthand."
+description: "Build a local prototype at .turbo/prototypes/ to settle unknowns prose cannot answer. Use when the user asks to \"prototype this\", \"mock this up\", or \"show me what it would look like\"."
 ---
 
 # Prototype

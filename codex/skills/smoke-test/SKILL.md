@@ -1,6 +1,6 @@
 ---
 name: smoke-test
-description: "Launch the app and hands-on verify that it works by interacting with it. Falls back to an existing integration test suite when there is no interactive surface in scope. Use when the user asks to \"smoke test\", \"test it manually\", \"verify it works\", \"try it out\", \"run a smoke test\", \"check it in the browser\", or \"does it actually work\". Not a unit test runner."
+description: "Launch the app and verify hands-on that it works, falling back to an existing integration suite. Use when the user asks to \"smoke test\", \"verify it works\", \"try it out\", or \"check it in the browser\"."
 ---
 
 # Smoke Test

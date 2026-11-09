@@ -1,6 +1,6 @@
 ---
 name: triage-backlog
-description: "Triage the backlog at .turbo/backlog.md: merge duplicate entries, state the user story or simplification behind each one, and decide with the user which to keep and which to drop. Use when the user asks to \"triage improvements\", \"triage the backlog\", \"clean up the backlog\", \"clean up improvements\", \"groom the backlog\", \"prune the improvements backlog\", or \"go through the backlog with me\"."
+description: "Triage .turbo/backlog.md: merge duplicates and decide with the user what to keep or drop. Use when the user asks to \"triage the backlog\", \"clean up the backlog\", or \"groom the backlog\"."
 ---
 
 # Triage Backlog

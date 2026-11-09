@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: "Write a handoff file at .turbo/handoff/<YYYY-MM-DD>-<slug>.md capturing current session state — task, status, open decisions, in-flight changes, next step — so a fresh session can continue without re-deriving context. Use when the user asks to \"create a handoff\", \"create handoff\", \"save handoff\", \"handoff before compact\", \"save session state\", \"handoff for next session\", or \"capture session state\"."
+description: "Write a handoff file at .turbo/handoff/ capturing session state so a fresh session can continue. Use when the user asks to \"create a handoff\", \"save session state\", or \"handoff before compact\"."
 ---
 
 # Handoff

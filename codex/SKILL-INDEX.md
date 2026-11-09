@@ -1,6 +1,6 @@
 # Codex Skill Index
 
-Full listing of skills in the Codex edition of Turbo, the human-gated agentic software factory, grouped by category. Skill descriptions are summarized; see each `SKILL.md` for the full description and trigger phrases.
+Full listing of skills in the Codex edition of Turbo, the human-gated agentic software factory, grouped by category. See each `SKILL.md` for its description and trigger phrases.
 
 ## Pipelines
 

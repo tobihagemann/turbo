@@ -1,6 +1,6 @@
 ---
 name: finalize
-description: "Run the post-implementation quality assurance workflow including tests, code polishing, review, and commit. Use when the user asks to \"finalize implementation\", \"finalize changes\", \"wrap up implementation\", \"finish up\", \"ready to commit\", or \"run QA workflow\"."
+description: "Run the post-implementation QA workflow: tests, code polishing, review, and commit. Use when the user asks to \"finalize changes\", \"wrap up implementation\", \"finish up\", or \"ready to commit\"."
 ---
 
 # Finalize Implementation

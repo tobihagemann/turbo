@@ -1,6 +1,6 @@
 ---
 name: recall-rationale
-description: "Recall why a past change was made by locating the Claude Code transcript that produced it. Use when the user asks to \"recall the rationale\", \"find the rationale\", \"look up the rationale\", \"why did I do X\", \"why did we do X\", \"why was this changed\", or \"find the transcript for this commit\"."
+description: "Recall why a past change was made by locating the Claude Code transcript that produced it. Use when the user asks to \"recall the rationale\", \"why did we do X\", or \"why was this changed\"."
 ---
 
 # Recall Rationale

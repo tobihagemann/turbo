@@ -1,6 +1,6 @@
 ---
 name: changelog-rules
-description: "Shared changelog conventions and formatting rules referenced by /create-changelog and /update-changelog. Not typically invoked directly."
+description: "Shared changelog conventions and formatting rules. Not typically invoked directly."
 ---
 
 # Changelog Rules

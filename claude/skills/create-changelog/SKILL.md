@@ -1,6 +1,6 @@
 ---
 name: create-changelog
-description: "Create a CHANGELOG.md following keepachangelog.com conventions with version history backfilled from GitHub releases or git tags. Use when the user asks to \"create a changelog\", \"add a changelog\", \"initialize changelog\", \"start a changelog\", \"set up changelog\", \"generate changelog\", or \"backfill changelog\"."
+description: "Create a keepachangelog CHANGELOG.md backfilled from GitHub releases or git tags. Use when the user asks to \"create a changelog\", \"add a changelog\", \"set up changelog\", or \"backfill changelog\"."
 ---
 
 # Create Changelog

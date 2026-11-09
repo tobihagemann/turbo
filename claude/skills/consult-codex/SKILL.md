@@ -1,6 +1,6 @@
 ---
 name: consult-codex
-description: "Multi-turn consultation with Codex CLI for second opinions, brainstorming, or collaborative problem-solving. Use when the user asks to \"consult codex\", \"ask codex\", \"get codex's opinion\", \"brainstorm with codex\", \"discuss with codex\", or \"chat with codex\"."
+description: "Multi-turn consultation with Codex CLI for second opinions or brainstorming. Use when the user asks to \"consult codex\", \"ask codex\", \"get codex's opinion\", or \"brainstorm with codex\"."
 ---
 
 # Consult Codex

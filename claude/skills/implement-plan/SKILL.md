@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: "Execute an implementation plan file produced by /draft-plan or /plan. Runs pre-implementation prep, then runs /implement to execute the steps and finalize once they are all done. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
+description: "Execute an implementation plan file from .turbo/plans/. Use when the user asks to \"implement the plan\", \"execute the plan\", \"implement plans/[slug].md\", or starts a fresh session to implement one."
 ---
 
 # Implement Plan

@@ -1,6 +1,6 @@
 ---
 name: simplify-all
-description: "Run the code and documentation simplification passes together over one scope, launching every review agent concurrently before applying a single round of fixes. Use when the user asks to \"simplify all\", \"simplify everything\", \"simplify code and docs\", \"clean up code and docs\", \"run both simplify skills\", or \"simplify code and docs in parallel\"."
+description: "Run the code and documentation simplification passes together over one scope. Use when the user asks to \"simplify all\", \"simplify everything\", \"simplify code and docs\", or \"clean up code and docs\"."
 ---
 
 # Simplify All

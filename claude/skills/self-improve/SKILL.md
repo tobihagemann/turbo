@@ -1,6 +1,6 @@
 ---
 name: self-improve
-description: "Extract lessons from the current session, or sweep the project's past sessions when asked, and route them to the appropriate knowledge layer (project AGENTS.md, auto memory, existing skills, or new skills). Use when the user asks to \"self-improve\", \"distill this session\", \"distill past sessions\", \"sweep past sessions\", \"extract lessons from all sessions\", \"save learnings\", \"update CLAUDE.md with what we learned\", \"capture session insights\", \"remember this for next time\", \"extract lessons\", \"update skills from session\", or \"what did we learn\"."
+description: "Extract lessons from this session or past sessions and route them to instructions, memory, or skills. Use when the user asks to \"self-improve\", \"extract lessons\", or \"what did we learn\"."
 ---
 
 # Self-Improve

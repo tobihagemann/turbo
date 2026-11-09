@@ -1,6 +1,6 @@
 ---
 name: assess-technical-debt
-description: "Assess project-wide structural technical debt: complexity hotspots, deprecated API usage, duplication clusters, architecture rot, and low-value tests. Ranks findings by impact and refactor effort into a report at .turbo/technical-debt.md. Use when the user asks to \"assess technical debt\", \"find technical debt\", \"review technical debt\", \"what should we refactor\", \"find refactoring candidates\", \"where is the code rot\", \"what's our worst code\", \"find low-value tests\", or \"which tests can we delete\". Analysis-only — does not modify code."
+description: "Assess project-wide technical debt (hotspots, deprecated APIs, duplication, low-value tests) into a ranked report. Use when the user asks to \"assess technical debt\" or \"what should we refactor\"."
 ---
 
 # Assess Technical Debt
