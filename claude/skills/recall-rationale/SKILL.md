@@ -15,6 +15,7 @@ Accept any of:
 - A file path, optionally with a line number (`<path>:<line>`)
 - A reviewer question plus surrounding context (file and line)
 - A passage with no commit behind it, because the project is not a git repository or the change is uncommitted
+- Another project's session to check, named by its directory
 
 If only a file is given, `git blame` resolves the commit that last touched the line.
 
@@ -32,6 +33,8 @@ When there is no commit to resolve, because the project is not a git repository 
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/scripts/find_transcript.py --phrase "<distinctive text from the passage>"
 ```
+
+For another project's session, run `--phrase` with `--cwd <dir>`, taking a phrase distinctive to that session, such as a command it ran or a file path it touched.
 
 With `--commit` or `--file`, the script:
 
@@ -88,7 +91,7 @@ If no transcript was found:
 <fallback explanation derived from reading the commit and current code>
 ```
 
-In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`.
+In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`. For another project's session, write it as `**Commit:** none (session check)` and report what the session did against what the request asks about, in place of a rationale. When no transcript was found, report the status alone.
 
 Then use the TaskList tool and proceed to any remaining task.
 

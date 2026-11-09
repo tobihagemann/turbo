@@ -15,6 +15,7 @@ Accept any of:
 - A file path, optionally with a line number (`<path>:<line>`)
 - A reviewer question plus surrounding context
 - A passage with no commit behind it, because the project is not a git repository or the change is uncommitted
+- Another project's session to check, named by its directory
 
 If only a file is given, use `git blame` to resolve the commit that last touched the line.
 
@@ -38,7 +39,7 @@ When there is no commit to resolve, because the project is not a git repository 
 
 ## Step 2: Search Codex Session History
 
-If Codex session files are available, search them for the commit SHA, touched file paths, branch name, and distinctive user request text. Without a commit, search for the passage text instead, list the matching files with `rg -l`, and keep only those whose first-line `session_meta` record has a `cwd` at or inside the project directory.
+If Codex session files are available, search them for the commit SHA, touched file paths, branch name, and distinctive user request text. Without a commit, search for the passage text instead, list the matching files with `rg -l`, and keep only those whose first-line `session_meta` record has a `cwd` at or inside the project directory. For another project's session, search for a phrase distinctive to that session, such as a command it ran or a file path it touched, and filter on that project's directory.
 
 Write the patterns to a file with `apply_patch`, one per line, then match them literally:
 
@@ -86,7 +87,7 @@ When no session rationale was found:
 <fallback explanation derived from git history and current code>
 ```
 
-In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`.
+In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`. For another project's session, write it as `**Commit:** none (session check)` and report what the session did against what the request asks about, in place of a rationale. When no session was found, report that alone.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
