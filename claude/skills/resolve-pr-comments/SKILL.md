@@ -49,7 +49,7 @@ Filter review threads to unresolved only. Filter reviews to those with a non-emp
 
 ## Step 2: Triage Already-Addressed Feedback
 
-Review bodies and PR conversation comments (issue comments) often pack multiple distinct concerns into one comment. Split each non-empty, non-PENDING review body and each non-empty issue comment into atomic observations, one per paragraph or bullet, so each can be evaluated on its own merits.
+Review bodies and PR conversation comments (issue comments) often pack multiple distinct concerns into one comment. Split each non-empty, non-PENDING review body and each non-empty issue comment into atomic observations, one per paragraph or bullet, so each can be evaluated on its own merits. When a review body nests observations inside collapsed `<details>` blocks, as AI reviewers do for nitpicks that name a file and line range, extract every observation inside them, keeping its file and line range in its text, and drop only blocks that carry no observation, such as review metadata, commit lists, and prompts for AI agents.
 
 For every observation, check whether a subsequent commit already addresses it. Compare the source timestamp (`submittedAt` for review bodies, `createdAt` for issue comments) against each commit's `committedDate`; only commits after the source was posted can address it. Start with commit messages; read `git show <oid>` only when the message is ambiguous. A commit addresses an observation when its changes clearly resolve that specific concern. Touching the same area is not enough for an observation.
 
@@ -59,7 +59,7 @@ Classify each observation:
 - **Addressed**: A subsequent commit resolves it. Record the commit SHA for the Step 13 summary.
 - **Unaddressed**: No subsequent commit resolves it. Carry into Step 3, tagged with its `source` (`review-body` or `issue-comment`), the author, the observation text, any recorded contradiction with the PR description, and (for review bodies) the review state.
 
-Review-body and issue-comment findings have no `diffHunk`, file path, or line reference. The downstream pipeline handles findings without a code location.
+Review-body and issue-comment findings have no `diffHunk`, file path, or line reference unless their text names a file and line. The downstream pipeline handles findings without a code location.
 
 Triage inline threads on their replies. Look for a later reply that claims the concern is fixed and names the commit that fixed it. Verify two things about that commit. First, it is on the branch: it appears in `commits`, or `git branch --contains <sha>` reports the head branch. Second, it changed or deleted the thread's path. When both hold, classify the thread **Addressed** with that SHA and skip Steps 3 through 8 for it. Classify the rest **Unaddressed** and carry them into Step 3.
 
@@ -95,7 +95,7 @@ If Step 4 produced no change requests and Step 3 routed no AI-reviewer items her
 
 Run the `/evaluate-findings` skill on the change requests from Step 4 and the AI-reviewer items Step 3 routed here, to triage each one. Questions are not evaluated here.
 
-Review-body and issue-comment findings have no file or line reference. Scope their assessment to the PR's changed files as a whole, and do not treat the absent code location as a "code has diverged" early exit.
+Scope the assessment of a review-body or issue-comment finding to the file and lines its text names, or to the PR's changed files as a whole when it names none. Treat a named location as a pointer to the code the reviewer saw, which later commits may have shifted, and do not treat an absent or shifted location as a "code has diverged" early exit.
 
 ## Step 6: Resolve Ambiguities
 
@@ -117,6 +117,8 @@ Whenever the item is costly to reverse (its resolution establishes a pattern oth
 
 ## Step 7: Run `/implement-findings` Skill
 
+Run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` again, once. When it shows unresolved threads, review bodies, or issue comments that pass Step 1's filters and that Steps 2 to 6 have not yet taken up, use `TaskUpdate` to set this step's task subject and description to running Steps 2 to 6 on only those items, then the rest of this step. Take them through Steps 2 to 6, then continue with this step without fetching again.
+
 If there are no accepted findings to implement, skip to Step 9.
 
 Run the `/implement-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. It commits and pushes before returning; Steps 11 and 12 replies reference that commit SHA.
@@ -125,7 +127,7 @@ Run the `/implement-findings` skill on the accepted findings from Step 5, includ
 
 For each finding that was fixed in Step 7, verify the fix actually addresses the reviewer's concern:
 
-1. Read the current code. For inline threads, use the thread's file and line. For review-body and issue-comment findings, read the files touched during the fix.
+1. Read the current code. For inline threads, use the thread's file and line. For review-body and issue-comment findings, read the file and lines their text names, or the files touched during the fix when it names none.
 2. Compare against the reviewer's comment (and `diffHunk` when available).
 3. Confirm the specific concern is resolved.
 
@@ -145,7 +147,7 @@ Skip this step when Step 7 pushed no commit, or when no inline thread whose firs
 
 For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one, or until 3 minutes have passed since the push. When none has, skip the rest of this step.
 
-Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 1 for a later run; record both for the Step 13 summary.
+Otherwise use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 7's fetch for a later run; record both for the Step 13 summary.
 
 ## Step 11: Run `/reply-to-pr-threads` Skill
 
@@ -194,7 +196,7 @@ After processing all items, present a summary grouped by source.
 - Resolved during Step 10's wait (list file path)
 - Resolved by this run (list file path, resolution reason, and any dismissed alert number)
 - Addressed AI-reviewer threads left unresolved (list file path and what remains)
-- Arrived during Step 10's wait, left for a later run (list file path or review author)
+- Arrived after Step 7's fetch, left for a later run (list file path or review author)
 - Questions answered (split into: answered from recalled transcript, answered from current code)
 - Clarification questions posted
 

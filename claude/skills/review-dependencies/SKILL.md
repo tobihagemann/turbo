@@ -55,6 +55,10 @@ Run the appropriate discovery command to find available updates:
 | Gradle | `gradle dependencyUpdates` | Requires `com.github.ben-manes.versions` plugin. |
 | GitHub Actions | `gh api repos/<owner>/<repo>/releases/latest --jq .tag_name`, compared against each `uses:` ref | No outdated command. Take `<owner>/<repo>` from the ref's first two path segments. Read a SHA-pinned ref's version from its trailing comment (`uses: <owner>/<action>@<sha> # v1.2.3`). Compare only the components the ref pins, so `@v7` is current against `v7.0.1`. Fall back to `repos/<owner>/<repo>/tags` when the release 404s or its tag namespace differs from the ref's, and to WebSearch when the action is not hosted on GitHub. Exclude local (`./…`), `<repo-relative>` (`$/…`), and Docker (`docker://…`) refs, which pin no release. |
 
+Also check for an update to the version pin the project declares for the package manager itself, such as `packageManager` or `devEngines.packageManager` in `package.json` or the Gradle wrapper's distribution version, when the discovery command leaves it out.
+
+When the package manager enforces a minimum release age, propose only versions the guard admits, and run discovery with a matching cooldown where the tool has one (`ncu --cooldown <days>`).
+
 Categorize updates:
 - **Major** (breaking changes) — requires migration research
 - **Minor** (new features, backward compatible)

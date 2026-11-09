@@ -62,7 +62,7 @@ For each group:
 3. **Commit**: run the `/commit-rules` skill to load commit message rules, then commit the staged changes following them
 4. **Push and create or update PR**:
    - Staying on existing branch with an open PR: run the `/pr` skill, then `git push`
-   - New branch: `git push`, then run the `/pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
+   - New branch: `git push -u origin <branch>`, then run the `/pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups). When git reports that it could not write the upstream branch configuration, confirm the push landed with `git rev-parse --verify --quiet refs/remotes/origin/<branch>`, then run `git branch --set-upstream-to=origin/<branch>` via the Bash tool (`dangerouslyDisableSandbox: true`) before running the `/pr` skill
 
 ### Clean up and summarize
 

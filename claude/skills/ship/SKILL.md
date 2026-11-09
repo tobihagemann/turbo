@@ -74,6 +74,8 @@ If the chosen option includes pushing, push to the current branch's remote:
 git push
 ```
 
+For a branch with no upstream, push with `git push -u origin <branch>`. When git reports that it could not write the upstream branch configuration, confirm the push landed with `git rev-parse --verify --quiet refs/remotes/origin/<branch>`, then run `git branch --set-upstream-to=origin/<branch>` via the Bash tool (`dangerouslyDisableSandbox: true`).
+
 ## Step 8: Create PR (if Requested)
 
 If the chosen option creates a PR, run the `/pr` skill.

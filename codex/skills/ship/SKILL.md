@@ -74,6 +74,8 @@ If the chosen option includes pushing, push to the current branch's remote:
 git push
 ```
 
+For a branch with no upstream, push with `git push -u origin <branch>`.
+
 ## Step 8: Create PR (if Requested)
 
 If the chosen option creates a PR, run the `$pr` skill.

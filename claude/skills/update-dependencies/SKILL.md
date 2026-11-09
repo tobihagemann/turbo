@@ -41,7 +41,7 @@ Present a summary showing:
 - Packages set aside, each with the pin that governs it
 - Packages whose newer releases need a higher runtime or platform minimum, each with the minimum they need
 
-Before the strategy question, use AskUserQuestion to ask for each package that needs a higher minimum whether to raise the project's minimum, naming the versions or devices that lose support and the dependents that must raise theirs in lockstep, or to cap the package at the last release the current minimum admits. Add a **Get a second opinion** option, which runs the `/consult-codex` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. Apply a raise only when the package is upgraded.
+Before the strategy question, use AskUserQuestion to ask for each package that needs a higher minimum whether to raise the project's minimum, naming the versions or devices that lose support and the dependents that must raise theirs in lockstep, or to cap the package at the last release the current minimum admits. A project that declares no minimum counts as below every package's declared minimum: there, the raise option declares the package's minimum as the project's pin, in a version manager file, the `engines` field, or a CI setup step, and the cap option holds the package at the last release before it raised its minimum. Add a **Get a second opinion** option, which runs the `/consult-codex` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. Apply a raise only when the package is upgraded.
 
 Use AskUserQuestion for upgrade strategy:
 
@@ -117,7 +117,7 @@ After every install or update command in this phase, run both checks below befor
 
 ### Minor and Patch Updates
 
-Under every strategy, run the package manager's semver-respecting update command, where it has one, so direct and indirect dependencies advance within their declared ranges. When a filter was given, limit the command to the filtered packages. Before running it, write each Phase 2 cap, and each Phase 2 hold whose declared range admits a release beyond its pin, into that package's manifest constraint. Under Cautious, run it before any major upgrade, then run tests; if the test command exits nonzero, stop before proceeding with major upgrades. Under every other strategy, run it after the major upgrades' install, or alone when no major is being upgraded.
+Under every strategy, run the package manager's semver-respecting update command, where it has one, so direct and indirect dependencies advance within their declared ranges. When a filter was given, limit the command to the filtered packages. Before running it, write each Phase 2 cap, and each Phase 2 hold whose declared range admits a release beyond its pin, into that package's manifest constraint. The command leaves a package manager's own version pin alone, so write a minor or patch target for that pin directly into the file that declares it. Under Cautious, run it before any major upgrade, then run tests; if the test command exits nonzero, stop before proceeding with major upgrades. Under every other strategy, run it after the major upgrades' install, or alone when no major is being upgraded.
 
 ### Major Version Upgrades
 
@@ -191,7 +191,7 @@ If any migrations could not be automated:
 - Highlight deprecated patterns that need attention
 - Note any runtime behavior changes to watch for
 
-Include every open item in the printed report. Whether or not any migration remains, ask about each open item that waits on a user decision through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/backlog` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's two checks after any install, then run the `/run-checks` skill again and update the report.
+Include every open item in the printed report. Whether or not any migration remains, ask about each open item that has a follow-up fix or an advisory to settle and was not already settled earlier in the run, even one that breaks nothing today. Ask through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/backlog` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's two checks after any install, then run the `/run-checks` skill again and update the report.
 
 ## Error Handling
 

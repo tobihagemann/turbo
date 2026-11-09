@@ -49,7 +49,7 @@ Then end the turn, leaving every process this skill started running.
 
 ## Step 5: Act on the User's Reply
 
-- **Needs changes** — make the change the user describes, then rebuild or refresh the running app so it is live. When the reply or session context surfaces further open issues, fix and re-verify each. Once no known issue remains, output what changed and the scenarios worth retrying, close with Step 4's reply guidance, and end the turn again.
+- **Needs changes** — make the change the user describes, then rebuild or refresh the running app and confirm it carries the change from output the change alters, such as a response from the running server or the relaunched build's window. Stop and start again, as Step 3 does, each process this skill started that still runs the old code, and confirm again. When the reply or session context surfaces further open issues, fix and re-verify each. Once no known issue remains, output what changed, the access point when a restart moved it, and the scenarios worth retrying, close with Step 4's reply guidance, and end the turn again.
 - **Looks good** — when the user asks to shut the app down, stop every process this skill started, and revert every override this skill made in a service that keeps running. Otherwise leave everything running.
 
 Then use the TaskList tool and proceed to any remaining task.

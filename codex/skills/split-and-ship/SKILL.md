@@ -62,7 +62,7 @@ For each group:
 3. **Commit**: run the `$commit-rules` skill to load commit message rules, then commit the staged changes following them
 4. **Push and create or update PR**:
    - Staying on existing branch with an open PR: run the `$pr` skill, then `git push`
-   - New branch: `git push`, then run the `$pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
+   - New branch: `git push -u origin <branch>`, then run the `$pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
 
 ### Clean up and summarize
 
