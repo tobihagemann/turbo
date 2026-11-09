@@ -52,7 +52,7 @@ Full listing of skills in the Codex edition of Turbo, the human-gated agentic so
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
 | [`$review-dependencies`](skills/review-dependencies/SKILL.md) | Detect outdated or vulnerable dependencies and CI action pins | | [`$update-dependencies`](skills/update-dependencies/SKILL.md) |
-| [`$update-dependencies`](skills/update-dependencies/SKILL.md) | Smart dependency upgrades with breaking change research | [`$review-dependencies`](skills/review-dependencies/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md), [`$run-checks`](skills/run-checks/SKILL.md) | |
+| [`$update-dependencies`](skills/update-dependencies/SKILL.md) | Smart dependency upgrades with breaking change research | [`$review-dependencies`](skills/review-dependencies/SKILL.md), [`$consult-claude`](skills/consult-claude/SKILL.md), [`$run-checks`](skills/run-checks/SKILL.md), [`$backlog`](skills/backlog/SKILL.md) | |
 
 ## Findings
 
@@ -107,7 +107,7 @@ Full listing of skills in the Codex edition of Turbo, the human-gated agentic so
 | Skill | What It Does | Uses | Used By |
 |---|---|---|---|
 | [`$self-improve`](skills/self-improve/SKILL.md) | Extract learnings from the current session, or sweep past sessions, to AGENTS.md, memory, or skills; hands Turbo skill lessons to a Turbo checkout or upstream | [`$contribute`](skills/contribute/SKILL.md), [`$write-skill`](skills/write-skill/SKILL.md), [`$backlog`](skills/backlog/SKILL.md) | [`$plan`](skills/plan/SKILL.md), [`$finalize`](skills/finalize/SKILL.md), [`$quick-finalize`](skills/quick-finalize/SKILL.md) |
-| [`$backlog`](skills/backlog/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/backlog.md` | | [`$apply-findings`](skills/apply-findings/SKILL.md), [`$self-improve`](skills/self-improve/SKILL.md), [`$simplify-code`](skills/simplify-code/SKILL.md), [`$draft-plan`](skills/draft-plan/SKILL.md), [`$discuss-change`](skills/discuss-change/SKILL.md), [`$implement-backlog`](skills/implement-backlog/SKILL.md) |
+| [`$backlog`](skills/backlog/SKILL.md) | Capture out-of-scope improvement ideas to `.turbo/backlog.md` | | [`$apply-findings`](skills/apply-findings/SKILL.md), [`$self-improve`](skills/self-improve/SKILL.md), [`$simplify-code`](skills/simplify-code/SKILL.md), [`$draft-plan`](skills/draft-plan/SKILL.md), [`$discuss-change`](skills/discuss-change/SKILL.md), [`$implement-backlog`](skills/implement-backlog/SKILL.md), [`$update-dependencies`](skills/update-dependencies/SKILL.md) |
 | [`$triage-backlog`](skills/triage-backlog/SKILL.md) | Triage the backlog at `.turbo/backlog.md`: merge duplicates, then keep or drop each entry on its user story or the simplification it delivers | | |
 | [`$implement-backlog`](skills/implement-backlog/SKILL.md) | Validate improvements and run one lane per session (direct, investigate, or plan) | [`$implement`](skills/implement/SKILL.md), [`$investigate`](skills/investigate/SKILL.md), [`$plan`](skills/plan/SKILL.md), [`$backlog`](skills/backlog/SKILL.md) | |
 | [`$recall-rationale`](skills/recall-rationale/SKILL.md) | Recall why a change was made from past Codex session history for a commit or file location | | [`$resolve-pr-comments`](skills/resolve-pr-comments/SKILL.md) |
