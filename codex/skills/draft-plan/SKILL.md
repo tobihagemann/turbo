@@ -137,7 +137,7 @@ Settle the first two rows before the rest, so implementation choices land agains
 
 Synthesize the task description, pattern survey findings, consulted skill and doc context, resolved product decisions, and deep-dive discussion outcomes into a complete plan document.
 
-When a decision in Step 4 or Step 5 deferred work to the improvements backlog, run the `$note-improvement` skill for it before writing the plan. State the deferral in the plan's Context as out of scope and, when the skill wrote a backlog entry, as already noted.
+When a decision in Step 4 or Step 5 deferred work to the backlog, run the `$backlog` skill for it before writing the plan. State the deferral in the plan's Context as out of scope and, when the skill wrote a backlog entry, as already noted.
 
 Create `.turbo/plans/` if it does not exist. Write the plan to `.turbo/plans/<slug>.md` using the slug picked in Step 1 (or the override path from Step 1) using this structure:
 
@@ -217,7 +217,7 @@ A goal continuation turn that carries no reply from the user is not an approval:
 
 - **Revise** — apply the edits the user describes to the affected plan file. Then re-present Step 7's summary, close with its reply guidance, and end the turn again.
 - **Prototype first** — run the `$prototype` skill, then apply what it settled to the plan file. Then re-present Step 7's summary, close with its reply guidance, and end the turn again.
-- **Approve** — the plan is final, along with any left-out item the approval flips. Run the `$note-improvement` skill once for each left-out item settled as noted.
+- **Approve** — the plan is final, along with any left-out item the approval flips. Run the `$backlog` skill once for each left-out item settled as noted.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

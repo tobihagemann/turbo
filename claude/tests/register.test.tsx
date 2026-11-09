@@ -1034,7 +1034,7 @@ test('names the skill when the resolve command fails to start', async ($, on) =>
   await ui.press({ key: 'resolve' })
   await ui.unmount()
 
-  expect(toasts.map(e => [e.text, e.timeoutMs])).toEqual([['/resolve-open-items did not start. Run it yourself.', 60_000]])
+  expect(toasts.map(e => [e.text, e.timeoutMs])).toEqual([['/turbo:resolve-open-items did not start. Run it yourself.', 60_000]])
 })
 
 test('leaves the Resolve button out while a turn runs', async ($, on) => {

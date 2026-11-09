@@ -15,11 +15,11 @@ Otherwise, ask the user to run these in Claude Code, since writes under `~/.clau
 
 Then have them open `/plugin` → Marketplaces and switch on auto-update for the `turbo` marketplace. Third-party marketplaces do not update on their own, and Turbo ships its changes to `main`.
 
-The plugin carries every skill and injects Turbo's rules into each session. Under the prompt it shows how much context is left, when the prompt cache expires, and which model answers. Above the prompt it lists open items that wait on the user, which `/resolve-open-items` walks. When a long workflow writes a handoff to free up context, the plugin compacts the session and resumes the workflow on its own. Skills answer to `/<skill>` and to `/turbo:<skill>`.
+The plugin carries every skill and injects Turbo's rules into each session. Under the prompt it shows how much context is left, when the prompt cache expires, and which model answers. Above the prompt it lists open items that wait on the user, which `/resolve-open-items` walks. When a long workflow writes a handoff to free up context, the plugin compacts the session and resumes the workflow on its own. Skills are typed as `/turbo:<skill>`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
-Some skills store project-level files in a `.turbo/` directory (plans, improvements, reports). Add it to the user's global gitignore to keep project repos clean:
+Some skills store project-level files in a `.turbo/` directory (plans, backlog, reports). Add it to the user's global gitignore to keep project repos clean:
 
 First, check if the user has `core.excludesfile` configured:
 
@@ -124,12 +124,12 @@ For someone who wants to change Turbo itself or run a fork, point them at [Custo
 
 Present the user with a summary of how to get started:
 
-1. **The main workflow:** Run `/turboplan` to draft and refine a plan, implement changes, then run `/finalize` to test, review, commit, and create a PR. `/turboplan` can also chain into implementation automatically.
+1. **The main workflow:** Run `/turbo:plan` to draft and refine a plan, implement changes, then run `/turbo:finalize` to test, review, commit, and create a PR. `/turbo:plan` can also chain into implementation automatically.
 2. **All available skills:** See [`SKILL-INDEX.md`](SKILL-INDEX.md) for the full Claude skill list with descriptions.
-3. **The turboplan pipeline:** For anything beyond a clear-scope change, `/turboplan` routes to plan mode and produces a plan file. See [The Turboplan Pipeline](../docs/workflows.md#the-turboplan-pipeline).
+3. **The plan pipeline:** For anything beyond a clear-scope change, `/turbo:plan` routes to plan mode and produces a plan file. See [The Plan Pipeline](../docs/workflows.md#the-plan-pipeline).
 4. **Peer review:** Claude uses Codex as the independent reviewer through `/peer-review`.
-5. **Self-improvement:** Run `/self-improve` before context runs out to capture lessons for future sessions.
-6. **Track improvements:** When noticing something out of scope, run `/note-improvement` so it doesn't get lost.
-7. **Artifacts:** Plans, reports, and improvements live under `.turbo/`.
+5. **Self-improvement:** Run `/turbo:self-improve` before context runs out to capture lessons for future sessions.
+6. **Track improvements:** When noticing something out of scope, run `/turbo:backlog` so it doesn't get lost.
+7. **Artifacts:** Plans, reports, and the backlog live under `.turbo/`.
 8. **Updating:** Updates arrive through the marketplace auto-update switched on in Step 1. Without it, run `/plugin marketplace update turbo` and restart Claude Code.
 9. **Browser and UI testing:** For web app testing, enable the `claude-in-chrome` MCP via `/mcp` or start Claude Code with `--chrome`. For native app testing on macOS, enable the `computer-use` MCP via `/mcp`. Both are per-project settings. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.

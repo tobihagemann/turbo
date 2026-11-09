@@ -17,4 +17,4 @@ When porting a Claude Code skill into the Codex edition, translate Claude Code t
 
 Turbo targets Codex multi-agents v1 only, and `codex/SETUP.md` Step 5 sets `agents.max_threads` (recommended 16, Codex default 6).
 
-Harness facts for each edition live in `codex/skills/create-skill/references/harness.md` and `claude/skills/create-skill/references/harness.md`.
+Harness facts for each edition live in `codex/skills/write-skill/references/harness.md` and `claude/skills/write-skill/references/harness.md`.

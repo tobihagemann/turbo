@@ -30,7 +30,7 @@ The plugin carries every skill and a `SessionStart` hook that loads Turbo's rule
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
-Some skills store project-level files in a `.turbo/` directory (plans, improvements, reports). Add it to the user's global gitignore to keep project repos clean:
+Some skills store project-level files in a `.turbo/` directory (plans, backlog, reports). Add it to the user's global gitignore to keep project repos clean:
 
 First, check if the user has `core.excludesfile` configured:
 
@@ -172,12 +172,12 @@ For someone who wants to change Turbo itself or run a fork, point them at [Custo
 
 Present the user with a summary of how to get started:
 
-1. **The main workflow:** Run `$turboplan` to draft and refine a plan, implement changes, then run `$finalize` to test, review, commit, and create a PR. `$turboplan` can also chain into implementation automatically.
+1. **The main workflow:** Run `$plan` to draft and refine a plan, implement changes, then run `$finalize` to test, review, commit, and create a PR. `$plan` can also chain into implementation automatically.
 2. **All available skills:** See [`SKILL-INDEX.md`](SKILL-INDEX.md) for the full Codex skill list with descriptions.
-3. **The turboplan pipeline:** For anything beyond a clear-scope change, `$turboplan` routes to plan mode and produces a plan file. See [The Turboplan Pipeline](../docs/workflows.md#the-turboplan-pipeline).
+3. **The plan pipeline:** For anything beyond a clear-scope change, `$plan` routes to plan mode and produces a plan file. See [The Plan Pipeline](../docs/workflows.md#the-plan-pipeline).
 4. **Peer review:** Codex uses Claude as the independent reviewer through `$peer-review`.
 5. **Self-improvement:** Run `$self-improve` before context runs out to capture lessons for future sessions.
-6. **Track improvements:** When noticing something out of scope, run `$note-improvement` so it doesn't get lost.
-7. **Artifacts:** Plans, reports, and improvements live under `.turbo/`.
+6. **Track improvements:** When noticing something out of scope, run `$backlog` so it doesn't get lost.
+7. **Artifacts:** Plans, reports, and the backlog live under `.turbo/`.
 8. **Updating:** Codex does not update plugins on its own. See [Customization](../docs/customization.md#updating) for the update commands.
 9. **Browser and UI testing:** For web app testing, enable the `browser-use@openai-bundled` plugin. For desktop UI testing, enable the `computer-use@openai-bundled` plugin. Both are bundled in Codex's `openai-bundled` marketplace. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.

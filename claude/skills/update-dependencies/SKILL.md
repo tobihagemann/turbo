@@ -191,7 +191,7 @@ If any migrations could not be automated:
 - Highlight deprecated patterns that need attention
 - Note any runtime behavior changes to watch for
 
-Include every open item in the printed report. Whether or not any migration remains, ask about each open item that waits on a user decision through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/note-improvement` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's two checks after any install, then run the `/run-checks` skill again and update the report.
+Include every open item in the printed report. Whether or not any migration remains, ask about each open item that waits on a user decision through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/backlog` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's two checks after any install, then run the `/run-checks` skill again and update the report.
 
 ## Error Handling
 

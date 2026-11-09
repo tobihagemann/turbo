@@ -1,6 +1,6 @@
 # Diagrams
 
-The [workflow guide](../docs/workflows.md) diagrams are authored in draw.io (`how-turboplan-connects.drawio` and `how-finalize-connects.drawio`), each rendered to a sibling `.svg`. Not Mermaid.
+The [workflow guide](../docs/workflows.md) diagrams are authored in draw.io (`how-plan-connects.drawio` and `how-finalize-connects.drawio`), each rendered to a sibling `.svg`. Not Mermaid.
 
 ## Collaboration Workflow
 
@@ -28,7 +28,7 @@ All values are multiples of 10 to align with draw.io's 10px grid.
 
 Lay each diagram out landscape. GitHub renders a wide diagram at a readable size, while a tall one shrinks to fit the column. `how-finalize-connects.drawio` carries the proportions to aim for.
 
-Put the pipeline the diagram is about at the center and arrange what it connects to around it: some containers to its left, some to its right, some below. `how-turboplan-connects.drawio` centers `/turboplan` this way.
+Put the pipeline the diagram is about at the center and arrange what it connects to around it: some containers to its left, some to its right, some below. `how-plan-connects.drawio` centers `/plan` this way.
 
 ## Shapes
 
@@ -90,7 +90,7 @@ When deciding whether a sub-skill gets its own expansion swimlane or stays as a 
 When encoding routing decisions (one step branches to multiple paths):
 
 - **Use dashed labeled arrows, not label pills.** From the branching step, draw a dashed arrow to each target pill, with the branch label as the edge value (e.g., `direct`, `plan`, `ship`, `split`). Do NOT insert intermediate label pills — they add a box without a corresponding step.
-- Match the style from existing examples: `/finalize`'s Analyze → /ship / /split-and-ship pattern and `/turboplan`'s Analyze complexity → /discuss-change / /draft-plan pattern both use this convention.
+- Match the style from existing examples: `/finalize`'s Analyze → /ship / /split-and-ship pattern and `/plan`'s Analyze complexity → /discuss-change / /draft-plan pattern both use this convention.
 
 When an arrow crosses a container boundary to invoke another skill:
 

@@ -24,7 +24,7 @@ At the start of every invocation (including re-runs from Step 5), use `TaskCreat
 3. **Single file** — Glob `.turbo/plans/*.md`. If exactly one file exists, use it
 4. **Most recent** — most recently modified file
 5. **Legacy fallback** — `.turbo/plan.md` if `.turbo/plans/` does not exist
-6. **Nothing found** — tell the user to run `/turboplan` and stop
+6. **Nothing found** — tell the user to run `/turbo:plan` and stop
 
 If multiple candidates exist and the choice is non-obvious, use `AskUserQuestion`.
 
@@ -77,7 +77,7 @@ When a round's findings turn on behavior nobody has observed, either how a platf
 
 **Before acting on any gate above, check for a context signal.** Call the `mcp__turbo__context-level` tool: a reading of 25% or less remaining is one. A request from the user to compact, arriving since the session last compacted, is the other. When either is present, turn whatever this step reached, including an automatic re-run and a run that left the plan unchanged, into one `AskUserQuestion` call. Its first question asks whether to compact before what comes next: "Handoff, then compact", marked recommended, or keep going in this session, which acts on the gate's answer here. Leave it out when the user asked to compact. Its second question offers the choices of the gate this step reached, with the recommendation that gate would make; in place of an automatic re-run, it offers run another iteration, marked recommended, or stop iterating. Leave it out when Step 4 left the plan unchanged. Make no `AskUserQuestion` call when both are left out. When the plan is unchanged and TaskList shows no pending task that no `/refine-plan` iteration created, nothing remains to resume: ignore the signal and let the loop end.
 
-**On "Handoff, then compact", or when the user asked to compact**, check first whether the gate's answer is stop iterating while TaskList shows no pending task that no `/refine-plan` iteration created. Then nothing remains to resume: tell the user so and close this step without a handoff. Otherwise run the `/create-handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what the gate's answer leads to, and once the handoff is written, update this step's task as that branch says:
+**On "Handoff, then compact", or when the user asked to compact**, check first whether the gate's answer is stop iterating while TaskList shows no pending task that no `/refine-plan` iteration created. Then nothing remains to resume: tell the user so and close this step without a handoff. Otherwise run the `/handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at what the gate's answer leads to, and once the handoff is written, update this step's task as that branch says:
 
 - **Run another iteration** — the re-run. The handoff carries the number of the iteration about to run, the already-adjudicated list this step supplies to it, and the resolved plan path. Use `TaskUpdate` to set this step's task description to the re-run: run `/refine-plan` on that path as that iteration, reading the already-adjudicated list from the handoff at its path. Leave the task in progress.
 - **Escalate to `/consult-oracle`** — the escalation. The handoff carries the summary above and the same state as on another iteration. Use `TaskUpdate` to set this step's task description to that escalation, reading that state from the handoff at its path. Leave the task in progress.

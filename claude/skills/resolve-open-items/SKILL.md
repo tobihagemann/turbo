@@ -40,7 +40,7 @@ After each call, act on its answers before the next call. An answer given under 
 
 - **A choice** — carry it out, then call the tool with `action` set to `resolve` and the item's `id`.
 - **Done** — the user already did it. Acknowledge it and resolve the item without repeating the action.
-- **Note for later** — run the `/note-improvement` skill with the item. Resolve the item only when that skill wrote the entry. When it could only print the entry, leave the item open and say so.
+- **Note for later** — run the `/backlog` skill with the item. Resolve the item only when that skill wrote the entry. When it could only print the entry, leave the item open and say so.
 - **Not yet** — leave the item open.
 - **Get a second opinion** — run the `/consult-codex` skill. On a technical choice, ask for the soundest choice on technical merit alone, independent of how closely it conforms to the original scope, and carry any scope cost back with the answer. On a question of product intent, ask what each choice commits to, what reversing it costs, and what the prevailing convention is. Then ask about that item again with the answer in hand.
 - **An instruction or a question** — act on it. When that settles the item or makes it moot, resolve it. Ask about it again only while it stays open.

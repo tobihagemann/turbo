@@ -27,17 +27,17 @@ Detect the repository state:
 
 - Default branch: `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`
 - Current branch name, and whether it tracks an upstream
-- Whether a PR already exists for the current branch (`gh pr view`)
+- Whether an open PR exists for the current branch (`gh pr view --json state`); a closed or merged one counts as none
 
 Sample the prevailing workflow from recent default-branch history (`git log --first-parent origin/<default-branch> -n 30 --pretty=%s`): judge whether changes mostly land through pull requests (merge-PR commits or `(#N)`-suffixed squash commits) or are committed directly to the default branch.
 
 Output a one-line summary of the detected state as text. Then use `AskUserQuestion` to choose how to proceed, offering these options:
 
-- **Commit, push, and create/update the PR** — say "create a PR" when no PR exists for the current branch and "update the PR" when one does; on the default branch, Step 2 creates a feature branch first
+- **Commit, push, and create/update the PR** — say "create a PR" when no open PR exists for the current branch and "update the PR" when one does; on the default branch, Step 2 creates a feature branch first
 - **Commit and push** — commit, then push to the current branch's remote
 - **Commit only** — commit the staged changes, do not push
 
-Recommend the option that fits this repo by listing it first and labeling it `(Recommended)`: when the current branch already has a PR, recommend updating it; otherwise follow the prevailing workflow — recommend the PR path for a PR-based history, or commit and push for a direct-commit history.
+Recommend the option that fits this repo by listing it first and labeling it `(Recommended)`: when the current branch already has an open PR, recommend updating it; otherwise follow the prevailing workflow — recommend the PR path for a PR-based history, or commit and push for a direct-commit history.
 
 If the user declines (chooses the free-form "Other" option or asks to abort), leave the changes staged and do not commit.
 
@@ -64,7 +64,7 @@ If the commit fails due to a pre-commit hook (formatter, linter), fix the issues
 
 ## Step 6: Update PR (if Requested)
 
-If the chosen option updates the PR, run the `/update-pr` skill.
+If the chosen option updates the PR, run the `/pr` skill.
 
 ## Step 7: Push (if Requested)
 
@@ -76,9 +76,9 @@ git push
 
 ## Step 8: Create PR (if Requested)
 
-If the chosen option creates a PR, run the `/create-pr` skill.
+If the chosen option creates a PR, run the `/pr` skill.
 
-When `/create-pr` hands the body file over for editing instead of posting, report that path and that no PR was opened yet, and leave Step 9 pending until the PR is posted or cancelled.
+When `/pr` hands the body file over for editing instead of posting, report that path and that no PR was opened yet, and leave Step 9 pending until the PR is posted or cancelled.
 
 ## Step 9: Link Changelog Entries to the PR (if Needed)
 

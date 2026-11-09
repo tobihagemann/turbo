@@ -15,7 +15,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 2. Extract patterns in parallel
 3. Evaluate patterns
 4. Propose skill list
-5. Run `$create-skill` skill
+5. Run `$write-skill` skill
 
 ## Step 1: Survey Codebase
 
@@ -41,7 +41,7 @@ State that as text first — what the survey found, and that conventions extract
 - **Generate nothing yet** — leave skills until the repo has code to have conventions about
 - **Extract anyway** — generate skills from the documentation and configuration that are there
 
-On the first option, run the `$create-skill` skill directly on that knowledge and skip the remaining steps. On either of the first two, call `update_plan` with the extraction phases removed so they no longer read as pending work.
+On the first option, run the `$write-skill` skill directly on that knowledge and skip the remaining steps. On either of the first two, call `update_plan` with the extraction phases removed so they no longer read as pending work.
 
 ## Step 2: Extract Patterns in Parallel
 
@@ -91,17 +91,17 @@ After all candidates are listed, use `request_user_input` to confirm the proposa
 
 For each Rename conflict candidate, use a separate `request_user_input` asking whether to update the existing skill, create the new one alongside it, or skip. Since creating alongside always establishes a second skill covering the same conventions, present a **Get a second opinion** option in place of **skip**, keeping the question at three options. It runs the `$consult-claude` skill for which resolution leaves the skill set coherent. Then resolve the conflict with that answer in hand, re-asking when the choice stays the user's. A freeform answer that declines the candidate skips it.
 
-## Step 5: Run `$create-skill` Skill
+## Step 5: Run `$write-skill` Skill
 
 Build the batch from approved candidates only. Do not include anything not explicitly approved in Step 4.
 
 Output all approved candidates (both **New** and **Update** status) as text in a single batch. For each candidate, list the Status tag, proposed name, description, target path `<target-skill-directory>/<name>/SKILL.md`, and the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`). These convention statements define the target state the final SKILL.md should match, regardless of whether the skill is being created or updated.
 
-This gives `$create-skill` everything it needs to skip its Step 1 (usage patterns clearly understood) and Step 2 (project skills typically need no additional reusable resources). For Update candidates, `$create-skill` also skips its Step 3 (initialization) per its own "skill already exists, iteration needed" skip rule and iterates on the existing SKILL.md in Step 4 until it matches the target convention statements.
+This gives `$write-skill` everything it needs to skip its Step 1 (usage patterns clearly understood) and Step 2 (project skills typically need no additional reusable resources). For Update candidates, `$write-skill` also skips its Step 3 (initialization) per its own "skill already exists, iteration needed" skip rule and iterates on the existing SKILL.md in Step 4 until it matches the target convention statements.
 
-Run the `$create-skill` skill once with this batch in context. Its batch-aware review, evaluation, and apply cycle then runs across all touched skills.
+Run the `$write-skill` skill once with this batch in context. Its batch-aware review, evaluation, and apply cycle then runs across all touched skills.
 
-After `$create-skill` completes, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
+After `$write-skill` completes, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
 
 ## Rules
 

@@ -2,52 +2,52 @@
 
 [← Back to Turbo](../README.md) · [Workflow guide](workflows.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
-These are prompts you can type directly into Claude Code or Codex (use `$skill-name` in Codex). Skill names work as natural words in your sentences.
+These are prompts you can type directly into Claude Code or Codex (`/turbo:skill-name` in Claude Code, `$skill-name` in Codex). Skill names work as natural words in your sentences.
 
 ```
-# Planning a change (single entry — /turboplan routes based on complexity)
-/turboplan add a caching layer to the image pipeline  ← plan mode → draft → refine → halt; run /implement-plan after
-/turboplan build a notification system with backend, API, and UI  ← same route, larger plan
-/survey-patterns  ← pattern-ground an approach without drafting a plan
-/prototype  ← settle how a surface looks or an interaction feels before committing to it
-/implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
+# Planning a change (single entry — /turbo:plan routes based on complexity)
+/turbo:plan add a caching layer to the image pipeline  ← plan mode → draft → refine → halt; run /turbo:implement-plan after
+/turbo:plan build a notification system with backend, API, and UI  ← same route, larger plan
+/turbo:survey-patterns  ← pattern-ground an approach without drafting a plan
+/turbo:prototype  ← settle how a surface looks or an interaction feels before committing to it
+/turbo:implement-plan  ← execute the latest plan in .turbo/plans/ in a fresh session
 
 # Investigating bugs
-tests are failing in the auth module, can you please /investigate?
-/investigate the app crashes when i click "save" after editing a profile
+tests are failing in the auth module, can you please /turbo:investigate?
+/turbo:investigate the app crashes when i click "save" after editing a profile
 
 # Reviewing code
-/review-code
-/review-pr for PR #42
+/turbo:review-code
+/turbo:review-pr for PR #42
 
 # Resolving PR feedback
-/resolve-pr-comments
+/turbo:resolve-pr-comments
 
 # Updating dependencies
-/update-dependencies
+/turbo:update-dependencies
 
-# Working through the improvements backlog
-the error messages in this module are inconsistent, /note-improvement
-/triage-improvements  ← keep or drop each entry
-/implement-improvements  ← dedicated session
+# Working through the backlog
+the error messages in this module are inconsistent, /turbo:backlog
+/turbo:triage-backlog  ← keep or drop each entry
+/turbo:implement-backlog  ← dedicated session
 
 # Testing manually
-/smoke-test
-/exploratory-test
-/preview  ← stand up the app so you can try a UI change yourself
+/turbo:smoke-test
+/turbo:exploratory-test
+/turbo:preview  ← stand up the app so you can try a UI change yourself
 
 # Picking the next issue to work on
-/pick-next-issue
+/turbo:pick-next-issue
 
 # Filing an issue
-/create-issue for the flaky upload test
+/turbo:create-issue for the flaky upload test
 
 # Extracting session learnings
-/self-improve
+/turbo:self-improve
 
 # Saving session state before compacting
-/create-handoff
+/turbo:handoff
 
 # Creating a new skill
-/create-skill for a skill that <description>
+/turbo:write-skill for a skill that <description>
 ```

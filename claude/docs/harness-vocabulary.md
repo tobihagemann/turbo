@@ -16,4 +16,4 @@ When porting a Codex skill into the Claude Code edition, translate Codex terms t
 
 Codex-edition `AGENTS.md` is *not* auto-loaded by Claude Code.
 
-Harness facts for each edition live in `claude/skills/create-skill/references/harness.md` and `codex/skills/create-skill/references/harness.md`.
+Harness facts for each edition live in `claude/skills/write-skill/references/harness.md` and `codex/skills/write-skill/references/harness.md`.

@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: "Execute an implementation plan file produced by /draft-plan or /turboplan. Runs pre-implementation prep, then runs /implement to execute the steps and finalize once they are all done. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
+description: "Execute an implementation plan file produced by /draft-plan or /plan. Runs pre-implementation prep, then runs /implement to execute the steps and finalize once they are all done. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
 ---
 
 # Implement Plan
@@ -25,7 +25,7 @@ Determine which plan file to implement using these rules in order:
 3. **Single file** — Glob `.turbo/plans/*.md`. If exactly one plan exists, use it
 4. **Most recent** — If multiple plans exist, use the most recently modified
 5. **Legacy fallback** — If `.turbo/plans/` does not exist but `.turbo/plan.md` exists, use it
-6. **Nothing found** — If no rule above resolved to an existing file, tell the user to run `/turboplan` and stop. When a slug or path was passed but no file matched it, say which one was tried
+6. **Nothing found** — If no rule above resolved to an existing file, tell the user to run `/turbo:plan` and stop. When a slug or path was passed but no file matched it, say which one was tried
 
 If multiple plans exist and the most-recent choice is non-obvious (e.g., several plans were modified within the same minute), use `AskUserQuestion` to let the user pick from the candidates.
 
@@ -44,7 +44,7 @@ When a signal fires, output it as text. Then use `AskUserQuestion` to offer:
 - **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against these same signals
 - **Leave it unimplemented** — the plan needs revising first, or its gate has not passed
 
-On **Leave it unimplemented**, tell the user to bring the plan current with `/refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Mark the remaining implement steps deleted, then use the TaskList tool and proceed to any remaining task.
+On **Leave it unimplemented**, tell the user to bring the plan current with `/turbo:refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Mark the remaining implement steps deleted, then use the TaskList tool and proceed to any remaining task.
 
 ## Step 2: Read Context Files
 
@@ -77,7 +77,7 @@ When the plan's Context names a larger source it implements part of (an assessme
 
 ## Rules
 
-- The plan file is read-only during execution. If revisions are needed, run `/refine-plan` or `/draft-plan` separately.
+- The plan file is read-only during execution. If revisions are needed, the user runs `/turbo:refine-plan` or `/turbo:draft-plan` separately.
 - Never skip Step 2.
 - Never enumerate or execute the plan's Implementation Steps inline. The work runs through `/implement`. Restating steps as a turn-level narration counts as inline execution and bypasses the delegation.
-- If the plan's Implementation Steps or Verification include `git commit`, `git push`, or PR creation, halt before Step 3 and ask the user to remove them via `/refine-plan`. A Verification item that observes the result of a push without instructing one is not grounds to halt.
+- If the plan's Implementation Steps or Verification include `git commit`, `git push`, or PR creation, halt before Step 3 and ask the user to remove them via `/turbo:refine-plan`. A Verification item that observes the result of a push without instructing one is not grounds to halt.

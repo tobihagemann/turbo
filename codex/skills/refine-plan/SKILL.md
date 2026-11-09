@@ -24,7 +24,7 @@ At the start of every invocation (including re-runs from Step 5), use `update_pl
 3. **Single file** — Glob `.turbo/plans/*.md`. If exactly one file exists, use it
 4. **Most recent** — most recently modified file
 5. **Legacy fallback** — `.turbo/plan.md` if `.turbo/plans/` does not exist
-6. **Nothing found** — tell the user to run `$turboplan` and stop
+6. **Nothing found** — tell the user to run `$plan` and stop
 
 If multiple candidates exist and the choice is non-obvious, use `request_user_input`.
 

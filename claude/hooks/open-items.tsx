@@ -205,6 +205,6 @@ async function runResolve($: EngineInterface) {
   try {
     await $.command.run({ command: RESOLVE_COMMAND })
   } catch {
-    $.ui.toast('/resolve-open-items did not start. Run it yourself.', TOAST)
+    $.ui.toast(`/${RESOLVE_COMMAND} did not start. Run it yourself.`, TOAST)
   }
 }

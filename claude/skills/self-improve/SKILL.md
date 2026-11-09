@@ -106,9 +106,9 @@ Assign each surviving lesson to exactly one destination.
 
 | Destination | Criteria |
 |---|---|
-| **Project improvements** | Actionable improvement to existing **code**: refactoring, performance, reliability, readability, testing, or DX. Not for documentation fixes — factual errors in CLAUDE.md belong in the **Project CLAUDE.md / AGENTS.md** row. Route to `.turbo/improvements.md` via the `/note-improvement` skill. |
+| **Project backlog** | Actionable improvement to existing **code**: refactoring, performance, reliability, readability, testing, or DX. Not for documentation fixes — factual errors in CLAUDE.md belong in the **Project CLAUDE.md / AGENTS.md** row. Route to `.turbo/backlog.md` via the `/backlog` skill. |
 | **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). A lesson the package-managed skills rule sends here stays here, whatever domain it overlaps, as does a turbo skill lesson the user declines to propose upstream in Step 6. |
-| **Project CLAUDE.md / AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. Also factual corrections to CLAUDE.md content (wrong commands, outdated paths, incorrect conventions) — fix these directly, do not defer to Project improvements. When the lesson applies only to one subtree, route it to the nearest enclosing CLAUDE.md/AGENTS.md; reserve the root file for project-wide decisions. |
+| **Project CLAUDE.md / AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. Also factual corrections to CLAUDE.md content (wrong commands, outdated paths, incorrect conventions) — fix these directly, do not defer to Project backlog. When the lesson applies only to one subtree, route it to the nearest enclosing CLAUDE.md/AGENTS.md; reserve the root file for project-wide decisions. |
 | **Existing user/project skill** | Lesson would improve a skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any skill whose *domain* covers the lesson — not just the skill worked on in this session. Changes go to the skill file directly. No contribution flow. |
 | **New skill** | A cohesive body of knowledge emerged that deserves its own on-demand context. The test: would this knowledge be too large for a CLAUDE.md section, and should it only be loaded when relevant? See the skill categories table below. |
 | **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, apply Step 1's verification rule; when the skill's load did not come from the Turbo plugin's skills folder, route to the Existing user/project skill destination instead, subject to the package-managed skills rule above.** Changes are not applied in this session: they go into a handoff in the Turbo checkout when `checkout` is set, and are offered upstream otherwise (see Step 6). |
@@ -143,7 +143,7 @@ Output a table as text before making any changes:
 | # | Lesson | Destination | Action |
 |---|--------|-------------|--------|
 | 1 | Always use X for... | Project AGENTS.md | Append to ## Conventions |
-| 2 | The /create-pr skill should... | ~/.claude/skills/create-pr | Update Step 2 |
+| 2 | The /pr skill should... | ~/.claude/skills/pr | Update references/create.md Phase 2 |
 | 3 | Multi-step deploy workflow | New project skill | Create new skill |
 | 4 | User prefers short commit msgs | Auto memory | Update <resolved memory target> |
 | 5 | /finalize should skip step 3 when... | Turbo skill: finalize | Handoff to Turbo checkout |
@@ -157,17 +157,17 @@ Then use `AskUserQuestion` with these options: **Approve** or **Reject**.
 
 Apply approved changes in order:
 
-1. **Improvements** — For items routed to project improvements, run the `/note-improvement` skill with the summary, location, and rationale for each.
+1. **Backlog** — For items routed to the project backlog, run the `/backlog` skill with the summary, location, and rationale for each.
 2. **Updates to auto memory** — Read the target, find the right section, append or update in place, following the memory system conventions from the system prompt.
 3. **Updates to CLAUDE.md / AGENTS.md** — Read the target file selected in Step 4 (the root file or a nested subtree file), find the right section, append or update in place. Match the tone and format already present.
-4. **Updates to user/project skills** — Run the `/create-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
-5. **New skills** — Run the `/create-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
+4. **Updates to user/project skills** — Run the `/write-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
+5. **New skills** — Run the `/write-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
 6. **Turbo skill lessons** — Edit no file in the Turbo plugin's skills folder: a plugin update replaces it.
    - **When `checkout` is set:** write every lesson routed to a turbo skill into one handoff file with the Write tool, at `<checkout>/.turbo/handoff/<YYYY-MM-DD>-turbo-lessons-<slug>.md`, where `<slug>` names the lessons' common subject. When that path already exists, append `-2`, `-3`, and so on to the slug until it is free. State the resolved path before writing. Record for each lesson:
      - Which turbo skill it targets, as a path under `claude/skills/<name>/` in the checkout
      - The change to make and where in the file it belongs
      - The session evidence that motivated it (the correction, failure, or repeated guidance)
-   - **When `checkout` is unset:** use `AskUserQuestion` to ask whether to propose each turbo skill lesson upstream, since it could benefit other users. Ask one question per lesson, at most four per call. Write each lesson the user leaves out to **Auto memory** as in item 2, recording the turbo skill it applies to. Then, when any lesson remains to propose, run the `/contribute-turbo` skill once for all of them, passing each lesson's target skill, change, and evidence.
+   - **When `checkout` is unset:** use `AskUserQuestion` to ask whether to propose each turbo skill lesson upstream, since it could benefit other users. Ask one question per lesson, at most four per call. Write each lesson the user leaves out to **Auto memory** as in item 2, recording the turbo skill it applies to. Then, when any lesson remains to propose, run the `/contribute` skill once for all of them, passing each lesson's target skill, change, and evidence.
 
 Then use the TaskList tool and proceed to any remaining task.
 

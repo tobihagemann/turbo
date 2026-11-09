@@ -6,7 +6,7 @@ You are working in the Claude Code edition tree. The default Claude Code instruc
 
 - [`CLAUDE.md`](CLAUDE.md) — Claude edition rules and overlay
 - [`SKILL-CONVENTIONS.md`](SKILL-CONVENTIONS.md) — Claude skill conventions
-- [`skills/create-skill/references/harness.md`](skills/create-skill/references/harness.md) — harness facts: tool names, permission modes, skill and CLAUDE.md hierarchies
+- [`skills/write-skill/references/harness.md`](skills/write-skill/references/harness.md) — harness facts: tool names, permission modes, skill and CLAUDE.md hierarchies
 - [`docs/harness-vocabulary.md`](docs/harness-vocabulary.md) — table translating Codex terms into Claude Code equivalents
 - [`ADDITIONS.md`](ADDITIONS.md) — Turbo rules the plugin mod injects into every Claude Code session
 

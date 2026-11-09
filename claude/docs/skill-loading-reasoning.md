@@ -18,7 +18,7 @@ Failure modes observed fall into two categories: **skip** (a step doesn't run) a
 
 ### Stop problem
 
-6. **Turn ends when a child skill finishes**: Workflow skills like `/finalize` and `/turboplan` chain multiple sub-skill invocations. After a child skill completed its own steps — especially with a clean "nothing to do" result like `/evaluate-findings` returning zero findings — Claude treated that as a turn boundary and stopped, even with a non-empty parent task list still in view.
+6. **Turn ends when a child skill finishes**: Workflow skills like `/finalize` and `/plan` chain multiple sub-skill invocations. After a child skill completed its own steps — especially with a clean "nothing to do" result like `/evaluate-findings` returning zero findings — Claude treated that as a turn boundary and stopped, even with a non-empty parent task list still in view.
 
 7. **Stops cascade within a session**: Once Claude has ended a turn at one skill boundary — typically after composing a prose "completion" summary — it tends to repeat the pattern at subsequent skill boundaries, even when those downstream skills are well-behaved. A single unmitigated stall can trigger a chain. Continuation framing at the earliest leaf skill in a chain therefore tends to prevent stalls downstream. Transcript review bears this out: in two separate sessions a stalled `/apply-findings` was followed by a stall at a downstream skill that does not stall on its own.
 
@@ -59,10 +59,10 @@ This breaks:
 - **Pipelines**: `/finalize` invoking `/review-code`, `/simplify-code`, etc.
 - **Parallel sub-reviews**: `/review-code` launching six type-specific review agents plus a peer-review agent
 - **Loops**: `/polish-code` re-invoking itself until stable
-- **Routing**: `/self-improve` routing through `/create-skill`
+- **Routing**: `/self-improve` routing through `/write-skill`
 - **Any second run**: Running the same top-level skill twice in one session
 
-Separately, the stop problem breaks any workflow skill that chains multiple sub-skill invocations — `/finalize` and `/turboplan` are the canonical examples.
+Separately, the stop problem breaks any workflow skill that chains multiple sub-skill invocations — `/finalize` and `/plan` are the canonical examples.
 
 ## Solution
 

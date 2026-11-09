@@ -1,16 +1,16 @@
 # Contributing
 
-Turbo skills improve through daily use. When Claude learns something that would make a skill better, `/self-improve` detects it and offers to propose the change upstream via `/contribute-turbo`.
+Turbo skills improve through daily use. When Claude learns something that would make a skill better, `/self-improve` detects it and offers to propose the change upstream via `/contribute`.
 
 Improvements start as issues. Open one so the change can be discussed before anyone writes it. Pull requests are welcome once an issue has established the direction.
 
 ## How It Works
 
-1. **Use Turbo normally.** Work on your project, run `/finalize`, let `/self-improve` extract lessons.
+1. **Use Turbo normally.** Work on your project, run `/turbo:finalize`, let `/self-improve` extract lessons.
 2. **`/self-improve` detects skill improvements.** When a lesson would improve a turbo skill's instructions, it asks whether to propose it upstream. With a Turbo clone set as `checkout`, it writes the lesson into that clone's `.turbo/handoff/` instead (see [Customization](../docs/customization.md#working-on-turbo-or-a-fork)).
-3. **`/contribute-turbo` files the issue.** It takes the lessons `/self-improve` passes in, or a change you describe, states each against the skill's current text upstream, drafts the "why" with project-specific details scrubbed (no repo names, file paths, or business logic), and files the issue after your approval.
+3. **`/contribute` files the issue.** It takes the lessons `/self-improve` passes in, or a change you describe, states each against the skill's current text upstream, drafts the "why" with project-specific details scrubbed (no repo names, file paths, or business logic), and files the issue after your approval.
 
-You can also run `/contribute-turbo` (Claude) or `$contribute-turbo` (Codex) directly at any point.
+You can also run `/turbo:contribute` (Claude) or `$contribute` (Codex) directly at any point.
 
 ## Privacy
 

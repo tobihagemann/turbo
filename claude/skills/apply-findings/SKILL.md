@@ -39,7 +39,7 @@ Recommend the genuinely best option: place it first and append `(Recommended)` t
 
 - **Apply** — make the change, then run Step 2's post-fix checks (items 8 and 9) against it
 - **Skip** — leave as-is
-- **Note for later** — run the `/note-improvement` skill to capture it
+- **Note for later** — run the `/backlog` skill to capture it
 - **Get a second opinion** — run the `/consult-codex` skill for a second opinion on the choice, or the `/consult-oracle` skill when standard approaches have already failed. Then apply, skip, or note the finding with that answer in hand
 
 After an escalation resolves, hold every other decision the user made earlier, in discussion or recorded in the artifact, against that resolution: re-read what the decision was recorded or described as depending on. Where the resolution takes away a part of the design it depended on, name that part and use `AskUserQuestion` to re-ask the decision, under this step's rules for framing a question and its options. Bring the artifact in line with the answer, then run Step 2's post-fix checks (items 8 and 9) against that edit.

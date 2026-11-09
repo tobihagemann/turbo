@@ -2,15 +2,15 @@
 
 [← Back to Turbo](../README.md) · [Prompt examples](examples.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
-Turbo runs a change through the stages of a human-gated software factory. You shape it with `/turboplan`, the agreed change gets built, and `/finalize` checks, reviews, and ships it. Your judgment comes at the start and the end. The sections below explain the routes, review loops, and supporting workflows. Examples use Claude Code syntax; use `$skill-name` in Codex. Each edition’s skill index ([Claude Code](../claude/SKILL-INDEX.md), [Codex](../codex/SKILL-INDEX.md)) links to its implementation.
+Turbo runs a change through the stages of a human-gated software factory. You shape it with `/plan`, the agreed change gets built, and `/finalize` checks, reviews, and ships it. Your judgment comes at the start and the end. The sections below explain the routes, review loops, and supporting workflows. Skills appear here as `/<skill-name>`. In Claude Code you type one as `/turbo:<skill-name>`, and in Codex as `$<skill-name>`. Each edition’s skill index ([Claude Code](../claude/SKILL-INDEX.md), [Codex](../codex/SKILL-INDEX.md)) links to its implementation.
 
-## The Turboplan Pipeline
+## The Plan Pipeline
 
-Claude Code's built-in plan mode tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny, and it can feel too restrictive for iterative planning. Turbo replaces it with [`/turboplan`](../claude/skills/turboplan/SKILL.md) as a universal entry point: whatever the size of the task, you start there. It analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality, with no need for plan mode to be active. Direct work chains through [`/discuss-change`](../claude/skills/discuss-change/SKILL.md) and [`/implement`](../claude/skills/implement/SKILL.md) to [`/finalize`](../claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) session.
+Claude Code's built-in plan mode tends to produce plans that miss existing patterns, skip edge cases, or propose approaches that don't hold up under scrutiny, and it can feel too restrictive for iterative planning. Turbo replaces it with [`/plan`](../claude/skills/plan/SKILL.md) as a universal entry point: whatever the size of the task, you start there by typing `/turbo:plan`. It analyzes the task, routes it through the right pipeline, and produces plans that survive contact with reality, with no need for plan mode to be active. Direct work chains through [`/discuss-change`](../claude/skills/discuss-change/SKILL.md) and [`/implement`](../claude/skills/implement/SKILL.md) to [`/finalize`](../claude/skills/finalize/SKILL.md); plan-mode work halts once for a fresh [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) session.
 
-![How Turboplan Connects](../assets/how-turboplan-connects.svg)
+![How Plan Connects](../assets/how-plan-connects.svg)
 
-[`/turboplan`](../claude/skills/turboplan/SKILL.md) has two modes, named by what each one produces. Its complexity analysis recommends a mode, then you confirm the route:
+[`/plan`](../claude/skills/plan/SKILL.md) has two modes, named by what each one produces. Its complexity analysis recommends a mode, then you confirm the route:
 
 - **Direct mode** — Clear scope, with any remaining decisions small enough to settle in conversation. Hands off to [`/discuss-change`](../claude/skills/discuss-change/SKILL.md), which escalates open product decisions, agrees the implementation shape with you, then runs [`/implement`](../claude/skills/implement/SKILL.md), which loads [`/code-style`](../claude/skills/code-style/SKILL.md) plus any task-specific skills, applies the change, smoke tests any UI/UX change and previews it for you to try, and offers [`/finalize`](../claude/skills/finalize/SKILL.md), a quick close, or stopping. No plan file is written.
 - **Plan mode** — The approach warrants writing down before implementing, however large the work turns out to be. Runs [`/draft-plan`](../claude/skills/draft-plan/SKILL.md) (survey + consult skills/docs + escalate + discuss + draft) → [`/refine-plan`](../claude/skills/refine-plan/SKILL.md) → [`/self-improve`](../claude/skills/self-improve/SKILL.md), then asks whether to commit any repository files the lessons changed. Halts after that; you run [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) in a fresh session.
@@ -43,15 +43,15 @@ In the Claude Code edition, [`/implement-plan`](../claude/skills/implement-plan/
 
 [`/self-improve`](../claude/skills/self-improve/SKILL.md) makes each session teach the next. Run it anytime before ending your session (it's also part of [`/finalize`](../claude/skills/finalize/SKILL.md) Phase 4). It scans the conversation for corrections, repeated guidance, failure modes, and preferences, then routes each lesson to the right place: project `CLAUDE.md`/`AGENTS.md`, auto memory, or existing/new skills. Ask it to distill past sessions and it sweeps the project's earlier transcripts instead, skipping what a previous run already covered and treating guidance repeated across sessions as a documentation gap rather than one-off steering. Over time, Turbo gets better at your specific project.
 
-[`/note-improvement`](../claude/skills/note-improvement/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests, and deliberate simplifications that accept a known ceiling. They're tracked in `.turbo/improvements.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
+[`/backlog`](../claude/skills/backlog/SKILL.md) captures improvement opportunities that surface during work but fall out of scope: review findings you skipped, refactoring ideas, missing tests, and deliberate simplifications that accept a known ceiling. They're tracked in `.turbo/backlog.md` (gitignored, so they don't clutter the repo), each tagged `direct`, `investigate`, or `plan` for later routing.
 
-Backlogs collect entries that turn out not to matter. [`/triage-improvements`](../claude/skills/triage-improvements/SKILL.md) walks through them with you: it merges duplicates, states the user story or the simplification behind each entry, and asks whether to keep or drop it.
+Backlogs collect entries that turn out not to matter. [`/triage-backlog`](../claude/skills/triage-backlog/SKILL.md) walks through them with you: it merges duplicates, states the user story or the simplification behind each entry, and asks whether to keep or drop it.
 
-When you're ready to act, [`/implement-improvements`](../claude/skills/implement-improvements/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
+When you're ready to act, [`/implement-backlog`](../claude/skills/implement-backlog/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
 
 - **`direct`** → [`/implement`](../claude/skills/implement/SKILL.md) for a clear-scope fix
 - **`investigate`** → [`/investigate`](../claude/skills/investigate/SKILL.md), then [`/implement`](../claude/skills/implement/SKILL.md)
-- **`plan`** → [`/turboplan`](../claude/skills/turboplan/SKILL.md)
+- **`plan`** → [`/plan`](../claude/skills/plan/SKILL.md)
 
 ## Browser and UI Testing
 

@@ -150,7 +150,7 @@
         <mxCell id="109" edge="1" parent="36" source="103" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="104">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="39" parent="36" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/note-improvement" vertex="1">
+        <mxCell id="39" parent="36" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/backlog" vertex="1">
           <mxGeometry height="40" width="150" x="200" y="440" as="geometry" />
         </mxCell>
         <mxCell id="76" edge="1" parent="36" source="104" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="39" value="out-of-scope fix">
@@ -161,7 +161,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="38" parent="36" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/create-skill" vertex="1">
+        <mxCell id="38" parent="36" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/write-skill" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="440" as="geometry" />
         </mxCell>
         <mxCell id="75" edge="1" parent="36" source="104" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="38" value="skill-shaped lesson">
@@ -172,7 +172,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="40" parent="36" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/contribute-turbo" vertex="1">
+        <mxCell id="40" parent="36" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/contribute" vertex="1">
           <mxGeometry height="40" width="150" x="370" y="440" as="geometry" />
         </mxCell>
         <mxCell id="77" edge="1" parent="36" source="104" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="40" value="turbo skill change">
@@ -213,7 +213,7 @@
         <mxCell id="231" parent="230" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="Apply fixes" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="232" parent="230" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/note-improvement" vertex="1">
+        <mxCell id="232" parent="230" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/backlog" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="130" as="geometry" />
         </mxCell>
         <mxCell id="233" edge="1" parent="230" source="231" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="232" value="skipped findings">
@@ -277,7 +277,7 @@
         <mxCell id="279" parent="277" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/commit-rules" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="170" as="geometry" />
         </mxCell>
-        <mxCell id="280" parent="277" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/create-pr or /update-pr" vertex="1">
+        <mxCell id="280" parent="277" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/pr" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="230" as="geometry" />
         </mxCell>
         <mxCell id="281" edge="1" parent="277" source="278" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="291">
@@ -304,7 +304,7 @@
         <mxCell id="285" parent="283" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/commit-rules" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="230" as="geometry" />
         </mxCell>
-        <mxCell id="286" parent="283" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/create-pr or /update-pr" vertex="1">
+        <mxCell id="286" parent="283" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/pr" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="290" as="geometry" />
         </mxCell>
         <mxCell id="295" parent="283" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Next group" vertex="1">

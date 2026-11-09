@@ -21,24 +21,24 @@ Turbo turns your coding agent into a one-person software factory. You decide wha
 Start with a change you want to make:
 
 ```text
-/turboplan add password reset to the app
+/turbo:plan add password reset to the app
 ```
 
 The change moves through six stages. You decide at Shape and judge at Try and Ship. The skills run the rest.
 
 | Stage | What happens | Skill |
 |---|---|---|
-| **Shape** | Settle what to build and how. You approve the shape or the plan before any code is written. | [`/turboplan`](claude/skills/turboplan/SKILL.md) |
-| **Build** | Make the change and verify it runs, with a smoke test in the live app for user-facing changes. | [`/implement`](claude/skills/implement/SKILL.md) |
-| **Try** | You try a user-facing change in the live app and say whether it's right. | [`/preview`](claude/skills/preview/SKILL.md) |
-| **Polish** | Run the project's checks, review with a second agent as peer reviewer, fix, and repeat until stable. | [`/polish-code`](claude/skills/polish-code/SKILL.md) |
-| **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/self-improve`](claude/skills/self-improve/SKILL.md) |
-| **Ship** | Commit, push, and open the pull request once you approve. | [`/ship`](claude/skills/ship/SKILL.md) |
+| **Shape** | Settle what to build and how. You approve the shape or the plan before any code is written. | [`/turbo:plan`](claude/skills/plan/SKILL.md) |
+| **Build** | Make the change and verify it runs, with a smoke test in the live app for user-facing changes. | [`/turbo:implement`](claude/skills/implement/SKILL.md) |
+| **Try** | You try a user-facing change in the live app and say whether it's right. | [`/turbo:preview`](claude/skills/preview/SKILL.md) |
+| **Polish** | Run the project's checks, review with a second agent as peer reviewer, fix, and repeat until stable. | [`/turbo:polish-code`](claude/skills/polish-code/SKILL.md) |
+| **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/turbo:self-improve`](claude/skills/self-improve/SKILL.md) |
+| **Ship** | Commit, push, and open the pull request once you approve. | [`/turbo:ship`](claude/skills/ship/SKILL.md) |
 
-Examples use Claude Code's `/skill-name` syntax. In Codex, use `$skill-name`:
+Examples use Claude Code's `/turbo:skill-name` syntax. In Codex, use `$skill-name`:
 
 ```text
-$turboplan add password reset to the app
+$plan add password reset to the app
 ```
 
 ## Get Started
@@ -73,7 +73,7 @@ Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo 
 
 Prefer to read the steps first? Open the **[Claude Code setup](claude/SETUP.md)** or **[Codex setup](codex/SETUP.md)** guide.
 
-Every skill also answers to `/turbo:<skill>` (`$turbo:<skill>` in Codex), which helps when another plugin uses the same name.
+In Codex, every skill also answers to `$turbo:<skill>`, which helps when another plugin uses the same name.
 
 Installed Turbo before it shipped as a plugin? Run `/update-turbo` (or `$update-turbo`) once. It moves you to the plugin and keeps your edited skills unless you choose otherwise.
 
@@ -83,12 +83,12 @@ You can start with any of these skills; you don't need to learn the whole pipeli
 
 | I want to… | Claude Code | Codex |
 |---|---|---|
-| Plan and build a change | `/turboplan` | `$turboplan` |
-| Understand a failing test or bug | `/investigate` | `$investigate` |
-| Review a pull request | `/review-pr` | `$review-pr` |
-| Finish and ship a change | `/finalize` | `$finalize` |
+| Plan and build a change | `/turbo:plan` | `$plan` |
+| Understand a failing test or bug | `/turbo:investigate` | `$investigate` |
+| Review a pull request | `/turbo:review-pr` | `$review-pr` |
+| Finish and ship a change | `/turbo:finalize` | `$finalize` |
 
-Skills also work naturally in a request: `tests are failing in the auth module, can you please /investigate?`
+Skills also work naturally in a request: `tests are failing in the auth module, can you please /turbo:investigate?`
 
 See [more prompt examples](docs/examples.md) for dependency updates, UI testing, PR feedback, and other everyday tasks.
 

@@ -6,7 +6,7 @@ You are working in the Codex edition tree. The default Codex instructions in thi
 
 - [`AGENTS.md`](AGENTS.md) — Codex edition rules and overlay
 - [`SKILL-CONVENTIONS.md`](SKILL-CONVENTIONS.md) — Codex skill conventions
-- [`skills/create-skill/references/harness.md`](skills/create-skill/references/harness.md) — harness facts: tool names, sandbox and approval modes, sub-agent limits, skill and AGENTS.md hierarchies
+- [`skills/write-skill/references/harness.md`](skills/write-skill/references/harness.md) — harness facts: tool names, sandbox and approval modes, sub-agent limits, skill and AGENTS.md hierarchies
 - [`docs/harness-vocabulary.md`](docs/harness-vocabulary.md) — table translating Claude Code terms into Codex equivalents
 - [`ADDITIONS.md`](ADDITIONS.md) — Turbo rules the plugin's `SessionStart` hook injects into every Codex session
 

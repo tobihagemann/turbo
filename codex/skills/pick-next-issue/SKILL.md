@@ -53,9 +53,9 @@ gh issue view <number> --json number,title,body,url,labels,comments,reactionGrou
 
 Read the full issue body and comments to understand the requirements and any discussion context.
 
-## Step 5: Run `$turboplan` Skill
+## Step 5: Run `$plan` Skill
 
-Run the `$turboplan` skill with the issue body as the task description. Tell turboplan that the plan must include a final implementation step: "Close issue #N or reference it in the PR with `Closes #N`."
+Run the `$plan` skill with the issue body as the task description. Tell `$plan` that the plan must include a final implementation step: "Close issue #N or reference it in the PR with `Closes #N`."
 
 ## Rules
 

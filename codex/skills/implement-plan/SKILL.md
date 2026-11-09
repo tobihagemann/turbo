@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: "Execute an implementation plan file produced by $draft-plan or $turboplan. Runs pre-implementation prep, then runs $implement to execute the steps and finalize once they are all done. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
+description: "Execute an implementation plan file produced by $draft-plan or $plan. Runs pre-implementation prep, then runs $implement to execute the steps and finalize once they are all done. Use when the user asks to \"implement plan\", \"implement the plan\", \"execute the plan\", \"run the plan\", \"implement plans/<slug>.md\", \"start implementing the plan\", or starts a fresh session to implement a previously drafted plan."
 ---
 
 # Implement Plan
@@ -25,7 +25,7 @@ Determine which plan file to implement using these rules in order:
 3. **Single file** — Glob `.turbo/plans/*.md`. If exactly one plan exists, use it
 4. **Most recent** — If multiple plans exist, use the most recently modified
 5. **Legacy fallback** — If `.turbo/plans/` does not exist but `.turbo/plan.md` exists, use it
-6. **Nothing found** — If no rule above resolved to an existing file, tell the user to run `$turboplan` and stop. When a slug or path was passed but no file matched it, say which one was tried
+6. **Nothing found** — If no rule above resolved to an existing file, tell the user to run `$plan` and stop. When a slug or path was passed but no file matched it, say which one was tried
 
 If multiple plans exist and the most-recent choice is non-obvious (e.g., several plans were modified within the same minute), use `request_user_input` to let the user pick from the candidates.
 

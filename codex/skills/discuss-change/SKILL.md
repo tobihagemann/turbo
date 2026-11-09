@@ -95,7 +95,7 @@ A goal continuation turn that carries no reply from the user is not an approval:
 
 - **Revise** — apply the correction the user describes. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
 - **Prototype first** — run the `$prototype` skill, then fold what it settled into the shape. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
-- **Approve** — the shape is settled, along with any deferred item the approval flips. Run the `$note-improvement` skill once for each deferred item settled as noted. Once every such item is noted, continue to Step 6.
+- **Approve** — the shape is settled, along with any deferred item the approval flips. Run the `$backlog` skill once for each deferred item settled as noted. Once every such item is noted, continue to Step 6.
 
 ## Step 6: Run `$implement` Skill
 
@@ -106,4 +106,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 ## Rules
 
 - Confine Steps 1 through 5 to reading, discussion, confirmation, any prototype those steps called for, and the backlog entries Step 5 notes.
-- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `$turboplan` for plan mode.
+- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `$plan` for plan mode.

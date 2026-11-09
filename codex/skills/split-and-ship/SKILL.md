@@ -25,7 +25,7 @@ Detect the repository state:
 
 - Default branch: `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`
 - Current branch name, and whether it tracks an upstream
-- Whether a PR already exists for the current branch (`gh pr view`)
+- Whether an open PR exists for the current branch (`gh pr view --json state`); a closed or merged one counts as none
 
 Sample the prevailing workflow from recent default-branch history (`git log --first-parent origin/<default-branch> -n 30 --pretty=%s`): judge whether changes mostly land through pull requests (merge-PR commits or `(#N)`-suffixed squash commits) or are committed directly to the default branch.
 
@@ -55,14 +55,14 @@ Use `update_plan` to track each group, restating any remaining steps of a parent
 
 For each group:
 
-1. **Determine branch**: If the current branch already has a PR and this group's changes align with the PR's purpose, stay on the current branch. Otherwise, use `request_user_input` to confirm the proposed branch name and create it from the appropriate base:
+1. **Determine branch**: If the current branch already has an open PR and this group's changes align with the PR's purpose, stay on the current branch. Otherwise, use `request_user_input` to confirm the proposed branch name and create it from the appropriate base:
    - Group that builds on an earlier group: branch from that group's branch (stacked)
    - Group with no dependencies: branch from the default branch (independent)
 2. **Restore and stage** this group's files from the stash's staged snapshot (`git checkout 'stash^2' -- <files>` restores and stages in one operation). For files with hunks belonging to different groups, restore the file, use `apply_patch` to remove the unwanted hunks, then re-stage it (`git add <file>`): for an independent group, remove every other group's hunks; for a stacked group, remove only later groups' hunks (earlier groups' hunks are already in its base). Before committing a stacked group, check its staged diff against HEAD and restore from HEAD any earlier group's content it would revert. After committing, reset the working tree (`git checkout -- .`) to clean up before the next group.
 3. **Commit**: run the `$commit-rules` skill to load commit message rules, then commit the staged changes following them
 4. **Push and create or update PR**:
-   - Staying on existing branch with a PR: run the `$update-pr` skill, then `git push`
-   - New branch: `git push`, then run the `$create-pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
+   - Staying on existing branch with an open PR: run the `$pr` skill, then `git push`
+   - New branch: `git push`, then run the `$pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
 
 ### Clean up and summarize
 
