@@ -10,7 +10,7 @@
 
 ---
 
-Turbo turns your coding agent into a one-person software factory. You decide what to build before any code exists and judge the result at the end. In between, skills shape the change, build it, check it, review it, and ship it. Each session teaches the next. A human holds both gates, so nothing ships that nobody looked at.
+Turbo turns your coding agent into a one-person software factory. You decide what to build before any code exists and judge the result at the end. In between, skills shape the change, build it, polish it, and ship it. Each session teaches the next. A human holds both gates, so nothing ships that nobody looked at.
 
 **[Claude Code](claude/SKILL-INDEX.md):** production-tested · **[Codex](codex/SKILL-INDEX.md):** experimental, with skill parity but less real-world use
 
@@ -24,17 +24,16 @@ Start with a change you want to make:
 /turboplan add password reset to the app
 ```
 
-The change moves through seven stages. You decide at Shape and judge at Try and Ship. The skills run the rest.
+The change moves through six stages. You decide at Shape and judge at Try and Ship. The skills run the rest.
 
-| Stage | What happens | Skills |
+| Stage | What happens | Skill |
 |---|---|---|
-| **Shape** | Settle what to build and how. You approve the shape or the plan before any code is written. | [`/turboplan`](claude/skills/turboplan/SKILL.md) · [`/discuss-change`](claude/skills/discuss-change/SKILL.md) · [`/draft-plan`](claude/skills/draft-plan/SKILL.md) |
-| **Build** | Make the change, step by step. | [`/implement`](claude/skills/implement/SKILL.md) · [`/implement-plan`](claude/skills/implement-plan/SKILL.md) |
-| **Check** | Run the project's own checks and drive the running app. | [`/run-checks`](claude/skills/run-checks/SKILL.md) · [`/smoke-test`](claude/skills/smoke-test/SKILL.md) |
-| **Review** | Review and polish in a loop, with a second agent as peer reviewer. | [`/review-code`](claude/skills/review-code/SKILL.md) · [`/polish-code`](claude/skills/polish-code/SKILL.md) · [`/peer-review`](claude/skills/peer-review/SKILL.md) |
+| **Shape** | Settle what to build and how. You approve the shape or the plan before any code is written. | [`/turboplan`](claude/skills/turboplan/SKILL.md) |
+| **Build** | Make the change and verify it runs, with a smoke test in the live app for user-facing changes. | [`/implement`](claude/skills/implement/SKILL.md) |
 | **Try** | You try a user-facing change in the live app and say whether it's right. | [`/preview`](claude/skills/preview/SKILL.md) |
-| **Ship** | Commit, push, and open the pull request once you approve. | [`/finalize`](claude/skills/finalize/SKILL.md) · [`/ship`](claude/skills/ship/SKILL.md) |
+| **Polish** | Run the project's checks, review with a second agent as peer reviewer, fix, and repeat until stable. | [`/polish-code`](claude/skills/polish-code/SKILL.md) |
 | **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/self-improve`](claude/skills/self-improve/SKILL.md) |
+| **Ship** | Commit, push, and open the pull request once you approve. | [`/ship`](claude/skills/ship/SKILL.md) |
 
 Examples use Claude Code's `/skill-name` syntax. In Codex, use `$skill-name`:
 
