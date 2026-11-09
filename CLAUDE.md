@@ -16,7 +16,7 @@ claude/                   # Claude Code edition and plugin root (canonical Claud
 │   ├── scripts/          # Optional supporting scripts
 │   ├── references/       # Optional reference documentation
 │   └── assets/           # Optional templates or boilerplate
-├── hooks/                # Plugin mod: rules injection, status entry, startup checks, context and compact tools
+├── hooks/                # Plugin mod: rules injection, status entry, startup checks, context and compact tools, open items
 ├── tests/                # Mod tests
 ├── types/                # Mod state contract, named in the plugin manifest
 ├── SETUP.md

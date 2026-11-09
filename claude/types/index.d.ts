@@ -7,8 +7,10 @@ export type TurnReading = {
   cacheTotal: number
 }
 
+export type OpenItem = { id: string; text: string; detail?: string; resolvedAt?: number }
+
 declare module 'claude-code' {
   interface PluginState {
-    turbo: { contextLeft: ContextLeft; turnReading: TurnReading | null; cacheTtl: number }
+    turbo: { contextLeft: ContextLeft; turnReading: TurnReading | null; cacheTtl: number; openItems: OpenItem[] }
   }
 }

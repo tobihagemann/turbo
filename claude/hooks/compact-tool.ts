@@ -2,8 +2,9 @@ import type { Args, EngineInterface, Frozen, TurnCompleteReason } from 'claude-c
 
 export const COMPACT_TOOL = 'mcp__turbo__compact-and-continue'
 
-const TOAST = { timeoutMs: 60_000 }
-const HANDOFF_PATH = /^[^\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+$/u
+export const TOAST = { timeoutMs: 60_000 }
+
+export const ONE_LINE = /^[^\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+$/u
 
 let pendingHandoff: string | undefined
 
@@ -28,7 +29,7 @@ export async function queueCompaction(_: EngineInterface, e: Frozen<Args<'tool.c
 
   const { handoff } = e as { handoff?: unknown }
 
-  if (typeof handoff !== 'string' || !HANDOFF_PATH.test(handoff)) {
+  if (typeof handoff !== 'string' || !ONE_LINE.test(handoff)) {
     return { result: 'No compaction queued: pass the path of the handoff file you wrote as `handoff`.' }
   }
 
@@ -62,21 +63,26 @@ export async function compactAfterTurn($: EngineInterface, reason: TurnCompleteR
     return
   }
 
-  $.clock.after(0, () => void submitContinue($, handoff))
+  $.clock.after(
+    0,
+    () =>
+      void submitOrToast(
+        $,
+        `The session was compacted. Read the handoff at ${handoff}, ` +
+          'then use the TaskList tool and continue with the next step it names.',
+        `${handoff}: compacted, but the continue prompt was not sent. Reply "continue".`,
+      ),
+  )
 }
 
-async function submitContinue($: EngineInterface, handoff: string) {
+async function submitOrToast($: EngineInterface, text: string, notSent: string) {
   try {
-    const submitted = await $.prompt.submit({
-      text:
-        `The session was compacted. Read the handoff at ${handoff}, ` +
-        'then use the TaskList tool and continue with the next step it names.',
-    })
+    const submitted = await $.prompt.submit({ text })
 
     if (submitted.drop === undefined) {
       return
     }
   } catch {}
 
-  $.ui.toast(`${handoff}: compacted, but the continue prompt was not sent. Reply "continue".`, TOAST)
+  $.ui.toast(notSent, TOAST)
 }

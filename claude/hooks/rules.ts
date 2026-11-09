@@ -1,7 +1,11 @@
 import type { Args, EngineInterface, Frozen, Next } from 'claude-code'
+import { OPEN_ITEMS_RULE } from './open-items'
 import { startupNotices } from './startup-checks'
 
 let rules: string | undefined
+
+const showsOpenItems = (e: Frozen<Args<'prompt.compose'>>) =>
+  !e.traits.includes('teammate') && e.surfaces.some(surface => surface === 'terminal' || surface === 'desktop')
 
 export async function composeRules(
   $: EngineInterface,
@@ -12,8 +16,9 @@ export async function composeRules(
 
   rules ??= await $.fs.read(`${$.plugin.root}/ADDITIONS.md`)
 
+  const session = showsOpenItems(e) ? `${rules}${OPEN_ITEMS_RULE}` : rules
   const notices = startupNotices()
-  const text = notices.length === 0 ? rules : `${rules}\n## Setup Notices\n\n${notices.join('\n')}\n`
+  const text = notices.length === 0 ? session : `${session}\n## Setup Notices\n\n${notices.join('\n')}\n`
 
   return { sections: [...sections, { id: 'turbo:rules', text, scope: 'session' as const }] }
 }

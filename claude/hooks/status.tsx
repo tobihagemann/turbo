@@ -1,5 +1,6 @@
 import { atom, read, update } from 'claude-code'
 import type { Args, EngineInterface, Frozen, Next, RenderInput } from 'claude-code'
+import { clearOpenItems } from './open-items'
 import { clearTurnReading, turnParts } from './turn-tracking'
 
 const contextLeft = atom({ plugin: 'turbo', key: 'contextLeft' } as const, null)
@@ -45,6 +46,7 @@ export async function clearStatusOnSwap(
   if (e.reason === 'clear' || e.reason === 'resume') {
     await update($, contextLeft, () => null)
     await clearTurnReading($)
+    await clearOpenItems($)
   }
 
   return next(e)

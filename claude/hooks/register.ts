@@ -1,6 +1,7 @@
 import type { Register } from 'claude-code'
 import { compactAfterTurn, COMPACT_TOOL, queueCompaction, registerCompactTool } from './compact-tool'
 import { answerContextLevel, CONTEXT_TOOL, registerContextTool } from './context-tool'
+import { addOpenItemsContext, answerOpenItems, OPEN_ITEMS_TOOL, registerOpenItemsTool, renderOpenItems } from './open-items'
 import { composeRules, shareRulesWithAgent } from './rules'
 import { runStartupChecks } from './startup-checks'
 import {
@@ -17,6 +18,7 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await registerContextTool($)
     await registerCompactTool($)
+    await registerOpenItemsTool($)
     await runStartupChecks($)
     startCountdownTicker($)
 
@@ -25,7 +27,9 @@ export const register: Register = on => {
 
   on('tool.call', { tool: CONTEXT_TOOL }, answerContextLevel)
   on('tool.call', { tool: COMPACT_TOOL }, queueCompaction)
+  on('tool.call', { tool: OPEN_ITEMS_TOOL }, answerOpenItems)
   on('prompt.compose', composeRules)
+  on('prompt.context', addOpenItemsContext)
   on('agent.spawn', shareRulesWithAgent)
   on('turn.step', async function* ($, e, next) {
     if (e.agentId !== undefined) {
@@ -51,4 +55,5 @@ export const register: Register = on => {
   on('session.end', clearStatusOnSwap)
   on('ui.render', { component: 'PromptHint' }, renderStatus)
   on('ui.render', { component: 'AskUserQuestion' }, renderDialogStatus)
+  on('ui.render', { component: 'AbovePrompt' }, renderOpenItems)
 }

@@ -15,7 +15,7 @@ Otherwise, ask the user to run these in Claude Code, since writes under `~/.clau
 
 Then have them open `/plugin` → Marketplaces and switch on auto-update for the `turbo` marketplace. Third-party marketplaces do not update on their own, and Turbo ships its changes to `main`.
 
-The plugin carries every skill and injects Turbo's rules into each session. Under the prompt it shows how much context is left, when the prompt cache expires, and which model answers. When a long workflow writes a handoff to free up context, the plugin compacts the session and resumes the workflow on its own. Skills answer to `/<skill>` and to `/turbo:<skill>`.
+The plugin carries every skill and injects Turbo's rules into each session. Under the prompt it shows how much context is left, when the prompt cache expires, and which model answers. Above the prompt it lists open items that wait on the user, which `/resolve-open-items` walks. When a long workflow writes a handoff to free up context, the plugin compacts the session and resumes the workflow on its own. Skills answer to `/<skill>` and to `/turbo:<skill>`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
