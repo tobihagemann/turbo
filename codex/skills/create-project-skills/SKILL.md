@@ -97,9 +97,7 @@ Build the batch from approved candidates only. Do not include anything not expli
 
 Output all approved candidates (both **New** and **Update** status) as text in a single batch. For each candidate, list the Status tag, proposed name, description, target path `<target-skill-directory>/<name>/SKILL.md`, and the 3–8 convention statements organized under `## <Section>` headings with inline evidence citations (`file_path:line`). These convention statements define the target state the final SKILL.md should match, regardless of whether the skill is being created or updated.
 
-This gives `$write-skill` everything it needs to skip its Step 1 (usage patterns clearly understood) and Step 2 (project skills typically need no additional reusable resources). For Update candidates, `$write-skill` also skips its Step 3 (initialization) per its own "skill already exists, iteration needed" skip rule and iterates on the existing SKILL.md in Step 4 until it matches the target convention statements.
-
-Run the `$write-skill` skill once with this batch in context. Its batch-aware review, evaluation, and apply cycle then runs across all touched skills.
+Run the `$write-skill` skill once with this batch in context.
 
 After `$write-skill` completes, output a summary of created and updated skills, grouped by status. If any candidates were dropped or skipped in Step 4, list them so the user knows what was left out.
 
