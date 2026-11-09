@@ -25,7 +25,7 @@ Determine which plan file to implement using these rules in order:
 3. **Single file** — Glob `.turbo/plans/*.md`. If exactly one plan exists, use it
 4. **Most recent** — If multiple plans exist, use the most recently modified
 5. **Legacy fallback** — If `.turbo/plans/` does not exist but `.turbo/plan.md` exists, use it
-6. **Nothing found** — If no rule above resolved to an existing file, tell the user to run `$plan` and stop. When a slug or path was passed but no file matched it, say which one was tried
+6. **Nothing found** — If no rule above resolved to an existing file, tell the user to run `$turbo:plan` and stop. When a slug or path was passed but no file matched it, say which one was tried
 
 If multiple plans exist and the most-recent choice is non-obvious (e.g., several plans were modified within the same minute), use `request_user_input` to let the user pick from the candidates.
 
@@ -44,7 +44,7 @@ When a signal fires, output it as text. Then use `request_user_input` to offer:
 - **Pick another plan** — resolve to a different file under `.turbo/plans/`, then confirm that plan against these same signals
 - **Leave it unimplemented** — the plan needs revising first, or its gate has not passed
 
-On **Leave it unimplemented**, tell the user to bring the plan current with `$refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Call `update_plan` to drop the remaining implement steps, restating any remaining steps of a parent workflow, then continue with the next step of the active workflow.
+On **Leave it unimplemented**, tell the user to bring the plan current with `$turbo:refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Call `update_plan` to drop the remaining implement steps, restating any remaining steps of a parent workflow, then continue with the next step of the active workflow.
 
 Workflow state lives at `.turbo/workflows/<slug>.md` — slug from the resolved plan's basename. It pairs one-to-one with the thread's goal. When this run's `create_goal` attempt succeeds, write the file fresh: `Status: active` plus this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed and mirror it, set `Status: closed`, mark the goal complete with `update_goal`, then emit any halt message.
 
@@ -74,7 +74,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- The plan file is read-only during execution. If revisions are needed, run `$refine-plan` or `$draft-plan` separately.
+- The plan file is read-only during execution. If revisions are needed, the user runs `$turbo:refine-plan` or `$turbo:draft-plan` separately.
 - Never skip Step 2.
 - Never enumerate or execute the plan's Implementation Steps inline. The work runs through `$implement`. Restating steps as a turn-level narration counts as inline execution and bypasses the delegation.
-- If the plan's Implementation Steps or Verification include `git commit`, `git push`, or PR creation, halt before Step 3 and ask the user to remove them via `$refine-plan`. A Verification item that observes the result of a push without instructing one is not grounds to halt.
+- If the plan's Implementation Steps or Verification include `git commit`, `git push`, or PR creation, halt before Step 3 and ask the user to remove them via `$turbo:refine-plan`. A Verification item that observes the result of a push without instructing one is not grounds to halt.

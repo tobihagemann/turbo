@@ -35,10 +35,10 @@ The change moves through six stages. You decide at Shape and judge at Try and Sh
 | **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/turbo:self-improve`](claude/skills/self-improve/SKILL.md) |
 | **Ship** | Commit, push, and open the pull request once you approve. | [`/turbo:ship`](claude/skills/ship/SKILL.md) |
 
-Examples use Claude Code's `/turbo:skill-name` syntax. In Codex, use `$skill-name`:
+Examples use Claude Code's `/turbo:skill-name` syntax. In Codex, use `$turbo:skill-name`:
 
 ```text
-$plan add password reset to the app
+$turbo:plan add password reset to the app
 ```
 
 ## Get Started
@@ -73,8 +73,6 @@ Walk me through the Turbo setup. Read SETUP.md from the tobihagemann/turbo repo 
 
 Prefer to read the steps first? Open the **[Claude Code setup](claude/SETUP.md)** or **[Codex setup](codex/SETUP.md)** guide.
 
-In Codex, every skill also answers to `$turbo:<skill>`, which helps when another plugin uses the same name.
-
 Installed Turbo before it shipped as a plugin? Run `/update-turbo` (or `$update-turbo`) once. It moves you to the plugin and keeps your edited skills unless you choose otherwise.
 
 ## What You Can Do
@@ -83,10 +81,10 @@ You can start with any of these skills; you don't need to learn the whole pipeli
 
 | I want to… | Claude Code | Codex |
 |---|---|---|
-| Plan and build a change | `/turbo:plan` | `$plan` |
-| Understand a failing test or bug | `/turbo:investigate` | `$investigate` |
-| Review a pull request | `/turbo:review-pr` | `$review-pr` |
-| Finish and ship a change | `/turbo:finalize` | `$finalize` |
+| Plan and build a change | `/turbo:plan` | `$turbo:plan` |
+| Understand a failing test or bug | `/turbo:investigate` | `$turbo:investigate` |
+| Review a pull request | `/turbo:review-pr` | `$turbo:review-pr` |
+| Finish and ship a change | `/turbo:finalize` | `$turbo:finalize` |
 
 Skills also work naturally in a request: `tests are failing in the auth module, can you please /turbo:investigate?`
 

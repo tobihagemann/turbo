@@ -10,7 +10,7 @@ Improvements start as issues. Open one so the change can be discussed before any
 2. **`/self-improve` detects skill improvements.** When a lesson would improve a turbo skill's instructions, it asks whether to propose it upstream. With a Turbo clone set as `checkout`, it writes the lesson into that clone's `.turbo/handoff/` instead (see [Customization](../docs/customization.md#working-on-turbo-or-a-fork)).
 3. **`/contribute` files the issue.** It takes the lessons `/self-improve` passes in, or a change you describe, states each against the skill's current text upstream, drafts the "why" with project-specific details scrubbed (no repo names, file paths, or business logic), and files the issue after your approval.
 
-You can also run `/turbo:contribute` (Claude) or `$contribute` (Codex) directly at any point.
+You can also run `/turbo:contribute` (Claude) or `$turbo:contribute` (Codex) directly at any point.
 
 ## Privacy
 

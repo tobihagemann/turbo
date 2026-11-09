@@ -47,11 +47,11 @@ Then halt with this message:
 
 > Plan ready at `<plan path>`.
 >
-> This is a good point to `/compact` before implementing. Then run `$implement-plan <slug>` to implement.
+> This is a good point to `/compact` before implementing. Then run `$turbo:implement-plan <slug>` to implement.
 
-When Phase 1 captured a gated plan, add a line to that message naming its path and the gate that must pass before running `$implement-plan` on it. When Phase 4 left files uncommitted, add a line naming them.
+When Phase 1 captured a gated plan, add a line to that message naming its path and the gate that must pass before running `$turbo:implement-plan` on it. When Phase 4 left files uncommitted, add a line naming them.
 
 ## Rules
 
 - Route revisions through `$refine-plan` or `$draft-plan`.
-- Hand implementation to the user via the Phase 6 halt; the user runs `$implement-plan` after an optional `/compact`.
+- Hand implementation to the user via the Phase 6 halt; the user runs `$turbo:implement-plan` after an optional `/compact`.

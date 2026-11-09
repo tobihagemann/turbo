@@ -1,6 +1,6 @@
 ---
 name: plan
-description: "Analyze task complexity and route to a mode by artifact: direct fix for clear-scope changes, or a plan file when the approach needs to be written down. Use when the user asks to \"turboplan\", \"run turboplan\", \"run $plan\", \"plan this task\", \"turbo plan mode\", \"plan and implement\", or \"use turboplan instead of plan mode\"."
+description: "Analyze task complexity and route to a mode by artifact: direct fix for clear-scope changes, or a plan file when the approach needs to be written down. Use when the user asks to \"turboplan\", \"run turboplan\", \"run $turbo:plan\", \"plan this task\", \"turbo plan mode\", \"plan and implement\", or \"use turboplan instead of plan mode\"."
 ---
 
 # Plan

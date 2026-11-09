@@ -2,7 +2,7 @@
 
 [← Back to Turbo](../README.md) · [Workflow guide](workflows.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
-These are prompts you can type directly into Claude Code or Codex (`/turbo:skill-name` in Claude Code, `$skill-name` in Codex). Skill names work as natural words in your sentences.
+These are prompts you can type directly into Claude Code or Codex (`/turbo:skill-name` in Claude Code, `$turbo:skill-name` in Codex). Skill names work as natural words in your sentences.
 
 ```
 # Planning a change (single entry — /turbo:plan routes based on complexity)

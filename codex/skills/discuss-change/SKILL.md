@@ -106,4 +106,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 ## Rules
 
 - Confine Steps 1 through 5 to reading, discussion, confirmation, any prototype those steps called for, and the backlog entries Step 5 notes.
-- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `$plan` for plan mode.
+- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `$turbo:plan` for plan mode.

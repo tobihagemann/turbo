@@ -26,7 +26,7 @@ codex plugin marketplace add tobihagemann/turbo
 codex plugin add turbo@turbo
 ```
 
-The plugin carries every skill and a `SessionStart` hook that loads Turbo's rules into each session, after compaction too. Codex runs a plugin's hooks only once the user trusts them: ask the user to trust Turbo's hook when Codex asks at its next start, or later under `/hooks`.
+The plugin carries every skill and a `SessionStart` hook that loads Turbo's rules into each session, after compaction too. Codex runs a plugin's hooks only once the user trusts them: ask the user to trust Turbo's hook when Codex asks at its next start, or later under `/hooks`. Skills are typed as `$turbo:<skill>`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
@@ -172,12 +172,12 @@ For someone who wants to change Turbo itself or run a fork, point them at [Custo
 
 Present the user with a summary of how to get started:
 
-1. **The main workflow:** Run `$plan` to draft and refine a plan, implement changes, then run `$finalize` to test, review, commit, and create a PR. `$plan` can also chain into implementation automatically.
+1. **The main workflow:** Run `$turbo:plan` to draft and refine a plan, implement changes, then run `$turbo:finalize` to test, review, commit, and create a PR. `$turbo:plan` can also chain into implementation automatically.
 2. **All available skills:** See [`SKILL-INDEX.md`](SKILL-INDEX.md) for the full Codex skill list with descriptions.
-3. **The plan pipeline:** For anything beyond a clear-scope change, `$plan` routes to plan mode and produces a plan file. See [The Plan Pipeline](../docs/workflows.md#the-plan-pipeline).
+3. **The plan pipeline:** For anything beyond a clear-scope change, `$turbo:plan` routes to plan mode and produces a plan file. See [The Plan Pipeline](../docs/workflows.md#the-plan-pipeline).
 4. **Peer review:** Codex uses Claude as the independent reviewer through `$peer-review`.
-5. **Self-improvement:** Run `$self-improve` before context runs out to capture lessons for future sessions.
-6. **Track improvements:** When noticing something out of scope, run `$backlog` so it doesn't get lost.
+5. **Self-improvement:** Run `$turbo:self-improve` before context runs out to capture lessons for future sessions.
+6. **Track improvements:** When noticing something out of scope, run `$turbo:backlog` so it doesn't get lost.
 7. **Artifacts:** Plans, reports, and the backlog live under `.turbo/`.
 8. **Updating:** Codex does not update plugins on its own. See [Customization](../docs/customization.md#updating) for the update commands.
 9. **Browser and UI testing:** For web app testing, enable the `browser-use@openai-bundled` plugin. For desktop UI testing, enable the `computer-use@openai-bundled` plugin. Both are bundled in Codex's `openai-bundled` marketplace. See [Browser and UI Testing Tools](../docs/requirements.md#browser-and-ui-testing-tools) for details.
