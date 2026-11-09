@@ -111,15 +111,16 @@ When an arrow crosses a container boundary to invoke another skill:
 The [Claude Code mod guide](../docs/claude-code-mod.md) shows the mod as terminal windows (`mod-*.svg`) captured from a real session.
 
 1. Run Claude Code in a scratch project inside a 124-column tmux pane (`tmux new-session -x 124`). Seed the state the shot shows through prompts.
-2. Read the pane back with `tmux capture-pane -p -e` and cut the frame to the lines the shot shows.
-3. Strip OSC 8 hyperlinks, since they carry absolute paths and session URLs. Drop indicators specific to this machine, such as `← N agents`.
-4. Replace `\e[39m` with `\e[38;2;196;196;196m`. freeze ignores the default-foreground reset, and the explicit color keeps the bold and background that a full `\e[0m` reset would end.
-5. Render the frame with [freeze](https://github.com/charmbracelet/freeze):
+2. Read the pane back with `tmux capture-pane -p -e -N` and cut the frame to the lines the shot shows. For a shot of something transient, such as a spinner or a notice that times out, save a frame every half second while it runs and pick from those.
+3. tmux reports a background only on cells that carry text, while the terminal paints a highlighted block, such as a submitted prompt, across its full width on every line. Set that background at the start of each of the block's lines and pad the lines to the pane width.
+4. Strip OSC 8 hyperlinks, since they carry absolute paths and session URLs. Drop indicators specific to this machine, such as `← N agents`.
+5. Replace `\e[39m` with `\e[38;2;196;196;196m`. freeze ignores the default-foreground reset, and the explicit color keeps the bold and background that a full `\e[0m` reset would end.
+6. Render the frame with [freeze](https://github.com/charmbracelet/freeze):
 
    ```bash
    freeze <frame.ansi> --language ansi --window --padding 20,64,20,24 --border.radius 8 --line-height 1.3 --font.family "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" -o assets/mod-<name>.svg
    ```
 
    The font stack keeps freeze from embedding a 370 KB font. The wider right padding absorbs fallback fonts that run wider than JetBrains Mono.
-6. freeze drops bold, so add `font-weight="bold"` to each `<tspan>` the frame sets bold. Bold starts at `\e[1m` and lasts across color changes until `\e[0m` or `\e[22m`.
-7. Confirm that `grep -E '/Users/|file://|claude\.ai/code' assets/mod-*.svg` prints nothing.
+7. freeze drops bold, so add `font-weight="bold"` to each `<tspan>` the frame sets bold. Bold starts at `\e[1m` and lasts across color changes until `\e[0m` or `\e[22m`.
+8. Confirm that `grep -E '/Users/|file://|claude\.ai/code' assets/mod-*.svg` prints nothing.

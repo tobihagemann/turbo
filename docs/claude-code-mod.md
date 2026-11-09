@@ -32,7 +32,7 @@ Skills read how much context is left through the `turbo - context-level` tool. [
 
 When one of those checks finds context running low, the skill asks whether to write a handoff and compact. When you agree, [`/handoff`](../claude/skills/handoff/SKILL.md) saves the session's state to a file, and the `turbo - compact-and-continue` tool tells the mod to compact once the turn ends. After compacting, the mod sends a prompt that has Claude read the handoff and pick up the next step, so the pipeline continues without you retyping anything:
 
-![Claude Code session queueing a compaction from a handoff, then resuming from a prompt sent by the turbo plugin](../assets/mod-compaction.svg)
+![Claude Code session queueing a compaction from a handoff, then resuming from a prompt sent by the turbo plugin, with Claude Code's Conversation compacted notice above the prompt](../assets/mod-compaction.svg)
 
 If you ask Claude to compact during a pipeline, its next check takes the same path without asking. If compaction is skipped or fails, a notice asks you to run `/compact` and reply "continue".
 
