@@ -40,10 +40,12 @@ Survey the conversation context for:
 - **Current task**: what is being worked on, in one or two sentences
 - **Workflow status**: where in the workflow this session is (drafting, refining iteration N, applying findings, implementing step M of K, investigating, blocked on Q, etc.)
 - **Active artifact**: path to the plan or other file at the center of the work, if one exists
-- **Open decisions**: questions raised but not resolved, choices the user is still weighing, escalations awaiting input
+- **Open decisions**: questions raised but not resolved, choices the user is still weighing, escalations awaiting input, actions only the user can take
 - **In-flight changes**: staged or unstaged edits that are not yet committed; what each change is doing and what is missing
 - **Closed avenues**: approaches that were built or tested and then abandoned, with the observed evidence that ruled them out
 - **Next step**: the first concrete action the new session should take. When the user has stated what they want to work on next, that intent leads and any work left in flight is ordered after it; say so in the same statement when that work should not resume at all
+
+Call the `mcp__turbo__open-items` tool with `action` set to `list`, and carry each item's text and detail, without its id, into the open decisions, merging any the survey already found.
 
 Read the backlog under the repo root resolved in Step 1: `.turbo/backlog.md`, and the legacy `.turbo/improvements.md` when one exists. Note any entry this handoff takes over. When no entry clearly matches, leave the backlog alone.
 

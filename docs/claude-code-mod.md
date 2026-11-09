@@ -12,7 +12,7 @@ Whenever a turn ends with something only you can decide or do, such as a plan to
 
 The band keeps those items in view after the reply that raised them scrolls away. Press **Resolve** (or `r`) to run [`/turbo:resolve-open-items`](../claude/skills/resolve-open-items/SKILL.md), which walks each item through a question with the recommendation first. You can also settle an item in your own words, and Claude resolves it from your reply. A resolved item shows struck through for a moment before it disappears.
 
-The list survives compaction. `/clear` and `/resume` start it empty.
+The list survives compaction. `/clear` and `/resume` start it empty. Before a `/clear`, run [`/turbo:handoff`](../claude/skills/handoff/SKILL.md) to carry the items into the handoff.
 
 ## Status Line
 
