@@ -839,13 +839,21 @@ const band = ($: Engine, { hasSurvey = false, isWorking = false }: Band = {}) =>
     props: { hasSurvey, isWorking, maxRows: 10, bodyColumns: 80, scroll: { offset: 0, bodyRows: 9 }, view: {} },
   })
 
-const bandLines = async ($: Engine, props: Band = {}) => {
+const isGutter = (text: string) => ['', '⎿'].includes(text.trim())
+
+const bandTexts = async ($: Engine, props: Band = {}) => {
   const ui = await band($, props)
-  const lines = (await ui.findAll({ type: 'Text' })).map(line => line.text)
+  const texts = (await ui.findAll({ type: 'Text' })).map(text => text.text)
   const buttons = (await ui.findAll({ type: 'Button' })).map(button => button.text)
   await ui.unmount()
 
-  return { lines, buttons }
+  return { texts, buttons }
+}
+
+const bandLines = async ($: Engine, props: Band = {}) => {
+  const { texts, buttons } = await bandTexts($, props)
+
+  return { lines: texts.filter(text => !isGutter(text)), buttons }
 }
 
 test('lists a recorded open item above the prompt with a Resolve button', async ($, on) => {
@@ -855,7 +863,7 @@ test('lists a recorded open item above the prompt with a Resolve button', async 
   const id = idOf(result)
 
   expect(result).toBe(`Recorded open item #${id}: ${OPEN}`)
-  expect(await bandLines($)).toEqual({ lines: ['Open items ', `☐ ${OPEN}`], buttons: ['Resolve'] })
+  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', `☐ ${OPEN}`], buttons: ['Resolve'] })
   expect(await listed($)).toBe(`#${id} ${OPEN}\n  Keep it (recommended), or revert it.`)
 })
 
@@ -866,7 +874,7 @@ test('keeps one row when an open item is recorded twice', async ($, on) => {
   const { result } = await openItems($, { action: 'add', text: OPEN })
 
   expect(result).toBe(`Already recorded as open item #${id}: ${OPEN}`)
-  expect((await bandLines($)).lines).toEqual(['Open items ', `☐ ${OPEN}`])
+  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', `☐ ${OPEN}`])
 })
 
 test('keeps one row when the same open item is recorded twice at once', async ($, on) => {
@@ -997,7 +1005,15 @@ test('keeps the Resolve button beside a struck row while another item is open', 
 
   await resolve($, id)
 
-  expect(await bandLines($)).toEqual({ lines: ['Open items ', `✓ ${OPEN}`, `☐ ${OTHER}`], buttons: ['Resolve'] })
+  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', `✓ ${OPEN}`, `☐ ${OTHER}`], buttons: ['Resolve'] })
+})
+
+test('hangs the first item off an elbow and aligns the rest under it', async ($, on) => {
+  machine(on)
+  await add($, OPEN)
+  await add($, OTHER)
+
+  expect((await bandTexts($)).texts).toEqual(['⏺ Open items ', '  ⎿  ', `☐ ${OPEN}`, '     ', `☐ ${OTHER}`])
 })
 
 test('keeps an item recorded after /clear when an earlier resolve timer fires', async ($, on) => {
@@ -1008,7 +1024,7 @@ test('keeps an item recorded after /clear when an earlier resolve timer fires', 
 
   await clock.advance(RESOLVED_SHOW_MS)
 
-  expect((await bandLines($)).lines).toEqual(['Open items ', `☐ ${OTHER}`])
+  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', `☐ ${OTHER}`])
 })
 
 test('runs /turbo:resolve-open-items as the plugin when Resolve is pressed', async ($, on) => {
@@ -1041,7 +1057,7 @@ test('leaves the Resolve button out while a turn runs', async ($, on) => {
   machine(on)
   await add($, OPEN)
 
-  expect(await bandLines($, { isWorking: true })).toEqual({ lines: ['Open items ', `☐ ${OPEN}`], buttons: [] })
+  expect(await bandLines($, { isWorking: true })).toEqual({ lines: ['⏺ Open items ', `☐ ${OPEN}`], buttons: [] })
 })
 
 test('gives way to a survey', async ($, on) => {

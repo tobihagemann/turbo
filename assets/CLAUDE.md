@@ -114,7 +114,7 @@ The [Claude Code mod guide](../docs/claude-code-mod.md) shows the mod as termina
 2. Read the pane back with `tmux capture-pane -p -e -N` and cut the frame to the lines the shot shows. For a shot of something transient, such as a spinner or a notice that times out, save a frame every half second while it runs and pick from those.
 3. tmux reports a background only on cells that carry text, while the terminal paints a highlighted block, such as a submitted prompt, across its full width on every line. Set that background at the start of each of the block's lines and pad the lines to the pane width.
 4. Strip OSC 8 hyperlinks, since they carry absolute paths and session URLs. Drop indicators specific to this machine, such as `← N agents`.
-5. Replace `\e[39m` with `\e[38;2;196;196;196m`. freeze ignores the default-foreground reset, and the explicit color keeps the bold and background that a full `\e[0m` reset would end.
+5. Replace `\e[39m` with `\e[38;2;196;196;196m`. freeze ignores the default-foreground reset, and the explicit color keeps the bold and background that a full `\e[0m` reset would end. freeze ignores the default-background reset too, so a highlight such as a selected dialog tab runs on to the end of its line: replace `\e[49m` with the window color, `\e[48;2;23;23;23m`. freeze also ignores reverse video, which marks a focused button, so replace `\e[7m` with an explicit background and foreground.
 6. Render the frame with [freeze](https://github.com/charmbracelet/freeze):
 
    ```bash
@@ -122,5 +122,6 @@ The [Claude Code mod guide](../docs/claude-code-mod.md) shows the mod as termina
    ```
 
    The font stack keeps freeze from embedding a 370 KB font. The wider right padding absorbs fallback fonts that run wider than JetBrains Mono.
-7. freeze drops bold, so add `font-weight="bold"` to each `<tspan>` the frame sets bold. Bold starts at `\e[1m` and lasts across color changes until `\e[0m` or `\e[22m`.
-8. Confirm that `grep -E '/Users/|file://|claude\.ai/code' assets/mod-*.svg` prints nothing.
+7. freeze drops bold, so add `font-weight="bold"` to each `<tspan>` the frame sets bold. Bold starts at `\e[1m` and lasts across color changes until `\e[0m` or `\e[22m`. Strikethrough survives, but freeze puts its `text-decoration` on an empty `<tspan>` ahead of the text, so move it onto the `<tspan>` that follows.
+8. freeze flows each line's `<tspan>`s one after another, so a glyph the font lacks, such as `⎿`, falls back to a font of another width and shifts everything after it on the line. Pin each `<tspan>` to its terminal column: give it an `x` of the line's `x` plus its zero-based column times one cell width, 0.6 times the font size.
+9. Confirm that `grep -E '/Users/|-Users-|/private/tmp/|file://|claude\.ai/code' assets/mod-*.svg` prints nothing. A Bash call in the shot prints the scratch project's absolute path, which encodes the user name as `-Users-<name>-`, so shorten that path in the frame before rendering.

@@ -19,6 +19,7 @@ const MAX_TEXT = 200
 const MAX_DETAIL = 1_000
 const ID_SPACE = 36 ** 4
 const RESOLVE_COMMAND = 'turbo:resolve-open-items'
+const ELBOW = '  ⎿  '
 
 const openItems = atom({ plugin: 'turbo', key: 'openItems' } as const, [])
 
@@ -185,18 +186,21 @@ export async function renderOpenItems(
   return (
     <Box flexDirection="column">
       <Box>
-        <Text bold>Open items </Text>
+        <Text bold>⏺ Open items </Text>
         {e.props.isWorking || !items.some(isOpen) ? null : (
           <Button key="resolve" label="Resolve" hotkey="r" onPress={() => runResolve($)} />
         )}
       </Box>
-      {items.map(item =>
-        isOpen(item) ? (
-          <Text key={item.id} wrap="truncate-end">{`☐ ${item.text}`}</Text>
-        ) : (
-          <Text key={item.id} wrap="truncate-end" dimColor strikethrough>{`✓ ${item.text}`}</Text>
-        ),
-      )}
+      {items.map((item, index) => (
+        <Box key={item.id}>
+          <Text dimColor>{index === 0 ? ELBOW : ' '.repeat(ELBOW.length)}</Text>
+          {isOpen(item) ? (
+            <Text wrap="truncate-end">{`☐ ${item.text}`}</Text>
+          ) : (
+            <Text wrap="truncate-end" dimColor strikethrough>{`✓ ${item.text}`}</Text>
+          )}
+        </Box>
+      ))}
     </Box>
   )
 }
