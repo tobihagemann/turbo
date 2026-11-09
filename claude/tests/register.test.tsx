@@ -815,6 +815,7 @@ test('compacts only the turn that queued it', async ($, on) => {
 
 const OPEN = 'Keep the probe or revert it?'
 const OTHER = 'Rotate the staging key'
+const HINT = ' (ctrl+x tab, then r)'
 const ID = /#([0-9a-z]{4})\b/
 
 const openItems = ($: Engine, input: Record<string, unknown>, agentId?: string) =>
@@ -829,12 +830,12 @@ const resolve = async ($: Engine, id: string) => (await openItems($, { action: '
 
 const listed = async ($: Engine) => (await openItems($, { action: 'list' })).result
 
-type Band = { hasSurvey?: boolean; isWorking?: boolean }
+type Band = { hasSurvey?: boolean; isWorking?: boolean; surface?: 'terminal' | 'desktop' }
 
-const band = ($: Engine, { hasSurvey = false, isWorking = false }: Band = {}) =>
+const band = ($: Engine, { hasSurvey = false, isWorking = false, surface = 'terminal' }: Band = {}) =>
   $.ui.mount({
     plugin: 'turbo',
-    surface: 'terminal',
+    surface,
     component: 'AbovePrompt',
     props: { hasSurvey, isWorking, maxRows: 10, bodyColumns: 80, scroll: { offset: 0, bodyRows: 9 }, view: {} },
   })
@@ -863,7 +864,7 @@ test('lists a recorded open item above the prompt with a Resolve button', async 
   const id = idOf(result)
 
   expect(result).toBe(`Recorded open item #${id}: ${OPEN}`)
-  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', `☐ ${OPEN}`], buttons: ['Resolve'] })
+  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', HINT, `☐ ${OPEN}`], buttons: ['Resolve'] })
   expect(await listed($)).toBe(`#${id} ${OPEN}\n  Keep it (recommended), or revert it.`)
 })
 
@@ -874,7 +875,7 @@ test('keeps one row when an open item is recorded twice', async ($, on) => {
   const { result } = await openItems($, { action: 'add', text: OPEN })
 
   expect(result).toBe(`Already recorded as open item #${id}: ${OPEN}`)
-  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', `☐ ${OPEN}`])
+  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', HINT, `☐ ${OPEN}`])
 })
 
 test('keeps one row when the same open item is recorded twice at once', async ($, on) => {
@@ -987,6 +988,7 @@ test('shows a resolved item struck through, then removes it once its time is up'
 
   expect([resolved?.text, resolved?.props.dimColor, resolved?.props.strikethrough]).toEqual([`✓ ${OPEN}`, true, true])
   expect(await ui.findAll({ type: 'Button' })).toEqual([])
+  expect(await ui.find({ type: 'Text', text: HINT })).toBeUndefined()
 
   await clock.advance(RESOLVED_SHOW_MS - 1)
 
@@ -1005,7 +1007,7 @@ test('keeps the Resolve button beside a struck row while another item is open', 
 
   await resolve($, id)
 
-  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', `✓ ${OPEN}`, `☐ ${OTHER}`], buttons: ['Resolve'] })
+  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', HINT, `✓ ${OPEN}`, `☐ ${OTHER}`], buttons: ['Resolve'] })
 })
 
 test('hangs the first item off an elbow and aligns the rest under it', async ($, on) => {
@@ -1013,7 +1015,7 @@ test('hangs the first item off an elbow and aligns the rest under it', async ($,
   await add($, OPEN)
   await add($, OTHER)
 
-  expect((await bandTexts($)).texts).toEqual(['⏺ Open items ', '  ⎿  ', `☐ ${OPEN}`, '     ', `☐ ${OTHER}`])
+  expect((await bandTexts($)).texts).toEqual(['⏺ Open items ', HINT, '  ⎿  ', `☐ ${OPEN}`, '     ', `☐ ${OTHER}`])
 })
 
 test('keeps an item recorded after /clear when an earlier resolve timer fires', async ($, on) => {
@@ -1024,7 +1026,7 @@ test('keeps an item recorded after /clear when an earlier resolve timer fires', 
 
   await clock.advance(RESOLVED_SHOW_MS)
 
-  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', `☐ ${OTHER}`])
+  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', HINT, `☐ ${OTHER}`])
 })
 
 test('runs /turbo:resolve-open-items as the plugin when Resolve is pressed', async ($, on) => {
@@ -1058,6 +1060,13 @@ test('leaves the Resolve button out while a turn runs', async ($, on) => {
   await add($, OPEN)
 
   expect(await bandLines($, { isWorking: true })).toEqual({ lines: ['⏺ Open items ', `☐ ${OPEN}`], buttons: [] })
+})
+
+test('leaves the focus hint off a band drawn outside the terminal', async ($, on) => {
+  machine(on)
+  await add($, OPEN)
+
+  expect(await bandLines($, { surface: 'desktop' })).toEqual({ lines: ['⏺ Open items ', `☐ ${OPEN}`], buttons: ['Resolve'] })
 })
 
 test('gives way to a survey', async ($, on) => {
