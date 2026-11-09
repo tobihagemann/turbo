@@ -7,17 +7,9 @@ description: "Walk the open items listed above the prompt (the decisions and act
 
 Settle each open item with one question per item, acting on every answer before the next round.
 
-## Task Tracking
-
-At the start, use `TaskCreate` to create a task for each step:
-
-1. List the open items
-2. Settle each item
-3. Report
-
 ## Step 1: List the Open Items
 
-Call the `mcp__turbo__open-items` tool with `action` set to `list`. When it answers that there are no open items, present "No open items." and mark this skill's remaining tasks deleted. Then use the TaskList tool and proceed to any remaining task.
+Call the `mcp__turbo__open-items` tool with `action` set to `list`. When it answers that there are no open items, present "No open items." Then use the TaskList tool and proceed to any remaining task.
 
 ## Step 2: Settle Each Item
 
