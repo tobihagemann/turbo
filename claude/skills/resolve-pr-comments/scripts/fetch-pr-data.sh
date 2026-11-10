@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
-# Fetch all review threads, reviews, issue comments, commits, and metadata for a
-# GitHub PR. Emits a single merged JSON document on stdout:
+# Fetch all review threads, reviews, issue comments, commits, head-commit checks,
+# and metadata for a GitHub PR. Emits a single merged JSON document on stdout:
 #   {
-#     "meta":          { title, url, headRefName, baseRefName, body },
+#     "meta":          { title, url, headRefName, headRefOid, baseRefName, body },
 #     "reviewThreads": [ ... ],
 #     "reviews":       [ ... ],   # includes submittedAt
 #     "issueComments": [ ... ],   # PR conversation comments; author, body, createdAt, url
-#     "commits":       [ ... ]    # oid, abbreviatedOid, message, committedDate
+#     "commits":       [ ... ],   # oid, abbreviatedOid, message, committedDate
+#     "checks":        [ ... ]    # head commit's check runs and commit statuses;
+#                                 # name, app, state, conclusion, title, detailsUrl
 #   }
+#
+# Each check's "state" is "failing", "pending", or "passing". Skipped check runs are
+# left out.
 #
 # Paginates reviewThreads, reviews, issue comments, and commits to avoid silent
 # drops on long PRs. For any thread whose inner comments exceed the initial page,
@@ -29,7 +34,7 @@ pr="$3"
 meta_query=$(cat <<'GRAPHQL'
 query($owner: String!, $repo: String!, $pr: Int!) {
   repository(owner: $owner, name: $repo) {
-    pullRequest(number: $pr) { title url headRefName baseRefName body }
+    pullRequest(number: $pr) { title url headRefName headRefOid baseRefName body }
   }
 }
 GRAPHQL
@@ -166,10 +171,39 @@ commits=$(gh api graphql --paginate \
   --jq '.data.repository.pullRequest.commits.nodes[]' \
   | jq -s '.')
 
+head_oid=$(jq -r '.headRefOid' <<<"$meta")
+
+# Only a successful or neutral conclusion passes. A cancelled or stale run never
+# produced a result, so it counts as failing rather than as confirmation.
+check_runs=$(gh api --paginate \
+  "repos/$owner/$repo/commits/$head_oid/check-runs?per_page=100" \
+  --jq '.check_runs[]' \
+  | jq -s '[ .[] | select(.conclusion != "skipped")
+      | (if .status != "completed" then "pending"
+         elif (.conclusion | IN("success", "neutral")) then "passing"
+         else "failing" end) as $state
+      | { name, app: .app.slug, state: $state, conclusion,
+          title: .output.title, detailsUrl: .details_url } ]')
+
+# Commit statuses are the older API some services still report through.
+statuses=$(gh api --paginate \
+  "repos/$owner/$repo/commits/$head_oid/status?per_page=100" \
+  --jq '.statuses[]' \
+  | jq -s '[ .[]
+      | { name: .context, app: null,
+          state: (if .state == "pending" then "pending"
+                  elif (.state | IN("failure", "error")) then "failing"
+                  else "passing" end),
+          conclusion: (if .state == "pending" then null else .state end),
+          title: .description, detailsUrl: .target_url } ]')
+
+checks=$(jq -n --argjson a "$check_runs" --argjson b "$statuses" '$a + $b')
+
 jq -n \
   --argjson meta "$meta" \
   --argjson threads "$threads" \
   --argjson reviews "$reviews" \
   --argjson issueComments "$issue_comments" \
   --argjson commits "$commits" \
-  '{meta: $meta, reviewThreads: $threads, reviews: $reviews, issueComments: $issueComments, commits: $commits}'
+  --argjson checks "$checks" \
+  '{meta: $meta, reviewThreads: $threads, reviews: $reviews, issueComments: $issueComments, commits: $commits, checks: $checks}'

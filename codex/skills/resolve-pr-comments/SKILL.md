@@ -1,17 +1,17 @@
 ---
 name: resolve-pr-comments
-description: "Evaluate, fix, answer, and reply to GitHub PR review and conversation comments. Use when the user asks to \"resolve PR comments\", \"address PR feedback\", or \"answer review questions\"."
+description: "Evaluate, fix, and answer GitHub PR comments, and fix what failing checks report. Use when the user asks to \"resolve PR comments\", \"address PR feedback\", \"answer review questions\", or \"fix PR checks\"."
 ---
 
 # Resolve PR Review Comments
 
-Fetch unresolved review comments from a GitHub PR (inline threads, review-body observations, and issue-comment observations from the PR conversation), evaluate each one, fix or skip based on confidence, answer reviewer questions using the recalled rationale behind the change, and reply. Inline threads are answered with thread replies; issue-comment findings from people are answered with new PR conversation comments. Review-body findings and AI-reviewer issue comments flow through the same evaluate-and-fix pipeline; their outcomes land only in the summary.
+Fetch unresolved review comments from a GitHub PR (inline threads, review-body observations, and issue-comment observations from the PR conversation), evaluate each one, fix or skip based on confidence, answer reviewer questions using the recalled rationale behind the change, and reply. Inline threads are answered with thread replies; issue-comment findings from people are answered with new PR conversation comments. Review-body findings, AI-reviewer issue comments, and the findings behind the head commit's failing checks flow through the same evaluate-and-fix pipeline; their outcomes land only in the summary.
 
 ## Task Tracking
 
 At the start, use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
 
-1. Fetch comments
+1. Fetch comments and checks
 2. Triage already-addressed feedback
 3. Run `$interpret-feedback` skill
 4. Split questions and change requests
@@ -20,14 +20,14 @@ At the start, use `update_plan` to track each step, restating any remaining step
 7. Run `$implement-findings` skill
 8. Verify fixes
 9. Answer reviewer questions
-10. Wait for AI re-reviews
+10. Wait for AI re-reviews and checks
 11. Run `$reply-to-pr-threads` skill
 12. Run `$reply-to-pr-conversation` skill
 13. Summary
 
-## Step 1: Fetch Comments
+## Step 1: Fetch Comments and Checks
 
-Auto-detect owner, repo, and PR number from current branch if not provided. Resolve the absolute path of this skill's directory, the directory of the `SKILL.md` loaded for this run, and use it as `<this skill's directory>` below. Then run `<this skill's directory>/scripts/fetch-pr-data.sh`, which handles full pagination (reviews, review threads, inner comment pages for long threads, issue comments, commits) and emits a single merged JSON document:
+Auto-detect owner, repo, and PR number from current branch if not provided. Resolve the absolute path of this skill's directory, the directory of the `SKILL.md` loaded for this run, and use it as `<this skill's directory>` below. Then run `<this skill's directory>/scripts/fetch-pr-data.sh`, which handles full pagination (reviews, review threads, inner comment pages for long threads, issue comments, commits, the head commit's checks) and emits a single merged JSON document:
 
 ```bash
 bash <this skill's directory>/scripts/fetch-pr-data.sh <owner> <repo> <pr_number>
@@ -37,15 +37,24 @@ Output shape:
 
 ```jsonc
 {
-  "meta":          { "title", "url", "headRefName", "baseRefName", "body" },
+  "meta":          { "title", "url", "headRefName", "headRefOid", "baseRefName", "body" },
   "reviewThreads": [ { "id", "isResolved", "isOutdated", "comments": { "nodes": [ { "author", "body", "path", "line", "originalLine", "diffHunk" } ] } } ],
   "reviews":       [ { "author", "body", "state", "submittedAt" } ],
   "issueComments": [ { "author", "body", "createdAt", "url" } ],
-  "commits":       [ { "commit": { "oid", "abbreviatedOid", "message", "committedDate" } } ]
+  "commits":       [ { "commit": { "oid", "abbreviatedOid", "message", "committedDate" } } ],
+  "checks":        [ { "name", "app", "state", "conclusion", "title", "detailsUrl" } ]
 }
 ```
 
-Filter review threads to unresolved only. Filter reviews to those with a non-empty body, excluding `PENDING` state (unsubmitted drafts). Filter issue comments to those with a non-empty body.
+Filter review threads to unresolved only. Filter reviews to those with a non-empty body, excluding `PENDING` state (unsubmitted drafts). Filter issue comments to those with a non-empty body. Filter checks to those whose `state` is `failing`.
+
+Read what each failing check reports, by its `app`:
+
+- **`github-actions`** — read the failed steps' log with `gh run view --job <job id> --log-failed`, taking the job id from the end of `detailsUrl`. Record each distinct build error or failing test as one check finding, with the file and line the log names. When the log cannot be read or names no failure, record the check as unreadable.
+- **`sonarqubecloud`** — run `bash <this skill's directory>/scripts/fetch-sonarcloud-findings.sh <detailsUrl>`, which emits `{ "qualityGate", "failedConditions": [ { "metric", "actual", "threshold", "comparator" } ], "issues": [ { "rule", "path", "line", "message", "severity", "type" } ] }`. Record each issue as one check finding, and each failed condition that no issue accounts for, such as coverage on new code, as one more. When the script exits non-zero, the analysis is not readable: record the check as unreadable.
+- **Any other app** — record the check as unreadable.
+
+Tag each check finding with the source `check` and the name of its check. Check findings skip Steps 2 through 4 and feed Step 5. Record each unreadable check's name, title, and `detailsUrl` for the Step 13 summary.
 
 ## Step 2: Triage Already-Addressed Feedback
 
@@ -91,11 +100,11 @@ Produce two lists. Each entry retains the `source` tag, identifier (thread id fo
 
 ## Step 5: Run `$evaluate-findings` Skill
 
-If Step 4 produced no change requests and Step 3 routed no AI-reviewer items here, skip the skill invocation.
+If Step 4 produced no change requests, Step 3 routed no AI-reviewer items here, and Step 1 recorded no check findings, skip the skill invocation.
 
-Run the `$evaluate-findings` skill on the change requests from Step 4 and the AI-reviewer items Step 3 routed here, to triage each one. Questions are not evaluated here.
+Run the `$evaluate-findings` skill on the change requests from Step 4, the AI-reviewer items Step 3 routed here, and the check findings from Step 1, to triage each one. Questions are not evaluated here.
 
-Scope the assessment of a review-body or issue-comment finding to the file and lines its text names, or to the PR's changed files as a whole when it names none. Treat a named location as a pointer to the code the reviewer saw, which later commits may have shifted, and do not treat an absent or shifted location as a "code has diverged" early exit.
+Scope the assessment of a review-body, issue-comment, or check finding to the file and lines it names, or to the PR's changed files as a whole when it names none. Treat a named location as a pointer to the code the reviewer saw, which later commits may have shifted, and do not treat an absent or shifted location as a "code has diverged" early exit.
 
 ## Step 6: Resolve Ambiguities
 
@@ -117,7 +126,7 @@ Whenever the item is costly to reverse (its resolution establishes a pattern oth
 
 ## Step 7: Run `$implement-findings` Skill
 
-Run `<this skill's directory>/scripts/fetch-pr-data.sh` again, once. When it shows unresolved threads, review bodies, or issue comments that pass Step 1's filters and that Steps 2 to 6 have not yet taken up, use `update_plan` to add Steps 2 to 6 for only those items ahead of the rest of this step. Take them through Steps 2 to 6, then continue with this step without fetching again.
+Run `<this skill's directory>/scripts/fetch-pr-data.sh` again, once. When it shows unresolved threads, review bodies, issue comments, or failing checks that pass Step 1's filters and that Steps 2 to 6 have not yet taken up, use `update_plan` to add Steps 2 to 6 for only those items ahead of the rest of this step. Take the new threads, review bodies, and issue comments through Steps 2 to 6. Read a newly failing check's findings as in Step 1 and take them through Steps 5 and 6. Then continue with this step without fetching again.
 
 If there are no accepted findings to implement, skip to Step 9.
 
@@ -127,7 +136,7 @@ Run the `$implement-findings` skill on the accepted findings from Step 5, includ
 
 For each finding that was fixed in Step 7, verify the fix actually addresses the reviewer's concern:
 
-1. Read the current code. For inline threads, use the thread's file and line. For review-body and issue-comment findings, read the file and lines their text names, or the files touched during the fix when it names none.
+1. Read the current code. For inline threads, use the thread's file and line. For review-body, issue-comment, and check findings, read the file and lines they name, or the files touched during the fix when they name none.
 2. Compare against the reviewer's comment (and `diffHunk` when available).
 3. Confirm the specific concern is resolved.
 
@@ -141,13 +150,17 @@ Issue-comment questions are composed during Step 12's assembly and posted by `$r
 
 If there are no inline-thread questions, skip this step.
 
-## Step 10: Wait for AI Re-reviews
+## Step 10: Wait for AI Re-reviews and Checks
 
-Skip this step when Step 7 pushed no commit, or when no inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped.
+Skip this step when Step 7 pushed no commit.
 
-For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one, or until 3 minutes have passed since the push. When none has, skip the rest of this step.
+Wait for AI re-reviews when an inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped. For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one, or until 3 minutes have passed since the push. When one has, poll the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) in a shell loop that ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes.
 
-Otherwise poll the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) in a shell loop that ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Then run `<this skill's directory>/scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 7's fetch for a later run; record both for the Step 13 summary.
+Wait for checks when Step 7 fixed a check finding: run `<this skill's directory>/scripts/fetch-pr-data.sh` in a shell loop that ends once `meta.headRefOid` is the pushed commit, every check whose finding was fixed appears in `checks`, and no check has the `state` `pending`, or after 15 minutes.
+
+When no reviewer was found re-reviewing and the wait for checks did not run, skip the rest of this step.
+
+Then run `<this skill's directory>/scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 7's fetch for a later run. When the wait for checks ran, sort the checks that were failing in Step 7's fetch: one that now passes is confirmed, one that still fails is still failing, and one that is `pending`, missing, or reported for a commit other than the pushed one is unfinished. A check failing for the first time is left for a later run. Record all of these for the Step 13 summary.
 
 ## Step 11: Run `$reply-to-pr-threads` Skill
 
@@ -163,7 +176,7 @@ Give each fix and skip entry whose first comment is from an AI-reviewer account 
 
 A thread whose first comment is from `github-advanced-security` carries a code-scanning alert. Give each such skip entry that carries a resolution reason the alert number from the comment's `/security/code-scanning/<n>` link and a dismissal reason: `used in tests` when the flagged code runs only in tests, otherwise `false positive` for `INVALID` and `won't fix` for `WONT_FIX`.
 
-Issue-comment findings go to Step 12. Review-body findings have no destination to post to, Addressed inline threads outside the resolve-only entries already carry the reply naming the commit, and threads Step 10 dropped were resolved during the wait; all three surface only in Step 13.
+Issue-comment findings go to Step 12. Review-body and check findings have no destination to post to, Addressed inline threads outside the resolve-only entries already carry the reply naming the commit, and threads Step 10 dropped were resolved during the wait; all three surface only in Step 13.
 
 If there are no inline-thread items to reply to or resolve, skip the skill invocation.
 
@@ -178,7 +191,7 @@ Assemble the processed-item list from issue-comment items only. Each entry inclu
 - **answer** — issue-comment questions. Compose a one-or-two-sentence answer from the reconciled intent from Step 3 and the PR's changed code. Payload: the composed answer.
 - **clarify** — issue-comment items reclassified as clarification questions in Step 6. Payload: the user-directed clarification question.
 
-Review-body findings have no destination to post to, and issue comments from AI-reviewer accounts, matched as in Step 3, get no conversation reply. Exclude both from this list; their triage status is reported in Step 13.
+Review-body and check findings have no destination to post to, and issue comments from AI-reviewer accounts, matched as in Step 3, get no conversation reply. Exclude them from this list; their triage status is reported in Step 13.
 
 If there are no issue-comment items to reply to, skip the skill invocation.
 
@@ -214,10 +227,17 @@ After processing all items, present a summary grouped by source.
 - Clarification questions asked
 - Reply URL (the posted issue comment, if any)
 
+**Checks:**
+- Failing checks found (list name and title)
+- Fixed (list finding, file path, addressing commit SHA, and whether Step 10 confirmed the check now passes)
+- Skipped (list finding and skip reasoning; for a SonarCloud issue, note that dismissing it in SonarCloud is left to the user)
+- Unreadable (list name, title, and link)
+- Still failing, left for a later run, or unfinished after Step 10's wait (list name and title)
+
 **Overall:** list of files modified.
 
 ## Rules
 
-- Process inline threads in file order to minimize context switching. Handle review-body and issue-comment findings after inline threads.
+- Process inline threads in file order to minimize context switching. Handle review-body, issue-comment, and check findings after inline threads.
 - When a thread has multiple comments (discussion), read the full thread before deciding.
 - The first comment in each thread is the original review comment; subsequent comments are replies.
