@@ -18,7 +18,7 @@ Run the `$github-voice` skill to load writing style rules.
 
 ## Phase 3: Draft Title and Description
 
-Pick a framing, then draft a title and description in it, embedding any diagrams and screenshots in the body. Output the drafted title and description as chat text so the user can review it, followed by the path of each capture that will upload, if any. After that, name each added surface or changed look that none of those captures shows in its final state, if any, with the reason it goes unshown.
+Pick a framing, then draft a title and description in it, embedding any diagrams, Merge Risk section, and screenshots in the body as [body-elements.md](body-elements.md) directs. Output the drafted title and description as chat text so the user can review it, followed by the path of each capture that will upload, if any. After that, name each added surface or changed look that none of those captures shows in its final state, if any, with the reason it goes unshown.
 
 ## Phase 4: Confirm and Create
 
@@ -47,7 +47,7 @@ When the command reports a failed upload, act on what it printed, then report wh
 - **No PR URL** — nothing uploaded and no PR exists. Remove the screenshot table and its heading from the body file and run the command again without `--attach`.
 - **A PR URL** — the PR exists, and its body references the captures that did not upload by local path. Fetch the posted body with `gh pr view <PR_URL> --json body --jq .body`, remove each table column whose image is still a local path, write the result to the body file, and apply it with `gh pr edit <PR_URL> --body-file .turbo/pr/<tag>-body.md`.
 
-When an uploaded capture was taken at a scale factor above 1, size it to its logical width. Take the scale factor as the capture's pixels per logical pixel of the surface it shows: the device scale factor it was captured at, unless it was captured at logical scale or resized since. When that is unknown, use its recorded pixel density divided by 72 dpi, provided that density is a whole multiple of 72. Leave a capture whose scale factor cannot be established as uploaded. Fetch the posted body with `gh pr view <PR_URL> --json body --jq .body`, replace each such capture's markdown image, which now points at its uploaded asset, with `<img width="<pixel width ÷ scale factor, rounded>" alt="<caption>" src="<asset URL>">`, write the result to the body file, and apply it with `gh pr edit <PR_URL> --body-file .turbo/pr/<tag>-body.md`.
+When an uploaded capture was taken at a scale factor above 1, size it to its logical width as the Logical Width section of [body-elements.md](body-elements.md) directs: fetch the posted body with `gh pr view <PR_URL> --json body --jq .body`, replace each such capture's image, write the result to the body file, and apply it with `gh pr edit <PR_URL> --body-file .turbo/pr/<tag>-body.md`.
 
 When the user asks, before the PR is posted, to change content this session committed for it, fold the change into the commit that carries that content instead of adding a commit, and push with `--force-with-lease` when that commit was already pushed. Update the drafted title and the body file where the change alters what they describe, then return to this gate.
 
@@ -84,84 +84,3 @@ Write Before lines in the past tense, with two exceptions. A sentence describing
 - Write the body for someone who knows only the repository the PR targets. When the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body. Explaining a cause does not license importing those internals. State the observable outcome instead. Describe the change on its own terms, without reference to how a different repository or product does it.
 - When the PR closes an issue, open with `Closes #N`. Carry only what the issue does not already say: the interface being added, behavior a reviewer cannot infer from the diff, and above all any deviation from what the issue asked for. The issue carries the bug, its root cause, and the motivation; reference it rather than restating it.
 - After cutting for any rule above, re-read what remains. A claim whose setup lived in a cut passage no longer stands on its own.
-
-## Diagrams
-
-GitHub renders Mermaid natively in PR descriptions via ` ```mermaid ` code blocks. Include diagrams only when they add clarity prose can't — skip for trivial changes or obvious flows.
-
-### Sequence Diagram
-
-Include when the changes introduce or modify a clear runtime flow: API endpoints, event handlers, pipelines, multi-service interactions, webhook flows.
-
-````markdown
-```mermaid
-sequenceDiagram
-  Client->>API: POST /payments
-  API->>PaymentService: processPayment()
-  PaymentService->>StripeClient: charge()
-  StripeClient-->>PaymentService: confirmation
-  PaymentService->>DB: save()
-```
-````
-
-### State Diagram
-
-Include when the changes add or modify entity states, status enums, workflow transitions, or lifecycle hooks.
-
-````markdown
-```mermaid
-stateDiagram-v2
-  [*] --> Draft
-  Draft --> Pending: submit()
-  Pending --> Approved: approve()
-  Pending --> Rejected: reject()
-  Approved --> [*]
-```
-````
-
-### Text Sketch
-
-Include when the point of the change is structural and a few lines show it faster than prose: where a call joined a call tree, how files or responsibilities were rearranged, where a component gained a child. Write an indented tree in a ` ```text ` block. When the surrounding shape already exists and the point is what was added or removed, write it in a ` ```diff ` block instead.
-
-````markdown
-```diff
- <entry point>
-   <existing call>
-+    <added call>
--  <removed call>
-```
-````
-
-### Rules
-
-- Only include when the diagram genuinely adds clarity
-- Keep diagrams focused — max ~10 nodes/transitions
-- Use descriptive labels on arrows (method names, HTTP verbs)
-- Place diagrams after the opening body text under a `## Flow` or `## State Machine` heading, and a text sketch beside the text it supports
-- One diagram per type max, and combine types only when the PR truly has each pattern
-
-## Merge Risk
-
-Add a `## Merge Risk` section when merging is hard to undo or reaches past the surface the PR edits: a data migration or data deletion, a published interface or format, a change other consumers pick up without opting in. State in one or two lines what reverting the PR would not roll back, what else the change affects, or both, as applies. Place it last in the body. Omit the section for a change that a revert undoes and that stays within the surface it edits.
-
-## Screenshots
-
-Include screenshots when the PR adds a user-facing surface or changes how one looks, and this session already holds captures of that surface in its final state. Reuse those captures after viewing each one, keeping the fewest that show the change. A change in when an existing surface appears leaves its look unchanged, so add no capture of it. Take no new captures: with none on hand, omit the section.
-
-Reference every kept capture in one row of a markdown table, with its caption in the header cell above it:
-
-```markdown
-| <caption> | <caption> |
-| --- | --- |
-| ![<caption>](<absolute path>) | ![<caption>](<absolute path>) |
-```
-
-### Rules
-
-- Use markdown image syntax with the capture's absolute path. `gh` points only markdown references at the uploaded asset, so a raw `<img>` tag keeps its local path.
-- Keep every capture in the table row. `gh` appends an attached file the body never references as its own paragraph.
-- Place the table after the opening body text under a `## Screenshots` heading, ahead of any `## Flow` or `## State Machine` section.
-
-## Rules
-
-- Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in the title or body. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.

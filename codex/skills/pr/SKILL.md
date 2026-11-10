@@ -9,6 +9,8 @@ Create the branch's pull request, or bring an existing one's title and descripti
 
 ## Route to Create or Update
 
+Both routes draft by the rules in [references/body-elements.md](references/body-elements.md). Read it alongside the route's reference, before the first phase.
+
 When this request gives a PR number, read [references/update.md](references/update.md) and follow its phases for that PR.
 
 Otherwise, look up the current branch's PR. A base branch given with the request is the base of a new PR, never a lookup key.
