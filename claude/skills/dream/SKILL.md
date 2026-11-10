@@ -13,7 +13,7 @@ Text passed with the invocation steers the memory pass: what to look for and how
 
 Use the auto-memory directory the system prompt names. When it names none, an effective `autoMemoryDirectory` setting gives the location. Otherwise the directory is `<Claude config home>/projects/<encoded project root>/memory/`. The config home is `CLAUDE_CONFIG_DIR` when set and `~/.claude` otherwise. The key replaces every character outside `A-Za-z0-9` with `-`, and long keys may be truncated and hashed.
 
-List the directory, then read `MEMORY.md` and every note. When the directory does not exist or holds no notes, say so and continue with Step 4.
+List the directory, then read `MEMORY.md` and every note with the Read tool. When the directory does not exist or holds no notes, say so and continue with Step 4.
 
 ## Step 2: Gather Evidence
 
