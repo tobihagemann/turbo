@@ -8,7 +8,7 @@ description: "Run the project's verification gate, built from its CI config, che
 Build the gate by combining every source below that the project declares (sources 1-3); run the baseline (source 4) only when the project declares none of them. Passing the gate must mean the project's own checks (and CI, where it exists) pass.
 
 1. **CI config** — where present, it is the authoritative gate; run the checks it enforces.
-2. **Check scripts** — package-manager scripts (`check`, `verify`, `lint`, `typecheck`, `build`), Makefile, Taskfile, or justfile targets, or a combined format+lint script.
+2. **Check scripts** — package-manager scripts (`check`, `verify`, `lint`, `typecheck`, `build`), Makefile, Taskfile, or justfile targets, a combined format+lint script, or a check command the project's instruction files call for on this change.
 3. **Configured tools** — any tool with a config committed to the repo, such as a dead-code or unused-dependency gate. A committed config means the project treats the tool as a gate; run it even when no script or CI invokes it. Do not run such a tool when the project has not configured it.
 4. **Baseline** — when the project declares nothing more, run the formatter, then the linter, then the build where the project produces one, then the test suite.
 

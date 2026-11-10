@@ -37,7 +37,7 @@ After each call, act on its answers before the next call. An answer given under 
 - **Get a second opinion** — run the `/consult-codex` skill. On a technical choice, ask for the soundest choice on technical merit alone, independent of how closely it conforms to the original scope, and carry any scope cost back with the answer. On a question of product intent, ask what each choice commits to, what reversing it costs, and what the prevailing convention is. Then ask about that item again with the answer in hand.
 - **An instruction or a question** — act on it. When that settles the item or makes it moot, resolve it. Ask about it again only while it stays open.
 
-Before the next call, resolve any unasked item that earlier answers settled or made moot, and leave it out of the call. Repeat until no item remains to ask. Then call the tool with `list` again, and settle any item it shows that this walk has not asked about.
+Before the next call, resolve any unasked item that earlier answers settled or made moot, and leave it out of the call. Repeat until no item remains to ask. Then call the tool with `list` again, and settle any item it shows that this walk has not asked about, except an action this walk itself added, which stays open.
 
 ## Step 3: Report
 
