@@ -37,7 +37,7 @@ tests are failing in the auth module, can you please /turbo:investigate?
 
 # Reviewing a PR and resolving PR feedback
 /turbo:review-pr for PR #42
-/turbo:resolve-pr-comments
+/turbo:resolve-pr-feedback
 
 # Updating dependencies
 /turbo:update-dependencies

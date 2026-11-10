@@ -105,4 +105,4 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- If the user wants to fix or reply to comments, direct them to use `/turbo:resolve-pr-comments`.
+- If the user wants to fix or reply to comments, direct them to use `/turbo:resolve-pr-feedback`.
