@@ -55,7 +55,7 @@ export async function clearStatusOnSwap(
 export async function renderStatus(
   $: EngineInterface,
   e: Frozen<RenderInput<'PromptHint'>>,
-  next: Next<'ui.render'>,
+  next: Next<'ui.render', RenderInput<'PromptHint'>>,
 ) {
   const text = await statusText($, (await read($, contextLeft)) ?? undefined, e.props.isWorking)
 
@@ -65,7 +65,7 @@ export async function renderStatus(
 export async function renderDialogStatus(
   $: EngineInterface,
   e: Frozen<RenderInput<'AskUserQuestion'>>,
-  next: Next<'ui.render'>,
+  next: Next<'ui.render', RenderInput<'AskUserQuestion'>>,
 ) {
   const text = await statusText($, contextText((await $.session.usage()).context.percent), false)
   const dialog = await next(e)

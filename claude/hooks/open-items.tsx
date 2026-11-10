@@ -170,7 +170,7 @@ export async function addOpenItemsContext(
 export async function renderOpenItems(
   $: EngineInterface,
   e: Frozen<RenderInput<'AbovePrompt'>>,
-  next: Next<'ui.render'>,
+  next: Next<'ui.render', RenderInput<'AbovePrompt'>>,
 ) {
   if (e.props.hasSurvey) {
     return next(e)

@@ -254,6 +254,17 @@ for (const [behavior, composed, text] of openItemsRuleBySession) {
   })
 }
 
+const SPAWN: Args<'agent.spawn'> = {
+  tool_use_id: 'toolu_1',
+  prompt: 'Review the diff.',
+  description: 'Review the diff',
+  subagentType: 'general-purpose',
+  provider: { plugin: 'engine', tier: 'core' },
+  parentModel: 'claude-opus-5-5',
+  background: false,
+  fork: false,
+}
+
 const spawnedPrompt = async ($: Engine, on: On, spawn: Partial<Args<'agent.spawn'>> = {}) => {
   let prompt: string | undefined
 
@@ -262,7 +273,7 @@ const spawnedPrompt = async ($: Engine, on: On, spawn: Partial<Args<'agent.spawn
 
     return { model: 'claude-opus-5-5' }
   })
-  await $.agent.spawn({ prompt: 'Review the diff.', ...spawn })
+  await $.agent.spawn({ ...SPAWN, ...spawn })
 
   return prompt
 }
@@ -837,7 +848,7 @@ const band = ($: Engine, { hasSurvey = false, isWorking = false, surface = 'term
     plugin: 'turbo',
     surface,
     component: 'AbovePrompt',
-    props: { hasSurvey, isWorking, maxRows: 10, bodyColumns: 80, scroll: { offset: 0, bodyRows: 9 }, view: {} },
+    props: { hasSurvey, isCollapsed: false, isWorking, maxRows: 10, bodyColumns: 80, scroll: { offset: 0, bodyRows: 9 }, view: {} },
   })
 
 const isGutter = (text: string) => ['', '⎿'].includes(text.trim())
