@@ -33,7 +33,7 @@ Write the drafted body to `.turbo/pr/<tag>-body.md` (using the printed tag) with
 Use `request_user_input` to choose among three outcomes, and act on the one selected:
 
 - **Post the PR now** — create it with the command below.
-- **Edit the description first** — give the user the path to the body file, note the current branch, and stop there. Once they say they are done editing, check out that branch, then use `request_user_input` again to offer posting the PR or cancelling, then act on that answer. Posting reads the file, so their edits carry through.
+- **Edit the description first** — give the user the path to the body file, note the current branch, and stop there. A goal continuation turn that carries no reply from the user is not the user saying they are done editing: end it without calling any tool and without advancing. Once they say they are done editing, check out that branch, then use `request_user_input` again to offer posting the PR or cancelling, then act on that answer. Posting reads the file, so their edits carry through.
 - **Cancel** — create no PR.
 
 ```bash
