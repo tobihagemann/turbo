@@ -196,16 +196,18 @@ export async function renderOpenItems(
           <Text dimColor>{` (ctrl+x tab, then ${RESOLVE_HOTKEY})`}</Text>
         ) : null}
       </Box>
-      {items.map((item, index) => (
-        <Box key={item.id}>
-          <Text dimColor>{index === 0 ? ELBOW : ' '.repeat(ELBOW.length)}</Text>
-          {isOpen(item) ? (
-            <Text wrap="truncate-end">{`☐ ${item.text}`}</Text>
-          ) : (
-            <Text wrap="truncate-end" dimColor strikethrough>{`✓ ${item.text}`}</Text>
-          )}
-        </Box>
-      ))}
+      {items.map((item, index) => {
+        const resolved = !isOpen(item)
+
+        return (
+          <Box key={item.id}>
+            <Text dimColor>{index === 0 ? ELBOW : ' '.repeat(ELBOW.length)}</Text>
+            <Text wrap="truncate-end" dimColor={resolved} strikethrough={resolved}>
+              {`${resolved ? '✓' : '☐'} ${item.text}`}
+            </Text>
+          </Box>
+        )
+      })}
     </Box>
   )
 }

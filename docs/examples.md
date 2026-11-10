@@ -35,7 +35,7 @@ the error messages in this module are inconsistent, /turbo:backlog
 tests are failing in the auth module, can you please /turbo:investigate?
 /turbo:investigate the app crashes when i click "save" after editing a profile
 
-# Reviewing and resolving PR feedback
+# Reviewing a PR and resolving PR feedback
 /turbo:review-pr for PR #42
 /turbo:resolve-pr-comments
 

@@ -96,15 +96,21 @@ Discard anything session-specific, speculative, one-off, or already resolved by 
 
 ## Step 4: Route Each Lesson
 
-Assign each surviving lesson to exactly one destination.
+Assign each surviving lesson to exactly one destination. Apply the routing rules in this order. The first that applies to a lesson decides its destination:
 
-**Revisions:** A lesson Step 3 kept as a revision routes to the destination that holds the rule it revises, as an update-in-place, ahead of the skill-first rule and the table; only the package-managed skills rule outranks it. When the rule lives in a source that is not a routing destination, route the lesson by the rules below like any other. When the rule lives in a turbo skill, its destination is **Existing turbo skill**, or **Existing user/project skill** under Step 1's turbo repo exception: the revision goes where any other lesson for that skill goes, never into the plugin's copy.
+1. **Package-managed skills**
+2. **Mechanical rules**
+3. **Revisions**
+4. **Skill-first rule**
+5. The destination table, with the **Tiebreakers** settling a lesson that fits more than one row
 
-**Mechanical rules (mandatory):** Before consulting the table below, classify each lesson that states a rule for the project's code as mechanical or judgment. A mechanical rule is one a tool can decide from the code alone: a fixed pattern, a banned call, an import shape, a file-location rule. Route it to **Deterministic check** alone, writing it to no instruction file, memory, or skill. A rule that takes judgment to apply routes by the table like any other lesson. This rule outranks the skill-first rule, the table, and the tiebreakers; only the package-managed skills rule outranks it.
+**Package-managed skills (mandatory):** A skill Step 1 classified as package-managed from the lock file routes its lesson straight to **Auto memory**, recording the skill it applies to, with no question put to the user: the lock file has already settled ownership. A skill under `~/.claude/skills/` that Step 1 left ownership-unresolved may still be one a package manager replaces wholesale on its next update, discarding any edit made here. Before routing a lesson to such a skill, say plainly that an edit to it survives only while the user maintains it themselves. Then use `AskUserQuestion` to ask which is the case, with the options phrased as that effect: edits to this skill stick, or the next update overwrites them. Route the lesson to **Auto memory** when a package manager maintains the skill, recording the skill it applies to so the knowledge survives the next update.
 
-**Skill-first rule (mandatory):** Before consulting the table below, check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running /skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or CLAUDE.md — they belong in the skill they correct. This rule is not a preference; it is a hard constraint that takes precedence over the table rows below, yielding only to **Mechanical rules** and **Package-managed skills**.
+**Mechanical rules (mandatory):** Classify each lesson that states a rule for the project's code as mechanical or judgment. A mechanical rule is one a tool can decide from the code alone: a fixed pattern, a banned call, an import shape, a file-location rule. Route it to **Deterministic check** alone, writing it to no instruction file, memory, or skill. A rule that takes judgment to apply routes by the remaining rules like any other lesson.
 
-**Package-managed skills (mandatory):** A skill Step 1 classified as package-managed from the lock file routes its lesson straight to **Auto memory**, recording the skill it applies to, with no question put to the user: the lock file has already settled ownership. A skill under `~/.claude/skills/` that Step 1 left ownership-unresolved may still be one a package manager replaces wholesale on its next update, discarding any edit made here. Before routing a lesson to such a skill, say plainly that an edit to it survives only while the user maintains it themselves. Then use `AskUserQuestion` to ask which is the case, with the options phrased as that effect: edits to this skill stick, or the next update overwrites them. Route the lesson to **Auto memory** when a package manager maintains the skill, recording the skill it applies to so the knowledge survives the next update. For those skills this rule outranks the skill-first rule, the routing table rows, and the tiebreakers below.
+**Revisions:** A lesson Step 3 kept as a revision routes to the destination that holds the rule it revises, as an update-in-place. When the rule lives in a source that is not a routing destination, route the lesson by the remaining rules like any other. When the rule lives in a turbo skill, its destination is **Existing turbo skill**, or **Existing user/project skill** under Step 1's turbo repo exception: the revision goes where any other lesson for that skill goes, never into the plugin's copy.
+
+**Skill-first rule (mandatory):** Check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running /skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or CLAUDE.md — they belong in the skill they correct.
 
 | Destination | Criteria |
 |---|---|
@@ -131,12 +137,11 @@ Assign each surviving lesson to exactly one destination.
 **Splitting heuristic:** When a session creates scripts or multi-step procedures, split the lesson: a brief pointer goes to CLAUDE.md (script names, purpose), and the full workflow goes to a skill. Don't collapse them into a single CLAUDE.md entry.
 
 **Tiebreakers (in priority order):**
-1. **Skill correction → skill (hard rule).** Any lesson that corrects, constrains, or refines a skill's behavior MUST route to that skill. Never to auto memory, never to CLAUDE.md. This is the highest-priority routing rule, ahead of every tiebreaker below and yielding only to **Mechanical rules** and **Package-managed skills** above.
-2. **Turbo skill vs. CLAUDE.md → always the turbo skill.** Broader impact (benefits all turbo users), better scoped, loaded only when relevant.
-3. **Skill vs. CLAUDE.md → always the skill.** Skills are more discoverable, better scoped, and loaded only when relevant.
-4. **Skill vs. auto memory → always the skill.** If a lesson falls within the domain of an existing skill, it goes to the skill. Auto memory is for knowledge that has no skill home, and for the domain of a skill a package manager maintains.
-5. **CLAUDE.md vs. auto memory** — intentional decisions go to CLAUDE.md. Discovered knowledge (gotchas, workarounds, quirks) goes to auto memory.
-6. **Lesson vs. improvement** — if the item is *knowledge to remember*, it's a lesson. If it's *work to do later*, it's an improvement. They don't compete — the same session can produce both.
+1. **Turbo skill vs. CLAUDE.md → always the turbo skill.** Broader impact (benefits all turbo users), better scoped, loaded only when relevant.
+2. **Skill vs. CLAUDE.md → always the skill.** Skills are more discoverable, better scoped, and loaded only when relevant.
+3. **Skill vs. auto memory → always the skill.** If a lesson falls within the domain of an existing skill, it goes to the skill. Auto memory is for knowledge that has no skill home, and for the domain of a skill a package manager maintains.
+4. **CLAUDE.md vs. auto memory** — intentional decisions go to CLAUDE.md. Discovered knowledge (gotchas, workarounds, quirks) goes to auto memory.
+5. **Lesson vs. improvement** — if the item is *knowledge to remember*, it's a lesson. If it's *work to do later*, it's an improvement. They don't compete — the same session can produce both.
 
 ## Step 5: Present Routing Plan
 
