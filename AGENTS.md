@@ -22,11 +22,14 @@ codex/                    # Codex edition and plugin root (canonical Codex tree)
 ├── ADDITIONS.md          # Turbo rules the hook injects
 └── SKILL-CONVENTIONS.md
 claude/                   # Claude Code edition and plugin root (parallel tree; hooks/, tests/, and types/ hold the mod)
+tests/                    # Tests for scripts both editions ship, outside both plugin roots
 ```
 
 Each skill is self-contained. Skills compose other skills to any depth via `$skill-name` invocations. The key distinction is between analysis skills (return structured findings without acting) and workflow skills (compose analysis skills and act on results).
 
 `$smoke-test`, `$create-test-plan`, and `$exploratory-test` share one testing domain. An execution rule (launching and driving the running app, and cleaning up after it) goes into `$test-run-rules` alone, which both test-running skills load. A scenario-design rule (what a test covers and what counts as a pass) that lands in `$smoke-test` also goes into `$create-test-plan`.
+
+After editing `checkout-snapshot.sh`, keep its four copies (polish-code and evaluate-findings, both editions) identical and run `bash tests/checkout-snapshot-harness.sh`.
 
 For Codex skill conventions, see [`codex/SKILL-CONVENTIONS.md`](codex/SKILL-CONVENTIONS.md). General skill-authoring principles live in [`codex/skills/write-skill/references/`](codex/skills/write-skill/references/), split by topic and indexed in that skill's SKILL.md.
 

@@ -24,9 +24,12 @@ claude/                   # Claude Code edition and plugin root (canonical Claud
 ├── ADDITIONS.md          # Turbo rules the mod injects into every session
 └── SKILL-CONVENTIONS.md
 codex/                    # Codex edition and plugin root (parallel tree; hooks/ holds the SessionStart hook)
+tests/                    # Tests for scripts both editions ship, outside both plugin roots
 ```
 
 Each skill is self-contained. Skills compose other skills to any depth via `/skill-name` invocations. The key distinction is between analysis skills (return structured findings without acting) and workflow skills (compose analysis skills and act on results).
+
+After editing `checkout-snapshot.sh`, keep its four copies (polish-code and evaluate-findings, both editions) identical and run `bash tests/checkout-snapshot-harness.sh`.
 
 After editing the plugin mod, run `claude plugin validate claude` and `claude plugin test claude`. When the edit changes what users see, update `docs/claude-code-mod.md` and re-capture the affected `assets/mod-*.svg` as `assets/CLAUDE.md` describes.
 

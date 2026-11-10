@@ -176,6 +176,8 @@ Workflow skills often need to prevent the agent from skipping steps ("don't rati
 **If this is iteration 3 and changes were still made**, the hard cap is reached. Use `AskUserQuestion` to tell the user that 3 iterations were not enough to stabilize, summarize what is still changing, and offer two options: continue for another iteration, or escalate to a different approach for the remaining issues.
 ```
 
+Keep a capped loop's iteration number, verdicts, and any state a later iteration depends on in a ledger under `.turbo/loops/`, at a path minted once when the loop starts and passed to every re-run. As soon as an invocation creates or reopens the ledger, have it write the path into the task of its own re-run step, so it finds the ledger again after a compaction. Delete the ledger when the loop converges or the user stops it at an iteration gate. Keep it when the loop halts on a failure, stops so the user can repair something by hand, or escalates. Compaction then erases neither the cap nor the settled verdicts.
+
 Removing verbose "Do NOT" blocks and "Rules" sections that restate the anti-skip rule often wins alongside adding the gates: the prose was unreliable anyway, and the gates replace it with enforceable behavior.
 
 ### AskUserQuestion Doesn't Work in Sub-Agents
