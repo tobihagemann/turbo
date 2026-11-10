@@ -1,10 +1,10 @@
 # Pull Request: Create
 
-Draft a concise and descriptive title and a body for a PR. Explain the purpose of the changes, the problem they solve, and the general approach taken. When the changes involve clear runtime flows or state transitions, include Mermaid diagrams. When they add a user-facing surface or change how one looks, and this session already captured it, include screenshots.
+Draft a concise and descriptive title and a body for a PR. Explain the purpose of the changes, the problem they solve, and the general approach taken. When the changes involve clear runtime flows or state transitions, include Mermaid diagrams. When their point is structural, include a text sketch. When merging is hard to undo or reaches past the surface the PR edits, state the merge risk. When they add a user-facing surface or change how one looks, and this session already captured it, include screenshots.
 
 ## Phase 1: Analyze Changes
 
-Take `<base>` as the base branch given with the request, or else the repository's default branch, and run `git fetch origin <base>`. Examine every commit message and the full diff against it (`git log origin/<base>..HEAD`, `git diff origin/<base>...HEAD`) to understand the overall changes. Analyze the diff for framing, diagram, and screenshot opportunities.
+Take `<base>` as the base branch given with the request, or else the repository's default branch, and run `git fetch origin <base>`. Examine every commit message and the full diff against it (`git log origin/<base>..HEAD`, `git diff origin/<base>...HEAD`) to understand the overall changes. Analyze the diff for framing, diagram, and screenshot opportunities, and for merge risk.
 
 Source every claim about prior behavior from the base branch itself, by reading its code with `git show origin/<base>:<path>`. A long session leaves the working tree carrying intermediate states that were never the state this PR is measured against, and describing one of those as the prior behavior misleads the reviewer.
 
@@ -87,7 +87,7 @@ Write Before lines in the past tense, with two exceptions. A sentence describing
 
 ## Diagrams
 
-GitHub renders Mermaid natively in PR descriptions via ` ```mermaid ` code blocks. Include diagrams only when they add clarity a text description can't — skip for trivial changes or obvious flows.
+GitHub renders Mermaid natively in PR descriptions via ` ```mermaid ` code blocks. Include diagrams only when they add clarity prose can't — skip for trivial changes or obvious flows.
 
 ### Sequence Diagram
 
@@ -119,13 +119,30 @@ stateDiagram-v2
 ```
 ````
 
+### Text Sketch
+
+Include when the point of the change is structural and a few lines show it faster than prose: where a call joined a call tree, how files or responsibilities were rearranged, where a component gained a child. Write an indented tree in a ` ```text ` block. When the surrounding shape already exists and the point is what was added or removed, write it in a ` ```diff ` block instead.
+
+````markdown
+```diff
+ <entry point>
+   <existing call>
++    <added call>
+-  <removed call>
+```
+````
+
 ### Rules
 
 - Only include when the diagram genuinely adds clarity
 - Keep diagrams focused — max ~10 nodes/transitions
 - Use descriptive labels on arrows (method names, HTTP verbs)
-- Place diagrams after the opening body text under a `## Flow` or `## State Machine` heading
-- One diagram per type max — don't include both unless the PR truly has both patterns
+- Place diagrams after the opening body text under a `## Flow` or `## State Machine` heading, and a text sketch beside the text it supports
+- One diagram per type max, and combine types only when the PR truly has each pattern
+
+## Merge Risk
+
+Add a `## Merge Risk` section when merging is hard to undo or reaches past the surface the PR edits: a data migration or data deletion, a published interface or format, a change other consumers pick up without opting in. State in one or two lines what reverting the PR would not roll back, what else the change affects, or both, as applies. Place it last in the body. Omit the section for a change that a revert undoes and that stays within the surface it edits.
 
 ## Screenshots
 
@@ -143,7 +160,7 @@ Reference every kept capture in one row of a markdown table, with its caption in
 
 - Use markdown image syntax with the capture's absolute path. `gh` points only markdown references at the uploaded asset, so a raw `<img>` tag keeps its local path.
 - Keep every capture in the table row. `gh` appends an attached file the body never references as its own paragraph.
-- Place the table after the opening body text under a `## Screenshots` heading, ahead of any diagram.
+- Place the table after the opening body text under a `## Screenshots` heading, ahead of any `## Flow` or `## State Machine` section.
 
 ## Rules
 

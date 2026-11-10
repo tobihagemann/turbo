@@ -23,11 +23,13 @@ Run the `$fetch-pr-comments` skill to get unresolved review comments.
 
 ## Step 2: Resolve Base Branch
 
-Detect the PR's base branch via `gh pr view --json baseRefName --jq '.baseRefName'`, then run `git fetch origin <base-branch>` to bring the remote ref up to date.
+Detect the PR's base branch and the issues it closes via `gh pr view --json baseRefName,closingIssuesReferences`, then run `git fetch origin <base-branch>` to bring the remote ref up to date.
 
 ## Step 3: Run `$review-code` Skill
 
-Run the `$review-code` skill. The diff command is `git diff origin/<base-branch>...HEAD`. Take the base from `origin/`: a local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the review as if it were new.
+When the PR closes issues, fetch each by its URL with `gh issue view <url> --json title,body,comments`, issuing the calls together. Together, their text is the governing document.
+
+Run the `$review-code` skill. The diff command is `git diff origin/<base-branch>...HEAD`. Take the base from `origin/`: a local branch of the same name can sit behind the remote, which puts the merge base before an already-merged pull request and pulls merged work into the review as if it were new. Supply the governing document when there is one.
 
 ## Step 4: Run `$evaluate-findings` Skill
 

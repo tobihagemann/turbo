@@ -57,7 +57,7 @@ Stage all changes made in this step before continuing.
 
 ## Step 3: Run `$review-code` Skill
 
-Run the `$review-code` skill on the staged changes. The diff command is `git diff --cached`. Supply every rejected and escalated verdict and every narrowed application the ledger records, across all iterations, as the already-adjudicated list, one line each: the finding, its verdict, and the recorded reason. An escalated verdict the user resolved carries their resolution. A narrowed application carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal Step 5's recurring-class rule depends on.
+Run the `$review-code` skill on the staged changes. The diff command is `git diff --cached`. When a plan governs the work, supply the ledger's `Plan:` path as the governing document. Supply every rejected and escalated verdict and every narrowed application the ledger records, across all iterations, as the already-adjudicated list, one line each: the finding, its verdict, and the recorded reason. An escalated verdict the user resolved carries their resolution. A narrowed application carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal Step 5's recurring-class rule depends on.
 
 ## Step 4: Run `$evaluate-findings` Skill
 
@@ -153,7 +153,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- Every step must run in every iteration. `$review-code` covers correctness, security, consistency, API usage, coverage, and simplicity across parallel internal reviewers plus peer review. `$evaluate-findings` is a judgment gate that must run before `$apply-findings`.
+- Every step must run in every iteration. `$review-code` runs every review type it activates across parallel internal reviewers plus peer review. `$evaluate-findings` is a judgment gate that must run before `$apply-findings`.
 - Each step must invoke its designated skill by reading and following that installed skill's instructions, not by substituting inline reasoning.
 - Re-invocations from Step 7 are full runs with fresh task tracking and complete skill invocations.
 - Step 6 carrying a smoke result forward on a matching baseline, or after a run with no integration test suite on one that differs only in test or documentation files the app never loads, is the one exception to the rules above.

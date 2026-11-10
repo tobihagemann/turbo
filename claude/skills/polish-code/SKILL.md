@@ -61,7 +61,7 @@ Stage all changes made in this step before continuing.
 
 ## Step 3: Run `/review-code` Skill
 
-Run the `/review-code` skill on the staged changes. The diff command is `git diff --cached`. Supply every Skip and Escalate verdict and every narrowed Apply the ledger records, across all iterations, as the already-adjudicated list, one line each: the finding, its verdict, and the recorded reason. An Escalate the user resolved carries their resolution. A narrowed Apply carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal Step 5's recurring-class rule depends on.
+Run the `/review-code` skill on the staged changes. The diff command is `git diff --cached`. When a plan governs the work, supply the ledger's `Plan:` path as the governing document. Supply every Skip and Escalate verdict and every narrowed Apply the ledger records, across all iterations, as the already-adjudicated list, one line each: the finding, its verdict, and the recorded reason. An Escalate the user resolved carries their resolution. A narrowed Apply carries what the remedy covered and what it left, so the untouched remainder reads as settled rather than as an unaddressed gap. A finding that re-proposes a remedy an earlier round narrowed stays in scope regardless of the list: the remainder having since caused a defect is evidence the earlier reason did not account for, and it is the signal Step 5's recurring-class rule depends on.
 
 ## Step 4: Run `/evaluate-findings` Skill
 
@@ -171,7 +171,7 @@ Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 
-- Every step must run in every iteration. `/review-code` covers correctness, security, consistency, API usage, coverage, and simplicity across parallel internal reviewers plus peer review. `/evaluate-findings` is a judgment gate that must run before `/apply-findings`.
+- Every step must run in every iteration. `/review-code` runs every review type it activates across parallel internal reviewers plus peer review. `/evaluate-findings` is a judgment gate that must run before `/apply-findings`.
 - Each step must invoke its designated skill via the Skill tool, not be replaced by inline reasoning or agent calls.
 - Re-invocations from Step 7 are full runs with fresh task tracking and complete skill invocations.
 - Two exceptions apply to the rules above: Step 6 carrying a smoke result forward on a matching baseline, or after a run with no integration test suite on one that differs only in test or documentation files the app never loads; and an invocation resuming a ledger whose last iteration is `awaiting <gate>`, which starts at that gate.

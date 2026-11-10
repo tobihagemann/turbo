@@ -54,6 +54,8 @@ Review and improve skills for maximum effectiveness and reliability.
 - **Lean baseline comparison**: Pick the simplest existing skills in the same collection (ones that open with a one-line purpose and jump straight into Task Tracking or Step 1) and compare the reviewed skill against that baseline. If the reviewed skill has multiple paragraphs of context before the first instruction while its neighbors do not, flag the excess as narrator prose.
 - **Organization**: Clear sections, logical flow
 - **Specificity**: Concrete guidance, not vague advice
+- **Done-conditions**: A step whose end is not self-evident states a checkable condition for being finished. Flag a step that ends on a vague bound, or that names a deliverable without the set it must cover
+- **No-op sentences**: Flag an instruction the agent would follow without being told, and recommend deleting the whole sentence. Leave a line the project's conventions mandate and a guardrail against the agent's own drift
 
 ### 5. Check Progressive Disclosure
 

@@ -34,7 +34,7 @@ For example, when building an image-editor skill, relevant questions include:
 
 To avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.
 
-Conclude this step when there is a clear sense of the functionality the skill should support.
+Conclude this step when every function the skill should support has at least one concrete example the user supplied or confirmed.
 
 ## Step 2: Planning the Reusable Skill Contents
 

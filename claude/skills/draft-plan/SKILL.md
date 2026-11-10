@@ -99,9 +99,9 @@ Offer a **Get a second opinion** option whenever the decision is costly to rever
 
 ## Step 5: Deep-Dive Discussion
 
-Interview the user relentlessly about every aspect of the implementation shape until you reach shared understanding. Use `AskUserQuestion`, one question at a time. Use the pattern survey findings to frame choices. Cover whichever of these matter for the task. Do not present a rigid checklist.
+Interview the user relentlessly about every aspect of the implementation shape until you reach shared understanding. Use `AskUserQuestion` in rounds: put every question whose answer depends on nothing still open into one call, up to its four-question limit, and hold a question that depends on an open answer for a later round. Use the pattern survey findings to frame choices. Cover whichever of these matter for the task. Do not present a rigid checklist.
 
-Settle the first two rows before the rest, so implementation choices land against concrete outcomes and bounds instead of being taken in the abstract. When the user jumps to implementation shape early, engage briefly then circle back.
+Settle the first two rows before the rest: treat every question from the other rows as depending on the answers to those two, so implementation choices land against concrete outcomes and bounds instead of being taken in the abstract. When the user jumps to implementation shape early, engage briefly then circle back.
 
 | Area | What to explore |
 |---|---|
@@ -127,7 +127,6 @@ Settle the first two rows before the rest, so implementation choices land agains
 - When a question concerns what the software does for the person using it, a default or a control included, run the `/user-experience` skill on it before framing options, and state each option as the behavior that person gets and the goal it serves.
 - Pair each question with a recommendation and the reasoning behind it, so the discussion stays collaborative.
 - Keep each option's description to the decision being asked and its trade-off. When an option would also commit to a design choice the question does not ask about, ask that choice on its own or leave it to the plan.
-- Walk down each branch of the design tree, resolving dependencies between decisions one-by-one.
 - When the user says "you decide," make the call and explain why.
 - Probe short answers before moving on.
 - Before closing the discussion, hold each decision resolved in Step 4 or earlier in this step against the shape as it now stands: re-read what its chosen option was described as doing. Where a description no longer holds, name the claim that fails and re-ask that decision.

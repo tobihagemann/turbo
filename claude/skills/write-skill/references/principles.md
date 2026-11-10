@@ -5,6 +5,7 @@ Foundational decisions that apply to every skill: what to include, what to leave
 ## Contents
 
 - Concise Is Key
+- Delete Sentences That Change Nothing
 - Skill Files Are Instructions, Not Documentation
 - Retire the Guardrail a New Rule Makes Unreachable
 - Set Appropriate Degrees of Freedom
@@ -30,6 +31,14 @@ Only add context Claude doesn't already have. Challenge each piece of informatio
 - "Does this paragraph justify its token cost?"
 
 Give the instruction and the minimum needed to act on it. Background on what a format is, why a library is popular, or how to install a standard tool is almost always cuttable — a concise instruction that costs 50 tokens routinely expands to 150 when padded with that kind of preamble.
+
+## Delete Sentences That Change Nothing
+
+Test each sentence against the model's default behavior: would the agent act differently without it? An instruction the agent already follows unprompted costs tokens and thins attention on the sentences that do change behavior. When a sentence fails the test, delete the whole sentence rather than trimming words from it.
+
+The test measures the model's default, so settle a disagreement over a sentence by running the skill with and without it on each model the skill targets. Keep a guardrail against the agent's own drift: it changes behavior on the runs where the drift occurs.
+
+A weak instruction fails the same way: "be thorough" asks for what the agent already does. Replace it with the specific bar the step must clear, or delete it.
 
 ## Skill Files Are Instructions, Not Documentation
 

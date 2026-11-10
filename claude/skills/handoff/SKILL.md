@@ -59,7 +59,9 @@ When that write is refused while this session runs inside a linked worktree, rep
 
 Lead with `# Handoff: <Task Title>`. Cover the items gathered in Step 2 in whatever structure fits the session — drafting, refining, implementing, and investigating sessions each have different shapes and don't all map to the same headings. Close with a clear statement of the next concrete action so the new session knows exactly what to do first.
 
-Keep it dense. Omit anything that has no real content.
+Keep it dense. Omit anything that has no real content. Point to content a plan, issue, commit, or diff already holds by path, URL, or hash rather than restating it. Carry content that lives only in a linked worktree's uncommitted changes or gitignored files into the handoff itself.
+
+Write `<REDACTED>` in place of any secret the session handled, such as an API key, token, or password.
 
 When this handoff splits an open decision out of an existing one, add a line to that existing handoff pointing at the new path, and remove the content the new file now carries.
 

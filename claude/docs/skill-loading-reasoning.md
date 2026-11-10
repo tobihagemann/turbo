@@ -14,7 +14,7 @@ Failure modes observed fall into two categories: **skip** (a step doesn't run) a
 
 4. **Child steps bypassed via arguments**: When `/resolve-pr-comments` invoked `/polish-code`, Claude passed an argument like *"Do NOT iterate into a polish loop. Just run the two gradle commands. Skip any `/simplify-code` review loop."* The invocation itself was technically compliant (Skill tool was used), but the argument instructed the child skill to abandon its own steps. The same effect as skipping, achieved through the argument channel.
 
-5. **Branch merging**: `/review-code` specifies seven parallel agents (six internal — one per review type — plus one peer). On a small diff, Claude collapsed the six internal agents into a single subagent told to apply all six criteria sequentially, reasoning that six agents each re-reading the same 25-line diff would duplicate work. All six criteria were still applied, so from the agent's view nothing was "dropped" — only merged. But context independence and parallelism were destroyed, which are the properties the skill's fan-out exists to provide. This is a budget-driven variant that looks like efficiency rather than skipping, which is why the "never skip" rule didn't fire.
+5. **Branch merging**: `/review-code` specified seven parallel agents at the time (six internal — one per review type — plus one peer). On a small diff, Claude collapsed the six internal agents into a single subagent told to apply all six criteria sequentially, reasoning that six agents each re-reading the same 25-line diff would duplicate work. All six criteria were still applied, so from the agent's view nothing was "dropped" — only merged. But context independence and parallelism were destroyed, which are the properties the skill's fan-out exists to provide. This is a budget-driven variant that looks like efficiency rather than skipping, which is why the "never skip" rule didn't fire.
 
 ### Stop problem
 
@@ -57,7 +57,7 @@ The system prompt's guard rail has a narrow intended meaning: don't call a skill
 This breaks:
 
 - **Pipelines**: `/finalize` invoking `/review-code`, `/simplify-code`, etc.
-- **Parallel sub-reviews**: `/review-code` launching six type-specific review agents plus a peer-review agent
+- **Parallel sub-reviews**: `/review-code` launching one review agent per type plus a peer-review agent
 - **Loops**: `/polish-code` re-invoking itself until stable
 - **Routing**: `/self-improve` routing through `/write-skill`
 - **Any second run**: Running the same top-level skill twice in one session

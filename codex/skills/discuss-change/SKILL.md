@@ -53,7 +53,7 @@ Offer a **Get a second opinion** option whenever the decision is costly to rever
 
 ## Step 3: Deep-Dive Discussion
 
-Interview the user about the implementation shape until you reach shared understanding. Use `request_user_input`, one question at a time. Cover whichever of these matter for the task. Do not present a rigid checklist. **Skip** when the request and the resolved decisions already name the files to touch, the existing code to build on, and the tests to write.
+Interview the user about the implementation shape until you reach shared understanding. Use `request_user_input` in rounds: put every question whose answer depends on nothing still open into one call, up to its question limit, and hold a question that depends on an open answer for a later round. Cover whichever of these matter for the task. Do not present a rigid checklist. **Skip** when the request and the resolved decisions already name the files to touch, the existing code to build on, and the tests to write.
 
 | Area | What to explore |
 |---|---|

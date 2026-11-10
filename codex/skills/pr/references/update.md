@@ -18,7 +18,8 @@ Before drafting, study the current title and body to identify:
 - **Body structure** — headings, bullet points, sections, line length
 - **Tone** — formal vs. casual, terse vs. detailed
 - **Content patterns** — does it explain the "why", list changes, include test plans?
-- **Diagrams** — does the body contain Mermaid code blocks (sequence, state, or other)?
+- **Diagrams** — does the body contain Mermaid code blocks (sequence, state, or other), or text sketches in `text` or `diff` blocks?
+- **Merge risk** — does the body carry a Merge Risk section?
 - **Screenshots** — does the body embed uploaded images?
 
 ## Phase 3: Evaluate Whether an Update Is Needed
@@ -31,11 +32,11 @@ Read the fetched body against the current diff and list what the body leaves und
 git diff origin/<base>...HEAD
 ```
 
-Check every Mermaid diagram in the body the same way, node by node and transition by transition. A diagram that omits a state still renders, so only the code reveals its staleness.
+Check every Mermaid diagram and text sketch in the body the same way, node by node, transition by transition, and line by line. A diagram or sketch that omits a state or a node still renders, so only the code reveals its staleness.
 
-If the body and its diagrams already describe the diff, no embedded screenshot shows a look the PR has since reverted, and the session holds no final-state capture of an added or visually changed user-facing surface that the body lacks or shows in an older state, the description is up to date. Say so, then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+If the body, its diagrams and text sketches, and any Merge Risk section already describe the diff, the diff warrants no Merge Risk section the body lacks, no embedded screenshot shows a look the PR has since reverted, and the session holds no final-state capture of an added or visually changed user-facing surface that the body lacks or shows in an older state, the description is up to date. Say so, then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
-If what the body leaves undescribed is only trivial (formatting, typos, config-only), the body embeds no such screenshot, and the session holds no such capture, say so, then call `update_plan` to mark this step completed and continue with the next step of the active workflow. Proceed when the body omits, misstates, or still describes behavior the diff no longer contains.
+If what the body leaves undescribed is only trivial (formatting, typos, config-only), the body embeds no such screenshot, the diff warrants no Merge Risk section the body lacks, and the session holds no such capture, say so, then call `update_plan` to mark this step completed and continue with the next step of the active workflow. Proceed when the body omits, misstates, or still describes behavior or merge risk the diff no longer contains.
 
 ## Phase 4: Analyze the Full Diff
 
@@ -43,7 +44,7 @@ Derive the PR description from the full diff, not from individual commits. The d
 
 1. Work from the full diff Phase 3 read (`git diff origin/<base>...HEAD`) — this is the primary source of truth
 2. Use what Phase 3 found undescribed to understand what's new, but frame everything in the context of the whole PR
-3. Check if the changes introduce runtime flows or state transitions that warrant diagrams (see Diagrams section below)
+3. Check if the changes introduce runtime flows, state transitions, or structural changes that warrant diagrams (see Diagrams section below), and whether merging is hard to undo or reaches past the surface the PR edits (see Merge Risk section below)
 
 ## Phase 5: Run `$github-voice` Skill
 
@@ -59,7 +60,8 @@ Write an updated title and body that:
 - **Adds what's new** — integrate new changes naturally into the existing structure
 - **Removes what's stale** — drop descriptions of work that was reverted or replaced
 - **Scopes to the target repository** — write for someone who knows only the repository the PR targets; when the change is paired with work in another repository, name the interface the code calls and leave that repository's internal names, data shapes, and mechanisms out of the body; describe the change on its own terms, without reference to how a different repository or product does it
-- **Updates diagrams** — if existing Mermaid diagrams are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
+- **Updates diagrams** — if existing Mermaid diagrams or text sketches are present, update them to reflect the current state; if they describe reverted code, remove them; if new changes warrant diagrams, add them
+- **Updates merge risk** — add, revise, or remove the Merge Risk section so it matches what the full diff now warrants
 - **Updates screenshots** — leave the URL and any set width of each embedded image unaltered, removing an image only when the surface it shows is no longer part of the PR or the PR has since reverted the look it shows; add session captures as the Screenshots section directs, replacing an embedded screenshot only with a newer capture of the same surface
 
 ## Phase 7: Confirm with User
@@ -97,7 +99,7 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Diagrams
 
-GitHub renders Mermaid natively in PR descriptions via ` ```mermaid ` code blocks. Include diagrams only when they add clarity a text description can't.
+GitHub renders Mermaid natively in PR descriptions via ` ```mermaid ` code blocks. Include diagrams only when they add clarity prose can't.
 
 ### Sequence Diagram
 
@@ -129,12 +131,29 @@ stateDiagram-v2
 ```
 ````
 
+### Text Sketch
+
+Include when the point of the change is structural and a few lines show it faster than prose: where a call joined a call tree, how files or responsibilities were rearranged, where a component gained a child. Write an indented tree in a ` ```text ` block. When the surrounding shape already exists and the point is what was added or removed, write it in a ` ```diff ` block instead.
+
+````markdown
+```diff
+ <entry point>
+   <existing call>
++    <added call>
+-  <removed call>
+```
+````
+
 ### Rules
 
 - Keep diagrams focused — max ~10 nodes/transitions
 - Use descriptive labels on arrows (method names, HTTP verbs)
-- Place diagrams after the summary paragraph under a `## Flow` or `## State Machine` heading
-- One diagram per type max — don't include both unless the PR truly has both patterns
+- Place diagrams after the summary paragraph under a `## Flow` or `## State Machine` heading, and a text sketch beside the text it supports
+- One diagram per type max, and combine types only when the PR truly has each pattern
+
+## Merge Risk
+
+Add a `## Merge Risk` section when merging is hard to undo or reaches past the surface the PR edits: a data migration or data deletion, a published interface or format, a change other consumers pick up without opting in. State in one or two lines what reverting the PR would not roll back, what else the change affects, or both, as applies. Place it last in the body. Omit the section for a change that a revert undoes and that stays within the surface it edits.
 
 ## Screenshots
 
@@ -154,7 +173,7 @@ When the body already embeds screenshots, keep their layout: a replacement captu
 
 - Use markdown image syntax with the capture's absolute path. `gh` points only markdown references at the uploaded asset, so a raw `<img>` tag keeps its local path.
 - Reference every attached capture in the body. `gh` appends an attached file the body never references as its own paragraph.
-- Place a new table after the summary paragraph under a `## Screenshots` heading, ahead of any diagram.
+- Place a new table after the summary paragraph under a `## Screenshots` heading, ahead of any `## Flow` or `## State Machine` section.
 
 ## Rules
 

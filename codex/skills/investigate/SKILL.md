@@ -25,9 +25,25 @@ Gather the symptom and establish what is actually happening:
 | Slow response / high CPU / memory growth | Performance |
 | "It does X instead of Y" / no error | Unexpected behavior |
 
-3. **Establish reproduction** — run the failing command, test, or operation. If the problem cannot be reproduced (intermittent, environment-specific), document the constraints and proceed with historical evidence.
+3. **Establish reproduction** — run the failing command, test, or operation, and confirm its output shows the reported symptom rather than a neighboring failure. When no command at hand shows the symptom, build one, trying whichever of these fit, in this order:
+   - A test at the boundary that reaches the failure
+   - A script that drives the running system from outside and asserts on what it returns
+   - A captured request, payload, or event log replayed through the failing path
+   - The same input run through a known-good version and the current one, with the outputs compared
+   - Many generated inputs, when the failure appears for only some
+   - For an intermittent failure, the trigger repeated or run concurrently until it fails often enough to test against
 
-Record the exact reproduction command and its output for verification. For intermittent or long-running reproductions, tail logs in a background shell, filtered for relevant signals (errors, stack traces, specific identifiers) so failures surface live while you work.
+Reproduction is established when one command has been run and its output shows the reported symptom. Record that command and its output for verification. For intermittent or long-running reproductions, tail logs in a background shell, filtered for relevant signals (errors, stack traces, specific identifiers) so failures surface live while you work.
+
+When neither the failing command nor any reproduction built from the list above shows the symptom, output what was tried and what each attempt showed. Then use `request_user_input` to offer three ways forward, and act on the answer. When `request_user_input` cannot reach the user, stop and report what was tried and that the way forward is unresolved.
+
+- **Provide access or an artifact** — the user supplies an environment where the failure occurs, or a capture from one such as a log, a trace, or a recorded request. Return to item 3 with it.
+- **Allow temporary instrumentation** — add labeled logging where the failure occurs, have the user trigger the failure, and read what it recorded. Remove the logging once it has been read, and confirm with `git diff -- <file>` that each file is back to its pre-check state. Carry what it recorded into Step 2 as evidence. When it yields a command whose output shows the symptom, record that command as the reproduction; otherwise continue as under **Proceed without a reproduction**.
+- **Proceed without a reproduction** — document the constraints and continue on historical evidence. Mark Step 4 verdicts and the report's root cause `unverified by reproduction`, and give the report's reproduction command as `none`, followed by what was tried. When a later step produces a command whose output shows the symptom, record that command from then on and drop the mark.
+
+### Minimize the Reproduction
+
+Cut the reproduction down in a throwaway copy, leaving the working tree and its git index unchanged. Remove inputs, configuration, data, callers, and steps, halving what remains before cutting single elements. Re-run after each cut and restore a cut that makes the symptom disappear. Stop when removing any remaining element makes the symptom disappear, or once the reproduction runs quickly and its remaining elements can be named. Record the minimal command alongside the original, with what was cut, then delete the copy and report anything that could not be deleted. The original stays the report's reproduction command. **Skip** when the reproduction is a single test or command with nothing left to remove, when each run is slow or intermittent, or when no reproduction exists.
 
 ## Step 2: Isolate
 
@@ -163,17 +179,17 @@ Investigation Report:
 
 Problem: [one-line description]
 Type: [runtime error | test failure | build failure | type error | performance | unexpected behavior]
-Root cause: [confirmed cause, or "unresolved" with best hypothesis]
+Root cause: [confirmed cause, or "unresolved" with best hypothesis; append "unverified by reproduction" when the mark applies]
 
 Evidence:
 - [what confirmed the root cause]
 
 Suggested fix: [description of what to change, or "needs further investigation"]
-Reproduction command: [command to verify the fix once applied]
+Reproduction command: [command to verify the fix once applied, or "none" followed by what was tried]
 
 Hypotheses tested:
-1. [hypothesis] — [confirmed/refuted/inconclusive] — [evidence]
-2. [hypothesis] — [confirmed/refuted/inconclusive] — [evidence]
+1. [hypothesis] — [confirmed/refuted/inconclusive, plus "unverified by reproduction" when the mark applies] — [evidence]
+2. [hypothesis] — [confirmed/refuted/inconclusive, plus "unverified by reproduction" when the mark applies] — [evidence]
 
 Escalation: [none | oracle]
 ```

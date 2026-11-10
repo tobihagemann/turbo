@@ -5,6 +5,7 @@ How to shape multi-step skills, convergence loops, exit signals, and recurring o
 ## Contents
 
 - Use Workflows for Complex Tasks
+- Give Each Step a Done-Condition
 - Implement Feedback Loops
 - Use Recursive Self-Invocation for Convergence Loops
 - Use Neutral Exit Signals So Parent Pipelines Can Continue
@@ -62,6 +63,18 @@ Task Progress:
 - [ ] Step 3: <validation>
 ```
 ````
+
+## Give Each Step a Done-Condition
+
+State what tells the agent a step is finished. The steps still ahead pull the agent forward, and a step with a vague end ("until the approach is understood") gets cut short. A done-condition holds against that pull when it is both:
+
+- **Checkable** — the agent can tell done from not done by looking: a file exists, a command ran and its output is shown, every listed item carries a verdict.
+- **Demanding** — it names the full set the step must cover, which forces the digging a bare deliverable lets the agent skip.
+
+A step whose single action is its own end, such as running one command or one skill, needs no separate condition.
+
+- ✗ **Avoid**: "Produce a list of the changes."
+- ✓ **Good**: "List the changes. The step is done when every modified file appears in the list."
 
 ## Implement Feedback Loops
 
