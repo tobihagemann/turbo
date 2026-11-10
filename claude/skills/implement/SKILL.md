@@ -42,7 +42,7 @@ Before each spawn, capture `git status --short` and run `git stash create`, whic
 Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. Its prompt directs it to read `${CLAUDE_SKILL_DIR}/references/step-implementer.md`, and gives:
 
 - The plan's path and the Implementation Step to implement
-- What earlier Implementation Steps changed that this one builds on
+- What earlier Implementation Steps changed that this one builds on, and anything they left for it to finish
 - The task-specific skills from Step 2 that this Implementation Step's work matches
 - The checks it must pass
 - A cap on any verification whose count the plan leaves open, such as mutation runs
@@ -52,6 +52,7 @@ When it reports, review what it changed against the plan: `git diff <snapshot>`,
 - Make a small correction in this session.
 - Give larger rework, or a block this session can clear, to a new subagent for the same Implementation Step, passing along what the first one reported.
 - Take a block or a deviation that changes what the plan delivers to the user with `AskUserQuestion`, and carry out the answer through one of the two routes above.
+- Carry a gap that a later Implementation Step's work closes into that step: name it in that step's prompt, and confirm it closed when reviewing what that step changed.
 
 Mark the Implementation Step's task completed once nothing is left open.
 

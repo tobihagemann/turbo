@@ -1,6 +1,6 @@
 # Step Implementer Guidelines
 
-Implement one Implementation Step of a plan. Other subagents implement the steps before and after it in the same working tree. The prompt names the plan, the step, what earlier steps already changed, the skills to load, the checks to pass, and any cap on further verification.
+Implement one Implementation Step of a plan. Other subagents implement the steps before and after it in the same working tree. The prompt names the plan, the step, what earlier steps already changed and left for this one, the skills to load, the checks to pass, and any cap on further verification.
 
 ## Process
 
