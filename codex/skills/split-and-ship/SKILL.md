@@ -53,6 +53,8 @@ Verify `git stash list` shows the saved changes and `git status --short` lists n
 
 Use `update_plan` to track each group, restating any remaining steps of a parent workflow alongside them. Process groups in order.
 
+A group is held when it builds on a group whose PR was handed over for editing and is neither posted nor cancelled yet, or when it builds on a held group. Leave a held group unshipped and continue with the next group.
+
 For each group:
 
 1. **Determine branch**: If the current branch already has an open PR and this group's changes align with the PR's purpose, stay on the current branch. Otherwise, use `request_user_input` to confirm the proposed branch name and create it from the appropriate base:
@@ -63,6 +65,10 @@ For each group:
 4. **Push and create or update PR**:
    - Staying on existing branch with an open PR: run the `$pr` skill, then `git push`
    - New branch: `git push -u origin <branch>`, then run the `$pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
+
+When held groups remain once every other group has shipped, output which groups are held, which handed-over PR each waits on, and that the stash holds their changes. Keep the stash and end the turn. A goal continuation turn that carries no reply from the user leaves a handed-over PR unresolved: end it without calling any tool and without advancing.
+
+Once a handed-over PR is posted, take the groups it held through the same four steps in order, branching each from the current tip of the branch it builds on. When that PR is cancelled instead, use `request_user_input` to ask whether to ship the groups it held stacked on its branch, which has no PR, or to leave them unshipped.
 
 ### Clean up and summarize
 
@@ -103,6 +109,6 @@ Then call `update_plan` to mark this step completed and continue with the next s
 ## Rules
 
 - Run the `$commit-rules` skill before every commit; do not commit without loading it first.
-- Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report every stashed change that no group shipped, rather than discarding it: re-apply the unstaged changes with `git diff 'stash^2' stash | git apply --3way --allow-empty`, restore untracked files with `git checkout 'stash^3' -- <files>`, then unstage everything with `git reset -q`. Report any hunk that does not apply. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery. A group whose PR was handed over for editing rather than posted is not a failure; record it in the summary and continue.
+- Never lose uncommitted work. Both paths stash all changes before shipping. Before dropping the stash, restore and report every stashed change that no group shipped, rather than discarding it: re-apply the unstaged changes with `git diff 'stash^2' stash | git apply --3way --allow-empty`, restore untracked files with `git checkout 'stash^3' -- <files>`, then unstage everything with `git reset -q`. Report any hunk that does not apply. If any step fails (commit hook, push, PR creation), stop and report the failure, which groups have been shipped, and that the stash still contains all changes for recovery. A group whose PR was handed over for editing rather than posted is not a failure; record it in the summary and continue with the groups it does not hold.
 - For stacked groups, the PR description should note the dependency chain.
 - Don't reference `.turbo/` content (filenames, acceptance criteria, step numbers, headings) in branch names. `.turbo/` is gitignored, so these references would be opaque to anyone reading without local copies.
