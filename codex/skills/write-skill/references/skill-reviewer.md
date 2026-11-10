@@ -47,7 +47,7 @@ Review and improve skills for maximum effectiveness and reliability.
 
 ### 4. Assess Content Quality
 
-- **Word Count**: SKILL.md body should stay under about 3,000 words (lean, focused). Flag a body over it as minor
+- **Word Count**: SKILL.md body should stay under about 3,000 words (lean, focused). Flag a body over it as minor when it holds content a typical run does not read
 - **Project Conventions**: Check the skill against the skill conventions stated in the instruction files governing its location (each AGENTS.md from the root of the project containing the skill down to the skill's directory, and the files they point to for conventions), and flag each deviation
 - **Writing Style**: Imperative/infinitive form ("To do X, do Y" not "You should do X")
 - **Instructions vs documentation**: Every paragraph should tell the agent what to do. Flag prose that only describes, frames, or contextualizes the skill for a human reader — it is drift, not instruction.
@@ -77,7 +77,7 @@ Categorize by severity (critical/major/minor).
 
 Anti-patterns to watch for:
 - Vague trigger descriptions
-- Too much content in SKILL.md (should be in references/)
+- Content a typical run does not read kept in SKILL.md (should be in references/)
 - First/second person in description ("I can help you", "You can use this")
 - Missing key triggers
 - No references when they'd be valuable
@@ -87,7 +87,7 @@ Anti-patterns to watch for:
 ## Quality Standards
 
 - Description must have strong, specific trigger phrases
-- SKILL.md should be lean (under about 3,000 words)
+- SKILL.md should be lean (under about 3,000 words, or over it only through content every typical run reads)
 - Skill follows the skill conventions its project states
 - Writing style must be imperative/infinitive form
 - Progressive disclosure properly implemented

@@ -93,7 +93,7 @@ SKILL.md serves as an overview that points Claude to detailed materials as neede
 **Practical guidance:**
 
 - Keep SKILL.md body under about 3,000 words (roughly 5k tokens) for optimal performance
-- Split content into separate files when approaching this limit
+- When approaching this limit, move only content a typical run does not read into separate files, and keep the rest in the body even when that leaves it over the limit
 - Use the patterns below to organize instructions, code, and resources effectively
 
 A Skill can grow from a single SKILL.md to a directory of bundled content that Claude loads only when needed:
@@ -135,6 +135,8 @@ When SKILL.md links to sub-files, each layer must own exactly one concern:
 Routing tables, decision logic, and shared config belong in SKILL.md only. Sub-files should never route back to siblings, and SKILL.md should not summarize sub-file commands. When other skills reference a sub-file, they should point to the skill and name the sub-file: "Run `/skill-name` skill and consult sub-file.md to ..."
 
 When removing content from a router because a sub-file already covers it, check whether the router loses a warning the sub-file cannot deliver. A sub-file reaches only a reader who already decided to look, so a caution against a wrong inference has to survive in the router. Merge such a line into the surrounding routing prose rather than deleting it.
+
+When moving a rule from the router into a sub-file, find every router step that reached the rule where it stood, and link each one to the sub-file.
 
 ## Use Forward Slashes in Paths
 
