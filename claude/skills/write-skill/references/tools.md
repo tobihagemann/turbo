@@ -134,6 +134,8 @@ When a skill needs user input, reference the tool by name (`AskUserQuestion`) in
 - ✗ **Avoid**: "Ask the user which option they prefer."
 - ✓ **Good**: "Use `AskUserQuestion` to determine which option the user prefers."
 
+A question's header is a chip of at most 12 characters. Give it a short identifier, such as the row number of a table printed before the question, and put names and paths in the question text.
+
 ### Output Content as Text Before AskUserQuestion
 
 When a skill presents structured content (tables, plans, reports) before asking for approval, output the content as text first. `AskUserQuestion` has limited UI space and should only carry the approval prompt, not the content being reviewed.

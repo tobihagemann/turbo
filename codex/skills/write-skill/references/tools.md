@@ -102,6 +102,8 @@ When a skill needs structured user input, reference the tool by name (`request_u
 - ✗ **Avoid**: "Ask the user which option they prefer."
 - ✓ **Good**: "Use `request_user_input` to determine which option the user prefers."
 
+A question's header is a chip of at most 12 characters. Give it a short identifier, such as the row number of a table printed before the question, and put names and paths in the question text.
+
 ### Output Content as Text Before request_user_input
 
 When a skill presents structured content (tables, plans, reports) before asking for approval, output the content as text first. `request_user_input` has limited UI space and should only carry the approval prompt, not the content being reviewed.

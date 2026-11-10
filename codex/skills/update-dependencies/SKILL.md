@@ -55,7 +55,7 @@ When a major upgrade would force a migration that is costly to reverse, present 
 
 If the user picks **Major handling**, ask a follow-up:
 
-**Question 2 — Header**: "Major handling"
+**Question 2 — Header**: "Majors"
 **Options**:
 - **Skip major** — Only upgrade minor and patch versions
 - **Interactive** — Ask for each major update individually
