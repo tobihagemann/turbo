@@ -52,6 +52,9 @@ tests are failing in the auth module, can you please /turbo:investigate?
 # Filing an issue
 /turbo:create-issue for the flaky upload test
 
+# Tidying memory and .turbo/ (Claude Code)
+/turbo:dream  ← consolidate memory notes, then pick what to delete from .turbo/
+
 # Checking in on the session (Claude Code)
 /turbo:resolve-open-items  ← walk the open items listed above the prompt
 /turbo:context-level  ← how much of the context window is left
