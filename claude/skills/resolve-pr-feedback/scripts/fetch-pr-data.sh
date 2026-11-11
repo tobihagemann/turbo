@@ -5,7 +5,7 @@
 #     "meta":          { title, url, headRefName, headRefOid, baseRefName, body },
 #     "reviewThreads": [ ... ],
 #     "reviews":       [ ... ],   # includes submittedAt
-#     "issueComments": [ ... ],   # PR conversation comments; author, body, createdAt, url
+#     "issueComments": [ ... ],   # PR conversation comments; author, body, createdAt, updatedAt, url
 #     "commits":       [ ... ],   # oid, abbreviatedOid, message, committedDate
 #     "checks":        [ ... ]    # head commit's check runs and commit statuses;
 #                                 # name, app, state, conclusion, title, detailsUrl
@@ -80,7 +80,7 @@ query($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
     pullRequest(number: $pr) {
       comments(first: 100, after: $endCursor) {
         pageInfo { hasNextPage endCursor }
-        nodes { author { login } body createdAt url }
+        nodes { author { login } body createdAt updatedAt url }
       }
     }
   }

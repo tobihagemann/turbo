@@ -40,7 +40,7 @@ Output shape:
   "meta":          { "title", "url", "headRefName", "headRefOid", "baseRefName", "body" },
   "reviewThreads": [ { "id", "isResolved", "isOutdated", "comments": { "nodes": [ { "author", "body", "path", "line", "originalLine", "diffHunk" } ] } } ],
   "reviews":       [ { "author", "body", "state", "submittedAt" } ],
-  "issueComments": [ { "author", "body", "createdAt", "url" } ],
+  "issueComments": [ { "author", "body", "createdAt", "updatedAt", "url" } ],
   "commits":       [ { "commit": { "oid", "abbreviatedOid", "message", "committedDate" } } ],
   "checks":        [ { "name", "app", "state", "conclusion", "title", "detailsUrl" } ]
 }
@@ -154,7 +154,17 @@ If there are no inline-thread questions, skip this step.
 
 Skip this step when Step 7 pushed no commit.
 
-Wait for AI re-reviews when an inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped. For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one, or until 3 minutes have passed since the push. When one has, use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes.
+Wait for AI re-reviews when an inline thread whose first comment is from an AI-reviewer account as matched in Step 3 came out of Steps 5 through 8 fixed or skipped. For each AI reviewer with such a thread, check whether it is re-reviewing the pushed head commit: a pending review request for it, a queued or in-progress check or workflow run from it on that commit, or a review it already submitted on that commit. Leave `github-advanced-security` out of this check. Repeat the check until each of those reviewers has shown one or has a completed check on that commit, or until 3 minutes have passed since the push.
+
+Then, whether or not that wait ran, run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` and look in `checks` for a completed check from any AI-reviewer account as matched in Step 3 whose `title` reports that the reviewer skipped the pushed commit, such as a rate limit. For each such reviewer with a comment command that requests a review (`@coderabbitai review` for `coderabbitai`), use `AskUserQuestion` to offer posting that comment on the PR under the user's account:
+
+- **Post when the limit resets** — offer it only when the reviewer's reviews or comments on the PR state when it will review again. Take the time from its most recent such statement: a remaining wait counts from that comment's `updatedAt`, and an allowance per period counts from the reviewer's latest review on the PR. Use the Monitor tool with an until-loop that ends at that time. Then post the comment.
+- **Post now** — post the comment.
+- **Don't post** — leave the reviewer as it is.
+
+A reviewer whose comment was posted counts as re-reviewing. Record every other reviewer that skipped the pushed commit, with its check's `title`, for the Step 13 summary.
+
+When a reviewer is re-reviewing, use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Record each reviewer whose comment was posted and whose review had not arrived when the loop ended for the Step 13 summary.
 
 Wait for checks when Step 7 fixed a check finding: use the Monitor tool with an until-loop that runs `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` and ends once `meta.headRefOid` is the pushed commit, every check whose finding was fixed appears in `checks`, and no check has the `state` `pending`, or after 15 minutes.
 
@@ -233,6 +243,10 @@ After processing all items, present a summary grouped by source.
 - Skipped (list finding and skip reasoning; for a SonarCloud issue, note that dismissing it in SonarCloud is left to the user)
 - Unreadable (list name, title, and link)
 - Still failing, left for a later run, or unfinished after Step 10's wait (list name and title)
+
+**AI reviewers:**
+- Skipped the pushed commit and not asked for a review (list reviewer and its check's title)
+- Asked for a review that had not arrived when Step 10's wait ended (list reviewer)
 
 **Overall:** list of files modified.
 
