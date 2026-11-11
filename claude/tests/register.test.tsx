@@ -827,6 +827,10 @@ test('compacts only the turn that queued it', async ($, on) => {
 const OPEN = 'Keep the probe or revert it?'
 const OTHER = 'Rotate the staging key'
 const HINT = ' (ctrl+x tab, then r)'
+const DETAILS_HINT = ' (ctrl+x tab, then d)'
+const BOTH_HINT = ' (ctrl+x tab, then r or d)'
+const DETAIL = 'Keep it (recommended), or revert it.'
+const OTHER_DETAIL = 'Only the user can rotate it.'
 const ID = /#([0-9a-z]{4})\b/
 
 const openItems = ($: Engine, input: Record<string, unknown>, agentId?: string) =>
@@ -853,30 +857,120 @@ const band = ($: Engine, { hasSurvey = false, isWorking = false, surface = 'term
 
 const isGutter = (text: string) => ['', '⎿'].includes(text.trim())
 
+const isMark = (text: string) => text === '☐ ' || text === '✓ '
+
+const rowLines = (texts: string[]) => {
+  const lines: string[] = []
+  let mark = ''
+
+  for (const text of texts.filter(text => !isGutter(text))) {
+    if (isMark(text)) {
+      mark = text
+    } else {
+      lines.push(mark + text)
+      mark = ''
+    }
+  }
+
+  return lines
+}
+
+type Mounted = Awaited<ReturnType<typeof band>>
+
+const drawn = async (ui: Mounted) => ({
+  texts: (await ui.findAll({ type: 'Text' })).map(text => text.text),
+  buttons: (await ui.findAll({ type: 'Button' })).map(button => button.text),
+})
+
+const drawnLines = async (ui: Mounted) => {
+  const { texts, buttons } = await drawn(ui)
+
+  return { lines: rowLines(texts), buttons }
+}
+
 const bandTexts = async ($: Engine, props: Band = {}) => {
   const ui = await band($, props)
-  const texts = (await ui.findAll({ type: 'Text' })).map(text => text.text)
-  const buttons = (await ui.findAll({ type: 'Button' })).map(button => button.text)
+  const result = await drawn(ui)
   await ui.unmount()
 
-  return { texts, buttons }
+  return result
 }
 
 const bandLines = async ($: Engine, props: Band = {}) => {
-  const { texts, buttons } = await bandTexts($, props)
+  const ui = await band($, props)
+  const result = await drawnLines(ui)
+  await ui.unmount()
 
-  return { lines: texts.filter(text => !isGutter(text)), buttons }
+  return result
 }
 
 test('lists a recorded open item above the prompt with a Resolve button', async ($, on) => {
   machine(on)
 
-  const { result } = await openItems($, { action: 'add', text: OPEN, detail: 'Keep it (recommended), or revert it.' })
+  const { result } = await openItems($, { action: 'add', text: OPEN, detail: DETAIL })
   const id = idOf(result)
 
   expect(result).toBe(`Recorded open item #${id}: ${OPEN}`)
-  expect(await bandLines($)).toEqual({ lines: ['⏺ Open items ', HINT, `☐ ${OPEN}`], buttons: ['Resolve'] })
-  expect(await listed($)).toBe(`#${id} ${OPEN}\n  Keep it (recommended), or revert it.`)
+  expect(await bandLines($)).toEqual({
+    lines: ['⏺ Open items ', BOTH_HINT, `☐ ${OPEN}`],
+    buttons: ['Resolve', 'Show details'],
+  })
+  expect(await listed($)).toBe(`#${id} ${OPEN}\n  ${DETAIL}`)
+})
+
+test('shows each detail under its item once Show details is pressed, and hides it again', async ($, on) => {
+  machine(on)
+  await add($, OPEN, DETAIL)
+  await add($, OTHER)
+  const ui = await band($)
+
+  await ui.press({ key: 'details' })
+
+  expect(await drawnLines(ui)).toEqual({
+    lines: ['⏺ Open items ', BOTH_HINT, `☐ ${OPEN}`, DETAIL, `☐ ${OTHER}`],
+    buttons: ['Resolve', 'Hide details'],
+  })
+  expect((await ui.find({ type: 'Text', text: DETAIL }))?.props.dimColor).toBe(true)
+  expect((await ui.find({ type: 'Text', text: OPEN }))?.props.wrap).toBe('wrap')
+
+  await ui.press({ key: 'details' })
+
+  expect(await drawnLines(ui)).toEqual({
+    lines: ['⏺ Open items ', BOTH_HINT, `☐ ${OPEN}`, `☐ ${OTHER}`],
+    buttons: ['Resolve', 'Show details'],
+  })
+  expect((await ui.find({ type: 'Text', text: OPEN }))?.props.wrap).toBe('truncate-end')
+  await ui.unmount()
+})
+
+test('keeps the details toggle while a turn runs', async ($, on) => {
+  machine(on)
+  await add($, OPEN, DETAIL)
+
+  expect(await bandLines($, { isWorking: true })).toEqual({
+    lines: ['⏺ Open items ', DETAILS_HINT, `☐ ${OPEN}`],
+    buttons: ['Show details'],
+  })
+})
+
+test('drops the detail of a resolved item, and the toggle with the last open detail', async ($, on) => {
+  machine(on)
+  const id = await add($, OPEN, DETAIL)
+  const other = await add($, OTHER, OTHER_DETAIL)
+  const ui = await band($)
+  await ui.press({ key: 'details' })
+
+  await resolve($, id)
+
+  expect(await drawnLines(ui)).toEqual({
+    lines: ['⏺ Open items ', BOTH_HINT, `✓ ${OPEN}`, `☐ ${OTHER}`, OTHER_DETAIL],
+    buttons: ['Resolve', 'Hide details'],
+  })
+
+  await resolve($, other)
+
+  expect(await drawnLines(ui)).toEqual({ lines: ['⏺ Open items ', `✓ ${OPEN}`, `✓ ${OTHER}`], buttons: [] })
+  await ui.unmount()
 })
 
 test('keeps one row when an open item is recorded twice', async ($, on) => {
@@ -997,7 +1091,8 @@ test('shows a resolved item struck through, then removes it once its time is up'
 
   const resolved = await ui.find({ type: 'Text', text: OPEN })
 
-  expect([resolved?.text, resolved?.props.dimColor, resolved?.props.strikethrough]).toEqual([`✓ ${OPEN}`, true, true])
+  expect([resolved?.text, resolved?.props.dimColor, resolved?.props.strikethrough]).toEqual([OPEN, true, true])
+  expect((await ui.find({ type: 'Text', text: '✓ ' }))?.props.dimColor).toBe(true)
   expect(await ui.findAll({ type: 'Button' })).toEqual([])
   expect(await ui.find({ type: 'Text', text: HINT })).toBeUndefined()
 
@@ -1026,7 +1121,7 @@ test('hangs the first item off an elbow and aligns the rest under it', async ($,
   await add($, OPEN)
   await add($, OTHER)
 
-  expect((await bandTexts($)).texts).toEqual(['⏺ Open items ', HINT, '  ⎿  ', `☐ ${OPEN}`, '     ', `☐ ${OTHER}`])
+  expect((await bandTexts($)).texts).toEqual(['⏺ Open items ', HINT, '  ⎿  ', '☐ ', OPEN, '     ', '☐ ', OTHER])
 })
 
 test('keeps an item recorded after /clear when an earlier resolve timer fires', async ($, on) => {

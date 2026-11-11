@@ -31,7 +31,7 @@ Each skill is self-contained. Skills compose other skills to any depth via `/ski
 
 After editing `checkout-snapshot.sh`, keep its four copies (polish-code and evaluate-findings, both editions) identical and run `bash tests/checkout-snapshot-harness.sh`.
 
-After editing the plugin mod, run `claude plugin validate claude` and `claude plugin test claude`. When the edit changes what users see, update `docs/claude-code-mod.md` and re-capture the affected `assets/mod-*.svg` as `assets/CLAUDE.md` describes.
+After editing the plugin mod, run `claude plugin validate claude` and `claude plugin test claude`. The test kit asserts the drawn tree and lays nothing out, so check a change to wrapping, alignment, or spacing in a live session before handing it over. When the edit changes what users see, update `docs/claude-code-mod.md` and re-capture the affected `assets/mod-*.svg` as `assets/CLAUDE.md` describes.
 
 `/smoke-test`, `/create-test-plan`, and `/exploratory-test` share one testing domain. An execution rule (launching and driving the running app, and cleaning up after it) goes into `/test-run-rules` alone, which both test-running skills load. A scenario-design rule (what a test covers and what counts as a pass) that lands in `/smoke-test` also goes into `/create-test-plan`.
 

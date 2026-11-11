@@ -20,11 +20,15 @@ const MAX_DETAIL = 1_000
 const ID_SPACE = 36 ** 4
 const RESOLVE_COMMAND = 'turbo:resolve-open-items'
 const RESOLVE_HOTKEY = 'r'
+const DETAILS_HOTKEY = 'd'
 const ELBOW = '  ⎿  '
 
 const openItems = atom({ plugin: 'turbo', key: 'openItems' } as const, [])
+const detailsShown = atom({ plugin: 'turbo', key: 'openItemsDetailsShown' } as const, false)
 
 const isOpen = (item: OpenItem) => item.resolvedAt === undefined
+
+const hasOpenDetail = (item: OpenItem) => isOpen(item) && item.detail !== undefined
 
 const isExpired = (item: OpenItem, now: number) =>
   item.resolvedAt !== undefined && item.resolvedAt + RESOLVED_SHOW_MS <= now
@@ -184,16 +188,29 @@ export async function renderOpenItems(
 
   const { Box, Button, Text } = $.ui.resolve(e)
   const resolvable = !e.props.isWorking && items.some(isOpen)
+  const expandable = items.some(hasOpenDetail)
+  const expanded = expandable && (await read($, detailsShown))
+  const hotkeys = [...(resolvable ? [RESOLVE_HOTKEY] : []), ...(expandable ? [DETAILS_HOTKEY] : [])]
 
   return (
     <Box flexDirection="column">
       <Box>
         <Text bold>⏺ Open items </Text>
-        {resolvable ? (
-          <Button key="resolve" label="Resolve" hotkey={RESOLVE_HOTKEY} onPress={() => runResolve($)} />
-        ) : null}
-        {resolvable && e.surface === 'terminal' ? (
-          <Text dimColor>{` (ctrl+x tab, then ${RESOLVE_HOTKEY})`}</Text>
+        <Box columnGap={1}>
+          {resolvable ? (
+            <Button key="resolve" label="Resolve" hotkey={RESOLVE_HOTKEY} onPress={() => runResolve($)} />
+          ) : null}
+          {expandable ? (
+            <Button
+              key="details"
+              label={expanded ? 'Hide details' : 'Show details'}
+              hotkey={DETAILS_HOTKEY}
+              onPress={() => update($, detailsShown, shown => !shown)}
+            />
+          ) : null}
+        </Box>
+        {hotkeys.length > 0 && e.surface === 'terminal' ? (
+          <Text dimColor>{` (ctrl+x tab, then ${hotkeys.join(' or ')})`}</Text>
         ) : null}
       </Box>
       {items.map((item, index) => {
@@ -202,9 +219,13 @@ export async function renderOpenItems(
         return (
           <Box key={item.id}>
             <Text dimColor>{index === 0 ? ELBOW : ' '.repeat(ELBOW.length)}</Text>
-            <Text wrap="truncate-end" dimColor={resolved} strikethrough={resolved}>
-              {`${resolved ? '✓' : '☐'} ${item.text}`}
-            </Text>
+            <Text dimColor={resolved}>{resolved ? '✓ ' : '☐ '}</Text>
+            <Box flexDirection="column">
+              <Text wrap={expanded ? 'wrap' : 'truncate-end'} dimColor={resolved} strikethrough={resolved}>
+                {item.text}
+              </Text>
+              {expanded && hasOpenDetail(item) ? <Text dimColor>{item.detail}</Text> : null}
+            </Box>
           </Box>
         )
       })}

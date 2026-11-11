@@ -11,6 +11,12 @@ export type OpenItem = { id: string; text: string; detail?: string; resolvedAt?:
 
 declare module 'claude-code' {
   interface PluginState {
-    turbo: { contextLeft: ContextLeft; turnReading: TurnReading | null; cacheTtl: number; openItems: OpenItem[] }
+    turbo: {
+      contextLeft: ContextLeft
+      turnReading: TurnReading | null
+      cacheTtl: number
+      openItems: OpenItem[]
+      openItemsDetailsShown: boolean
+    }
   }
 }

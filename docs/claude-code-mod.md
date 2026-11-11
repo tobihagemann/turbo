@@ -8,9 +8,11 @@ The Claude Code plugin ships a [mod](https://claude.com/blog/claude-code-mods) a
 
 Whenever a turn ends with something only you can decide or do, such as a plan to approve or a sign-in to complete, Claude records it through the `turbo - open-items` tool. Open items are listed in the band above the prompt.
 
-![Claude Code session with two open items listed above the prompt and Turbo's status line below it](../assets/mod-prompt-area.svg)
+![Claude Code session with two open items and their details listed above the prompt, and Turbo's status line below it](../assets/mod-prompt-area.svg)
 
 The band keeps those items in view after the reply that raised them scrolls away. Click **Resolve** to run [`/turbo:resolve-open-items`](../claude/skills/resolve-open-items/SKILL.md), which walks each item through a question with the recommendation first. From the keyboard, press `ctrl+x tab` to focus the band, then `r`. You can also settle an item in your own words, and Claude resolves it from your reply. A resolved item shows struck through for a moment before it disappears.
+
+Each row shows the item's summary, cut to one line. When Claude recorded more about an item, such as a decision's choices, click **Show details** or press `d` in the focused band. Every summary then shows in full, with what Claude recorded under it. **Hide details** folds them away again.
 
 The list survives compaction. `/clear` and `/resume` start it empty. Before a `/clear`, run [`/turbo:handoff`](../claude/skills/handoff/SKILL.md) to carry the items into the handoff.
 
