@@ -26,6 +26,8 @@ Send each extra session one message with the SendMessage tool, using this templa
 ```
 [Opening for the set's lane]
 
+Main checkout: [absolute path of the repo root SKILL.md Step 1 resolved]. Once in a worktree, copy from the main checkout each file the worktree lacks that the work needs, such as gitignored local configuration or untracked project instructions, and leave each copied file out of every commit.
+
 The entries were validated against the code in the session that sent this.
 
 Lane: [direct, investigate, or plan]
