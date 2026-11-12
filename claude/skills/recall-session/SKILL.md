@@ -1,11 +1,11 @@
 ---
-name: recall-rationale
-description: "Recall why a past change was made by locating the Claude Code transcript that produced it. Use when the user asks to \"recall the rationale\", \"why did we do X\", or \"why was this changed\"."
+name: recall-session
+description: "Recall what a past Claude Code session did and why by locating its transcript. Use when the user asks to \"recall the session\", \"why did we do X\", or \"why was this changed\"."
 ---
 
-# Recall Rationale
+# Recall Session
 
-Locate the Claude Code transcript that produced a given change and recover why it was made. Useful for answering reviewer questions, writing post-hoc explanations, or recovering forgotten context.
+Locate the Claude Code transcript behind a change, a passage, or another project's session, and recover what that session did and why. Useful for answering reviewer questions, writing post-hoc explanations, or recovering forgotten context.
 
 ## Inputs
 
@@ -19,7 +19,7 @@ Accept any of:
 
 If only a file is given, `git blame` resolves the commit that last touched the line.
 
-## Step 1: Resolve the Commit and Run the Script
+## Step 1: Locate the Transcript
 
 Call `${CLAUDE_SKILL_DIR}/scripts/find_transcript.py` with either `--commit <sha>` or `--file <path>[:<line>]`. Pass `--cwd /path/to/repo` when searching a different repo than the current working directory.
 
@@ -58,31 +58,32 @@ Status values:
 If `status` is `ok`:
 
 1. Start with the top candidate (highest score). Read its excerpts first.
-2. If the excerpts already explain the change, stop. If they are thin or ambiguous, read the full transcript at `jsonl_path` directly for more context.
+2. If the excerpts already answer the question, stop. If they are thin or ambiguous, read the full transcript at `jsonl_path` directly for more context.
 3. Ignore candidates with low scores or scores far below the top — they are false positives.
-4. When the rationale spans multiple excerpts, quote the most specific one.
+4. When the answer spans multiple excerpts, quote the most specific one.
 5. In phrase mode, the `last match at` reason marks the last time the session handled the passage. When the question is about the passage's current state, read the transcript around that point.
 
 Synthesize a concise summary tied to the question being answered:
 
-- Lead with the **why**. The diff already shows the what.
+- For a change or a passage, lead with the **why**. The diff already shows the what.
+- For another project's session, report what it did against what the request asks about.
 - Quote the implementer's own words when they already say it well.
 - Keep it to one or two paragraphs. Don't narrate the whole session.
 
-If `status` is anything other than `ok`, report that no rationale was found and fall back to reading the commit diff, when there is one, and the surrounding code. Say so explicitly so it's clear whether the answer still holds up.
+If `status` is anything other than `ok`, report that no transcript was found. For a change or a passage, fall back to reading the commit diff, when there is one, and the surrounding code, and say so explicitly so it's clear whether the answer still holds up. For another project's session, report the status alone.
 
 ## Step 3: Output
 
-Return the rationale in this shape:
+Return the answer in this shape:
 
 ```
 **Commit:** <short-sha> — <subject>
 **Transcript:** <session-id> (score <N>)
 
-<one or two paragraphs of rationale, quoting the implementer where useful>
+<one or two paragraphs answering the question, quoting the implementer where useful>
 ```
 
-If no transcript was found:
+If no transcript was found for a change or a passage:
 
 ```
 **Commit:** <short-sha> — <subject>
@@ -91,7 +92,7 @@ If no transcript was found:
 <fallback explanation derived from reading the commit and current code>
 ```
 
-In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`. For another project's session, write it as `**Commit:** none (session check)` and report what the session did against what the request asks about, in place of a rationale. When no transcript was found, report the status alone.
+In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`. For another project's session, write it as `**Project:** <the directory passed as --cwd>`.
 
 Then use the TaskList tool and proceed to any remaining task.
 

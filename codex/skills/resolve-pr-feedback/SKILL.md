@@ -144,9 +144,9 @@ If the fix did not address the concern (wrong location, incomplete change, or th
 
 ## Step 9: Answer Reviewer Questions
 
-For each question item whose source is `inline-thread`, run the `$recall-rationale` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the rationale it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it finds no session history, compose the answer from the current code and record that grounding for Step 13. Leave out any mention of Codex, session history, or recalled rationale, and leave voice rules and reply formatting to Step 11.
+For each question item whose source is `inline-thread`, run the `$recall-session` skill with `<path>:<line>` and compose a one-or-two-sentence answer from the rationale it returns, quoting or paraphrasing the implementer's own words where they explain the decision. When it finds no session history, compose the answer from the current code and record that grounding for Step 13. Leave out any mention of Codex, session history, or recalled rationale, and leave voice rules and reply formatting to Step 11.
 
-Issue-comment questions are composed during Step 12's assembly and posted by `$reply-to-pr-conversation`. They have no file and line to ground with `$recall-rationale`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 13.
+Issue-comment questions are composed during Step 12's assembly and posted by `$reply-to-pr-conversation`. They have no file and line to ground with `$recall-session`, so the composition draws on the reconciled intent and the PR's changed code. Review-body questions have no destination to post to and are listed for manual follow-up in Step 13.
 
 If there are no inline-thread questions, skip this step.
 

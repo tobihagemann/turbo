@@ -1,11 +1,11 @@
 ---
-name: recall-rationale
-description: "Recall why a past change was made from Codex session history, falling back to git history and code. Use when the user asks to \"recall the rationale\", \"why did we do X\", or \"why was this changed\"."
+name: recall-session
+description: "Recall what a past Codex session did and why from session history, falling back to git and code. Use when the user asks to \"recall the session\", \"why did we do X\", or \"why was this changed\"."
 ---
 
-# Recall Rationale
+# Recall Session
 
-Recover why a change was made. Prefer Codex session history when it can be found; otherwise derive the explanation from git history and current code.
+Recover what a past Codex session did and why, for a change, a passage, or another project's session. Prefer Codex session history when it can be found; for a change or a passage, otherwise derive the explanation from git history and current code.
 
 ## Inputs
 
@@ -35,7 +35,7 @@ git show --stat --oneline <sha>
 git show -- <path>
 ```
 
-When there is no commit to resolve, because the project is not a git repository or `git blame` finds no commit for the line (it reports `Not Committed Yet`, or fails because the file is untracked), skip the git commands and carry a distinctive stretch of the passage's current text into Step 2, taken from a single line and free of quotes and backslashes, which session files store escaped.
+When there is no commit to resolve, because the project is not a git repository or `git blame` finds no commit for the line (it reports `Not Committed Yet`, or fails because the file is untracked), skip the git commands and carry a distinctive stretch of the passage's current text into Step 2, taken from a single line and free of quotes and backslashes, which session files store escaped. For another project's session, skip the git commands as well.
 
 ## Step 2: Search Codex Session History
 
@@ -51,34 +51,36 @@ rg -F -f <pattern-file> ~/.codex/sessions
 
 Read only the smallest relevant transcript excerpts. Prefer sessions close to the commit time and sessions that mention both the file and the task. Without a commit, disregard matches from this search itself (the pattern-file write and the search commands), prefer sessions whose tool calls carry the passage and that mention it often, break ties by recency, and read around the chosen session's last mention when the question is about the passage's current state.
 
-If no matching session is found, continue with the fallback path.
+If no matching session is found, continue with Step 3.
 
 ## Step 3: Synthesize
 
-If session rationale was found:
+For a change or a passage, if session rationale was found:
 
 - Lead with the **why**. The diff already shows the what.
 - Quote or paraphrase only the relevant rationale.
 - Keep the explanation to one or two paragraphs.
 
-If no session rationale was found:
+For a change or a passage, if no session rationale was found:
 
 - Read the commit diff, when there is one, and the surrounding current code.
 - Infer the most likely rationale from the code, tests, plan/spec artifacts, and PR context.
 - Mark the output as fallback-derived.
 
+For another project's session, report what the session did against what the request asks about, in one or two paragraphs. If no session was found, report that alone.
+
 ## Step 4: Output
 
-When session rationale was found:
+When a session answered the question:
 
 ```markdown
 **Commit:** <short-sha> — <subject>
 **Session:** <session reference>
 
-<one or two paragraphs of rationale>
+<one or two paragraphs answering the question>
 ```
 
-When no session rationale was found:
+When no session rationale was found for a change or a passage:
 
 ```markdown
 **Commit:** <short-sha> — <subject>
@@ -87,7 +89,7 @@ When no session rationale was found:
 <fallback explanation derived from git history and current code>
 ```
 
-In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`. For another project's session, write it as `**Commit:** none (session check)` and report what the session did against what the request asks about, in place of a rationale. When no session was found, report that alone.
+In either shape, without a commit, write the first line as `**Commit:** none (not a git repository)` or `**Commit:** none (uncommitted)`. For another project's session, write it as `**Project:** <the project's directory>`.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
@@ -95,4 +97,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 - Treat session excerpts as evidence, not ground truth.
 - Do not read full transcript files unless excerpts are insufficient.
-- If current code contradicts a remembered rationale, note the discrepancy.
+- If current code contradicts a recalled excerpt, note the discrepancy.
