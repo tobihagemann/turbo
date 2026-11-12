@@ -7,6 +7,8 @@ description: "Validate .turbo/backlog.md entries, recommend a working set, and r
 
 Validate improvements from `.turbo/backlog.md`, propose a specific working set based on the backlog's actual contents, and run one lane per session: direct, investigate, or plan. Mixing lanes in a single run tangles commits, so the skill processes exactly one lane each time. Entries outside the confirmed working set stay in the backlog for future runs.
 
+When a working set and a lane were passed in, by the user or in a message from another session, start at Step 5 with them and create tasks for Steps 5 and 6 alone.
+
 ## Task Tracking
 
 At the start, use `TaskCreate` to create a task for each step:
@@ -14,8 +16,9 @@ At the start, use `TaskCreate` to create a task for each step:
 1. Read the backlog
 2. Validate and classify
 3. Recommend, confirm, and update the backlog
-4. Run the chosen lane
-5. Prune working-set entries from the backlog
+4. Brief the extra sessions
+5. Run the chosen lane
+6. Prune working-set entries from the backlog
 
 ## Step 1: Read the Backlog
 
@@ -115,11 +118,13 @@ Pick one specific working set tailored to the active entries. Read the entries a
 
 State the recommendation as: lane + concrete working set (specific entries or a category-scoped subset) + one or two sentences on why this beats the alternatives. Then list 1–3 honest alternatives, each named with the actual entry or subset (e.g., "investigate the flaky presence test", "plan lane on persist-before-send"). When only one lane has active entries, recommend that lane and skip alternatives.
 
+Then check the active entries outside the recommended working set for **parallel sets**: working sets an extra session can run at the same time. A parallel set touches no file the recommended working set or another parallel set touches, and no set supersedes another. Name each parallel set with its lane after the alternatives.
+
 ### Confirm via AskUserQuestion
 
 Use `AskUserQuestion` to confirm. Combine into the same prompt:
 
-1. Confirm the recommended working set or pick one of the named alternatives — include only when active entries exist
+1. Confirm the recommended working set or pick one of the named alternatives — include only when active entries exist. When parallel sets exist, add an option that runs the recommended working set here and each parallel set in an extra session, naming how many extra sessions that takes, in place of the weakest alternative when the options would exceed four.
 2. Whether to remove stale entries — include only when stale entries exist
 3. Resolution for unclear items — include only when unclear entries exist
 
@@ -131,7 +136,13 @@ Rewrite in `.turbo/backlog.md` each Active or Deferred entry whose path, scope, 
 
 Compute the **working set** from the confirmed choice. If the working set is empty, stop.
 
-## Step 4: Run the Chosen Lane
+## Step 4: Brief the Extra Sessions
+
+Skip this step unless the user confirmed the parallel option.
+
+Read [references/parallel-split.md](references/parallel-split.md) and follow its phases.
+
+## Step 5: Run the Chosen Lane
 
 Read the reference file for the confirmed lane and follow its phases:
 
@@ -141,7 +152,13 @@ Read the reference file for the confirmed lane and follow its phases:
 
 State the chosen lane before continuing with the reference file.
 
-## Step 5: Prune Working-Set Entries from the Backlog
+## Step 6: Prune Working-Set Entries from the Backlog
+
+When the working set arrived in a message from another session, skip the rest of this step: send that session one message with the SendMessage tool giving each working-set entry's outcome under this step's rules, either processed, or kept with the restated fields a kept entry calls for, and the path of any plan file written. Then use the TaskList tool and proceed to any remaining task.
+
+When Step 1 did not run, resolve the repo root as Step 1 does.
+
+For each session briefed in Step 4 whose report has arrived, apply the rest of this step to the entries it reports and mark its prune task completed. Leave the prune task of a session that has not reported pending, and apply its report when it arrives.
 
 Edit `.turbo/backlog.md` to delete the working-set entries that the lane processed. "Processed" means:
 
@@ -162,4 +179,4 @@ When a processed entry carries a **Paired with** line, drop that reference from 
 ## Rules
 
 - `.turbo/` is gitignored. Edits to `.turbo/backlog.md` are local-only and do not need to be staged or committed.
-- Run exactly one lane per session. Leave other active entries in the backlog for a future run.
+- Run exactly one lane per session. Leave active entries outside the confirmed working set and the briefed parallel sets in the backlog for a future run.

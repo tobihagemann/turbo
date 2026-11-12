@@ -89,6 +89,8 @@ When you're ready to act, [`/implement-backlog`](../claude/skills/implement-back
 - **`investigate`** → [`/investigate`](../claude/skills/investigate/SKILL.md), then [`/implement`](../claude/skills/implement/SKILL.md)
 - **`plan`** → [`/plan`](../claude/skills/plan/SKILL.md)
 
+In the Claude Code edition, it also names working sets that share no files with the one it recommends. Pick the parallel option, open the extra sessions it asks for, and it briefs each one to run its set. A session that changes code works in a worktree of its own, on its own branch, and a session that only plans stays in the main checkout. Each session's gates still come to you.
+
 ## Browser and UI Testing
 
 [`/smoke-test`](../claude/skills/smoke-test/SKILL.md) and [`/exploratory-test`](../claude/skills/exploratory-test/SKILL.md) (Claude) / [`$smoke-test`](../codex/skills/smoke-test/SKILL.md) and [`$exploratory-test`](../codex/skills/exploratory-test/SKILL.md) (Codex) automate manual testing — the kind of hands-on verification you'd normally do yourself. See [Browser and UI Testing Tools](requirements.md#browser-and-ui-testing-tools) for what drives them in each edition. [`/preview`](../claude/skills/preview/SKILL.md) / [`$preview`](../codex/skills/preview/SKILL.md) is the hand-over for the [Try](#try) stage, and you can run it standalone any time you want to poke at the running app.

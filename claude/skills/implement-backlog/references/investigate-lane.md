@@ -2,7 +2,7 @@
 
 Diagnose each working-set entry via `/investigate`, then apply the concluded fixes via `/implement`.
 
-The working set is the entries the user confirmed in SKILL.md Step 3.
+The working set is the entries the user confirmed in SKILL.md Step 3, or the set that was passed in.
 
 ## Task Tracking
 

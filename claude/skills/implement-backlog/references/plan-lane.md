@@ -2,7 +2,7 @@
 
 Run `/plan` with the working-set entries. When `/plan` writes a plan, the user runs `/turbo:implement-plan` in a fresh session afterward.
 
-The working set is the entries the user confirmed in SKILL.md Step 3.
+The working set is the entries the user confirmed in SKILL.md Step 3, or the set that was passed in.
 
 ## Task Tracking
 
