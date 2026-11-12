@@ -16,6 +16,7 @@ Identify from the invoking prompt or conversation context:
 - **Dimensions** — one review concern (single-pass) or multiple independent concerns (fan-out, one per dimension)
 - **Skepticism guidance** — any material-specific instruction for pushing past surface findings; optional
 - **Prior adjudications** — findings already judged, one line each with its verdict and the recorded reason; optional
+- **Execution limits** — test tiers that are off-limits, timeouts, or other limits the request places on running checks; optional
 - **Output format** — finding layout, priority scale, or verdict labels; optional
 
 If no reviewable material is available, stop and state that material is required.
@@ -43,11 +44,13 @@ Assemble the prompt using codex's XML tag conventions (see `/codex-exec` Prompt 
 
 Instruct codex to bound its reads to the material under review, the sources needed to verify claims about it, and the criteria identified in Step 1. Exclude documents unrelated to those three. Instruct codex to search the repository with a tool that skips gitignored files, such as `git grep --untracked`, and to open or search a gitignored path only when this prompt, the material, or the criteria name it, or when a dependency's installed source is needed to verify a claim, never one holding local configuration or credentials.
 
+When the material is code, state in the prompt that the repository is read-only, that the working directory is an empty scratch directory outside it, and that the temporary directory is writable. Name the repository and every path the prompt mentions by absolute path. Instruct codex to read the `AGENTS.md` files that govern the reviewed paths as project instructions, since a run started outside the repository loads none. Carry any execution limits identified in Step 1 into the prompt. Instruct codex to run any check that modifies files against a copy of the repository under the temporary directory, deleted afterward, in place of a `git worktree`, which the read-only repository refuses. Instruct it to name any check it could not run and to mark a verdict that rests on reading alone as such.
+
 Include an explicit instruction that codex perform the review itself rather than delegating to another peer review skill or back to Claude. The prompt has already crossed the tool boundary; further forwarding would loop.
 
 ## Step 3: Run `/codex-exec` Skill
 
-Invoke `/codex-exec` via the Skill tool in read-only mode with the assembled prompt.
+Invoke `/codex-exec` via the Skill tool with the assembled prompt: in scratch-workspace mode when the material is code, in read-only mode otherwise.
 
 ## Step 4: Shape the Response
 

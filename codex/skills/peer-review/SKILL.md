@@ -33,6 +33,7 @@ Assemble a prompt for Claude:
 - Require the exact output format expected by the calling skill.
 - Require evidence for every actionable finding.
 - Tell Claude not to modify files.
+- When the material is code, state that the run is limited to reading files and a fixed set of read-only git commands. Instruct Claude to name any check it could not run, such as a test suite or a mutation check, and to mark a verdict that rests on reading alone as such.
 - Tell Claude to perform the review itself rather than delegating to another peer review skill or back to Codex. The prompt has already crossed the tool boundary; further forwarding would loop.
 
 ## Step 3: Run `$claude-print` Skill

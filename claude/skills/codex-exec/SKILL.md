@@ -60,9 +60,9 @@ codex exec --skip-git-repo-check --sandbox <original-sandbox> -o <fresh-output-p
   "Reply now with your complete findings as your final message." < /dev/null
 ```
 
-A resume turn takes its sandbox from its own command line rather than from the session, so pass the original run's `--sandbox` value again, ahead of the `resume` subcommand, which does not accept the flag after it. When the kill left no session id in hand, recover it from the newest `~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-<timestamp>-<session-id>.jsonl` (the id is the UUID in the filename), listing a single day directory so the ordering is right. `--last` in place of `<session-id>` also works when no other codex run is in flight. Do not consult `~/.codex/session_index.jsonl`; it lags behind the rollout files.
+A resume turn takes its sandbox from its own command line rather than from the session, so pass the original run's `--sandbox` value again, ahead of the `resume` subcommand, which does not accept the flag after it. It takes its working directory the same way: when the original run passed `-C`, pass the same `-C` value again beside `--sandbox`. When the kill left no session id in hand, recover it from the newest `~/.codex/sessions/<YYYY>/<MM>/<DD>/rollout-<timestamp>-<session-id>.jsonl` (the id is the UUID in the filename), listing a single day directory so the ordering is right. `--last` in place of `<session-id>` also works when no other codex run is in flight. Do not consult `~/.codex/session_index.jsonl`; it lags behind the rollout files.
 
-A run can also exit 0 within the timeout without completing the task, its final message **asking for authorization** to take an approach its own instructions require it to clear first. Read the final message before treating the run as finished: the exit code and the well-formed message both read as success. Resume the session with the authorization as the prompt, per the form above, passing the `--sandbox` value the authorized approach needs. Do not re-run the original prompt; it reaches the same gate.
+A run can also exit 0 within the timeout without completing the task, its final message **asking for authorization** to take an approach its own instructions require it to clear first. Read the final message before treating the run as finished: the exit code and the well-formed message both read as success. Resume the session with the authorization as the prompt, per the form above, passing the `--sandbox` value the authorized approach needs and the original run's `-C` value when it had one. Do not re-run the original prompt; it reaches the same gate.
 
 Never wait with `Monitor` (it returns immediately, and events that arrive after your final text are dropped), and never return the task ID, an interim file snapshot, or `"Waiting for codex to finish"` as the result — each is a false-empty return.
 
@@ -80,6 +80,7 @@ Treat models-manager and cache-TTL errors as non-fatal warnings. Read the error 
 | `--sandbox read-only` | Analysis, code reading, generating reports |
 | `--sandbox workspace-write` | Editing files within the project |
 | `--sandbox danger-full-access` | Installing packages, running tests, system operations |
+| `-C <dir>` | Working directory for the run |
 | `--json` | JSON Lines output (progress + final message) |
 | `-o <path>` | Write final message to a file |
 | `--output-schema <path>` | Enforce JSON Schema on the output |
@@ -87,6 +88,8 @@ Treat models-manager and cache-TTL errors as non-fatal warnings. Read the error 
 | `--skip-git-repo-check` | Bypass git repository requirement |
 
 For fix or implementation tasks, default to `--sandbox workspace-write` so Codex can edit files. Use `--sandbox read-only` for analysis or research tasks. Pass `--sandbox` and no other permission flag. Omitting `--sandbox` falls back to the codex config and project trust level (trusted projects run workspace-write), so always pass the flag explicitly.
+
+For scratch-workspace mode, a run that executes checks against a repository it must leave untouched, pass `--sandbox workspace-write -C <scratch-dir>`, where `<scratch-dir>` is a fresh empty directory under the session scratchpad directory. `workspace-write` makes the working directory and the temporary directory writable, so the repository stays read-only while tests that create temporary files run. The run starts outside the repository and loads none of its `AGENTS.md` files, so name the repository by absolute path in the prompt, along with any of its instruction files the run should follow. For a repository that itself sits under `/tmp`, `/private/tmp`, or the temporary directory, which stay writable in this mode, use `--sandbox read-only` instead.
 
 Omit `-m`, leaving the run on codex's configured model. When the user named a model for this run, add `-m <model>` to every `codex exec` command in this skill, resume turns included, and pass the name verbatim.
 
