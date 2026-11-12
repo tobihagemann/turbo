@@ -19,7 +19,7 @@ Gather from context or `$ARGUMENTS`:
 - **Type**: One of `direct`, `investigate`, or `plan` — see criteria below
 - **Category**: One of `refactor`, `performance`, `reliability`, `readability`, `testing`, `docs`, `dx` (developer experience), or `feature`
 - **Where**: File path(s) and/or area of the codebase affected
-- **Why**: Brief rationale — what's the benefit?
+- **Why**: Brief rationale — what's the benefit? For a defect or risk, whether it was observed in use or derived from reading code or a review.
 - **Ceiling** and **Revisit**: when the entry records a deliberate simplification, meaning a simpler approach was shipped in place of a fuller one and accepts a known limit — the limit the shipped approach accepts, and the condition that makes the fuller version worth building. **Revisit** alone when the entry waits on an outside event: that event
 
 ### Type criteria
