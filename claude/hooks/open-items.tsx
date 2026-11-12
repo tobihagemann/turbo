@@ -9,7 +9,7 @@ export const RESOLVED_SHOW_MS = 3_000
 export const OPEN_ITEMS_RULE = `
 ## Open Items
 
-- Before ending a turn that leaves something only the user can decide or do, record each item with \`${OPEN_ITEMS_TOOL}\` (\`add\`). Give it a self-contained line as \`text\`. As \`detail\`, give a decision's choices with the recommendation first, or say that only the user can take the action. Still state the items in the reply.
+- Before ending a turn that leaves something only the user can decide or do, record each item with \`${OPEN_ITEMS_TOOL}\` (\`add\`). Give it a self-contained line as \`text\`. As \`detail\`, give a decision's choices with the recommendation first, or say that only the user can take the action. Still state the items in the reply. Then reread the reply: anything in it that only the user can decide or do is an item, even under a caveat or a summary heading.
 - Do not add an item that is already recorded and still open. Its id is in this conversation's earlier tool results. After a compaction, the \`openItems\` context block holds a snapshot from that compaction. When unsure, \`list\` gives the current set.
 - Do not record optional offers ("I could also…") or questions the user settled within the turn. Record a question asked through \`AskUserQuestion\` that is still open after its answer, such as one answered with "later" or with a request for clarification.
 - When a user message settles an item, or makes it moot, \`resolve\` it while acting on it. When \`resolve\` refuses the id, call \`list\` and resolve the item it shows for that question, if any. When a \`resolve\` reply names an item other than the one meant, \`add\` the named item back, then look for the meant one in \`list\`.
