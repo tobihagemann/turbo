@@ -22,7 +22,7 @@ Read every file in `.turbo/handoff/`. Audit the handoffs that propose lessons fo
 Take each handoff's evidence as a record of the incident, and audit its remedy against the file it targets before recommending any of it:
 
 - **Gap** — confirm the gap still exists in the current text, is not already handled elsewhere in the skill, its references, or the `SKILL-CONVENTIONS.md` of the edition the target lives in (`claude/` or `codex/`), and was not already rejected by a decision recorded in auto memory or the target's git history.
-- **Diagnosis** — ask whether the real finding is that the skill should not have run there, or that nothing was broken, rather than that the skill must handle the case.
+- **Diagnosis** — ask whether the real finding is that the skill should not have run there, or that nothing was broken, rather than that the skill must handle the case. Before concluding either, check whether the user had to step in to finish something the skill left undefined. Treat such an intervention as a gap, look for it in the design of the skill the lesson targets as well as where the handoff's remedy points, and name it in the verdict even when dropping the remedy.
 - **Remedy** — check the proposed text against the conventions and against what the target skill's other steps depend on. Prefer generalizing an existing rule over adding one more special case to it.
 - **Genericity** — strip anything tied to the originating project so the rule states the shared shape alone.
 - **Weight** — weigh how often the new rule would fire against how often it would help.
