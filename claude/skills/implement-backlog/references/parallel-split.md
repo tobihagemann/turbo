@@ -48,8 +48,6 @@ Fill the opening by lane:
 
 List every other set in each brief, the recommended working set under this session's own name included.
 
-Then use `TaskCreate` to add one task per briefed session, `Prune entries reported by <session name>`, and leave each pending until that session's report arrives.
-
 Continue with the recommended working set without waiting for the briefed sessions. Leave each briefed session's gates to the user.
 
 Then use the TaskList tool and proceed to any remaining task.

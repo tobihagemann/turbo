@@ -154,11 +154,16 @@ State the chosen lane before continuing with the reference file.
 
 ## Step 6: Prune Working-Set Entries from the Backlog
 
-When the working set arrived in a message from another session, skip the rest of this step: send that session one message with the SendMessage tool giving each working-set entry's outcome under this step's rules, either processed, or kept with the restated fields a kept entry calls for, and the path of any plan file written. Then use the TaskList tool and proceed to any remaining task.
-
 When Step 1 did not run, resolve the repo root as Step 1 does.
 
-For each session briefed in Step 4 whose report has arrived, apply the rest of this step to the entries it reports and mark its prune task completed. Leave the prune task of a session that has not reported pending, and apply its report when it arrives.
+When this session runs inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), use `AskUserQuestion` to offer two options: leave the worktree and prune from the main checkout, listed first and labeled `(Recommended)`, or stay in the worktree.
+
+- **Leave** — Leave with the ExitWorktree tool (`action: "keep"`). When it reports that no worktree session is active, take the Stay path instead. Otherwise:
+  1. Resolve the default branch with `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`. Fast-forward the main checkout's local default branch to `origin/<default-branch>` without switching the branch the main checkout has checked out. When the fast-forward fails, report it and leave that branch as it is.
+  2. When the worktree's commits are on `origin/<default-branch>` (`git merge-base --is-ancestor <branch> origin/<default-branch>`) or its branch has a pull request (`gh pr view <branch> --json state`), remove the worktree with `git worktree remove <path>`. When git refuses over files this session copied in from the main checkout, delete those copies and remove it again. Otherwise keep the worktree, without `--force`.
+  3. Delete the branch with `git branch -d <branch>` when its commits are on `origin/<default-branch>`. Keep it when it carries a pull request or when git refuses.
+  4. Report what was kept, then continue with the rest of this step from the main checkout.
+- **Stay** — List every edit the rest of this step would make to the backlog, and print each entry `/backlog` could not persist from the worktree, so both can be applied from a session that can write to the main checkout. Skip the rest of this step, then use the TaskList tool and proceed to any remaining task.
 
 Edit `.turbo/backlog.md` to delete the working-set entries that the lane processed. "Processed" means:
 
@@ -175,6 +180,10 @@ Rewrite in place each entry the investigate lane investigated that stays in the 
 When the restated **Where** names files in another repo, delete the entry in place of rewriting it, drop each **Paired with** reference to it from its counterpart entries, then run the `/backlog` skill for the entry as restated, with its **Category**, **Type**, **Why**, and any **Ceiling** or **Revisit**.
 
 When a processed entry carries a **Paired with** line, drop that reference from each counterpart entry it names, so no backlog is left pointing at an entry that no longer exists.
+
+When this session left its worktree at the start of this step, run the `/backlog` skill for each entry `/backlog` could not persist from the worktree.
+
+Then use the TaskList tool and proceed to any remaining task.
 
 ## Rules
 

@@ -89,7 +89,7 @@ When you're ready to act, [`/implement-backlog`](../claude/skills/implement-back
 - **`investigate`** → [`/investigate`](../claude/skills/investigate/SKILL.md), then [`/implement`](../claude/skills/implement/SKILL.md)
 - **`plan`** → [`/plan`](../claude/skills/plan/SKILL.md)
 
-In the Claude Code edition, it also names working sets that share no files with the one it recommends. Pick the parallel option, open the extra sessions it asks for, and it briefs each one to run its set. A session that changes code works in a worktree of its own, on its own branch, and a session that only plans stays in the main checkout. Each session's gates still come to you.
+In the Claude Code edition, it also names working sets that share no files with the one it recommends. Pick the parallel option, open the extra sessions it asks for, and it briefs each one to run its set. A session that changes code works in a worktree of its own, on its own branch, and a session that only plans stays in the main checkout. Each session prunes its own entries from the backlog. A session in a worktree offers to leave it when done, and removes it once its commits are on the default branch or in a pull request. Each session's gates still come to you.
 
 ## Browser and UI Testing
 

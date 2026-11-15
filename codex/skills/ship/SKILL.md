@@ -37,6 +37,8 @@ Output a one-line summary of the detected state as text. Then use `request_user_
 - **Commit and push** — commit, then push to the current branch's remote
 - **Commit only** — commit the staged changes, do not push
 
+Inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), on a branch with no upstream and in a direct-commit history, offer **Commit and push to `<default-branch>`** in place of **Commit and push**: commit, rebase onto `origin/<default-branch>`, and push to `<default-branch>`.
+
 Recommend the option that fits this repo by listing it first and labeling it `(Recommended)`: when the current branch already has an open PR, recommend updating it; otherwise follow the prevailing workflow — recommend the PR path for a PR-based history, or commit and push for a direct-commit history.
 
 If the user declines (chooses the free-form "Other" option or asks to abort), leave the changes staged and do not commit.
@@ -68,7 +70,9 @@ If the chosen option updates the PR, run the `$pr` skill.
 
 ## Step 7: Push (if Requested)
 
-If the chosen option includes pushing, push to the current branch's remote:
+If the chosen option is **Commit and push to `<default-branch>`**, run `git fetch origin <default-branch>`, then `git rebase --autostash origin/<default-branch>`. When the rebase stops on a conflict, leave it stopped and use `request_user_input` to offer resolving the conflict and continuing with `git rebase --continue`, or aborting with `git rebase --abort` and keeping the commits on the branch unpushed. When `git status --short` lists unmerged paths after the rebase, restoring the autostash conflicted: report those paths and the stash entry that holds the changes, and leave the commits unpushed. Otherwise push with `git push origin HEAD:<default-branch>`. When the push is rejected because the default branch moved, repeat the fetch, rebase, and push, at most twice, then report the rejection and keep the commits unpushed.
+
+Otherwise, if the chosen option includes pushing, push to the current branch's remote:
 
 ```bash
 git push
