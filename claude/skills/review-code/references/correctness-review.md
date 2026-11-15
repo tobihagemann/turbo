@@ -4,7 +4,7 @@
 
 Bugs, logic errors, and correctness problems: incorrect control flow, off-by-one errors, null/undefined access, type mismatches, broken error handling, race conditions, resource leaks, and state lifecycle bugs.
 
-Also audit removed behavior: when the change deletes a line or block, identify the invariant, guard, validation, or cleanup it enforced and confirm the change re-establishes it elsewhere or proves it is no longer needed.
+Also audit removed behavior: when the change deletes a line or block, identify the invariant, guard, validation, or cleanup it enforced and confirm the change re-establishes it elsewhere or proves it is no longer needed. When the change moves or extracts code to a new location, also identify what the code relied on at its original location, such as an enclosing check, lock, transaction, or ordering, and confirm the new location provides it. Audit a configuration default the change alters: name what the old value guaranteed and confirm that guarantee still holds for every consumer that relied on it.
 
 Also trace call sites: for each function, method, or exported symbol the change modifies, search for its callers and check whether the change breaks any of them — a new precondition, a changed return shape or nullability, a newly thrown error, a different ordering or timing dependency. Check the other direction too: a parallel change elsewhere in the same changeset can make an existing call unsafe.
 

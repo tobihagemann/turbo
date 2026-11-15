@@ -41,7 +41,7 @@ For reuse, identify analogous utilities, helpers, or shared modules elsewhere in
 - **Hot-path bloat** — new blocking work added to startup or per-request hot paths
 - **Refresh cadence** — work triggered more often than its result can change, such as refetching rarely changing data on every event, request, or timer tick
 - **Unnecessary existence checks** — pre-checking file/resource existence before operating (TOCTOU anti-pattern); operate directly and handle the error
-- **Memory** — unbounded data structures, missing cleanup, resource leaks
+- **Memory** — unbounded data structures, missing cleanup, resource leaks, and long-lived closures or callbacks that capture, and so keep alive, more state than they use; narrow the capture to the state the closure uses
 - **Overly broad operations** — reading entire files when only a portion is needed, loading all items when filtering for one
 
 ### Clarity and Standards
