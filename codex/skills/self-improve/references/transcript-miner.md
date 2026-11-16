@@ -38,7 +38,25 @@ The current session is the most recently modified match. Confirm it by grepping 
 
 If no matching rollout file can be found, report that in one line and stop.
 
-### 2. Extract the User Side
+### 2. Drop What a Previous Run Distilled
+
+A `$self-improve` run before the latest compaction already distilled the records up to it. Take the last invocation that precedes the latest `compacted` record, skipping the live run after it, and slice the rollout file from the record after that invocation. When no invocation follows that record, the compaction interrupted the live run itself, so the last invocation before it is the live run: take the one before that instead.
+
+Codex injects a loaded skill as a text part opening with a `<skill>` block that names it, `turbo:`-prefixed when the plugin supplied it, inside a `response_item`, which the extraction below skips in favor of `event_msg`, so find it in the raw file. Match that opening rather than the bare string `$self-improve`, which also matches file reads, diffs, and prose that merely names the skill. Resolve the rollout file to the path the next step reads:
+
+```bash
+R="<rollout path>"
+LINE=$(awk '/"type":"compacted"/ {at = last; before = prev; after = 0; next}
+            /"text":"<skill>\\n<name>(turbo:)?self-improve<\/name>/ {prev = last; last = NR; after = 1}
+            END {print (after ? at : before)}' "$R")
+INPUT="$R"
+if [ -n "$LINE" ]; then
+  INPUT="<scratch>/<session-id>.jsonl"
+  sed -n "$((LINE + 1)),\$p" "$R" > "$INPUT"
+fi
+```
+
+### 3. Extract the User Side
 
 Each line is a record with `type` and `payload`. Submitted user turns are `event_msg` records taking one of two shapes, and a file carries only one of them: a payload with `type: "user_message"` holding the text in `payload.message`, or a payload with `type: "item_completed"` whose `payload.item.type` is `UserMessage`, holding the text in the `text` content parts of `payload.item.content` (other part types are attachments carrying none). Match both shapes, since an extraction matching one returns nothing at all on a file written in the other. The model-facing copies live in `response_item` records, wrapped in harness blocks that read like user speech, so extract from `event_msg` instead. The `compacted` record type marks where a compaction cut the thread; anything before it is what this run needs to recover.
 
@@ -49,7 +67,7 @@ An answer to a `request_user_input` gate produces no ordinary user turn and arri
 Print the real user turns:
 
 ```bash
-python3 - "<rollout path>" <<'PY'
+python3 - "<input path>" <<'PY'
 import json, sys
 
 WRAPPERS = ("# Files mentioned by the user:", "# In app browser:",
@@ -165,7 +183,7 @@ PY
 
 A session driven entirely by skill pipelines can yield no typed user turns at all. Then the evidence lives on the assistant side: extract `response_item` records whose payload has `type: "message"` and `role: "assistant"`, joining the `text` of their content parts. Those payloads carry a `phase` of `commentary` or `final_answer`; label each extracted turn with its phase, so a preamble is not read as a conclusion.
 
-### 3. Identify Evidence
+### 4. Identify Evidence
 
 Read the extracted turns in order and collect:
 
@@ -221,18 +239,16 @@ PY
 
 Drop the most recently modified match: that is the live session, already covered by the scan that dispatched you. When no file matches, or none remains after that drop, report it in one line and stop.
 
-Drop what a previous run already distilled: the records preceding the last `$self-improve` invocation in any file that holds one. Codex injects a loaded skill as a `<skill><name>…</name>` block inside a `response_item`, which the extraction below skips in favor of `event_msg`, so find it in the raw file and slice from there, resolving each rollout file to the path the next step reads:
+Drop what a previous run already distilled: the records preceding the last `$self-improve` invocation in any file that holds one. Find that invocation in the raw file by the `<skill>` opening the Mining Process matches, and slice from there, resolving each rollout file to the path the next step reads:
 
 ```bash
-LINE=$(grep -n '<name>self-improve</name>' "<rollout path>" | tail -1 | cut -d: -f1)
+LINE=$(grep -nE -e '"text":"<skill>\\n<name>(turbo:)?self-improve</name>' "<rollout path>" | grep -v -e '"type":"compacted"' | tail -1 | cut -d: -f1)
 INPUT="<rollout path>"
 if [ -n "$LINE" ]; then
   INPUT="<scratch>/<session-id>.jsonl"
   sed -n "$((LINE + 1)),\$p" "<rollout path>" > "$INPUT"
 fi
 ```
-
-Match that block rather than the bare string `$self-improve`, which also matches file reads, diffs, and prose that merely names the skill.
 
 ### 2. Extract Each One
 

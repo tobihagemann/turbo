@@ -19,7 +19,25 @@ The current session is the most recently modified file. Confirm it by grepping f
 
 If the directory or a matching transcript cannot be found, report that in one line and stop.
 
-### 2. Extract the User Side
+### 2. Drop What a Previous Run Distilled
+
+A `/self-improve` run before the latest compaction already distilled the turns up to it. Take the last invocation that precedes the latest `compact_boundary` record, skipping the live run after it, and slice the transcript from the record after that invocation. When no invocation follows that record, the compaction interrupted the live run itself, so the last invocation before it is the live run: take the one before that instead.
+
+Every load of the skill, typed or started through the Skill tool, writes a `user` record holding a text part that opens with `Base directory for this skill:` and the skill's folder. The extraction below discards it as harness noise, so find it in the raw file. Match that opening rather than the skill name alone, which also appears in tool output quoting a transcript or this file, and keep to `user` records, since an `api-request-blob` record repeats the text. Resolve the transcript to the path the next step reads:
+
+```bash
+T="<transcript path>"
+LINE=$(awk '/"subtype":"compact_boundary"/ {at = last; before = prev; after = 0; next}
+            /"type":"user"/ && /"text":"Base directory for this skill: [^"]*\/self-improve\\n/ {prev = last; last = NR; after = 1}
+            END {print (after ? at : before)}' "$T")
+INPUT="$T"
+if [ -n "$LINE" ]; then
+  INPUT="<scratch>/<session-id>.jsonl"
+  tail -n +$((LINE + 1)) "$T" > "$INPUT"
+fi
+```
+
+### 3. Extract the User Side
 
 Each line is a record with `type`, `timestamp`, `sessionId`, and `isSidechain`. Conversation records are typed `user` and `assistant` and carry `message.content`, either a string or a list of parts typed `text`, `thinking`, `tool_use`, or `tool_result`. A `thinking` part holds its text in a `thinking` field, which is often empty. The remaining types hold harness state.
 
@@ -32,7 +50,7 @@ An answer given through `AskUserQuestion` produces no text part either. The `use
 Print the real user turns:
 
 ```bash
-python3 - "<transcript path>" <<'PY'
+python3 - "<input path>" <<'PY'
 import json, re, sys
 
 NOISE = ("<command-message>", "<command-name>", "<local-command-stdout>",
@@ -128,7 +146,7 @@ PY
 
 A session driven entirely by skill pipelines can yield no typed user turns at all. Then the evidence lives on the assistant side: rerun the extraction with the `user` branch's type check changed to `assistant`, keeping the same flattening.
 
-### 3. Identify Evidence
+### 4. Identify Evidence
 
 Read the extracted turns in order and collect:
 
@@ -177,18 +195,16 @@ PY
 
 Drop the most recently modified match: that is the live session, already covered by the scan that dispatched you. When no file matches, or none remains after that drop, report it in one line and stop.
 
-Drop what a previous run already distilled: files older than the cutoff you were given, and the turns preceding the last `/self-improve` invocation in any file that holds one. That invocation is a `<command-name>/self-improve</command-name>` record, which the extraction below discards as a harness wrapper, so find it in the raw file and slice from there, resolving each transcript to the path the next step reads:
+Drop what a previous run already distilled: files older than the cutoff you were given, and the turns preceding the last `/self-improve` invocation in any file that holds one. Find that invocation in the raw file by the `Base directory for this skill:` text part the Mining Process matches, and slice from there, resolving each transcript to the path the next step reads:
 
 ```bash
-LINE=$(grep -n 'command-name>/self-improve<' "<transcript>" | tail -1 | cut -d: -f1)
+LINE=$(grep -nE -e '"text":"Base directory for this skill: [^"]*/self-improve\\n' "<transcript>" | grep -e '"type":"user"' | tail -1 | cut -d: -f1)
 INPUT="<transcript>"
 if [ -n "$LINE" ]; then
   INPUT="<scratch>/<session-id>.jsonl"
   tail -n +$((LINE + 1)) "<transcript>" > "$INPUT"
 fi
 ```
-
-Match that record shape rather than the bare string `/self-improve`, which also matches the installed skill path and ordinary prose.
 
 ### 2. Extract Each One
 

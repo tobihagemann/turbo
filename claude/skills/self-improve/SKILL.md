@@ -36,9 +36,9 @@ When `${CLAUDE_SKILL_DIR}/../../.claude-plugin/plugin.json` exists and names the
 
 ### Recover Pre-Compaction Evidence
 
-**Skip** when the conversation is visible in full from the user's own first message.
+**Skip** when the conversation is visible in full from the user's own first message, or when the summary shows that the last work before the compaction was a finished `/self-improve` run.
 
-When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk transcript. Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
+Otherwise, when it starts from a summary of earlier work, recover the compacted turns from the on-disk transcript. Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
 
 1. The absolute path of the project root
 2. A distinctive phrase from the visible conversation, for confirming which transcript belongs to this session

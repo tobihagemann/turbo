@@ -44,9 +44,9 @@ Resolve the absolute path of the directory this `SKILL.md` was loaded from, and 
 
 ### Recover Pre-Compaction Evidence
 
-**Skip** when the conversation is visible in full from the user's own first message.
+**Skip** when the conversation is visible in full from the user's own first message, or when the summary shows that the last work before the compaction was a finished `$self-improve` run.
 
-When it starts from a summary of earlier work instead, recover the compacted turns from the on-disk rollout file. Spawn a single sub-agent (inherited model defaults). The sub-agent's prompt must include:
+Otherwise, when it starts from a summary of earlier work, recover the compacted turns from the on-disk rollout file. Spawn a single sub-agent (inherited model defaults). The sub-agent's prompt must include:
 
 1. The absolute path of the project root
 2. A distinctive phrase from the visible conversation, for confirming which rollout file belongs to this session
