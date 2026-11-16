@@ -11,13 +11,11 @@ Use `TaskCreate` to create a task for each phase:
 
 ## Phase 1: Get the Extra Sessions
 
-Use the ListAgents tool and note the local sessions it shows.
-
 Output how many extra sessions the split needs, and ask the user to open that many Claude Code sessions in this directory. Then use `AskUserQuestion` to confirm, with two options: the sessions are open, or run the recommended working set alone.
 
 When the user chose to run the recommended working set alone, the parallel sets stay in the backlog. Mark Phase 2 completed, then use the TaskList tool and proceed to any remaining task.
 
-Otherwise, use the ListAgents tool again. The extra sessions are the local sessions in this directory that the first listing did not show. When fewer appeared than the split needs, hand out the parallel sets in the order Step 3 named them and leave the rest in the backlog. When more appeared, use `AskUserQuestion` to ask which ones to brief.
+Otherwise, use the ListAgents tool. The extra sessions are the local sessions in this directory that the SKILL.md Step 3 listing did not show. When fewer appeared than the split needs, hand out the parallel sets in the order Step 3 named them and leave the rest in the backlog. When more appeared, use `AskUserQuestion` to ask which ones to brief.
 
 ## Phase 2: Brief Each Extra Session
 

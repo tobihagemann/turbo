@@ -82,6 +82,8 @@ Pick the type without asking the user. Default to `plan` when a missing Type is 
 
 ## Step 3: Recommend, Confirm, and Update the Backlog
 
+When at least two entries are Active, use the ListAgents tool and note the local sessions it shows before outputting anything in this step.
+
 Output the backlog status as text first, grouped by type and status. Include each entry's category inline and a category tally across active entries:
 
 ```
