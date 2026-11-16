@@ -55,7 +55,7 @@ When something is genuinely unclear and would leave a gap in the handoff, use `A
 
 Write the file at the path picked in Step 1 with the Write tool, which creates `.turbo/handoff/` if it does not exist, including when that path is in the main checkout outside the current working directory: the Bash sandbox denies a shell write there.
 
-When that write is refused while this session runs inside a linked worktree, report that the handoff cannot be persisted from here and print it in full so it can be pasted in from a session that can write to the main checkout, naming any backlog entry noted in Step 2 for deletion there. Leave it out of the worktree's own `.turbo/`, which is gitignored and is destroyed with the worktree.
+When that write is refused while this session runs inside a linked worktree, write it under the same file name directly in the session scratchpad directory instead, and carry that absolute path forward as the handoff's path. Leave it out of the worktree's own `.turbo/`, which is gitignored and is destroyed with the worktree.
 
 Lead with `# Handoff: <Task Title>`. Cover the items gathered in Step 2 in whatever structure fits the session — drafting, refining, implementing, and investigating sessions each have different shapes and don't all map to the same headings. Close with a clear statement of the next concrete action so the new session knows exactly what to do first.
 
@@ -67,7 +67,7 @@ When this handoff splits an open decision out of an existing one, add a line to 
 
 ## Step 4: Confirm
 
-Once the handoff file exists, delete each backlog entry noted in Step 2 from the file that holds it. Delete a backlog file left with no entries.
+Once the handoff file exists, delete each backlog entry noted in Step 2 from the file that holds it. Delete a backlog file left with no entries. When the handoff was written to the session scratchpad directory, leave those entries in place and name them as still in the backlog.
 
 Tell the user where the handoff was written, name any backlog entry deleted and any existing handoff edited to point at a split, and quote the next-step statement so the path forward is visible at a glance.
 

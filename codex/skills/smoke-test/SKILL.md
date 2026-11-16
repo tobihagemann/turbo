@@ -44,6 +44,8 @@ Otherwise, design targeted smoke tests. Each test should:
 2. Verify the happy path works end-to-end
 3. Check one obvious edge case if applicable
 
+When the change alters how the surface responds to a transition it can undergo while running (a change of mode, connectivity, visibility, or available space), drive that transition from each state the user can be in when it fires, not only from the state the change introduces, and drive it back again. The pass condition is that each side of the transition ends in the same state whichever path reached it.
+
 Confirm any control, command, or other affordance a test names exists in the code before writing the test: search for the API that would implement it rather than inferring it from what the feature does. Where it cannot be confirmed, write the test against the outcome to verify and leave the affordance to be found during execution.
 
 Confirm as well that the surface accepts a test's action in the state the test sets up. When the code refuses or swallows that action there, drive a state or entry point where the action goes through, or make the refusal itself the observation. When a scenario claims an affordance is available in a state, drive each such affordance in that state to its first observable effect and make that effect the pass condition; a refusal or swallowed action there fails the scenario. For an affordance whose effect is not cleanly undoable, stop at its confirmation step and cancel it. When the affordance has no confirmation step, act on a record this run created, record it in **Owned cleanup**, and carry any write to a shared external system through the test run rules' write sequence; plan the scenario as unverified when no such record can be created.

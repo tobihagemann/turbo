@@ -101,7 +101,7 @@ Actively try to break the feature. Explore boundary conditions and unexpected in
 Explore state interactions across system boundaries. These surface the hardest bugs.
 
 - Concurrent modifications from different sources
-- State transitions (online to offline to online, foreground to background)
+- State transitions (online to offline to online, foreground to background), each driven from every state the user can be in when it fires and back again, passing only when each side ends in the same state whichever path reached it
 - Interactions with other features that share state
 - Race conditions between asynchronous operations
 

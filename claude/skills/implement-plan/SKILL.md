@@ -69,11 +69,22 @@ Run the `/implement` skill. The plan file, its file references, and its Verifica
 
 ## Step 4: Update Plan Status
 
-After `/implement` completes, set the plan's frontmatter `status:` to `done` with the Edit tool. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip the status update.
+After `/implement` completes, when this session runs inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), use `AskUserQuestion` to offer two options: leave the worktree and update the plan from the main checkout, listed first and labeled `(Recommended)`, or stay in the worktree.
+
+- **Leave** — Leave with the ExitWorktree tool (`action: "keep"`). When it reports that no worktree session is active, take the Stay path instead. Otherwise:
+  1. Resolve the default branch with `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`. Fast-forward the main checkout's local default branch to `origin/<default-branch>` without switching the branch the main checkout has checked out. When the fast-forward fails, report it and leave that branch as it is.
+  2. When the worktree's commits are on `origin/<default-branch>` (`git merge-base --is-ancestor <branch> origin/<default-branch>`) or its branch has a pull request (`gh pr view <branch> --json state`), remove the worktree with `git worktree remove <path>`. When git refuses over files this session copied in from the main checkout, delete those copies and remove it again. Otherwise keep the worktree, without `--force`.
+  3. Delete the branch with `git branch -d <branch>` when its commits are on `origin/<default-branch>`. Keep it when it carries a pull request or when git refuses.
+  4. Report what was kept.
+- **Stay** — Continue in the worktree.
+
+Set the plan's frontmatter `status:` to `done` with the Edit tool, in the plan under the main checkout's `.turbo/plans/` when this session runs inside or has left a linked worktree. If the plan is the legacy `.turbo/plan.md` without frontmatter, skip the status update.
 
 When that edit is refused while this session runs inside a linked worktree, report that the status update was not applied and name the edit to make from a session that can write to the main checkout: `status: done` in the resolved plan path.
 
 When the plan's Context names a larger source it implements part of (an assessment, a backlog, an issue), report the plan's completion separately from that source's: name the source's items the plan left out, and say whether another plan under `.turbo/plans/` covers them.
+
+When this session left its worktree in this step, run the `/backlog` skill for each entry `/backlog` could not persist from the worktree.
 
 ## Rules
 
