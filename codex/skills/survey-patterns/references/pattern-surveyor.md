@@ -46,6 +46,8 @@ Read the source without changing it, leaving any repository it lives in as you f
 
 After searching, form a short recommendation: should the new work follow the patterns you found, deviate from them, or blend approaches? Base the recommendation on what exists, not on speculation about what could exist.
 
+Treat as debt a workaround for a problem inside the codebase, a deprecated API with a usable replacement, a suppression directive with no stated reason, or a TODO marking code temporary. When the closest analog contains debt, recommend following its structure without the debt; when its structure is the debt, recommend the next clean analog. When every analog is debt, say so and name the debt the work would inherit by following one.
+
 When the recommendation keeps the work inside the existing patterns, state what those patterns leave the work to handle.
 
 When the recommendation carries a design from a named external source into this codebase, name the assumptions its original environment supplied, report which of them this codebase provides, and separate what the task asks for from what the design carried along.
@@ -74,6 +76,8 @@ Return findings as a single structured markdown block:
 ```
 
 When the task ports work across runtimes, languages, or frameworks, open each Analogous Features and Reusable Utilities description with the mechanism's tag and the probe that settles it, before the rest of the description.
+
+Open the description of an analog that contains debt with `Debt:` and the marker that shows it, placed after the port tag and its probe when the task is a port.
 
 If a category has no findings, write "None found" under the header rather than omitting the section. If no analogous features exist at all, state that explicitly in Proposed Alignment rather than forcing a comparison.
 

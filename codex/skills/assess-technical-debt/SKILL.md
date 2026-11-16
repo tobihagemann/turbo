@@ -49,7 +49,7 @@ If more partitions exist than fit a single fan-out, group related directories so
 
 ## Step 3: Run `$evaluate-findings` Skill
 
-Aggregate all findings from all agents. Deduplicate items that surface in more than one agent (e.g., duplication a partition agent and the architecture agent both flag). Run the `$evaluate-findings` skill once on the combined set to verify each finding against the actual code and weed out false positives.
+Aggregate all findings from all agents. Deduplicate items that surface in more than one agent (e.g., duplication a partition agent and the architecture agent both flag). When several agents report the same blocking check, merge them into one finding whose baseline combines their sites. Run the `$evaluate-findings` skill once on the combined set to verify each finding against the actual code and weed out false positives.
 
 ## Step 4: Resolve Escalated Findings
 

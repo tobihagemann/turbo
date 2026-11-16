@@ -69,6 +69,8 @@ Look for:
 
 Distinguish genuine duplication worth unifying from coincidental resemblance. Report the cluster (all locations), what they share, and the consolidation target (shared helper, base type, table, generic, established dependency). When the target is an established dependency, name the candidate and mark its coverage of the needed behavior, compatibility, license, and migration cost as unverified.
 
+Report a workaround repeated across modules because each site patches the same underlying problem under Architecture Rot rather than here.
+
 ## Dimension 4: Architecture Rot
 
 Structural decay visible only across modules. This is the architecture agent's focus.
@@ -80,6 +82,7 @@ Look for:
 - Layering violations: lower layers reaching into higher ones, UI touching persistence directly, business logic in controllers/views.
 - Bottleneck modules everything depends on, and "shotgun surgery" where one conceptual change forces edits across many files.
 - Inconsistent architecture: several competing ways to do the same cross-cutting thing (data access, config, eventing).
+- Recurring workarounds: the same workaround repeated across modules (a suppression directive, a timing hack, a comment justifying a deviation), each patching over one underlying problem inside the codebase. Report that problem with every site that patches it, and aim the refactor at the problem.
 
 Report the modules involved, the dependency or boundary problem, and the refactor direction (introduce a boundary/interface, invert a dependency, extract a shared layer, merge or split modules).
 
@@ -108,15 +111,19 @@ Tag every finding with both axes so the report can rank them.
 
 **Impact** — how much the debt hurts:
 
-- **High** — frequently changed or central code; high change risk, wide blast radius, or a recurring source of bugs.
+- **High** — frequently changed or central code; high change risk, wide blast radius, or a recurring source of bugs. Also a pattern new code keeps copying, even when its existing sites are rarely touched.
 - **Medium** — noticeable maintenance drag on a moderately active area.
 - **Low** — real but isolated, rarely touched, or low-risk.
+
+Before rating a pattern with several sites, search recent history for commits that added new sites (`git log -S` or `-G` for a literal pattern, the diffs of recent commits for a structural one), and cite them in the Impact rationale. When history is unavailable, say so there.
 
 **Effort** — rough size of the refactor:
 
 - **Low** — localized, mechanical, low regression risk (single function/file).
 - **Medium** — spans a few files or needs modest restructuring and test updates.
 - **High** — cross-module restructuring, broad ripple, or significant test/behavior risk.
+
+When a tool can decide a debt pattern with several sites from the code alone (a deprecated call, a banned import, a layering violation) and no existing check already blocks new occurrences, report one more finding for that pattern under the same dimension: a check that blocks new occurrences with the existing sites as its baseline, as a rule in a linter or dependency checker the project already uses, or a CI job. Locate it at the configuration file the check goes in, rate its impact by the new occurrences it prevents and its effort by the rule and baseline setup, so it can rank ahead of the cleanup.
 
 ## Output Format
 
@@ -128,7 +135,7 @@ Return findings as a single structured markdown block. Group by dimension; state
 ### <Dimension>
 
 **Finding:** <one-line summary>
-**Location:** <path:line or path (lines start-end); list all sites for duplication and test clusters>
+**Location:** <path:line or path (lines start-end); list all sites for duplication clusters, test clusters, and recurring workarounds>
 **Impact:** <High|Medium|Low> — <why>
 **Effort:** <High|Medium|Low> — <why>
 **Guard:** <low-value tests only: the test that guards the behavior afterward, or "none: cannot fail"; mutation-verified or inspection alone>
