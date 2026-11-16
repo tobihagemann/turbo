@@ -92,8 +92,8 @@ Then end the turn.
 
 ## Step 5: Act on the User's Reply
 
-- **Revise** — apply the correction the user describes. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
-- **Prototype first** — run the `/prototype` skill, then fold what it settled into the shape. Then re-present the shape, close with Step 4's reply guidance, and end the turn again.
+- **Revise** — apply the correction the user describes. Then confirm each claim the revised shape newly makes about existing code as Step 4 does, re-present it, close with Step 4's reply guidance, and end the turn again.
+- **Prototype first** — run the `/prototype` skill, then fold what it settled into the shape. Then confirm each claim the revised shape newly makes about existing code as Step 4 does, re-present it, close with Step 4's reply guidance, and end the turn again.
 - **Approve** — the shape is settled, along with any deferred item the approval flips. Run the `/backlog` skill once for each deferred item settled as noted. Once every such item is noted, continue to Step 6.
 
 ## Step 6: Run `/implement` Skill
