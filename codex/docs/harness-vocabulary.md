@@ -10,6 +10,7 @@ When porting a Claude Code skill into the Codex edition, translate Claude Code t
 | `Agent tool` | Codex sub-agent tools (`spawn_agent` / `wait_agent`) when permitted |
 | `Skill tool` | read/invoke the installed skill instructions |
 | `Edit` / `Write` | `apply_patch` (V4A diff envelope) |
+| `SendUserFile` | no equivalent — list the file's absolute path |
 | `~/.claude/skills` (user scope) | `~/.agents/skills` (user scope) |
 | plugin skills reached through `${CLAUDE_SKILL_DIR}` | plugin skills in `~/.codex/plugins/cache/<marketplace>/<plugin>/<version>/skills/`, reached by resolving the loaded `SKILL.md`'s own directory |
 | `CLAUDE.md` | `AGENTS.md` for Codex-facing project instructions |

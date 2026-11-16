@@ -45,6 +45,8 @@ Output as text:
 - When a verification pass preceded this hand-over, what it could not cover: paths needing real credentials, external services, or state unavailable in this session
 - How to reply once they have tried it: say it looks good, adding whether to keep the app running or shut it down, or describe what needs changing
 
+When a verification pass that preceded this hand-over captured the change on screen as the app now serves it, send those captures with the SendUserFile tool alongside that text, cropped to the changed area where that helps. Caption a capture of a state the user would not reach in ordinary use with what that state is, in the user's own terms.
+
 Then end the turn, leaving every process this skill started running.
 
 ## Step 5: Act on the User's Reply

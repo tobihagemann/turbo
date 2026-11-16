@@ -7,7 +7,7 @@ description: "Validate .turbo/backlog.md entries, recommend a working set, and r
 
 Validate improvements from `.turbo/backlog.md`, propose a specific working set based on the backlog's actual contents, and run one lane per session: direct, investigate, or plan. Mixing lanes in a single run tangles commits, so the skill processes exactly one lane each time. Entries outside the confirmed working set stay in the backlog for future runs.
 
-When a working set and a lane were passed in, by the user or in a message from another session, start at Step 5 with them and create tasks for Steps 5 and 6 alone.
+When a working set and a lane were passed in, by the user or in a message from another session, start at Step 5 with them and create tasks for Steps 5 and 6 alone. Resolve the repo root as Step 1 does, read each working-set entry in full from `.turbo/backlog.md` under it, and run the lane with each entry's full text alongside what was passed in. When an entry is not there, run the lane with what was passed in for it.
 
 ## Task Tracking
 
@@ -177,8 +177,6 @@ Read the reference file for the confirmed lane and follow its phases:
 State the chosen lane before continuing with the reference file.
 
 ## Step 6: Prune Working-Set Entries from the Backlog
-
-When Step 1 did not run, resolve the repo root as Step 1 does.
 
 When this session runs inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), use `AskUserQuestion` to offer two options: leave the worktree and prune from the main checkout, listed first and labeled `(Recommended)`, or stay in the worktree.
 
