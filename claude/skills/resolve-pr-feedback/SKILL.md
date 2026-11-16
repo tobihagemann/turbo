@@ -166,7 +166,7 @@ Then, whether or not that wait ran, run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-da
 
 A reviewer whose comment was posted counts as re-reviewing. Record every other reviewer that skipped the pushed commit, with its check's `title`, for the Step 13 summary.
 
-When a reviewer is re-reviewing, use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head, or after 15 minutes. Record each reviewer whose comment was posted and whose review had not arrived when the loop ended for the Step 13 summary.
+When a reviewer is re-reviewing, use the Monitor tool with an until-loop that polls the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and runs `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` for its `checks`, and ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head or, while `meta.headRefOid` is the pushed commit, has a completed check whose `title` does not report a skip, or after 15 minutes. Record for the Step 13 summary each reviewer whose comment was posted and whose review had not arrived when the loop ended, and each other reviewer whose check completed without a review on the pushed head.
 
 Wait for checks when Step 7 fixed a check finding: use the Monitor tool with an until-loop that runs `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` and ends once `meta.headRefOid` is the pushed commit, every check whose finding was fixed appears in `checks`, and no check has the `state` `pending`, or after 15 minutes.
 
@@ -249,6 +249,7 @@ After processing all items, present a summary grouped by source.
 **AI reviewers:**
 - Skipped the pushed commit and not asked for a review (list reviewer and its check's title)
 - Asked for a review that had not arrived when Step 10's wait ended (list reviewer)
+- Completed its check on the pushed commit without a review when Step 10's wait ended (list reviewer)
 
 **Overall:** list of files modified.
 

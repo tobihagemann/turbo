@@ -150,7 +150,7 @@ A session driven entirely by skill pipelines can yield no typed user turns at al
 
 Read the extracted turns in order and collect:
 
-- **Corrections** — the user interrupted, said no, redirected, or fixed something by hand
+- **Corrections** — the user interrupted, said no, redirected, reverted a change, picked a variant other than the one proposed, or fixed something by hand, including a value the user changed in a file the agent wrote. After a run of nudges toward one target, keep where the user settled, not each step
 - **Repeated guidance** — the same instruction given more than once
 - **Preferences** — formatting, naming, style, or tool choices the user expressed
 - **Failure modes** — an approach that failed, with what replaced it
