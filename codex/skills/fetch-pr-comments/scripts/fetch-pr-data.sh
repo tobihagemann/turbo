@@ -12,6 +12,8 @@
 # PRs. For any thread whose inner comments exceed the initial page, walks the
 # remaining comments via node(id:) and merges them back into the thread.
 #
+# Fetched values go to jq on stdin, since a long PR overflows an argument.
+#
 # Usage: fetch-pr-data.sh <owner> <repo> <pr_number>
 
 set -euo pipefail
@@ -122,15 +124,17 @@ threads=$(jq -c '.[]' <<<"$threads" | while IFS= read -r thread; do
       -f thread_id="$thread_id" -f cursor="$cursor" \
       --jq '.data.node.comments')
     page_nodes=$(jq '.nodes' <<<"$page")
-    nodes=$(jq -n --argjson a "$nodes" --argjson b "$page_nodes" '$a + $b')
+    nodes=$(printf '%s\n' "$nodes" "$page_nodes" | jq -s '.[0] + .[1]')
     has_next=$(jq -r '.pageInfo.hasNextPage' <<<"$page")
     cursor=$(jq -r '.pageInfo.endCursor // ""' <<<"$page")
   done
-  jq --argjson nodes "$nodes" '
-    .comments.nodes = $nodes
+  printf '%s\n' "$thread" "$nodes" | jq -s '
+    .[1] as $nodes
+    | .[0]
+    | .comments.nodes = $nodes
     | .comments.pageInfo.hasNextPage = false
     | .comments.pageInfo.endCursor = null
-  ' <<<"$thread"
+  '
 done | jq -s '.')
 
 reviews=$(gh api graphql --paginate \
@@ -145,9 +149,5 @@ issue_comments=$(gh api graphql --paginate \
   --jq '.data.repository.pullRequest.comments.nodes[]' \
   | jq -s '.')
 
-jq -n \
-  --argjson meta "$meta" \
-  --argjson threads "$threads" \
-  --argjson reviews "$reviews" \
-  --argjson issueComments "$issue_comments" \
-  '{meta: $meta, reviewThreads: $threads, reviews: $reviews, issueComments: $issueComments}'
+printf '%s\n' "$meta" "$threads" "$reviews" "$issue_comments" \
+  | jq -s '{meta: .[0], reviewThreads: .[1], reviews: .[2], issueComments: .[3]}'

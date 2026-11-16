@@ -128,6 +128,8 @@ Whenever the item is costly to reverse (its resolution establishes a pattern oth
 
 Run `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` again, once. When it shows unresolved threads, review bodies, issue comments, or failing checks that pass Step 1's filters and that Steps 2 to 6 have not yet taken up, use `TaskUpdate` to set this step's task subject and description to running Steps 2 to 6 on only those items, then the rest of this step. Take the new threads, review bodies, and issue comments through Steps 2 to 6. Read a newly failing check's findings as in Step 1 and take them through Steps 5 and 6. Then continue with this step without fetching again.
 
+Use `TaskUpdate` to record every item in the Step 13 task description: its source and identifier, its file and line, and for an item without a thread its author and observation text. Add its outcome: Addressed with the commit SHA, Apply, Skip with its reasoning and whether it refuted the finding, declined it, or neither, a question with its reconciled intent, or a clarification with the user-directed question. Add each unreadable check's name, title, and link. After a compaction, Steps 8 through 13 read the record back from that task.
+
 If there are no accepted findings to implement, skip to Step 9.
 
 Run the `/implement-findings` skill on the accepted findings from Step 5, including any items reclassified in Step 6. It commits and pushes before returning; Steps 11 and 12 replies reference that commit SHA.
@@ -140,7 +142,7 @@ For each finding that was fixed in Step 7, verify the fix actually addresses the
 2. Compare against the reviewer's comment (and `diffHunk` when available).
 3. Confirm the specific concern is resolved.
 
-If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Record the reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) so Step 11 (for inline threads), Step 12 (for the issue-comment findings it replies to), and Step 13 (for the rest) report it correctly.
+If the fix did not address the concern (wrong location, incomplete change, or the issue is still present), downgrade the item to Skip. Use `TaskUpdate` to add the downgrade and its reason (the attempted fix did not resolve the reviewer's concern, with a brief explanation of what remains) to the record in the Step 13 task description, keeping the rest of it, so Step 11 (for inline threads), Step 12 (for the issue-comment findings it replies to), and Step 13 (for the rest) report it correctly.
 
 ## Step 9: Answer Reviewer Questions
 
