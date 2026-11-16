@@ -83,7 +83,7 @@ Memory notes pile up, and some go stale. In the Claude Code edition, [`/dream`](
 
 Backlogs collect entries that turn out not to matter. [`/triage-backlog`](../claude/skills/triage-backlog/SKILL.md) walks through them with you: it merges duplicates, states the user story or the simplification behind each entry, and asks whether to keep or drop it.
 
-When you're ready to act, [`/implement-backlog`](../claude/skills/implement-backlog/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session:
+When you're ready to act, [`/implement-backlog`](../claude/skills/implement-backlog/SKILL.md) validates each entry against the current codebase, drops stale ones, and runs one lane per session. Each entry it finds still active or deferred records what that verdict rested on: a commit, the files read, and any search or outside fact such as a release tag. A later run that finds none of it changed reuses the verdict instead of reading the code again, and `/triage-backlog` clears those records so the next run validates every entry anew. The lanes:
 
 - **`direct`** → [`/implement`](../claude/skills/implement/SKILL.md) for a clear-scope fix
 - **`investigate`** → [`/investigate`](../claude/skills/investigate/SKILL.md), then [`/implement`](../claude/skills/implement/SKILL.md)

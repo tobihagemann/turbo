@@ -15,6 +15,8 @@ When that root holds the legacy `.turbo/improvements.md`, carry it into `.turbo/
 
 Read `.turbo/backlog.md` under that root. When it does not exist or holds no entries, present "No backlog entries to triage." Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
+Remove from every entry its **Validated** line and the command lines nested under it, and write the backlog back.
+
 Merge entries that cover the same improvement into one entry that keeps every detail either held, write the merged entries back, and output which ones were merged. Update each **Paired with** line in counterpart entries that names a title the merge retired.
 
 Number the remaining entries in file order.

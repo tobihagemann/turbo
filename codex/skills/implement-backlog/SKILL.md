@@ -34,10 +34,17 @@ Parse all entries, extracting for each:
 - **Why** (rationale)
 - **Ceiling** and **Revisit** (present when the entry records a deliberate simplification; **Revisit** alone when the entry waits on an outside event)
 - **Noted** (date)
+- **Validated** (present when an earlier run recorded what the entry's verdict rested on)
 
 ## Step 2: Validate and Classify
 
 Improvements drift: files get renamed, code gets refactored, issues get fixed as side effects of other work. Before routing, validate each improvement and settle the Type of any entry whose Type is missing or wrong.
+
+### Reuse an Earlier Validation
+
+Before validating, note the root of the checkout whose code this step reads (`git rev-parse --show-toplevel`) and its commit (`git rev-parse --short HEAD`). The **path check** for a commit and a set of repo-relative paths passes when `git -C <root> diff --quiet <commit> -- <paths>` exits 0 and `git -C <root> ls-files --others --exclude-standard -- <paths>` prints nothing.
+
+For each entry carrying a **Validated** line, run the path check with its recorded commit and paths, and run each command nested under it from that root. When the path check passes and every command prints its recorded output, whatever its exit status, classify the entry with its recorded verdict and skip the rest of this step for it. Otherwise, including when a command cannot run, validate the entry in full.
 
 ### Validate
 
@@ -76,6 +83,8 @@ Output the backlog status as text first, grouped by type and status. Include eac
 
 ```
 ## Backlog Status
+
+Reused earlier validations: N of M entries carrying a Validated line
 
 ### Active (N)
 Categories: refactor (N), performance (N), testing (N), docs (N)
@@ -127,7 +136,20 @@ Skip the call when no item applies.
 
 If the user confirmed stale removal, edit `.turbo/backlog.md` to delete the stale entries.
 
-Rewrite in `.turbo/backlog.md` each Active or Deferred entry whose path, scope, count, consequence, or Type Step 2 corrected, changing only the fields the correction touches. When that changes an entry's summary, update each **Paired with** line in its counterpart entries that names the old title.
+Rewrite in `.turbo/backlog.md` each Active or Deferred entry whose path, scope, count, consequence, or Type Step 2 corrected, changing only the fields the correction touches, and write the Type Step 2 inferred into each Active entry that lacked one. When that changes an entry's summary, update each **Paired with** line in its counterpart entries that names the old title.
+
+Record the validation on each Active or Deferred entry that Step 2 validated in full, after its **Noted** line, replacing any **Validated** line it carries together with the command lines nested under it:
+
+```markdown
+- **Validated**: <YYYY-MM-DD>, <Active | Deferred> at `<commit>`: `<path>`, `<path>`
+  - `<command>` → `<output>`
+```
+
+- **Commit** — the commit Step 2 noted.
+- **Paths** — repo-relative, every file or directory whose content the verdict rests on: the ones the entry names, and the callers, tests, and configuration Step 2 read to reach the verdict.
+- **Commands** — one line for each fact the verdict rests on that the paths do not pin: a repo-wide search that established something is absent, or a fact outside the repo, such as a dependency's latest release or an upstream issue's state. Have each print the one value the verdict turns on, such as a match count or a release tag.
+
+Leave the **Validated** line off an entry when the path check fails for its commit and paths now, when `git -C <root> ls-files --error-unmatch -- <paths>` fails because a path is untracked or ignored, or when a fact its verdict rests on has neither a path nor a command that pins it. A Revisit condition only a person can observe, such as a user report, is exempt and needs no command.
 
 Compute the **working set** from the confirmed choice. If the working set is empty, stop.
 
@@ -149,7 +171,7 @@ Edit `.turbo/backlog.md` to delete the working-set entries that the lane process
 - **Investigate lane** — entries the applied fixes resolve in full, and entries whose investigation established that no defect exists
 - **Plan lane** — entries captured in the plan file `$plan` wrote, and entries whose fixes were applied in this session. Treat planned entries as processed once the plan is written.
 
-Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan), and any entry of which the working set took only one step of several. These stay in the backlog for a future run. Delete the file if no entries remain.
+Keep any entries the lane re-classified mid-flight (direct → investigate/plan, or investigate → plan), and any entry of which the working set took only one step of several. These stay in the backlog for a future run. Remove the **Validated** line, with the command lines nested under it, from each working-set entry that stays. Delete the file if no entries remain.
 
 Rewrite in place each kept entry of which the working set took only one step: restate its summary and **Where** as the steps that remain. When the rewrite changes the summary, update each **Paired with** line in counterpart entries that names the old title.
 
