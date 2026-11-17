@@ -42,7 +42,7 @@ Improvements drift: files get renamed, code gets refactored, issues get fixed as
 
 ### Reuse an Earlier Validation
 
-Before validating, note the root of the checkout whose code this step reads (`git rev-parse --show-toplevel`) and its commit (`git rev-parse --short HEAD`). The **path check** for a commit and a set of repo-relative paths passes when `git -C <root> diff --quiet <commit> -- <paths>` exits 0 and `git -C <root> ls-files --others --exclude-standard -- <paths>` prints nothing.
+Before validating, note the root of the checkout whose code this step reads (`git rev-parse --show-toplevel`). When that checkout has the default branch checked out (resolve it with `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`), run `git -C <root> fetch` and fast-forward that branch to its upstream with `git -C <root> merge --ff-only @{upstream}`. When any of these commands fails, report it and validate the checkout as it stands. Then note its commit (`git -C <root> rev-parse --short HEAD`). The **path check** for a commit and a set of repo-relative paths passes when `git -C <root> diff --quiet <commit> -- <paths>` exits 0 and `git -C <root> ls-files --others --exclude-standard -- <paths>` prints nothing.
 
 For each entry carrying a **Validated** line, run the path check with its recorded commit and paths, and run each command nested under it from that root. When the path check passes and every command prints its recorded output, whatever its exit status, classify the entry with its recorded verdict and skip the rest of this step for it. Otherwise, including when a command cannot run, validate the entry in full.
 
