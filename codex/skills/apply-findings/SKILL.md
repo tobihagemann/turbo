@@ -29,6 +29,8 @@ Group Apply findings by file path and apply in file order to minimize context sw
 
 If a finding references code that has changed since it was generated (e.g., by a prior fix in this same run), re-assess whether it still applies. Skip if the code has diverged.
 
+When a finding reports a failing check, fix what the check reports and leave the check as strict as it was: disabling, skipping, or retrying a test, disabling or downgrading a rule, lowering a threshold, or widening an ignore or exclude list fixes nothing. When the check itself is wrong for the code, treat the finding as Escalate (surface it in Step 3) with the evidence.
+
 When an escalated finding's outcome would change what the other fixes should look like, settle it in Step 3 before applying them.
 
 ## Step 3: Handle Escalated Findings

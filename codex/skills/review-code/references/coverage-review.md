@@ -2,7 +2,7 @@
 
 ## Review Instructions
 
-1. Skip non-testable code (config, documentation, CI files, SKILL.md files, markdown).
+1. Skip non-testable code (config, documentation, CI files, SKILL.md files, markdown), except where a change to it loosens a check.
 2. Search for existing test files covering the target code.
 3. Identify the project's test framework and conventions by reading existing test files.
 
@@ -33,10 +33,11 @@ When a test double is the only executor of an external boundary, a green tier is
 - **Test value** — tests that cost maintenance without independent protection: a scenario already pinned by a test at a stronger boundary, or replayed at every layer it crosses; assertions on implementation (source text, import or export lists, private call shapes) that break under a behavior-preserving refactor; a production export, flag, or hook that no production caller uses and exists only for a test
 - **Risk-level mismatch** — high-risk code (auth, data handling, financial logic) with only basic happy-path tests
 - **Convention gaps** — tests not following the project's established testing patterns, except a pattern of test-only production seams
+- **Loosened check** — a check that judges code made more lenient: a test disabled, skipped, marked as an expected failure, or given a retry or a sleep; a linter or type-checker rule disabled or downgraded in configuration, or a lint rule suppressed inline; a threshold lowered; an ignore or exclude list widened; or a check dropped from CI
 
 ## Determination Criteria
 
-Flag an issue other than test value only when ALL of these hold:
+Flag an issue other than test value or a loosened check only when ALL of these hold:
 
 1. The code performs meaningful logic worth testing (not pure configuration, boilerplate, or generated code)
 2. The gap is discrete and actionable (a specific function or module, not "needs more tests generally")
@@ -47,16 +48,25 @@ Flag a test-value issue only when ALL of these hold:
 1. The proposed action leaves no behavior, credible regression, or independent contract unguarded. Name the test that guards it afterward. Public API, protocol, persisted format, migration, security, and platform contracts count, and a source-text check that is the cheapest guard on a user-facing name, key, or path guards one.
 2. The finding names one action: delete the test, fold it into an existing test's cases, move it to the boundary that owns the behavior, rewrite its assertions against observable behavior, or remove the test-only seam from production code.
 
+Flag a loosened check only when ALL of these hold:
+
+1. The code or behavior the check judged still ships.
+2. Nothing in the scope, such as a comment beside the loosened check, states what makes the check wrong for that code. A note that the check fails or is flaky states no such thing.
+3. The finding names restoring the check, and fixing whatever it then reports, as the action.
+
+When the loosening also leaves code with no test, report it once, under the higher of the two priorities.
+
 ## Priority Levels
 
 - **P0** — Critical code with no tests (auth, data mutation, payment processing)
 - **P1** — Important code with no tests or high-risk code with only happy-path tests
-- **P2** — Code with tests but missing significant edge cases, or a production seam kept alive only by tests
+- **P2** — Code with tests but missing significant edge cases, a production seam kept alive only by tests, or a loosened check
 - **P3** — Minor coverage gaps, convention mismatches, or redundant or implementation-coupled tests
 
 ## What to Ignore
 
-- Non-testable code (config, documentation, CI files, SKILL.md files, markdown)
+- Non-testable code (config, documentation, CI files, SKILL.md files, markdown), apart from a loosened check
 - Generated code or trivial getters/setters with no logic
+- In a file or directory scope, which has no diff to compare against, a loosening only a diff shows: a lowered threshold, a widened ignore or exclude list, or a check dropped from CI
 
 **Verdict label:** `Test Coverage: <adequate | issues found>`

@@ -62,7 +62,7 @@ Run the `/commit-rules` skill to load commit message rules and technical constra
 
 Commit the already-staged changes (do not stage additional files) with a message following the loaded rules. Keep the branch Step 2 left in place and commit on it, including when that is the default branch.
 
-If the commit fails due to a pre-commit hook (formatter, linter), fix the issues — or run the project's format/lint script to auto-fix — then **re-stage by path the files the hook modified** before retrying. Pre-commit hooks may modify files in the working tree without updating the staging area.
+If the commit fails due to a pre-commit hook (formatter, linter), fix the issues — or run the project's format/lint script to auto-fix — then **re-stage by path the files the hook modified** before retrying. Fix them in the code and leave the hook's checks as strict as they were: disabling or downgrading a rule, widening an exclude list, or bypassing the hook fixes nothing. When a hook's check is wrong for the code, stop and report it with the evidence. Pre-commit hooks may modify files in the working tree without updating the staging area.
 
 ## Step 6: Update PR (if Requested)
 
