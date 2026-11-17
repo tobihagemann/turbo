@@ -75,7 +75,7 @@ Use `AskUserQuestion` to offer up to the first three candidates, each requesting
 
 ## Step 4: Wait for Reviewers and Checks
 
-Use the Monitor tool with an until-loop that runs the status script every 30 seconds and ends once no check has the `state` `pending` and no review request of `type` `Bot` is pending, or after 20 minutes. When this session pushed the head commit less than 3 minutes before the loop starts, start its first run 3 minutes after that push.
+Use the Monitor tool with an until-loop that runs the status script every 30 seconds and ends once no check has the `state` `pending` and no review request of `type` `Bot` is pending, or after 20 minutes. When this session pushed the head commit less than 3 minutes before the loop starts, start its first run 3 minutes after that push. Pipe the script's output into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the loop reporting the error when `jq` cannot parse the output or the script fails on three runs in a row.
 
 Then run the script once more and list as text the feedback to resolve:
 

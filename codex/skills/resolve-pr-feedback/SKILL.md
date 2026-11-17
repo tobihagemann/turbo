@@ -168,6 +168,8 @@ When a reviewer is re-reviewing, poll the PR's reviews (`reviews(last: 20) { nod
 
 Wait for checks when Step 7 fixed a check finding: run `<this skill's directory>/scripts/fetch-pr-data.sh` in a shell loop that ends once `meta.headRefOid` is the pushed commit, every check whose finding was fixed appears in `checks`, and no check has the `state` `pending`, or after 15 minutes.
 
+In every shell loop or repeated check of this step that reads JSON, pipe the JSON into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the wait reporting the error when `jq` cannot parse its input or a fetch fails on three polls in a row.
+
 When no reviewer was found re-reviewing and the wait for checks did not run, skip the rest of this step.
 
 Then run `<this skill's directory>/scripts/fetch-pr-data.sh` again. Drop from processing every inline thread that is now resolved, and leave threads and review bodies that arrived since Step 7's fetch for a later run. When the wait for checks ran, sort the checks that were failing in Step 7's fetch: one that now passes is confirmed, one that still fails is still failing, and one that is `pending`, missing, or reported for a commit other than the pushed one is unfinished. A check failing for the first time is left for a later run. Record all of these for the Step 13 summary.
