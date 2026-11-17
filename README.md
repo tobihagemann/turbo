@@ -34,7 +34,7 @@ The change moves through six stages. You decide at Shape and judge at Try and Sh
 | **Try** | You try a user-facing change in the live app and say whether it's right. | [`/turbo:preview`](claude/skills/preview/SKILL.md) |
 | **Polish** | Run the project's checks, review with parallel agents and the other model as peer, fix, and repeat until stable. | [`/turbo:polish-code`](claude/skills/polish-code/SKILL.md) |
 | **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/turbo:self-improve`](claude/skills/self-improve/SKILL.md) |
-| **Ship** | Commit, push, and open the pull request once you approve. | [`/turbo:ship`](claude/skills/ship/SKILL.md) |
+| **Ship** | Commit, push, and open the pull request once you approve. Then resolve AI review feedback and failing checks until it's green, and merge when you say so. | [`/turbo:ship`](claude/skills/ship/SKILL.md), [`/turbo:land-pr`](claude/skills/land-pr/SKILL.md) |
 
 Examples use Claude Code's `/turbo:skill-name` syntax. In Codex, use `$turbo:skill-name`:
 

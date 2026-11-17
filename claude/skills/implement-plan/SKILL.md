@@ -69,12 +69,12 @@ Run the `/implement` skill. The plan file, its file references, and its Verifica
 
 ## Step 4: Update Plan Status
 
-After `/implement` completes, when this session runs inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), use `AskUserQuestion` to offer two options: leave the worktree and update the plan from the main checkout, listed first and labeled `(Recommended)`, or stay in the worktree.
+After `/implement` completes, when this session runs inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), use `AskUserQuestion` to offer two options: leave the worktree and update the plan from the main checkout, or stay in the worktree. List leaving first and label it `(Recommended)`. While the branch's pull request is open (`gh pr view <branch> --json state`), list staying first and label it `(Recommended)` instead.
 
 - **Leave** — Leave with the ExitWorktree tool (`action: "keep"`). When it reports that no worktree session is active, take the Stay path instead. Otherwise:
   1. Resolve the default branch with `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`. Fast-forward the main checkout's local default branch to `origin/<default-branch>` without switching the branch the main checkout has checked out. When the fast-forward fails, report it and leave that branch as it is.
-  2. When the worktree's commits are on `origin/<default-branch>` (`git merge-base --is-ancestor <branch> origin/<default-branch>`) or its branch has a pull request (`gh pr view <branch> --json state`), remove the worktree with `git worktree remove <path>`. When git refuses over files this session copied in from the main checkout, delete those copies and remove it again. Otherwise keep the worktree, without `--force`.
-  3. Delete the branch with `git branch -d <branch>` when its commits are on `origin/<default-branch>`. Keep it when it carries a pull request or when git refuses.
+  2. When the worktree's commits are on `origin/<default-branch>` (`git merge-base --is-ancestor <branch> origin/<default-branch>`) or its branch's pull request is merged (`gh pr view <branch> --json state,headRefOid`), remove the worktree with `git worktree remove <path>`. When git refuses over files this session copied in from the main checkout, delete those copies and remove it again. Otherwise keep the worktree, without `--force`.
+  3. Delete the branch with `git branch -d <branch>` when its commits are on `origin/<default-branch>`, or with `git branch -D <branch>` when its pull request is merged and the branch's tip is that pull request's `headRefOid`. Keep it otherwise, or when git refuses.
   4. Report what was kept.
 - **Stay** — Continue in the worktree.
 

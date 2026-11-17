@@ -28,8 +28,9 @@ These are prompts you can type directly into Claude Code or Codex (`/turbo:skill
 /turbo:self-improve
 the error messages in this module are inconsistent, /turbo:backlog
 
-# Ship: committing and opening the PR
+# Ship: committing, opening the PR, and seeing it through to merge
 /turbo:ship
+/turbo:land-pr  ← wait for AI reviews and checks, resolve feedback, then merge
 
 # Investigating bugs
 tests are failing in the auth module, can you please /turbo:investigate?

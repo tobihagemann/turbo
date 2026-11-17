@@ -5,7 +5,7 @@ description: "Run the post-implementation QA workflow: tests, code polishing, re
 
 # Finalize Implementation
 
-Post-implementation QA workflow: tests, code polishing, commit, and self-improvement.
+Post-implementation QA workflow: tests, code polishing, commit, self-improvement, and landing the pull request.
 
 ## Task Tracking
 
@@ -16,6 +16,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 3. Run `/update-changelog` skill
 4. Run `/self-improve` skill
 5. Ship It
+6. Run `/land-pr` skill
 
 ## Phase 1: Run `/polish-code` Skill
 
@@ -63,6 +64,14 @@ Use `AskUserQuestion` to let the user choose whether to ship the changes togethe
 
 - **Ship together** — ship all staged changes as one unit; run the `/ship` skill
 - **Split up** — ship each group as its own unit; run the `/split-and-ship` skill
+
+## Phase 6: Run `/land-pr` Skill
+
+Skip this phase when Phase 5 neither opened a pull request nor pushed to the branch of an open one. When Phase 5 left a pull request's body with the user instead of opening it, present `/turbo:land-pr` to run once it is posted, and skip the skill.
+
+When Phase 5 opened or pushed to several pull requests, present `/turbo:land-pr <number>` for each, to run from that pull request's checkout, and skip the skill.
+
+Otherwise, run the `/land-pr` skill for that pull request.
 
 Then use the TaskList tool and proceed to any remaining task.
 

@@ -16,6 +16,7 @@ At the start, use `TaskCreate` to create a task for each phase:
 5. Run `/update-changelog` skill
 6. Run `/self-improve` skill
 7. Ship It
+8. Run `/land-pr` skill
 
 ## Phase 1: Run `/stage` Skill
 
@@ -31,7 +32,7 @@ Run the `/run-checks` skill. Stage any edits it makes before continuing.
 
 ## Phase 4: Run `/smoke-test` Skill
 
-Run the `/smoke-test` skill. It verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `/investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it to the end of the run and name it in the closing report as a case still left to the user, rather than treating it as a failure. When a fix made here edited code, run the `/run-checks` skill again once no failure remains. Stage any edits before continuing.
+Run the `/smoke-test` skill. It verifies without modifying code, so act on what it reports here: fix each failure and re-run it. When the same failure survives a fix attempt, run the `/investigate` skill; if investigation finds no root cause, stop and report with its findings. When a blocker cannot be cleared in this session (a path needing real credentials, an external service, or state unavailable here), carry it to Phase 8, which names it as a case left unverified, rather than treating it as a failure. When a fix made here edited code, run the `/run-checks` skill again once no failure remains. Stage any edits before continuing.
 
 ## Phase 5: Run `/update-changelog` Skill
 
@@ -71,6 +72,16 @@ Use `AskUserQuestion` to let the user choose whether to ship the changes togethe
 
 - **Ship together** — ship all staged changes as one unit; run the `/ship` skill
 - **Split up** — ship each group as its own unit; run the `/split-and-ship` skill
+
+## Phase 8: Run `/land-pr` Skill
+
+Before anything else in this phase, present each case Phase 4 carried as left unverified.
+
+Skip this phase when Phase 7 neither opened a pull request nor pushed to the branch of an open one. When Phase 7 left a pull request's body with the user instead of opening it, present `/turbo:land-pr` to run once it is posted, and skip the skill.
+
+When Phase 7 opened or pushed to several pull requests, present `/turbo:land-pr <number>` for each, to run from that pull request's checkout, and skip the skill.
+
+Otherwise, run the `/land-pr` skill for that pull request, passing along the cases Phase 4 carried as left unverified.
 
 Then use the TaskList tool and proceed to any remaining task.
 

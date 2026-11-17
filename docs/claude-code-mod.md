@@ -26,7 +26,7 @@ The same reading also appears above every `AskUserQuestion` dialog, where a skil
 
 ## Context Level
 
-Skills read how much context is left through the `turbo - context-level` tool. [`/refine-plan`](../claude/skills/refine-plan/SKILL.md) and [`/polish-code`](../claude/skills/polish-code/SKILL.md) check it before each decision on another iteration, and [`/implement`](../claude/skills/implement/SKILL.md) checks it once before QA. [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) uses it to project whether reading the plan's files fits the window. [`/turbo:context-level`](../claude/skills/context-level/SKILL.md) gives you the same reading on request:
+Skills read how much context is left through the `turbo - context-level` tool. [`/refine-plan`](../claude/skills/refine-plan/SKILL.md) and [`/polish-code`](../claude/skills/polish-code/SKILL.md) check it before each decision on another iteration, [`/implement`](../claude/skills/implement/SKILL.md) checks it once before QA, and [`/land-pr`](../claude/skills/land-pr/SKILL.md) before each round of following a pull request. [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) uses it to project whether reading the plan's files fits the window. [`/turbo:context-level`](../claude/skills/context-level/SKILL.md) gives you the same reading on request:
 
 ![Claude Code session running /turbo:context-level and reporting how much of the context window remains](../assets/mod-context-level.svg)
 

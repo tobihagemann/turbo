@@ -6,7 +6,7 @@ Turbo runs a change through the six stages of a human-gated software factory, ma
 
 ## The Stages
 
-In Claude Code, anything a stage leaves for you to decide or do stays listed [above the prompt](claude-code-mod.md#open-items) until you settle it. Long planning and polish loops, and the step before QA, check how much context is left and offer to [compact and continue](claude-code-mod.md#compaction-that-continues) when it runs low.
+In Claude Code, anything a stage leaves for you to decide or do stays listed [above the prompt](claude-code-mod.md#open-items) until you settle it. Long planning and polish loops, the step before QA, and each round of following a pull request check how much context is left and offer to [compact and continue](claude-code-mod.md#compaction-that-continues) when it runs low.
 
 ### Shape
 
@@ -34,6 +34,8 @@ You judge a user-facing change firsthand. [`/preview`](../claude/skills/preview/
 
 [`/ship`](../claude/skills/ship/SKILL.md) asks how the change should land and commits only once you choose. Then it pushes and creates or updates the pull request through [`/pr`](../claude/skills/pr/SKILL.md). When a changeset holds several unrelated changes, [`/split-and-ship`](../claude/skills/split-and-ship/SKILL.md) ships each group as its own branch and pull request, or as sequential commits.
 
+Once a pull request is open, [`/land-pr`](../claude/skills/land-pr/SKILL.md) follows it to merge. When no human has reviewed it or been asked to, it first offers to request a review from GitHub's suggested reviewers or the people who reviewed the repository's recent pull requests. Then it waits for the checks and for AI reviewers such as CodeRabbit and Copilot. Whenever feedback or a failing check comes in, it runs [`/resolve-pr-feedback`](../claude/skills/resolve-pr-feedback/SKILL.md) and waits again after the pushed fix. After the third round of fixes, it asks whether another is worth it. In Claude Code, it also offers to hand off and compact when the context runs low. Once the checks pass and nothing blocks the merge, it offers to merge, then deletes the branch. Claude Code also removes the worktree, and Codex lists the commands that remove it. A pull request still waiting on a human review comes back to you, with the branch and worktree kept for the changes it may bring.
+
 ## The Pipelines
 
 ### The Plan Pipeline
@@ -59,7 +61,7 @@ Every sub-skill works standalone too. Run [`/draft-plan`](../claude/skills/draft
 
 `/finalize` covers Polish, Learn, and Ship in one run.
 
-[`/finalize`](../claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](../claude/skills/implement/SKILL.md) / [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) chain into it automatically once a plan file's steps are done. Without a plan file, `/implement` asks first, offering [`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) as a quick close or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, and commit.
+[`/finalize`](../claude/skills/finalize/SKILL.md) is the QA and commit side of the loop. Run it when you're done implementing, or let [`/implement`](../claude/skills/implement/SKILL.md) / [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) chain into it automatically once a plan file's steps are done. Without a plan file, `/implement` asks first, offering [`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) as a quick close or stopping instead. One command runs tests, iterative code polishing, documentation cleanup, changelog updates, self-improvement, commit, and following the pull request to merge.
 
 ![How Finalize Connects](../assets/how-finalize-connects.svg)
 
@@ -70,8 +72,9 @@ Every sub-skill works standalone too. Run [`/draft-plan`](../claude/skills/draft
 3. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
 4. **Self-Improve** — Extract learnings, route to CLAUDE.md / AGENTS.md / memory / skills
 5. **Ship It** — Branch if needed, commit, update an existing PR, push, then create a PR if none exists and link the changelog entries written before it
+6. **Land PR** — Follow the PR through AI review and checks, resolving feedback until it is green, then offer to merge and clean up
 
-[`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) is the sibling for changes that don't warrant the deep review loop. It stages, simplifies code and docs, runs the project's checks via [`/run-checks`](../claude/skills/run-checks/SKILL.md), smoke tests, updates the changelog, self-improves, and ships. Same close-out, without the iterative bug hunt.
+[`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) is the sibling for changes that don't warrant the deep review loop. It stages, simplifies code and docs, runs the project's checks via [`/run-checks`](../claude/skills/run-checks/SKILL.md), smoke tests, updates the changelog, self-improves, ships, and lands the pull request. Same close-out, without the iterative bug hunt.
 
 ## Self-Improvement
 
@@ -89,7 +92,7 @@ When you're ready to act, [`/implement-backlog`](../claude/skills/implement-back
 - **`investigate`** → [`/investigate`](../claude/skills/investigate/SKILL.md), then [`/implement`](../claude/skills/implement/SKILL.md)
 - **`plan`** → [`/plan`](../claude/skills/plan/SKILL.md)
 
-In the Claude Code edition, it also names working sets that share no files with the one it recommends. Pick the parallel option, open the extra sessions it asks for, and it briefs each one to run its set. A session that changes code works in a worktree of its own, on its own branch, and a session that only plans stays in the main checkout. Each session prunes its own entries from the backlog. A session in a worktree offers to leave it when done, and removes it once its commits are on the default branch or in a pull request. Each session's gates still come to you.
+In the Claude Code edition, it also names working sets that share no files with the one it recommends. Pick the parallel option, open the extra sessions it asks for, and it briefs each one to run its set. A session that changes code works in a worktree of its own, on its own branch, and a session that only plans stays in the main checkout. Each session prunes its own entries from the backlog. A session in a worktree offers to leave it when done, and removes it once its commits are on the default branch or in a merged pull request. While its pull request is open, it recommends staying, since review may still bring changes. Each session's gates still come to you.
 
 ## Browser and UI Testing
 
