@@ -158,9 +158,11 @@ Wait for AI re-reviews when an inline thread whose first comment is from an AI-r
 
 Then, whether or not that wait ran, run `<this skill's directory>/scripts/fetch-pr-data.sh` and look in `checks` for a completed check from any AI-reviewer account as matched in Step 3 whose `title` reports that the reviewer skipped the pushed commit, such as a rate limit. For each such reviewer with a comment command that requests a review (`@coderabbitai review` for `coderabbitai`), use `request_user_input` to offer posting that comment on the PR under the user's account:
 
-- **Post when the limit resets** — offer it only when the reviewer's reviews or comments on the PR state when it will review again. Take the time from its most recent such statement: a remaining wait counts from that comment's `updatedAt`, and an allowance per period counts from the reviewer's latest review on the PR. Wait in a shell loop that ends at that time. Then post the comment.
+- **Post when the limit resets** — offer it only when the reviewer's reviews or comments in this fetch state when it will review again and that time is still ahead. Read the bodies from this fetch, never ones fetched earlier, including earlier comments the reviewer has since edited. Take the time from its most recent stated remaining wait, counted from that comment's `updatedAt`, or, when none of its reviews or comments states one, from an allowance per period, counted from the reviewer's latest review on the PR. Wait in a shell loop that ends at that time. Then post the comment.
 - **Post now** — post the comment.
 - **Don't post** — leave the reviewer as it is.
+
+Mark the first option offered recommended.
 
 A reviewer whose comment was posted counts as re-reviewing. Record every other reviewer that skipped the pushed commit, with its check's `title`, for the Step 13 summary.
 
