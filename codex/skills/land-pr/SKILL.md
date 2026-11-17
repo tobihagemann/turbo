@@ -56,7 +56,7 @@ Output shape:
 
 `meta.viewer` is the account this session posts as. A review request of `type` `Unknown` names a reviewer this account cannot read, and counts as a human one.
 
-Skip the rest of this step after round 1. Otherwise run the script, and skip the rest of this step when a review request of `type` `User`, `Team`, or `Unknown` is pending, or when `reviews` holds one whose `authorType` is `User`.
+In round 2 and later, skip the rest of this step. In round 1, run the script, and skip the rest of this step when a review request of `type` `User`, `Team`, or `Unknown` is pending, or when `reviews` holds one whose `authorType` is `User`.
 
 Otherwise list the candidates:
 
@@ -78,6 +78,8 @@ Then run the script once more and list as text the feedback to resolve:
 - Every check with the `state` `failing`
 - Every review with a body, from someone other than `meta.author` and `meta.viewer`, submitted after `meta.headCommittedDate`
 - Every conversation comment from someone other than `meta.author` and `meta.viewer`, created after `meta.headCommittedDate`
+
+Leave out a review body or conversation comment that holds no observation, counting any nested inside collapsed blocks, such as a summary reporting no open issues, an acknowledgement of a review command, or a notice that a review was skipped. Read the bodies with `gh pr view <number> --json reviews,comments` to decide.
 
 Also list each check and review request still pending when the loop ended. The step is done once that list, or a statement that nothing awaits resolution, is output.
 
