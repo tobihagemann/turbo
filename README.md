@@ -5,12 +5,13 @@
 <h1 align="center">Turbo</h1>
 
 <p align="center">
-  A human-gated agentic software factory for Claude Code and Codex.
+  Ship changes of any size with confidence.<br>
+  An agentic software factory for Claude Code and Codex.
 </p>
 
 ---
 
-Turbo turns your coding agent into a one-person software factory. You decide what to build before any code exists and judge the result at the end. In between, skills shape the change, build it, polish it, and ship it. Each session teaches the next. A human holds both gates, so nothing ships that nobody looked at.
+Bring your agent any idea or problem, big or small, and it asks you questions until you agree on what to build. From there it runs on its own. Every change goes through your project's checks and a multi-agent review, with Codex checking Claude's work or the other way around. UI changes also get a smoke test in the live app. Your agent comes back to you so you can judge the result, sign off before anything ships, and settle any call that's yours to make. At the end of each change, your agent saves what it learned to instructions, memory, or skills, ready for the next session.
 
 **[Claude Code](claude/SKILL-INDEX.md):** production-tested · **[Codex](codex/SKILL-INDEX.md):** experimental, with skill parity but less real-world use
 
@@ -31,7 +32,7 @@ The change moves through six stages. You decide at Shape and judge at Try and Sh
 | **Shape** | Settle what to build and how. You approve the shape or the plan before any code is written. | [`/turbo:plan`](claude/skills/plan/SKILL.md) |
 | **Build** | Make the change and verify it runs, with a smoke test in the live app for user-facing changes. | [`/turbo:implement`](claude/skills/implement/SKILL.md) |
 | **Try** | You try a user-facing change in the live app and say whether it's right. | [`/turbo:preview`](claude/skills/preview/SKILL.md) |
-| **Polish** | Run the project's checks, review with a second agent as peer reviewer, fix, and repeat until stable. | [`/turbo:polish-code`](claude/skills/polish-code/SKILL.md) |
+| **Polish** | Run the project's checks, review with parallel agents and the other model as peer, fix, and repeat until stable. | [`/turbo:polish-code`](claude/skills/polish-code/SKILL.md) |
 | **Learn** | Carry corrections and conventions into instructions, memory, and skills. | [`/turbo:self-improve`](claude/skills/self-improve/SKILL.md) |
 | **Ship** | Commit, push, and open the pull request once you approve. | [`/turbo:ship`](claude/skills/ship/SKILL.md) |
 
