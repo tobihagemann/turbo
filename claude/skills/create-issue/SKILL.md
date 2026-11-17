@@ -27,6 +27,8 @@ Treat an empty listing or a 404 as normal. When templates exist, read the one ma
 
 When the search surfaces a plausible duplicate, present it and use `AskUserQuestion` to confirm whether to file anyway.
 
+When a bug report rests on reading code alone, with no run having shown the behavior, offer to reproduce it before drafting. Use `AskUserQuestion` with **Reproduce first (Recommended)**, which runs the scenario against the target repository's code and drafts from what it shows, and **Draft as unobserved**, which states in the body that the behavior was derived from code and not observed. When the scenario cannot be run, draft as unobserved.
+
 ## Step 2: Run `/github-voice` Skill
 
 Run the `/github-voice` skill to load writing style rules.
