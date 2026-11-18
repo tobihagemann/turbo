@@ -26,6 +26,7 @@ These are prompts you can type directly into Claude Code or Codex (`/turbo:skill
 
 # Learn: capturing lessons and ideas
 /turbo:self-improve
+/turbo:self-improve move auto memory into the repo
 the error messages in this module are inconsistent, /turbo:backlog
 
 # Ship: committing, opening the PR, and seeing it through to merge

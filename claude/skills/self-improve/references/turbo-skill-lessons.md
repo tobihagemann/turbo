@@ -4,6 +4,6 @@
 
 - Which turbo skill it targets, as a path under `claude/skills/<name>/` in the checkout
 - The change to make and where in the file it belongs
-- The session evidence that motivated it (the correction, failure, or repeated guidance)
+- The session evidence that motivated it (the correction, failure, or repeated guidance), or the memory note it came from
 
-**When `checkout` is unset:** use `AskUserQuestion` to ask whether to propose each turbo skill lesson upstream. Ask one question per lesson, at most four per call. Write each lesson the user leaves out to **Auto memory** as Step 6 item 2 writes it, recording the turbo skill it applies to. Then, when any lesson remains to propose, run the `/contribute` skill once for all of them, passing each lesson's target skill, change, and evidence.
+**When `checkout` is unset:** use `AskUserQuestion` to ask whether to propose each turbo skill lesson upstream. Ask one question per lesson, at most four per call. Write each lesson the user leaves out to **Auto memory** as Step 6 item 2 writes it, recording the turbo skill it applies to, except a lesson drawn from a memory note, which keeps its note as it stands and is not written again. Then, when any lesson remains to propose, run the `/contribute` skill once for all of them, passing each lesson's target skill, change, and evidence.

@@ -23,17 +23,20 @@ Judge each statement in every note, and in every entry `MEMORY.md` holds in full
 - **A decision or preference of the user**: the code never contradicts it. Only a note modified more recently, or the user reversing it in a session transcript, does.
 - **Anything else**: unverifiable.
 
+Then check each note, and each entry `MEMORY.md` holds in full, against what the project records in its instruction files, the documents they point to, and its skills. A note or entry is covered when they hold every detail it holds. A statement they disagree with, where the code does not settle it, is in conflict with the project; a project file is never the evidence for a contradicted verdict. Name the file in both cases.
+
 Search the session transcripts only to settle which of two notes that contradict each other holds. Claude Code writes them to `<Claude config home>/projects/<key>/<session-id>.jsonl`. A session started in a subdirectory uses its own key, so match the encoded project root as a prefix. An `autoMemoryDirectory` setting does not move them. Search the transcripts modified after the older of the two notes for a narrow term, and output a short window around each match rather than the whole line, since one line can hold an entire tool result.
 
-The step is done when every statement carries one of three verdicts: confirmed, contradicted with the evidence named, or unverifiable.
+The step is done when every statement carries one of three verdicts: confirmed, contradicted with the evidence named, or unverifiable; every note and every entry held in full is marked covered, naming the covering file, or not covered; and every conflict names its file.
 
 ## Step 3: Consolidate the Memory
 
 Apply these changes without asking, following the memory conventions from the system prompt:
 
 - **Merge** notes that cover the same fact into the one that covers it best, keeping every detail any of them held, and delete the others.
+- **Delete** a note the project covers.
 - **Correct** a contradicted statement so it states what the evidence shows. Delete the note when nothing true remains in it.
-- **Leave** the content of an unverifiable statement as it stands. Merging and date rewriting still apply to it.
+- **Leave** the content of an unverifiable statement, or of one in conflict with the project, as it stands. Merging and date rewriting still apply to it.
 - **Rewrite** a relative date as an absolute one when the note's own text fixes the day.
 - **Repoint** each link in another note that names a note merged away at the note that absorbed it, and remove each link to a deleted note.
 - **Re-index** `MEMORY.md`: one line per note, each pointing at a file that exists. Leave entries it holds in full where they are, correcting or deleting them under the rules above.
@@ -75,6 +78,7 @@ After each call, delete the entries the user chose to delete. When an answer ask
 Output what changed:
 
 - **Memory** — each note merged, corrected, or deleted, with the evidence for it, the dates rewritten, and the index lines added, changed, or removed
+- **Conflicts with the project** — each statement a project file contradicts, with the note and the file, for the user to settle
 - **`.turbo/`** — each entry deleted, with the space freed
 - **Left to do** — each write or deletion that was refused, with the path
 

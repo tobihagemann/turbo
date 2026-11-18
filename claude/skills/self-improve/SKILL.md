@@ -1,11 +1,11 @@
 ---
 name: self-improve
-description: "Extract lessons from this session or past sessions and route them to instructions, memory, or skills. Use when the user asks to \"self-improve\", \"extract lessons\", or \"what did we learn\"."
+description: "Extract lessons from sessions or auto memory and route them to instructions, memory, or skills. Use when the user asks to \"self-improve\", \"what did we learn\", or \"move memory into the repo\"."
 ---
 
 # Self-Improve
 
-Review the current conversation, or the project's past sessions when asked, to extract durable lessons and route each one to the right knowledge layer.
+Review the current conversation, or when asked the project's past sessions or its auto memory, to extract durable lessons and route each one to the right knowledge layer.
 
 ## Step 1: Detect Context
 
@@ -15,7 +15,7 @@ Available destinations:
 - **Auto memory** — The project-specific memory directory named by the active harness. An effective `autoMemoryDirectory` setting overrides its location; otherwise it normally lives at `<Claude config home>/projects/<encoded project root>/memory/`, where the config home is `CLAUDE_CONFIG_DIR` when set and `~/.claude` otherwise. The key replaces every character outside `A-Za-z0-9` with `-`, and long keys may be truncated and hashed, so prefer the exact harness-provided path over recomputing it. List the directory and read `MEMORY.md` if it exists.
 - **Skills** — Project skills at `skills/` or `.claude/skills/` (resolve symlinks)
 
-Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3 rather than a routing destination. Also read any document of rules for one area that those files tell agents to read before working in that area; Step 4 routes lessons to it. List all skill directories with the `description` frontmatter of each SKILL.md, but leave the bodies unread until Step 2.
+Discover the project CLAUDE.md/AGENTS.md files (the root file and any nested ones in subdirectories) and read them, then read MEMORY.md. When those files point at a knowledge base the repo maintains, read its index too; it is a documentation source for Step 3, and a routing destination only when the CLAUDE.md/AGENTS.md files name it one. Also read any document of rules for one area that those files tell agents to read before working in that area; Step 4 routes lessons to it. Note each other destination the CLAUDE.md/AGENTS.md files name for a kind of knowledge, outside skills and instruction files, with the process they give for writing to it and the subtree of the file that names it; Step 4 routes lessons to it too. List all skill directories with the `description` frontmatter of each SKILL.md, but leave the bodies unread until Step 2.
 
 Read the top-level `checkout` key from `~/.turbo/config.json` when the file exists. When it names a directory holding `claude/skills/`, that directory is the user's Turbo clone or fork. Treat any other value as unset, and say so in the Step 5 routing plan.
 
@@ -50,6 +50,10 @@ Treat the returned items as raw evidence for the scan below.
 
 **Run** when asked to distill sessions beyond the current one: read [references/past-session-sweep.md](references/past-session-sweep.md) and follow it. **Skip** otherwise.
 
+### Take Lessons from Auto Memory
+
+**Run** when asked to move auto memory into the repo or to route its notes again: take each fact in every note, and in every entry `MEMORY.md` holds in full, as a candidate lesson, recording the note it came from. **Skip** otherwise.
+
 ### Identify Session Skills
 
 Before scanning for lessons, identify which skills were loaded during this session:
@@ -80,20 +84,21 @@ Keep only lessons that are:
 - **Stable** — likely to remain true across future sessions
 - **Non-obvious** — Claude would not already know this
 - **Actionable** — can be expressed as a rule or instruction
-- **Not already covered** — no rule in the files read in Steps 1 and 2, in the `references/` and other supporting files of the skills read in Step 2, or in the project's own knowledge stores already covers it, even as a special case. A lesson drawn from one incident is covered when an existing general rule, followed, would have prevented that incident; a workflow is covered only when an existing skill already encodes its steps. Search those sources for each candidate's keywords, then judge coverage by meaning rather than by shared wording. When the covering rule was in context during the incident and still read past, because its wording, scope, or placement let the incident through, keep the lesson as a revision of that rule in place, adding no new rule; otherwise discard it. A prose rule does not cover a rule a tool can decide from the code alone. When the session broke such a rule, keep the lesson as a new lesson rather than a revision. A lesson covered only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as uncovered for the subtree it actually applies to.
-- **Still a concern** — the issue is not already fixed by changes made in this session, such as a bug that was found and fixed or a missing feature that was added. **Exception: a successful workflow or procedure is not "resolved"; it stays a skill candidate.** When sweeping past sessions, judge this against the current state of the code and docs rather than against this session's changes.
+- **Not already covered** — no rule in the files read in Steps 1 and 2, in the `references/` and other supporting files of the skills read in Step 2, or in the project's own knowledge stores already covers it, even as a special case. A lesson drawn from one incident is covered when an existing general rule, followed, would have prevented that incident; a workflow is covered only when an existing skill already encodes its steps. Search those sources for each candidate's keywords, then judge coverage by meaning rather than by shared wording. When the covering rule was in context during the incident and still read past, because its wording, scope, or placement let the incident through, keep the lesson as a revision of that rule in place, adding no new rule; otherwise discard it. A prose rule does not cover a rule a tool can decide from the code alone. When the session broke such a rule, keep the lesson as a new lesson rather than a revision. A lesson covered only in an unrelated subtree's CLAUDE.md/AGENTS.md still counts as uncovered for the subtree it actually applies to. For a lesson drawn from a memory note, auto memory counts as no coverage, and this test replaces the revision-or-discard test above: when another source records every detail of that fact, keep it as a deletion of that fact from its note, naming the covering file.
+- **Still a concern** — the issue is not already fixed by changes made in this session, such as a bug that was found and fixed or a missing feature that was added. **Exception: a successful workflow or procedure is not "resolved"; it stays a skill candidate.** When sweeping past sessions or reading memory notes, judge this against the current state of the code and docs rather than against this session's changes.
 
-Discard anything session-specific, speculative, one-off, or already resolved by code changes in this session (but not successful workflows — see exception above). If no lessons survive filtering, tell the user and stop.
+Discard anything session-specific, speculative, one-off, or already resolved by code changes in this session (but not successful workflows — see exception above). A lesson drawn from a memory note that this step discards stays in its note untouched. If no lessons survive filtering, tell the user and stop.
 
 ## Step 4: Route Each Lesson
 
-Assign each surviving lesson to exactly one destination. Apply the routing rules in this order. The first that applies to a lesson decides its destination:
+Assign each surviving lesson to exactly one destination; a deletion Step 3 kept takes none and goes straight to Step 5. Apply the routing rules in this order. The first that applies to a lesson decides its destination:
 
 1. **Package-managed skills**
 2. **Mechanical rules**
 3. **Revisions**
 4. **Skill-first rule**
-5. The destination table, with the **Tiebreakers** settling a lesson that fits more than one row
+5. **Project routing**
+6. The destination table, with the **Tiebreakers** settling a lesson that fits more than one row
 
 **Package-managed skills (mandatory):** A lesson for a skill Step 1 classified as package-managed or ownership-unresolved routes by the Route Its Lessons section of [references/package-managed-skills.md](references/package-managed-skills.md).
 
@@ -103,12 +108,15 @@ Assign each surviving lesson to exactly one destination. Apply the routing rules
 
 **Skill-first rule (mandatory):** Check whether the lesson corrects, refines, or adds a guardrail to any existing skill's behavior — turbo or user/project. This includes lessons about skipping steps, wrong defaults, missing edge cases, or any "don't do X when running /skill-name" correction. If yes, route to that skill. Do not route skill corrections to auto memory or CLAUDE.md.
 
+**Project routing:** A lesson of a kind Step 1 noted a destination for, within the subtree of the file that names it, routes to **Project-named destination**.
+
 | Destination | Criteria |
 |---|---|
 | **Project backlog** | Actionable improvement to existing **code**: refactoring, performance, reliability, readability, testing, or DX. Not for documentation fixes — factual errors in CLAUDE.md belong in the **Project CLAUDE.md / AGENTS.md** row. Route to `.turbo/backlog.md` via the `/backlog` skill. |
 | **Deterministic check** | A mechanical rule for the project's code, or an existing check that nothing runs. The work is building the check or wiring it in: a rule in the linter the project already uses, a git hook, or a CI job, whichever its existing tooling makes cheapest. The work also clears the existing violations and makes the check block new occurrences, and a new check gets an error message that names the fix the lesson calls for. Route to `.turbo/backlog.md` via the `/backlog` skill. |
-| **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). A lesson the package-managed skills rule sends here stays here, whatever domain it overlaps, as does a turbo skill lesson the user declines to propose upstream in Step 6. |
+| **Auto memory** | Discovered knowledge with no skill home: API quirks, debugging workarounds, compiler gotchas, tool pitfalls, user preferences. Must not overlap with any existing skill's domain — if it does, route to the skill instead (see skill-first rule above). A lesson the package-managed skills rule sends here stays here, whatever domain it overlaps, as does a turbo skill lesson the user declines to propose upstream in Step 6. A lesson drawn from a memory note that routes here stays in its note. |
 | **Project CLAUDE.md / AGENTS.md** | Intentional project decisions: conventions, architecture, stack choices, build setup, module boundaries. Also factual corrections to CLAUDE.md content (wrong commands, outdated paths, incorrect conventions) — fix these directly, do not defer to Project backlog. When the lesson applies only to one subtree, route it to the nearest enclosing CLAUDE.md/AGENTS.md; reserve the root file for project-wide decisions. When those files tell agents to read a document of rules for the lesson's area, write the lesson there under its matching section. |
+| **Project-named destination** | A destination Step 1 noted for the lesson's kind of knowledge, such as a knowledge base. Write to it by the process the project's instruction files give. |
 | **Existing user/project skill** | Lesson would improve a skill's instructions, supporting files, or reference materials, add a missing edge case, correct its workflow, or refine its trigger conditions. Route to any skill whose *domain* covers the lesson — not just the skill worked on in this session. Changes go to the skill file directly. No contribution flow. |
 | **New skill** | A cohesive body of knowledge emerged that deserves its own on-demand context. The test: would this knowledge be too large for a CLAUDE.md section, and should it only be loaded when relevant? |
 | **Existing turbo skill** | Same criteria as **Existing user/project skill** above, but for turbo skills. **Before routing here, apply Step 1's verification rule; a skill it classifies as other than turbo routes to the Existing user/project skill destination instead, subject to the package-managed skills rule above.** Changes are not applied in this session: they go into a handoff in the Turbo checkout when `checkout` is set, and are offered upstream otherwise (see Step 6). |
@@ -136,7 +144,7 @@ Output a table as text before making any changes:
 | 5 | /finalize should skip step 3 when... | Turbo skill: finalize | Handoff to Turbo checkout |
 ```
 
-For each lesson, show: concise summary, exact target file/skill, and whether it's an append, update-in-place, or new creation. When a lesson carries a reason the user did not state, show that reason in its row, marked *inferred*, so the approval covers it. For Auto memory, name the resolved project-memory target so the approval covers the durable write at that path. Turbo skill lessons show `Handoff to Turbo checkout` as the action when `checkout` is set, and `Propose upstream` otherwise, naming the Auto memory target that receives the lesson if the user declines to propose it.
+For each lesson, show: concise summary, exact target file/skill, and whether it's an append, update-in-place, or new creation. When a lesson carries a reason the user did not state, show that reason in its row, marked *inferred*, so the approval covers it. For Auto memory, name the resolved project-memory target so the approval covers the durable write at that path. For a lesson drawn from a memory note, name the note: add `then delete from <note>` to the action of a lesson Step 6 writes into an instruction file, a rules document, a user/project skill, a new skill, or a project-named destination; add `Keep in note` to the action of any other, such as one bound for Auto memory, the backlog, or a Turbo handoff or upstream proposal; and show `Delete from <note>, covered by <file>` for a deletion Step 3 kept. Turbo skill lessons show `Handoff to Turbo checkout` as the action when `checkout` is set, and `Propose upstream` otherwise, naming the Auto memory target that receives the lesson if the user declines to propose it.
 
 Then use `AskUserQuestion` with these options: **Approve** or **Reject**.
 
@@ -150,6 +158,8 @@ Apply approved changes in order:
 4. **Updates to user/project skills** — Run the `/write-skill` skill to apply changes to any file inside the skill directory (SKILL.md, references, scripts, assets).
 5. **New skills** — Run the `/write-skill` skill for each new skill. Provide the trigger conditions and relevant context from the session.
 6. **Turbo skill lessons** — Edit no file in the Turbo plugin's skills folder: a plugin update replaces it. Read [references/turbo-skill-lessons.md](references/turbo-skill-lessons.md) and follow it.
+7. **Project-named destinations** — Write each lesson by the process the project's instruction files give for its destination, running any project skill that process names.
+8. **Memory notes** — For each approved deletion, and each lesson whose action ends in `then delete from <note>` once its write succeeded, remove the fact from its note, or from its entry when `MEMORY.md` holds it in full. Before this item's first edit to any note or to `MEMORY.md`, link removals included, output its path and full text. Delete a note left with nothing, removing its `MEMORY.md` line and each link to it in other notes; otherwise update its `MEMORY.md` line to match what remains. Remove an entry held in full that is left with nothing, keeping `MEMORY.md` itself.
 
 Then use the TaskList tool and proceed to any remaining task.
 
@@ -165,4 +175,4 @@ Then use the TaskList tool and proceed to any remaining task.
 - For AGENTS.md: write as agent documentation — project rules any AI agent on this repo should follow
 - For auto memory: write as personal project notes — concise, operational, organized by topic
 - For skills: follow the conventions in the existing skill collection
-- For files that live in the repo (CLAUDE.md / AGENTS.md, the rules documents they point to, and project skills): name only mechanisms that live in the repo too; describe an installed skill's behavior generically
+- For files that live in the repo (CLAUDE.md / AGENTS.md, the rules documents they point to, project-named destinations, and project skills): name only mechanisms that live in the repo too; describe an installed skill's behavior generically
