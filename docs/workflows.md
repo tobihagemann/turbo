@@ -55,7 +55,7 @@ A plan states the deployment's bounds and, where the change has observable behav
 
 Both modes offer [`/prototype`](../claude/skills/prototype/SKILL.md) when a discussion question turns on how a surface looks or whether an interaction reads the way you expect. It builds a self-contained page under `.turbo/prototypes/`, drives every control itself, and hands you the file, ending its turn so you can try it at your own pace. Reply that it settled your questions, or describe what to change. The decisions that follow then rest on something you've used instead of on faith. [`/draft-plan`](../claude/skills/draft-plan/SKILL.md) and [`/discuss-change`](../claude/skills/discuss-change/SKILL.md) also end their turn on the summary they present for approval. Reply to approve it, describe what to change, or ask to prototype an unknown you only spot while reading it.
 
-Every sub-skill works standalone too. Run [`/draft-plan`](../claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/refine-plan`](../claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/implement-plan`](../claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file.
+Every sub-skill works standalone too. Run [`/turbo:draft-plan`](../claude/skills/draft-plan/SKILL.md) directly if you want to draft a plan without the rest of the pipeline. Run [`/turbo:refine-plan`](../claude/skills/refine-plan/SKILL.md) on a plan you wrote yourself. Run [`/turbo:implement-plan`](../claude/skills/implement-plan/SKILL.md) in a fresh session on any plan file.
 
 ### The Finalize Pipeline
 

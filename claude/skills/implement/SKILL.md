@@ -47,7 +47,7 @@ Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report befo
 - The checks it must pass
 - A cap on any verification whose count the plan leaves open, such as mutation runs
 
-When it reports, review what it changed against the plan: `git diff <snapshot>`, or `git diff HEAD` when the tree was clean, shows its changes to tracked files, and `git status --short` compared with the capture shows the files it added. Run the checks the prompt named. Then settle everything the report leaves open before the next Implementation Step starts:
+When it reports, stop it with `TaskStop` on its agent ID, which also ends any background command it left running; a reply that it is not running needs nothing further. Then review what it changed against the plan: `git diff <snapshot>`, or `git diff HEAD` when the tree was clean, shows its changes to tracked files, and `git status --short` compared with the capture shows the files it added. Run the checks the prompt named. Then settle everything the report leaves open before the next Implementation Step starts:
 
 - Make a small correction in this session.
 - Give larger rework, or a block this session can clear, to a new subagent for the same Implementation Step, passing along what the first one reported.

@@ -14,6 +14,7 @@ Implement one Implementation Step of a plan. Other subagents implement the steps
 
 - Re-run the named checks as often as fixing them takes. Keep any further verification within the cap the prompt sets. When the cap is spent and doubt remains, report the doubt in place of running more.
 - Run long work as a series of bounded commands. A message from the session that spawned you arrives between commands: act on it before starting the next one.
+- Put a time limit on every wait, including a loop that polls for a condition, and stop every background command you started before reporting.
 - When the plan's design cannot be implemented as written, stop and report what blocks it. Record any smaller departure under Deviations.
 - Leave the result uncommitted in the working tree: no `git commit`, `git push`, `git stash`, or branch switch.
 - Keep `.turbo/` content (filenames, acceptance criteria, step numbers, headings) out of code and comments.
