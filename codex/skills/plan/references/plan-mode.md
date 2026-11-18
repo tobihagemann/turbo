@@ -41,6 +41,8 @@ Update the YAML frontmatter of each plan from Phase 1 to `status: ready`.
 
 ## Phase 6: Summarize and Halt
 
+When the workflow file, or your latest `update_plan` call when there is none, lists pending steps of a parent workflow, complete each of them, then continue with this phase's summary.
+
 Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
 Then halt with this message:

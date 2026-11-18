@@ -6,7 +6,7 @@ The working set is the entries the user confirmed in SKILL.md Step 3.
 
 ## Task Tracking
 
-Use `update_plan` to track each phase:
+Use `update_plan` to track each phase, restating SKILL.md's remaining steps and any remaining steps of a parent workflow alongside them:
 
 1. Run `$implement` skill
 

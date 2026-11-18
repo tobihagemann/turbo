@@ -41,6 +41,8 @@ Update the YAML frontmatter of each plan from Phase 1 to `status: ready`.
 
 ## Phase 6: Summarize and Offer Implementation
 
+Use the TaskList tool. When it shows pending tasks besides this phase, complete each of them, then continue with this phase's summary.
+
 Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
 Output "Plan ready at `<plan path>`." as text. When Phase 1 captured a gated plan, add a line naming its path and the gate that must pass before running `/turbo:implement-plan` on it. When Phase 4 left files uncommitted, add a line naming them.

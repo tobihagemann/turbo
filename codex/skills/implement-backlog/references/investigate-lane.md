@@ -6,7 +6,7 @@ The working set is the entries the user confirmed in SKILL.md Step 3.
 
 ## Task Tracking
 
-Track each phase with the Codex plan tool:
+Use `update_plan` to track each phase, restating SKILL.md's remaining steps and any remaining steps of a parent workflow alongside them:
 
 1. Run `$investigate` skill for each working-set entry
 2. Run `$implement` skill for the concluded fixes
