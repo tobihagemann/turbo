@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { Args, EngineInterface, Frozen, Next, RenderInput } from 'claude-code'
 import type { OpenItem } from '../types'
-import { ONE_LINE, TOAST } from './compact-tool'
+import { ONE_LINE, TOAST } from './shared'
 
 export const OPEN_ITEMS_TOOL = 'mcp__turbo__open-items'
 export const RESOLVED_SHOW_MS = 3_000

@@ -1,5 +1,5 @@
 import type { Register } from 'claude-code'
-import { CLEAR_TOOL, implementAfterTurn, queueImplementation, registerClearTool } from './clear-tool'
+import { CLEAR_TOOL, continueAfterTurn, queueContinuation, registerClearTool } from './clear-tool'
 import { compactAfterTurn, COMPACT_TOOL, queueCompaction, registerCompactTool } from './compact-tool'
 import { answerContextLevel, CONTEXT_TOOL, registerContextTool } from './context-tool'
 import { addOpenItemsContext, answerOpenItems, OPEN_ITEMS_TOOL, registerOpenItemsTool, renderOpenItems } from './open-items'
@@ -29,7 +29,7 @@ export const register: Register = on => {
 
   on('tool.call', { tool: CONTEXT_TOOL }, answerContextLevel)
   on('tool.call', { tool: COMPACT_TOOL }, queueCompaction)
-  on('tool.call', { tool: CLEAR_TOOL }, queueImplementation)
+  on('tool.call', { tool: CLEAR_TOOL }, queueContinuation)
   on('tool.call', { tool: OPEN_ITEMS_TOOL }, answerOpenItems)
   on('prompt.compose', composeRules)
   on('prompt.context', addOpenItemsContext)
@@ -50,7 +50,7 @@ export const register: Register = on => {
     if (e.agentId === undefined) {
       await refreshStatus($)
       await compactAfterTurn($, e.reason)
-      await implementAfterTurn($, e.reason)
+      await continueAfterTurn($, e.reason)
     }
 
     return result

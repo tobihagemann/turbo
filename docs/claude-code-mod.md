@@ -2,7 +2,7 @@
 
 [← Back to Turbo](../README.md) · [Workflow guide](workflows.md) · [Prompt examples](examples.md) · [Requirements](requirements.md) · [Customization](customization.md)
 
-The Claude Code plugin ships a [mod](https://claude.com/blog/claude-code-mods) alongside its skills. It keeps you informed while a pipeline runs, keeps long pipelines going when the context window fills up, and starts a fresh conversation to implement a finished plan. The Codex edition loads the same rules through a `SessionStart` hook and has none of the rest.
+The Claude Code plugin ships a [mod](https://claude.com/blog/claude-code-mods) alongside its skills. It keeps you informed while a pipeline runs, keeps long pipelines going when the context window fills up, and starts a fresh conversation that continues from a finished plan or a handoff. The Codex edition loads the same rules through a `SessionStart` hook and has none of the rest.
 
 ## Open Items
 
@@ -38,19 +38,21 @@ When one of those checks finds context running low, the skill asks whether to wr
 
 If you ask Claude to compact during a pipeline, its next check takes the same path without asking. If compaction is skipped or fails, a notice asks you to run `/compact` and reply "continue".
 
-## Clearing to Implement a Plan
+## Clearing That Continues
 
-When [`/plan`](../claude/skills/plan/SKILL.md) finishes a plan file, it asks whether to clear the conversation and implement the plan. When you pick either clear option, the `turbo - clear-and-implement` tool tells the mod to run `/clear` once the turn ends, then [`/turbo:implement-plan`](../claude/skills/implement-plan/SKILL.md) on the plan, either in your checkout or in a git worktree of its own:
+When [`/plan`](../claude/skills/plan/SKILL.md) finishes a plan file, it asks whether to clear the conversation and implement the plan. When you pick either clear option, the `turbo - clear-and-continue` tool tells the mod to run `/clear` once the turn ends, then [`/turbo:implement-plan`](../claude/skills/implement-plan/SKILL.md) on the plan, either in your checkout or in a git worktree of its own:
 
-![Claude Code session where the answer to how to implement a ready plan is a worktree, and the turbo - clear-and-implement tool queues the clear](../assets/mod-clear-and-implement-queued.svg)
+![Claude Code session where the answer to how to implement a ready plan is a worktree, and the turbo - clear-and-continue tool queues the clear](../assets/mod-clear-and-continue-queued.svg)
 
 The conversation then starts fresh and implements the plan without you typing anything:
 
-![Claude Code session starting fresh after a /clear the turbo plugin ran, then running /turbo:implement-plan on the plan in a worktree and creating that worktree](../assets/mod-clear-and-implement-started.svg)
+![Claude Code session starting fresh after a /clear the turbo plugin ran, then running /turbo:implement-plan on the plan in a worktree and creating that worktree](../assets/mod-clear-and-continue-started.svg)
 
 The question recommends the worktree in a session that [`/implement-backlog`](../claude/skills/implement-backlog/SKILL.md) briefed to work beside others.
 
 Clearing empties the open items list, so the question names any open items before you choose. If either command fails, a notice names the commands to run yourself.
+
+The same tool continues from a handoff file. Ask Claude to write a handoff and clear, and the mod runs `/clear` once the turn ends. It then sends a prompt that has the fresh session read the handoff and pick up its next step. Unlike compaction, nothing of the old conversation carries over beyond the handoff itself. If the clear or the prompt fails, a notice names the command to run and the reply to send.
 
 ## Rules and Startup Checks
 

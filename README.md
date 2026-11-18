@@ -104,7 +104,7 @@ You stay involved in choosing the approach and reviewing the result. Turbo works
 - **[Workflow guide](docs/workflows.md)** — the six stages from your side, then the plan and finalize pipelines, self-improvement, and browser testing.
 - **[Prompt examples](docs/examples.md)** — requests you can copy into your next session.
 - **[Requirements](docs/requirements.md)** — accounts, what setup changes, and the project infrastructure Turbo builds on.
-- **[Claude Code mod](docs/claude-code-mod.md)** — open items above the prompt, the status line, compaction that continues on its own, and clearing to implement a finished plan.
+- **[Claude Code mod](docs/claude-code-mod.md)** — open items above the prompt, the status line, compaction that continues on its own, and clearing that continues from a finished plan or a handoff.
 - **[Customization](docs/customization.md)** — override skills, update the plugin, and work on Turbo or a fork.
 - **All skills:** [Claude Code index](claude/SKILL-INDEX.md) · [Codex index](codex/SKILL-INDEX.md) — descriptions and dependencies for every skill.
 

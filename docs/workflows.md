@@ -6,7 +6,7 @@ Turbo runs a change through the six stages of a human-gated software factory, ma
 
 ## The Stages
 
-In Claude Code, anything a stage leaves for you to decide or do stays listed [above the prompt](claude-code-mod.md#open-items) until you settle it. Long planning and polish loops, the step before QA, and each round of following a pull request check how much context is left and offer to [compact and continue](claude-code-mod.md#compaction-that-continues) when it runs low. A finished plan comes with an offer to [clear the conversation and implement it](claude-code-mod.md#clearing-to-implement-a-plan).
+In Claude Code, anything a stage leaves for you to decide or do stays listed [above the prompt](claude-code-mod.md#open-items) until you settle it. Long planning and polish loops, the step before QA, and each round of following a pull request check how much context is left and offer to [compact and continue](claude-code-mod.md#compaction-that-continues) when it runs low. A finished plan comes with an offer to [clear the conversation and implement it](claude-code-mod.md#clearing-that-continues).
 
 ### Shape
 

@@ -8,7 +8,7 @@
 - **The other coding agent, for peer review.** `/finalize` uses it through [`/peer-review`](../claude/skills/peer-review/SKILL.md). The Claude edition uses the Codex CLI, which needs ChatGPT Plus or higher. The Codex edition uses the Claude Code CLI, which needs a Claude subscription.
 - **[GitHub CLI](https://cli.github.com/)** (required). Powers PR and issue operations.
 - **Node.js and `jq`.** Setup uses Node.js to install the CLIs, and the PR comment skills use `jq` to page through review threads.
-- **A Claude Code release with [mods](https://claude.com/blog/claude-code-mods)** (Claude Code edition). The plugin's mod injects Turbo's rules, lists open items above the prompt, shows a status line, compacts long workflows so they continue on their own, and clears the conversation to implement a finished plan. See the [Claude Code mod](claude-code-mod.md) guide.
+- **A Claude Code release with [mods](https://claude.com/blog/claude-code-mods)** (Claude Code edition). The plugin's mod injects Turbo's rules, lists open items above the prompt, shows a status line, compacts long workflows so they continue on their own, and clears the conversation to continue from a finished plan or a handoff. See the [Claude Code mod](claude-code-mod.md) guide.
 - **ChatGPT Pro or Business** (optional). Useful for [`/consult-oracle`](../claude/skills/consult-oracle/SKILL.md), which asks ChatGPT when you're completely stuck. The Pro tier is what reliably solves very hard problems.
 
 [`/peer-review`](../claude/skills/peer-review/SKILL.md) and [`/consult-oracle`](../claude/skills/consult-oracle/SKILL.md) are designed to be swapped. If you don't have access, [replace them](customization.md#the-puzzle-piece-philosophy) with alternatives that work for you.

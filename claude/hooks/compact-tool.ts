@@ -1,10 +1,7 @@
 import type { Args, EngineInterface, Frozen, TurnCompleteReason } from 'claude-code'
+import { handoffPrompt, messageOf, ONE_LINE, submitOrToast, TOAST } from './shared'
 
 export const COMPACT_TOOL = 'mcp__turbo__compact-and-continue'
-
-export const TOAST = { timeoutMs: 60_000 }
-
-export const ONE_LINE = /^[^\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+$/u
 
 let pendingHandoff: string | undefined
 
@@ -57,8 +54,7 @@ export async function compactAfterTurn($: EngineInterface, reason: TurnCompleteR
       return
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    $.ui.toast(`${message}: compaction failed. Run /compact, then reply "continue".`, TOAST)
+    $.ui.toast(`${messageOf(error)}: compaction failed. Run /compact, then reply "continue".`, TOAST)
 
     return
   }
@@ -68,21 +64,8 @@ export async function compactAfterTurn($: EngineInterface, reason: TurnCompleteR
     () =>
       void submitOrToast(
         $,
-        `The session was compacted. Read the handoff at ${handoff}, ` +
-          'then use the TaskList tool and continue with the next step it names.',
+        handoffPrompt(handoff, 'compacted'),
         `${handoff}: compacted, but the continue prompt was not sent. Reply "continue".`,
       ),
   )
-}
-
-async function submitOrToast($: EngineInterface, text: string, notSent: string) {
-  try {
-    const submitted = await $.prompt.submit({ text })
-
-    if (submitted.drop === undefined) {
-      return
-    }
-  } catch {}
-
-  $.ui.toast(notSent, TOAST)
 }

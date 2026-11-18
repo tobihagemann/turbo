@@ -53,7 +53,7 @@ Call the `mcp__turbo__open-items` tool with `action` set to `list`. Then use `As
 
 Mark **Implement in worktree** recommended when an instruction addressed to this session says to implement the plan in a worktree of its own, and **Clear and implement** recommended otherwise.
 
-On either clear option, call the `mcp__turbo__clear-and-implement` tool with the slug of the plan named in the "Plan ready" line as `plan`, and `worktree` set to true for the worktree option. The fallback commands are `/clear`, then `/turbo:implement-plan <slug>`, with "in a worktree" added for the worktree option. When the tool confirms the clear is queued, tell the user that the session clears and starts implementing once this turn ends. Name the fallback commands for the case that it does not. When the tool refuses, tell the user to run the fallback commands themselves.
+On either clear option, call the `mcp__turbo__clear-and-continue` tool with the slug of the plan named in the "Plan ready" line as `plan`, and `worktree` set to true for the worktree option. The fallback commands are `/clear`, then `/turbo:implement-plan <slug>`, with "in a worktree" added for the worktree option. When the tool confirms the clear is queued, tell the user that the session clears and starts implementing once this turn ends. Name the fallback commands for the case that it does not. When the tool refuses, tell the user to run the fallback commands themselves.
 
 On **Stop here**, tell the user to run `/clear`, then `/turbo:implement-plan <slug>` to implement.
 

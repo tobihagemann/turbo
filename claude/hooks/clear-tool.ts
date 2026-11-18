@@ -1,78 +1,99 @@
 import type { Args, EngineInterface, Frozen, TurnCompleteReason } from 'claude-code'
-import { TOAST } from './compact-tool'
+import { handoffPrompt, messageOf, ONE_LINE, submitOrToast, TOAST } from './shared'
 
-export const CLEAR_TOOL = 'mcp__turbo__clear-and-implement'
+export const CLEAR_TOOL = 'mcp__turbo__clear-and-continue'
 
 const IMPLEMENT_COMMAND = 'turbo:implement-plan'
 
 const SLUG = /^[A-Za-z0-9][A-Za-z0-9._-]*$/
 
-type PendingImplementation = { slug: string; worktree: boolean }
+type PlanContinuation = { plan: string; worktree: boolean }
 
-let pendingImplementation: PendingImplementation | undefined
+type PendingContinuation = PlanContinuation | { handoff: string }
+
+type ContinuationInput = { plan?: unknown; worktree?: unknown; handoff?: unknown }
+
+let pendingContinuation: PendingContinuation | undefined
 
 export async function registerClearTool($: EngineInterface) {
   await $.tool.register({
-    name: 'clear-and-implement',
+    name: 'clear-and-continue',
     description:
-      `Clears the main conversation once this turn ends, then runs /${IMPLEMENT_COMMAND} on the plan. ` +
-      'Call it only after the user chose to clear the conversation and implement a ready plan.',
+      'Clears the main conversation once this turn ends, then continues from a ready plan or a handoff file. ' +
+      `For a plan, it runs /${IMPLEMENT_COMMAND} on it. ` +
+      'For a handoff, it submits a prompt to read the file and continue. ' +
+      'Call it only after the user chose to clear the conversation and continue.',
     inputSchema: {
       type: 'object',
       properties: {
         plan: { type: 'string', description: "The plan's slug: its file name under .turbo/plans/, without .md." },
-        worktree: { type: 'boolean', description: 'Implement the plan in a git worktree of its own.' },
+        worktree: { type: 'boolean', description: 'With `plan`: implement the plan in a git worktree of its own.' },
+        handoff: { type: 'string', description: "The handoff file's path. Pass it in place of `plan`." },
       },
-      required: ['plan'],
     },
   })
 }
 
-export async function queueImplementation($: EngineInterface, e: Frozen<Args<'tool.call'>>) {
+export async function queueContinuation($: EngineInterface, e: Frozen<Args<'tool.call'>>) {
   if (e.agentId !== undefined) {
     return { result: 'No clear for a subagent: this tool clears the main session.' }
   }
 
-  const { plan, worktree } = e as { plan?: unknown; worktree?: unknown }
-  const refused = { result: 'Nothing queued: pass the slug of a plan under .turbo/plans/ as `plan`.' }
+  const continuation = await validContinuation($, e as ContinuationInput)
 
-  if (typeof plan !== 'string' || !SLUG.test(plan)) {
-    return refused
+  if (continuation === undefined) {
+    return {
+      result:
+        'Nothing queued: pass either the slug of a plan under .turbo/plans/ as `plan`, with `worktree` if wanted, ' +
+        'or the path of an existing handoff file as `handoff`, without `worktree`.',
+    }
   }
 
-  if (!(await $.fs.exists(`.turbo/plans/${plan}.md`))) {
-    return refused
-  }
-
-  pendingImplementation = { slug: plan, worktree: worktree === true }
+  pendingContinuation = continuation
+  const afterClear = 'plan' in continuation ? `runs /${IMPLEMENT_COMMAND} on the plan` : 'continues from the handoff'
 
   return {
-    result:
-      `The session clears and runs /${IMPLEMENT_COMMAND} on the plan once this turn ends. ` +
-      'Finish any remaining task, then end the turn.',
+    result: `The session clears and ${afterClear} once this turn ends. Finish any remaining task, then end the turn.`,
   }
 }
 
-export async function implementAfterTurn($: EngineInterface, reason: TurnCompleteReason) {
-  const implementation = pendingImplementation
-  pendingImplementation = undefined
+async function validContinuation(
+  $: EngineInterface,
+  { plan, worktree, handoff }: ContinuationInput,
+): Promise<PendingContinuation | undefined> {
+  if (plan !== undefined && handoff !== undefined) {
+    return undefined
+  }
 
-  if (implementation === undefined || reason !== 'answer') {
+  if (typeof plan === 'string' && SLUG.test(plan) && (await $.fs.exists(`.turbo/plans/${plan}.md`))) {
+    return { plan, worktree: worktree === true }
+  }
+
+  if (typeof handoff === 'string' && ONE_LINE.test(handoff) && worktree !== true && (await $.fs.exists(handoff))) {
+    return { handoff }
+  }
+
+  return undefined
+}
+
+export async function continueAfterTurn($: EngineInterface, reason: TurnCompleteReason) {
+  const continuation = pendingContinuation
+  pendingContinuation = undefined
+
+  if (continuation === undefined || reason !== 'answer') {
     return
   }
 
-  $.clock.after(0, () => void clearThenImplement($, implementation))
+  $.clock.after(0, () =>
+    void ('plan' in continuation ? clearThenImplement($, continuation) : clearThenResume($, continuation.handoff)),
+  )
 }
 
-async function clearThenImplement($: EngineInterface, { slug, worktree }: PendingImplementation) {
-  const args = worktree ? `${slug} in a worktree` : slug
+async function clearThenImplement($: EngineInterface, plan: PlanContinuation) {
+  const args = plan.worktree ? `${plan.plan} in a worktree` : plan.plan
   const typed = `/${IMPLEMENT_COMMAND} ${args}`
 
-  try {
-    await $.command.run({ command: 'clear' })
-  } catch (error) {
-    $.ui.toast(`${messageOf(error)}: clear failed. Run /clear, then ${typed}`, TOAST)
-
+  if (!(await clearOrToast($, typed))) {
     return
   }
 
@@ -83,6 +104,28 @@ async function clearThenImplement($: EngineInterface, { slug, worktree }: Pendin
   }
 }
 
-function messageOf(error: unknown) {
-  return error instanceof Error ? error.message : String(error)
+async function clearThenResume($: EngineInterface, handoff: string) {
+  const reply = `reply "Read the handoff at ${handoff} and continue"`
+
+  if (!(await clearOrToast($, reply))) {
+    return
+  }
+
+  await submitOrToast(
+    $,
+    handoffPrompt(handoff, 'cleared'),
+    `${handoff}: cleared, but the continue prompt was not sent. Reply "Read the handoff at ${handoff} and continue".`,
+  )
+}
+
+async function clearOrToast($: EngineInterface, next: string) {
+  try {
+    await $.command.run({ command: 'clear' })
+
+    return true
+  } catch (error) {
+    $.ui.toast(`${messageOf(error)}: clear failed. Run /clear, then ${next}`, TOAST)
+
+    return false
+  }
 }
