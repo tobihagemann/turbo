@@ -136,6 +136,8 @@ When a skill needs user input, reference the tool by name (`AskUserQuestion`) in
 
 A question's header is a chip of at most 12 characters. Give it a short identifier, such as the row number of a table printed before the question, and put names and paths in the question text.
 
+Keep each option label within the tool's limit of one to five words, and carry the rest in its description. The agent shortens a longer label when it asks, so a line elsewhere in the skill that names the option, such as which one to mark recommended or what to do on it, no longer matches what the user picked.
+
 ### Output Content as Text Before AskUserQuestion
 
 When a skill presents structured content (tables, plans, reports) before asking for approval, output the content as text first. `AskUserQuestion` has limited UI space and should only carry the approval prompt, not the content being reviewed.

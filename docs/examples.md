@@ -6,7 +6,7 @@ These are prompts you can type directly into Claude Code or Codex (`/turbo:skill
 
 ```
 # Shape: planning a change (single entry — /turbo:plan routes based on complexity)
-/turbo:plan add a caching layer to the image pipeline  ← plan mode → draft → refine → halt; run /turbo:implement-plan after
+/turbo:plan add a caching layer to the image pipeline  ← plan mode → draft → refine → offers to clear and run /turbo:implement-plan
 /turbo:plan build a notification system with backend, API, and UI  ← same route, larger plan
 /turbo:survey-patterns  ← pattern-ground an approach without drafting a plan
 /turbo:prototype  ← settle how a surface looks or an interaction feels before committing to it

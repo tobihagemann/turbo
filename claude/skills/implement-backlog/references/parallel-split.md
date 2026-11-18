@@ -42,7 +42,7 @@ When your work turns out to need one of those files, message that session before
 Fill the opening by lane:
 
 - **Direct or investigate** — "Enter a git worktree of your own with the EnterWorktree tool. Then invoke `/implement-backlog` via the Skill tool with the working set and lane below."
-- **Plan** — "Stay in this checkout and change no file outside `.turbo/`. Invoke `/implement-backlog` via the Skill tool with the working set and lane below. When `/plan` routes the work to a direct change, enter a git worktree of your own with the EnterWorktree tool before editing."
+- **Plan** — "Stay in this checkout and change no file outside `.turbo/`. Invoke `/implement-backlog` via the Skill tool with the working set and lane below. When `/plan` routes the work to a direct change, enter a git worktree of your own with the EnterWorktree tool before editing. When `/plan` writes a plan, implement it in a git worktree of your own."
 
 List every other set in each brief, the recommended working set under this session's own name included.
 

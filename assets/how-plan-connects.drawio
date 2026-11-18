@@ -59,7 +59,7 @@
         <mxCell id="125" edge="1" parent="100" source="2201" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="105">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="2204" edge="1" parent="100" source="105" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="106" value="halt and suggest">
+        <mxCell id="2204" edge="1" parent="100" source="105" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="106" value="fresh conversation">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="200" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#f0fdf4;strokeColor=#22c55e;fontColor=#14532d;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/draft-plan" vertex="1">

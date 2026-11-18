@@ -46,6 +46,8 @@ When a signal fires, output it as text. Then use `AskUserQuestion` to offer:
 
 On **Leave it unimplemented**, tell the user to bring the plan current with `/turbo:refine-plan` and run this skill again, or, for a plan whose gate has not passed, to run this skill again once it has. Mark the remaining implement steps deleted, then use the TaskList tool and proceed to any remaining task.
 
+When the input asks to implement in a worktree and this session does not already run inside a linked worktree (where `git rev-parse --git-dir` differs from `--git-common-dir`), enter a new git worktree with the EnterWorktree tool. Name it after the plan's slug. Keep using the plan at its absolute path in the main checkout, and read the files it references under `.turbo/` from the main checkout too. Copy from the main checkout each file the worktree lacks that the work needs, such as gitignored local configuration or untracked project instructions, and leave each copied file out of every commit.
+
 ## Step 2: Read Context Files
 
 The read list, every file to read in full:
