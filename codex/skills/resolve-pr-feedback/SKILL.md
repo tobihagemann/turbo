@@ -166,7 +166,12 @@ Mark the first option offered recommended.
 
 A reviewer whose comment was posted counts as re-reviewing. Record every other reviewer that skipped the pushed commit, with its check's `title`, for the Step 13 summary.
 
-When a reviewer is re-reviewing, poll the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and run `<this skill's directory>/scripts/fetch-pr-data.sh` for its `checks` in a shell loop that ends once each reviewer found re-reviewing has submitted a review whose commit is the pushed head or, while `meta.headRefOid` is the pushed commit, has a completed check whose `title` does not report a skip, or after 15 minutes. Record for the Step 13 summary each reviewer whose comment was posted and whose review had not arrived when the loop ended, and each other reviewer whose check completed without a review on the pushed head.
+When a reviewer is re-reviewing, poll the PR's reviews (`reviews(last: 20) { nodes { author { login } commit { oid } } }`) and run `<this skill's directory>/scripts/fetch-pr-data.sh` for its `checks` in a shell loop. A reviewer found re-reviewing is finished once either holds:
+
+- It submitted a review whose commit is the pushed head.
+- `meta.headRefOid` is the pushed commit and the reviewer has a completed check whose `title` does not report a skip.
+
+Test both in the loop's condition. The loop ends once every such reviewer is finished, or after 15 minutes. Record for the Step 13 summary each reviewer whose comment was posted and whose review had not arrived when the loop ended, and each other reviewer whose check completed without a review on the pushed head.
 
 Wait for checks when Step 7 fixed a check finding: run `<this skill's directory>/scripts/fetch-pr-data.sh` in a shell loop that ends once `meta.headRefOid` is the pushed commit, every check whose finding was fixed appears in `checks`, and no check has the `state` `pending`, or after 15 minutes.
 

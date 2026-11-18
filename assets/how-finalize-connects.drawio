@@ -414,13 +414,13 @@
         <mxCell id="411" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#fefce8;strokeColor=#eab308;fontColor=#713f12;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/land-pr" vertex="1">
           <mxGeometry height="470" width="210" x="845" y="1600" as="geometry" />
         </mxCell>
-        <mxCell id="412" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Check context" vertex="1">
+        <mxCell id="412" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Request review" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="425" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Request review" vertex="1">
+        <mxCell id="425" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Wait for reviews" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="110" as="geometry" />
         </mxCell>
-        <mxCell id="413" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Wait for reviews" vertex="1">
+        <mxCell id="413" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Check context" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="170" as="geometry" />
         </mxCell>
         <mxCell id="414" parent="411" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#dbeafe;strokeColor=#3b82f6;fontColor=#1e3a5f;fontSize=12;" value="/resolve-pr-feedback" vertex="1">

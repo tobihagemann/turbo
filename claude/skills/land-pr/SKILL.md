@@ -10,9 +10,9 @@ description: "Follow a PR to merge: wait for AI reviewers and checks, resolve th
 At the start of every invocation, including the re-run from Step 6, use `TaskCreate` to create a task for each step:
 
 1. Identify the pull request
-2. Check context
-3. Request a human review
-4. Wait for reviewers and checks
+2. Request a human review
+3. Wait for reviewers and checks
+4. Check context
 5. Run `/resolve-pr-feedback` skill
 6. Re-run `/land-pr` skill if fixes were pushed
 7. Offer the merge
@@ -31,13 +31,7 @@ Otherwise mark completed every task an earlier `/land-pr` invocation for this pu
 - **Merged** — mark Steps 2 through 7 completed and continue with Step 8.
 - **Open on the current branch** — continue with Step 2.
 
-## Step 2: Check Context
-
-Call the `mcp__turbo__context-level` tool: a reading of 50% or less remaining is a context signal. A request from the user to compact, arriving since the session last compacted, is the other. When the reading is 50% or less and the user has not asked to compact, use `AskUserQuestion` to ask whether to compact before following the pull request: "Handoff, then compact", marked recommended, or keep going in this session.
-
-On "Handoff, then compact", or when the user asked to compact, run the `/handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at running `/land-pr` for the pull request's URL, at this round, with the cases left unverified, from the checkout root. Use `TaskUpdate` to set this step's task description to that same next step and leave the task in progress. Then call the `mcp__turbo__compact-and-continue` tool with the handoff's path. End the turn in place of continuing to Step 3, telling the user that the session compacts and continues on its own, and that if it does not, they should run `/compact` and then reply "continue".
-
-## Step 3: Request a Human Review
+## Step 2: Request a Human Review
 
 This skill reads the pull request's state with:
 
@@ -73,7 +67,7 @@ It emits `[ { "login", "source", "prs" } ]`: GitHub's suggested reviewers first,
 
 Use `AskUserQuestion` to offer up to the first three candidates, each requesting that person's review, plus **No human review**. Name each candidate's source and pull request count in its description. Mark the first candidate recommended when `reviewDecision` is `REVIEW_REQUIRED`. For the candidate chosen, or each login a freeform answer names, run `gh pr edit <number> --add-reviewer <login>`.
 
-## Step 4: Wait for Reviewers and Checks
+## Step 3: Wait for Reviewers and Checks
 
 Use the Monitor tool with an until-loop that runs the status script every 30 seconds and ends once no check has the `state` `pending` and no review request of `type` `Bot` is pending, or after 20 minutes. When this session pushed the head commit less than 3 minutes before the loop starts, start its first run 3 minutes after that push. Pipe the script's output into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the loop reporting the error when `jq` cannot parse the output or the script fails on three runs in a row.
 
@@ -88,9 +82,17 @@ Leave out a review body or conversation comment that holds no observation, count
 
 Also list each check and review request still pending when the loop ended. The step is done once that list, or a statement that nothing awaits resolution, is output.
 
+## Step 4: Check Context
+
+Skip this step when Step 3 listed no feedback to resolve and the user has not asked to compact since the session last compacted.
+
+Call the `mcp__turbo__context-level` tool: a reading of 50% or less remaining is a context signal. A request from the user to compact, arriving since the session last compacted, is the other. When the reading is 50% or less and the user has not asked to compact, use `AskUserQuestion` to ask whether to compact before resolving the feedback: "Handoff, then compact", marked recommended, or keep going in this session.
+
+On "Handoff, then compact", or when the user asked to compact, run the `/handoff` skill, or, when this session already wrote a handoff, edit that file. Point its next step at running `/land-pr` for the pull request's URL, at this round, with the cases left unverified, from the checkout root. Use `TaskUpdate` to set this step's task description to that same next step and leave the task in progress. Then call the `mcp__turbo__compact-and-continue` tool with the handoff's path. End the turn in place of continuing to Step 5, telling the user that the session compacts and continues on its own, and that if it does not, they should run `/compact` and then reply "continue".
+
 ## Step 5: Run `/resolve-pr-feedback` Skill
 
-Skip this step when Step 4 listed no feedback to resolve.
+Skip this step when Step 3 listed no feedback to resolve.
 
 Note `meta.headRefOid`. Then run the `/resolve-pr-feedback` skill for the pull request.
 
