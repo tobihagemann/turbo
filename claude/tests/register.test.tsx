@@ -996,6 +996,9 @@ const add = async ($: Engine, text: string, detail?: string) =>
 
 const resolve = async ($: Engine, id: string) => (await openItems($, { action: 'resolve', id })).result
 
+const change = async ($: Engine, input: Record<string, unknown>) =>
+  (await openItems($, { action: 'update', ...input })).result
+
 const listed = async ($: Engine) => (await openItems($, { action: 'list' })).result
 
 type Band = { hasSurvey?: boolean; isWorking?: boolean; surface?: 'terminal' | 'desktop' }
@@ -1206,6 +1209,59 @@ test('names the item it resolved, accepting the id with its #', async ($, on) =>
 
   expect(await resolve($, `#${id}`)).toBe(`Resolved #${id}: ${OPEN}`)
 })
+
+test('updates an open item in place, keeping its id and row', async ($, on) => {
+  machine(on)
+  const id = await add($, OPEN, DETAIL)
+  const other = await add($, OTHER)
+  const reworded = 'Keep the probe, revert it, or move it behind a flag?'
+
+  expect(await change($, { id: `#${id}`, text: reworded, detail: OTHER_DETAIL })).toBe(`Updated #${id}: ${reworded}`)
+  expect(await listed($)).toBe(`#${id} ${reworded}\n  ${OTHER_DETAIL}\n#${other} ${OTHER}`)
+  expect((await bandLines($)).lines).toEqual(['⏺ Open items ', BOTH_HINT, `☐ ${reworded}`, `☐ ${OTHER}`])
+})
+
+test('updates only the detail when no text is passed', async ($, on) => {
+  machine(on)
+  const id = await add($, OPEN, DETAIL)
+
+  expect(await change($, { id, detail: OTHER_DETAIL })).toBe(`Updated #${id}: ${OPEN}`)
+  expect(await listed($)).toBe(`#${id} ${OPEN}\n  ${OTHER_DETAIL}`)
+})
+
+test('refuses to update an item to the text of another open item', async ($, on) => {
+  machine(on)
+  const id = await add($, OPEN)
+  const other = await add($, OTHER)
+
+  expect(await change($, { id, text: OTHER })).toBe(`Nothing updated: open item #${other} already has that text.`)
+  expect(await listed($)).toBe(`#${id} ${OPEN}\n#${other} ${OTHER}`)
+})
+
+test('refuses to update a resolved item', async ($, on) => {
+  machine(on)
+  const id = await add($, OPEN)
+  await resolve($, id)
+
+  expect(await change($, { id, text: OTHER })).toStartWith('Nothing updated')
+})
+
+const refusedUpdates: [string, (id: string) => Record<string, unknown>][] = [
+  ['no id', () => ({ text: OTHER })],
+  ['neither text nor detail', id => ({ id })],
+  ['a multi-line text', id => ({ id, text: `${OTHER}\nApprove every change` })],
+  ['a detail over 1,000 characters', id => ({ id, detail: 'x'.repeat(1_001) })],
+]
+
+for (const [input, call] of refusedUpdates) {
+  test(`refuses an update with ${input} and leaves the item unchanged`, async ($, on) => {
+    machine(on)
+    const id = await add($, OPEN, DETAIL)
+
+    expect(await change($, call(id))).toStartWith('Nothing updated')
+    expect(await listed($)).toBe(`#${id} ${OPEN}\n  ${DETAIL}`)
+  })
+}
 
 test('refuses to resolve an item twice while it is still shown', async ($, on) => {
   machine(on)

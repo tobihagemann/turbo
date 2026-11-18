@@ -12,11 +12,15 @@ export const OPEN_ITEMS_RULE = `
 - Before ending a turn that leaves something only the user can decide or do, record each item with \`${OPEN_ITEMS_TOOL}\` (\`add\`). Give it a self-contained line as \`text\`. As \`detail\`, give a decision's choices with the recommendation first, or say that only the user can take the action. Still state the items in the reply. Then reread the reply: anything in it that only the user can decide or do is an item, even under a caveat or a summary heading.
 - Do not add an item that is already recorded and still open. Its id is in this conversation's earlier tool results. After a compaction, the \`openItems\` context block holds a snapshot from that compaction. When unsure, \`list\` gives the current set.
 - Do not record optional offers ("I could also…"), questions the user settled within the turn, or work that is not this session's, such as a finding a peer session reports about its own repository or leftovers another session's run left on the user's machines; state those in the reply once. Record a question asked through \`AskUserQuestion\` that is still open after its answer, such as one answered with "later" or with a request for clarification.
+- When an open item's wording or choices change while it stays open, \`update\` it by id with the new \`text\` or \`detail\`, rather than resolving it and adding it again.
 - When a user message settles an item, or makes it moot, \`resolve\` it while acting on it. When \`resolve\` refuses the id, call \`list\` and resolve the item it shows for that question, if any. When a \`resolve\` reply names an item other than the one meant, \`add\` the named item back, then look for the meant one in \`list\`.
 `
 
 const MAX_TEXT = 200
 const MAX_DETAIL = 1_000
+const TEXT_SHAPE = `one line of at most ${MAX_TEXT} characters`
+const DETAIL_SHAPE = `one line of at most ${MAX_DETAIL} characters`
+const ACTIONS = ['add', 'update', 'resolve', 'list'] as const
 const ID_SPACE = 36 ** 4
 const RESOLVE_COMMAND = 'turbo:resolve-open-items'
 const RESOLVE_HOTKEY = 'r'
@@ -26,7 +30,25 @@ const ELBOW = '  ⎿  '
 const openItems = atom({ plugin: 'turbo', key: 'openItems' } as const, [])
 const detailsShown = atom({ plugin: 'turbo', key: 'openItemsDetailsShown' } as const, false)
 
+const isAction = (action: unknown): action is (typeof ACTIONS)[number] => ACTIONS.some(known => known === action)
+
+const isValidText = (text: unknown): text is string =>
+  typeof text === 'string' && text.trim() !== '' && ONE_LINE.test(text) && text.length <= MAX_TEXT
+
+const isValidDetail = (detail: unknown): detail is string =>
+  typeof detail === 'string' && ONE_LINE.test(detail) && detail.length <= MAX_DETAIL
+
+const bareId = (id: string) => id.replace(/^#/, '')
+
+const notOpen = (outcome: string, id: string) =>
+  `Nothing ${outcome}: #${id} is not an open item. \`list\` gives the open ones.`
+
 const isOpen = (item: OpenItem) => item.resolvedAt === undefined
+
+const openWithId = (items: readonly OpenItem[], id: string) => items.find(item => isOpen(item) && item.id === id)
+
+const openWithText = (items: readonly OpenItem[], text: string, except?: OpenItem) =>
+  items.find(item => item !== except && isOpen(item) && item.text === text)
 
 const hasOpenDetail = (item: OpenItem) => isOpen(item) && item.detail !== undefined
 
@@ -58,19 +80,23 @@ export async function registerOpenItemsTool($: EngineInterface) {
     name: 'open-items',
     description:
       'Records things only the user can decide or do, for the band above the prompt and for /resolve-open-items. ' +
-      '`add` records one, `resolve` settles one by id, `list` shows the open ones.',
+      '`add` records one, `update` changes an open one’s text or detail by id, `resolve` settles one by id, ' +
+      '`list` shows the open ones.',
     inputSchema: {
       type: 'object',
       properties: {
-        action: { type: 'string', enum: ['add', 'resolve', 'list'] },
-        text: { type: 'string', description: 'For `add`: the one-line, self-contained question or action.' },
+        action: { type: 'string', enum: [...ACTIONS] },
+        text: {
+          type: 'string',
+          description: 'For `add`, and optionally `update`: the one-line, self-contained question or action.',
+        },
         detail: {
           type: 'string',
           description:
-            'For `add`, optional, one line. For a decision, the choices with the recommendation first. ' +
+            'For `add` and `update`, optional, one line. For a decision, the choices with the recommendation first. ' +
             'For an action, that only the user can do it. Add any context.',
         },
-        id: { type: 'string', description: "For `resolve`: the item's id, as `add` or `list` gave it." },
+        id: { type: 'string', description: "For `update` and `resolve`: the item's id, as `add` or `list` gave it." },
       },
       required: ['action'],
     },
@@ -84,8 +110,10 @@ export async function answerOpenItems($: EngineInterface, e: Frozen<Args<'tool.c
 
   const { action, text, detail, id } = e as { action?: unknown; text?: unknown; detail?: unknown; id?: unknown }
 
-  if (action !== 'add' && action !== 'resolve' && action !== 'list') {
-    return { result: 'Nothing done: pass `action` as `add`, `resolve`, or `list`.' }
+  if (!isAction(action)) {
+    const names = new Intl.ListFormat('en', { type: 'disjunction' }).format(ACTIONS.map(name => `\`${name}\``))
+
+    return { result: `Nothing done: pass \`action\` as ${names}.` }
   }
 
   if (action === 'list') {
@@ -95,19 +123,19 @@ export async function answerOpenItems($: EngineInterface, e: Frozen<Args<'tool.c
   const now = await $.clock.now()
 
   if (action === 'add') {
-    if (typeof text !== 'string' || text.trim() === '' || !ONE_LINE.test(text) || text.length > MAX_TEXT) {
-      return { result: `Nothing recorded: pass \`text\` as one line of at most ${MAX_TEXT} characters.` }
+    if (!isValidText(text)) {
+      return { result: `Nothing recorded: pass \`text\` as ${TEXT_SHAPE}.` }
     }
 
-    if (detail !== undefined && (typeof detail !== 'string' || !ONE_LINE.test(detail) || detail.length > MAX_DETAIL)) {
-      return { result: `Nothing recorded: pass \`detail\` as one line of at most ${MAX_DETAIL} characters, or leave it out.` }
+    if (detail !== undefined && !isValidDetail(detail)) {
+      return { result: `Nothing recorded: pass \`detail\` as ${DETAIL_SHAPE}, or leave it out.` }
     }
 
     let answer = ''
 
     await update($, openItems, items => {
       const kept = unexpired(items, now)
-      const recorded = kept.find(item => isOpen(item) && item.text === text)
+      const recorded = openWithText(kept, text)
 
       if (recorded !== undefined) {
         answer = `Already recorded as open item #${recorded.id}: ${text}`
@@ -124,22 +152,71 @@ export async function answerOpenItems($: EngineInterface, e: Frozen<Args<'tool.c
     return { result: answer }
   }
 
+  if (action === 'update') {
+    if (typeof id !== 'string') {
+      return { result: "Nothing updated: pass the item's id as `id`." }
+    }
+
+    if (text === undefined && detail === undefined) {
+      return { result: 'Nothing updated: pass a new `text`, a new `detail`, or both.' }
+    }
+
+    if (text !== undefined && !isValidText(text)) {
+      return { result: `Nothing updated: pass \`text\` as ${TEXT_SHAPE}, or leave it out.` }
+    }
+
+    if (detail !== undefined && !isValidDetail(detail)) {
+      return { result: `Nothing updated: pass \`detail\` as ${DETAIL_SHAPE}, or leave it out.` }
+    }
+
+    const wanted = bareId(id)
+    let answer = ''
+
+    await update($, openItems, items => {
+      const kept = unexpired(items, now)
+      const target = openWithId(kept, wanted)
+
+      if (target === undefined) {
+        answer = notOpen('updated', wanted)
+
+        return kept
+      }
+
+      if (text !== undefined) {
+        const duplicate = openWithText(kept, text, target)
+
+        if (duplicate !== undefined) {
+          answer = `Nothing updated: open item #${duplicate.id} already has that text.`
+
+          return kept
+        }
+      }
+
+      const updated = { ...target, ...(text === undefined ? {} : { text }), ...(detail === undefined ? {} : { detail }) }
+      answer = `Updated #${updated.id}: ${updated.text}`
+
+      return kept.map(item => (item === target ? updated : item))
+    })
+
+    return { result: answer }
+  }
+
   if (typeof id !== 'string') {
     return { result: "Nothing resolved: pass the item's id as `id`." }
   }
 
-  const wanted = id.replace(/^#/, '')
+  const wanted = bareId(id)
   let resolved: OpenItem | undefined
 
   await update($, openItems, items => {
     const kept = unexpired(items, now)
-    resolved = kept.find(item => item.id === wanted && isOpen(item))
+    resolved = openWithId(kept, wanted)
 
     return kept.map(item => (item === resolved ? { ...item, resolvedAt: now } : item))
   })
 
   if (resolved === undefined) {
-    return { result: `Nothing resolved: #${wanted} is not an open item. \`list\` gives the open ones.` }
+    return { result: notOpen('resolved', wanted) }
   }
 
   $.clock.after(RESOLVED_SHOW_MS, () => $.ui.invalidate('ui.render'))
