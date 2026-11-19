@@ -59,7 +59,7 @@ This breaks:
 - **Pipelines**: `/finalize` invoking `/review-code`, `/simplify-code`, etc.
 - **Parallel sub-reviews**: `/review-code` launching one review agent per type plus a peer-review agent
 - **Loops**: `/polish-code` re-invoking itself until stable
-- **Routing**: `/self-improve` routing through `/write-skill`
+- **Routing**: `/route-lessons` routing through `/write-skill`
 - **Any second run**: Running the same top-level skill twice in one session
 
 Separately, the stop problem breaks any workflow skill that chains multiple sub-skill invocations — `/finalize` and `/plan` are the canonical examples.

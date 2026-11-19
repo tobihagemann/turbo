@@ -26,7 +26,6 @@ These are prompts you can type directly into Claude Code or Codex (`/turbo:skill
 
 # Learn: capturing lessons and ideas
 /turbo:self-improve
-/turbo:self-improve move auto memory into the repo
 the error messages in this module are inconsistent, /turbo:backlog
 
 # Ship: committing, opening the PR, and seeing it through to merge
@@ -55,7 +54,7 @@ tests are failing in the auth module, can you please /turbo:investigate?
 /turbo:create-issue for the flaky upload test
 
 # Tidying memory and .turbo/ (Claude Code)
-/turbo:dream  ← consolidate memory notes, then pick what to delete from .turbo/
+/turbo:dream  ← consolidate memory notes, move what belongs in the repo, then pick what to delete from .turbo/
 
 # Checking in on the session (Claude Code)
 /turbo:resolve-open-items  ← walk the open items listed above the prompt

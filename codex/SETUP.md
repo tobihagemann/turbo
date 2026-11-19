@@ -76,11 +76,11 @@ Smoke-test print mode in the current project: `claude -p "hello" < /dev/null` sh
 
 ### Shared Claude Code Auto Memory (Optional)
 
-Ask the user whether to let `$self-improve` use Claude Code project memory as a shared source for Codex. When rerunning setup, show the current `codex.sharedClaudeAutoMemory` value in `~/.turbo/config.json` and let the user keep or change it. Create the file when it does not exist, and preserve every other key whenever changing the preference.
+Ask the user whether to let Turbo use Claude Code project memory as a shared source for Codex: `$route-lessons` writes approved lessons there, and `$self-improve` proposes a past-session cutoff from it. When rerunning setup, show the current `codex.sharedClaudeAutoMemory` value in `~/.turbo/config.json` and let the user keep or change it. Create the file when it does not exist, and preserve every other key whenever changing the preference.
 
-If declined, set the preference to `false` and skip the rest of this section. `$self-improve` then bypasses shared-source discovery and retains its harness-memory fallback.
+If declined, set the preference to `false` and skip the rest of this section. Both skills then bypass shared-source discovery and retain their harness-memory fallback.
 
-If the preference is already `true` and the user keeps it, trust the recorded global setup contract and skip the rest of this section, including current-project validation. The preference instructs `$self-improve` to assume every project has a matching imported resource when resolving its source path.
+If the preference is already `true` and the user keeps it, trust the recorded global setup contract and skip the rest of this section, including current-project validation. The preference instructs both skills to assume every project has a matching imported resource when resolving its source path.
 
 When enabling it from any other state, leave the preference `false` while completing the setup below.
 
@@ -108,7 +108,7 @@ Verify every condition before relying on the shared route:
 
 Set `codex.sharedClaudeAutoMemory` to `true` only after every condition passes. If any condition fails, leave it `false` and report that setup is incomplete.
 
-Treat files under the imported `resources/` directory as read-only. The saved `true` value is the runtime contract: `$self-improve` resolves the source path but does not repeat these setup checks.
+Treat files under the imported `resources/` directory as read-only. The saved `true` value is the runtime contract: both skills resolve the source path but do not repeat these setup checks.
 
 ## Step 4: Enable Structured User Input in Default Mode
 

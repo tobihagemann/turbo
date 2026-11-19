@@ -39,7 +39,7 @@ After editing the plugin mod, run `claude plugin validate claude` and `claude pl
 
 ## Key Files
 
-- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared, and top-level `checkout` names a Turbo clone or fork that `/self-improve` hands Turbo skill lessons to. `codex.sharedClaudeAutoMemory` is the Codex edition's shared-memory preference.
+- `~/.turbo/config.json` — User-level configuration. Top-level `oracle` is shared, and top-level `checkout` names a Turbo clone or fork that `/route-lessons` hands Turbo skill lessons to. `codex.sharedClaudeAutoMemory` is the Codex edition's shared-memory preference.
 
 A setting Turbo requires goes into `SETUP.md`. When the harness lets the plugin observe it, as the Claude mod observes an environment variable, the mod or the Codex `SessionStart` hook also checks it at startup and tells the user what is missing. A setting the plugin cannot observe, such as a Codex `config.toml` key, lives in `SETUP.md` alone. A retired key or setting is dropped from `SETUP.md` and left behind on existing installs.
 

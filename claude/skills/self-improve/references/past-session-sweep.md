@@ -1,6 +1,6 @@
 # Past-Session Sweep
 
-Propose a cutoff first: take the newest modification time in the memory directory from Step 1, state it, then use `AskUserQuestion` to confirm sweeping from it or sweeping the whole history. That timestamp records a memory write rather than a completed sweep: present it as a bound on the work, never as what a previous run covered. When the directory is absent or empty, sweep the whole history without asking.
+Propose a cutoff first: take the newest modification time in the auto-memory directory the active harness names, state it, then use `AskUserQuestion` to confirm sweeping from it or sweeping the whole history. That timestamp records a memory write rather than a completed sweep: present it as a bound on the work, never as what a previous run covered. When no directory is named, or it is absent or empty, sweep the whole history without asking.
 
 Spawn a single subagent (`model: "opus"`, no `name`). Wait for it to report before continuing; do not relaunch it if it has not yet reported. The subagent's prompt must include:
 

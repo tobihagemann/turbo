@@ -1,19 +1,31 @@
 ---
 name: dream
-description: "Consolidate the project's auto memory in place (merge, correct, prune, re-index), then offer to clean up .turbo/. Use when the user asks to \"dream\", \"tidy memory\", or \"clean up stale notes\"."
+description: "Consolidate the project's auto memory, move notes that belong in the repo, then offer to clean up .turbo/. Use when the user asks to \"dream\", \"tidy memory\", or \"move memory into the repo\"."
 ---
 
 # Dream
 
-Consolidate this project's auto memory, then clear out what `.turbo/` no longer needs.
+Consolidate this project's auto memory, move what belongs in the repo, then clear out what `.turbo/` no longer needs.
 
-Text passed with the invocation steers the memory pass: what to look for and how to organize the notes. Every note is still read, and Step 3's conditions for deleting a note hold regardless.
+Text passed with the invocation steers the memory pass: what to look for and how to organize the notes. Every note is still read, and Step 3's and Step 5's conditions for deleting a note hold regardless.
+
+## Task Tracking
+
+Use `TaskCreate` to create a task for each step:
+
+1. Read the memory
+2. Gather evidence
+3. Consolidate the memory
+4. Run `/route-lessons` skill
+5. Remove moved statements
+6. Clean up `.turbo/`
+7. Report
 
 ## Step 1: Read the Memory
 
 Use the auto-memory directory the system prompt names. When it names none, an effective `autoMemoryDirectory` setting gives the location. Otherwise the directory is `<Claude config home>/projects/<encoded project root>/memory/`. The config home is `CLAUDE_CONFIG_DIR` when set and `~/.claude` otherwise. The key replaces every character outside `A-Za-z0-9` with `-`, and long keys may be truncated and hashed.
 
-List the directory, then read `MEMORY.md` and every note with the Read tool. When the directory does not exist or holds no notes, say so and continue with Step 4.
+List the directory, then read `MEMORY.md` and every note with the Read tool. When the directory does not exist, or holds no notes and `MEMORY.md` holds no entry in full, say so and continue with Step 6.
 
 ## Step 2: Gather Evidence
 
@@ -23,18 +35,18 @@ Judge each statement in every note, and in every entry `MEMORY.md` holds in full
 - **A decision or preference of the user**: the code never contradicts it. Only a note modified more recently, or the user reversing it in a session transcript, does.
 - **Anything else**: unverifiable.
 
-Then check each note, and each entry `MEMORY.md` holds in full, against what the project records in its instruction files, the documents they point to, and its skills. A note or entry is covered when they hold every detail it holds. A statement they disagree with, where the code does not settle it, is in conflict with the project; a project file is never the evidence for a contradicted verdict. Name the file in both cases.
+Then check each statement against what the project records in its instruction files, the documents they point to, and its skills. A statement is covered when they hold every detail it holds. A statement they disagree with, where the code does not settle it, is in conflict with the project; a project file is never the evidence for a contradicted verdict. Name the file in both cases.
 
 Search the session transcripts only to settle which of two notes that contradict each other holds. Claude Code writes them to `<Claude config home>/projects/<key>/<session-id>.jsonl`. A session started in a subdirectory uses its own key, so match the encoded project root as a prefix. An `autoMemoryDirectory` setting does not move them. Search the transcripts modified after the older of the two notes for a narrow term, and output a short window around each match rather than the whole line, since one line can hold an entire tool result.
 
-The step is done when every statement carries one of three verdicts: confirmed, contradicted with the evidence named, or unverifiable; every note and every entry held in full is marked covered, naming the covering file, or not covered; and every conflict names its file.
+The step is done when every statement carries one of three verdicts: confirmed, contradicted with the evidence named, or unverifiable; every statement is marked covered, naming the covering file, or not covered; and every conflict names its file.
 
 ## Step 3: Consolidate the Memory
 
 Apply these changes without asking, following the memory conventions from the system prompt:
 
 - **Merge** notes that cover the same fact into the one that covers it best, keeping every detail any of them held, and delete the others.
-- **Delete** a note the project covers.
+- **Delete** a statement the project covers, and its note when nothing else remains in it.
 - **Correct** a contradicted statement so it states what the evidence shows. Delete the note when nothing true remains in it.
 - **Leave** the content of an unverifiable statement, or of one in conflict with the project, as it stands. Merging and date rewriting still apply to it.
 - **Rewrite** a relative date as an absolute one when the note's own text fixes the day.
@@ -43,11 +55,23 @@ Apply these changes without asking, following the memory conventions from the sy
 
 Before the first edit this step makes to a note, and before deleting one, output its path and its full original text. Output each line of `MEMORY.md` before changing or removing it. Leave every file that is not a note or the index untouched.
 
-When a write or a deletion is refused, continue with the rest and carry what is left to do into Step 5.
+When a write or a deletion is refused, continue with the rest and carry what is left to do into Step 7.
 
-## Step 4: Clean Up `.turbo/`
+## Step 4: Run `/route-lessons` Skill
 
-Resolve the repo root with `git rev-parse --show-toplevel`, except inside a linked worktree — where `git rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir. Outside a git repository, use the working directory. When that root has no `.turbo/` directory, continue with Step 5.
+**Skip** when every remaining statement is in conflict with the project, or none remains.
+
+Run the `/route-lessons` skill with each statement in every note, and in every entry `MEMORY.md` holds in full, as a candidate lesson: its note or entry as its origin, and the evidence Step 2 gathered for it. Leave out each statement in conflict with the project; Step 7 reports it for the user to settle.
+
+## Step 5: Remove Moved Statements
+
+**Skip** when Step 4 was skipped.
+
+Remove each statement `/route-lessons` reports as moved from its note, or from its entry when `MEMORY.md` holds it in full. Delete a note left with nothing, and remove an entry held in full that is left with nothing, keeping `MEMORY.md` itself. Make these edits under Step 3's rules for outputting original text, removing links, re-indexing `MEMORY.md`, and refused writes, outputting only the removed statements for a note Step 3 already printed.
+
+## Step 6: Clean Up `.turbo/`
+
+Resolve the repo root with `git rev-parse --show-toplevel`, except inside a linked worktree — where `git rev-parse --git-dir` differs from `--git-common-dir` — in which case use the parent of the common dir. Outside a git repository, use the working directory. When that root has no `.turbo/` directory, continue with Step 7.
 
 List the top-level entries of `.turbo/` with one command that prints one line per entry: its size and the date of its newest file. Say what each holds from its name and, for a file, its heading. Read the frontmatter `status:` of every plan with one search.
 
@@ -71,13 +95,14 @@ Then use `AskUserQuestion`, one question per entry recommended for deletion, in 
 - **Question** — the entry's name, what it holds, its size and age, ending with "Delete or keep?"
 - **Options** — **Delete (Recommended)** with the reason in its description, then **Keep** with what keeping costs in its description
 
-After each call, delete the entries the user chose to delete. When an answer asks a question or gives an instruction in place of a choice, act on it, then ask about that entry again when delete or keep is still open. When a deletion is refused, carry it into Step 5.
+After each call, delete the entries the user chose to delete. When an answer asks a question or gives an instruction in place of a choice, act on it, then ask about that entry again when delete or keep is still open. When a deletion is refused, carry it into Step 7.
 
-## Step 5: Report
+## Step 7: Report
 
 Output what changed:
 
-- **Memory** — each note merged, corrected, or deleted, with the evidence for it, the dates rewritten, and the index lines added, changed, or removed
+- **Memory** — each note merged, corrected, or deleted, and each statement removed as covered, with the evidence for it, the dates rewritten, and the index lines added, changed, or removed
+- **Moved out of memory** — each statement removed from its note, with the file it now lives in or the upstream proposal that carries it
 - **Conflicts with the project** — each statement a project file contradicts, with the note and the file, for the user to settle
 - **`.turbo/`** — each entry deleted, with the space freed
 - **Left to do** — each write or deletion that was refused, with the path

@@ -47,4 +47,4 @@ Clone the repo (or your fork) and use the clone as the plugin, so your edits tak
 
 Claude Code loads the plugin from the clone in place: an edit applies at the next session, or right away after `/reload-plugins`. Codex runs a copy, so re-run the Codex update commands above after editing.
 
-With `checkout` set, `/self-improve` in any project writes lessons for Turbo's skills into `<clone>/.turbo/handoff/` instead of proposing them upstream, ready to apply in a session inside the clone.
+With `checkout` set, `/route-lessons` writes lessons for Turbo's skills into `<clone>/.turbo/handoff/` instead of proposing them upstream, ready to apply in a session inside the clone. `/self-improve` and `/dream` both route their lessons through it.

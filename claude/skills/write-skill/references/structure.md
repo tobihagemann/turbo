@@ -134,9 +134,13 @@ When SKILL.md links to sub-files, each layer must own exactly one concern:
 
 Routing tables, decision logic, and shared config belong in SKILL.md only. Sub-files should never route back to siblings, and SKILL.md should not summarize sub-file commands. When other skills reference a sub-file, they should point to the skill and name the sub-file: "Run `/skill-name` skill and consult sub-file.md to ..."
 
+### Moving Content
+
 When removing content from a router because a sub-file already covers it, check whether the router loses a warning the sub-file cannot deliver. A sub-file reaches only a reader who already decided to look, so a caution against a wrong inference has to survive in the router. Merge such a line into the surrounding routing prose rather than deleting it.
 
 When moving a rule from the router into a sub-file, find every router step that reached the rule where it stood, and link each one to the sub-file.
+
+When moving a section into a sub-file or into another skill, list before the move every behavior and special case the moved text performs, every definition or placeholder that the text staying behind still uses, and every condition reworded on the way. After the move, confirm each still holds somewhere with its original scope. A dropped special case, an orphaned placeholder, or a condition widened by generic rewording survives review, because every remaining sentence still reads as sound.
 
 ## Use Forward Slashes in Paths
 
