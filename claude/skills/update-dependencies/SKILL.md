@@ -43,6 +43,8 @@ Present a summary showing:
 
 Before the strategy question, use AskUserQuestion to ask for each package that needs a higher minimum whether to raise the project's minimum, naming the versions or devices that lose support and the dependents that must raise theirs in lockstep, or to cap the package at the last release the current minimum admits. A project that declares no minimum counts as below every package's declared minimum: there, the raise option declares the package's minimum as the project's pin, in a version manager file, the `engines` field, or a CI setup step, and the cap option holds the package at the last release before it raised its minimum. Add a **Get a second opinion** option, which runs the `/consult-codex` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. Apply a raise only when the package is upgraded.
 
+When no package or CI action has a major update, skip the strategy question and proceed under All at once.
+
 Use AskUserQuestion for upgrade strategy:
 
 **Header**: "Strategy"
@@ -110,10 +112,11 @@ If "Show details" selected, display full migration research, then ask again.
 
 Bump each outdated CI action ref in the file that declares it, under the chosen strategy. For a ref pinned to a commit SHA, resolve the target release tag to the commit it points to (for an annotated tag, follow the tag to its commit) and update the trailing version comment to match. For a tag ref, keep the ref's precision when the action publishes a tag at that precision for the target, otherwise use the full release tag.
 
-After every install or update command in this phase, run both checks below before any tests and before Phase 6.
+After every install or update command in this phase, run the checks below before any tests and before Phase 6.
 
 1. **Confirm the installed tree moved** — spot-check the resolved version of one or two upgraded packages in the installed dependency tree against the manifest, or against the lockfile after an update command. An install can record the new versions while leaving the installed packages on their old ones, which makes every later check report on the pre-upgrade tree. When the two disagree, force a clean resolve: use the package manager's lockfile-respecting install where it has one, otherwise clear the installed tree and install again. Re-check afterward.
 2. **Diff the package-manager configuration** — inspect the package-manager config files for entries the tool wrote on its own. A tool enforcing a safety guard, such as a minimum age before a release is installable or a provenance requirement, may record a per-package exclusion rather than refusing. Treat such an entry as the guard being bypassed: revert it and lower the manifest constraint to the newest version the guard admits. When the lowered range still admits the rejected version, an existing lockfile keeps it: restore the lockfile from git (delete it when git does not track it), re-run the resolving install and any semver-respecting update command this phase already ran, and diff the configuration again.
+3. **Hold to unenforced release-age guards** — when the repo's dependency automation declares a minimum release age the package manager does not enforce, such as a Dependabot `cooldown` or a Renovate `minimumReleaseAge`, compare each version the command moved, direct and indirect alike, against it. Resolve any package on a release younger than the guard admits back to the newest release it admits through the package manager's targeted resolve command. Leave a release that fixes a known vulnerability in the version it replaced where it is.
 
 ### Minor and Patch Updates
 
@@ -147,7 +150,7 @@ For changes requiring manual intervention:
 
 ### Step 3: Raise Manifest Floors
 
-When migrated code adopts an API that first shipped after the lower bound the manifest declares for that package, raise the constraint to the earliest release that provides every API the migrated code uses, confirmed against the package's tagged source or changelog, then re-run the install so any lockfile records the raised constraint. Passing checks do not clear a stale floor, since they build against the resolved release rather than the floor.
+When migrated code adopts an API that first shipped after the lower bound the manifest declares for that package, raise the constraint to the earliest release that provides every API the migrated code uses, confirmed against the package's tagged source or changelog, then re-run the install so any lockfile records the raised constraint, and run Phase 5's checks. Passing checks do not clear a stale floor, since they build against the resolved release rather than the floor.
 
 ### Step 4: Update Configuration Files
 
@@ -168,7 +171,7 @@ When the repository commits a third-party license inventory or bundled license a
 - Update the recorded versions and revisions from the resolved lockfile.
 - Re-copy the unmodified upstream license and notice texts from the resolved revisions and compare them with the bundled copies. Include code a package vendors from another project, whose revision can move on a patch release.
 
-When a package's license, or the license of code it vendors, changed, use AskUserQuestion before accepting the new text: adopt the new license, updating every project license text, attribution, and license exception written for the old one, or cap the package at the last release under the old license. Add a **Get a second opinion** option, which runs the `/consult-codex` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. On adopt, raise the package's manifest floor to the first release under the new license, as Step 3 does. On cap, write the cap into the manifest constraint, re-run the install, run Phase 5's two checks, revert the Phase 6 changes made for the newer release, and refresh the inventory for the capped release.
+When a package's license, or the license of code it vendors, changed, use AskUserQuestion before accepting the new text: adopt the new license, updating every project license text, attribution, and license exception written for the old one, or cap the package at the last release under the old license. Add a **Get a second opinion** option, which runs the `/consult-codex` skill for what each option commits to and what reversing it costs. Then resolve the choice with that answer in hand, re-asking when it stays the user's. On adopt, raise the package's manifest floor to the first release under the new license, as Step 3 does. On cap, write the cap into the manifest constraint, re-run the install, run Phase 5's checks, revert the Phase 6 changes made for the newer release, and refresh the inventory for the capped release.
 
 ## Phase 7: Verification
 
@@ -191,7 +194,7 @@ If any migrations could not be automated:
 - Highlight deprecated patterns that need attention
 - Note any runtime behavior changes to watch for
 
-Include every open item in the printed report. Whether or not any migration remains, ask about each open item that has a follow-up fix or an advisory to settle and was not already settled earlier in the run, even one that breaks nothing today. Ask through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/backlog` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's two checks after any install, then run the `/run-checks` skill again and update the report.
+Include every open item in the printed report. Whether or not any migration remains, ask about each open item that has a follow-up fix or an advisory to settle and was not already settled earlier in the run, even one that breaks nothing today. Ask through `AskUserQuestion`, one question per item, filling each call to its four-question limit: a follow-up fix to make now or note for later, or an advisory that no release within the declared range fixes, to accept or to override to the earliest release that fixes it. Act on each answer, running the `/backlog` skill for an item noted for later. When an answer changes code, the manifest, or the lockfile, run Phase 5's checks after any install, then run the `/run-checks` skill again and update the report.
 
 ## Error Handling
 

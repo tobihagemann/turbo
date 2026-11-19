@@ -57,7 +57,7 @@ Run the appropriate discovery command to find available updates:
 
 Also check for an update to the version pin the project declares for the package manager itself, such as `packageManager` or `devEngines.packageManager` in `package.json` or the Gradle wrapper's distribution version, when the discovery command leaves it out.
 
-When the package manager enforces a minimum release age, propose only versions the guard admits, and run discovery with a matching cooldown where the tool has one (`ncu --cooldown <days>`).
+When the package manager or the repo's dependency automation (Dependabot `cooldown`, Renovate `minimumReleaseAge`) enforces a minimum release age, propose only versions the guard admits, naming the newest admitted version as the target. Hold a release that fixes a known vulnerability in the current version only to a guard the package manager enforces, and run discovery with a matching cooldown only for such a guard, where the tool has one (`ncu --cooldown <days>`).
 
 Categorize updates:
 - **Major** (breaking changes) — requires migration research
@@ -79,7 +79,7 @@ Format each finding as:
 ```
 ### [P<N>] <title (imperative, <=80 chars)>
 
-**Package:** `<name>` <current> -> <latest>
+**Package:** `<name>` <current> -> <target>
 **Manager:** <npm/pip/cargo/etc.>
 **Proposed:** <open automation PR already covering this upgrade, when one exists>
 
