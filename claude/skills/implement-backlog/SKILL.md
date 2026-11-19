@@ -47,7 +47,7 @@ Improvements drift: files get renamed, code gets refactored, issues get fixed as
 
 Before validating, note the root of the checkout whose code this step reads (`git rev-parse --show-toplevel`). When that checkout has the default branch checked out (resolve it with `gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name'`), run `git -C <root> fetch` and fast-forward that branch to its upstream with `git -C <root> merge --ff-only @{upstream}`. When any of these commands fails, report it and validate the checkout as it stands. Then note its commit (`git -C <root> rev-parse --short HEAD`). The **path check** for a commit and a set of repo-relative paths passes when `git -C <root> diff --quiet <commit> -- <paths>` exits 0 and `git -C <root> ls-files --others --exclude-standard -- <paths>` prints nothing.
 
-For each entry carrying a **Validated** line, run the path check with its recorded commit and paths, and run each command nested under it from that root. When the path check passes and every command prints its recorded output, whatever its exit status, classify the entry with its recorded verdict and skip the rest of this step for it. Otherwise, including when a command cannot run, validate the entry in full.
+For each entry carrying a **Validated** line, run the path check with its recorded commit and paths, and run each command nested under it from that root. When the path check passes and every command prints its recorded output, whatever its exit status, classify the entry with its recorded verdict and skip the rest of this step for it. Otherwise, including when a command cannot run or cannot reach its source, or when it reads a source outside the repo and would print its recorded output on a failed read too, validate the entry in full.
 
 ### Validate
 
@@ -154,7 +154,7 @@ Record the validation on each Active or Deferred entry that Step 2 validated in 
 
 - **Commit** — the commit Step 2 noted.
 - **Paths** — repo-relative, every file or directory whose content the verdict rests on: the ones the entry names, and the callers, tests, and configuration Step 2 read to reach the verdict.
-- **Commands** — one line for each fact the verdict rests on that the paths do not pin: a repo-wide search that established something is absent, or a fact outside the repo, such as a dependency's latest release or an upstream issue's state. Have each print the one value the verdict turns on, such as a match count or a release tag.
+- **Commands** — one line for each fact the verdict rests on that the paths do not pin: a repo-wide search that established something is absent, or a fact outside the repo, such as a dependency's latest release or an upstream issue's state. Have each print the one value the verdict turns on, such as a match count or a release tag. When it cannot reach its source, have it print a value no successful run could print, such as `fetch-failed` when a download fails.
 
 Leave the **Validated** line off an entry when the path check fails for its commit and paths now, when `git -C <root> ls-files --error-unmatch -- <paths>` fails because a path is untracked or ignored, or when a fact its verdict rests on has neither a path nor a command that pins it. A Revisit condition only a person can observe, such as a user report, is exempt and needs no command.
 

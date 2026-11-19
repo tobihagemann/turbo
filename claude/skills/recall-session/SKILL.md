@@ -70,7 +70,9 @@ Synthesize a concise summary tied to the question being answered:
 - Quote the implementer's own words when they already say it well.
 - Keep it to one or two paragraphs. Don't narrate the whole session.
 
-If `status` is anything other than `ok`, report that no transcript was found. For a change or a passage, fall back to reading the commit diff, when there is one, and the surrounding code, and say so explicitly so it's clear whether the answer still holds up. For another project's session, report the status alone.
+If `status` is `no-match` or `no-transcripts` and the session's date (the commit's, or the one the user gives) is older than the transcript cleanup period (`cleanupPeriodDays`, 30 days by default), say its transcript was likely pruned. Use `AskUserQuestion` to ask whether a backup holds an older copy of the Claude configuration home, the directory that holds `projects/` (`~/.claude` unless `CLAUDE_CONFIG_DIR` is set), taking its path through a freeform answer. When the user names one, re-run Step 1 with `CLAUDE_CONFIG_DIR` set to that directory and continue from its status.
+
+If `status` is still anything other than `ok`, report that no transcript was found. For a change or a passage, fall back to reading the commit diff, when there is one, and the surrounding code, and say so explicitly so it's clear whether the answer still holds up. For another project's session, report the status alone.
 
 ## Step 3: Output
 
