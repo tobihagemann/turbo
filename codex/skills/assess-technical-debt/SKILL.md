@@ -17,6 +17,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 4. Resolve escalated findings
 5. Rank and write markdown report
 6. Generate HTML report
+7. Offer backlog capture
 
 ## Step 1: Scope and Partition
 
@@ -151,6 +152,18 @@ Convert the markdown report into a styled, interactive HTML page.
    - Entrance animations and hover states
    - Print-friendly styles via `@media print`
    - Responsive layout for mobile
+
+## Step 7: Offer Backlog Capture
+
+**Skip** the question when the Priority Matrix holds no finding.
+
+Use `request_user_input` to ask which findings to track in the backlog:
+
+- **All ranked findings (Recommended)** — every tier of the Priority Matrix becomes backlog entries
+- **High impact only** — Quick Wins and Strategic Refactors become backlog entries, and the rest stay in the report
+- **Keep the report only** — the backlog stays unchanged
+
+On either capture answer, sort the chosen findings into entries: group low-to-medium-impact findings that share a dimension and an area of the codebase into one entry, and give every other finding an entry of its own. Have every entry name the report items it covers, so it traces back to `.turbo/technical-debt.md`. Run the `$backlog` skill once for each entry. When `$backlog` wrote at least one entry, tell the user they can run `$turbo:implement-backlog` to work through them.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
