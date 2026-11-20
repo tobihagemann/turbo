@@ -47,7 +47,7 @@ Present a brief summary of the finished plan: the essence of what it builds and 
 
 Output "Plan ready at `<plan path>`." as text. When Phase 1 captured a gated plan, add a line naming its path and the gate that must pass before running `/turbo:implement-plan` on it. When Phase 4 left files uncommitted, add a line naming them.
 
-Call the `mcp__turbo__open-items` tool with `action` set to `list`. Then use `AskUserQuestion` to ask how to implement the plan in a fresh conversation. When the list shows open items, name them in the question and say that clearing empties the list.
+Call the `mcp__turbo__open-items` tool with `action` set to `list`. For each open item whose edit and target file are already settled, with no decision or action left to the user, add that edit to the plan named in the "Plan ready" line as a final implementation step, naming the file it lands in, then `resolve` the item. Then use `AskUserQuestion` to ask how to implement the plan in a fresh conversation. Name each item carried into the plan, and the step it became, in the question. When the list still shows open items, name them in the question and say that clearing empties the list.
 
 - **Clear and implement** — clears this conversation, then runs `/turbo:implement-plan` on the plan in this checkout
 - **Implement in worktree** — clears this conversation, then runs `/turbo:implement-plan` on the plan in a git worktree of its own, leaving this checkout to other sessions. When Phase 4 left files uncommitted, add that the worktree starts without them.

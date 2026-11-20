@@ -50,7 +50,7 @@ The conversation then starts fresh and implements the plan without you typing an
 
 The question recommends the worktree in a session that [`/implement-backlog`](../claude/skills/implement-backlog/SKILL.md) briefed to work beside others.
 
-Clearing empties the open items list, so the question names any open items before you choose. If either command fails, a notice names the commands to run yourself.
+Clearing empties the open items list. An item that only needs a settled edit goes into the plan as a final step first, and the question names the rest before you choose. If either command fails, a notice names the commands to run yourself.
 
 The same tool continues from a handoff file. Ask Claude to write a handoff and clear, and the mod runs `/clear` once the turn ends. It then sends a prompt that has the fresh session read the handoff and pick up its next step. Unlike compaction, nothing of the old conversation carries over beyond the handoff itself. If the clear or the prompt fails, a notice names the command to run and the reply to send.
 
