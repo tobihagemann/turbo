@@ -116,7 +116,7 @@ Output all escalated items as a numbered list. For each item, show:
 - The competing interpretations or the reason for escalation
 - The file and line reference, when available
 
-Then use `AskUserQuestion` to ask how to handle them. State each question as the decision the user owns: what the code should do. Leave the reviewer's wording and code location to the numbered list above. Per item, the options are:
+Then use `AskUserQuestion` to ask how to handle them. State each question as the decision the user owns: what the code should do. When an item changes what the software does for the person using it, state each option as the behavior that person gets and the goal it serves, before any mechanism terms. For software that other code consumes, that person is the developer integrating it and the user behind them. A choice framed as internal mechanism, such as concurrency, locking, retry, or failing versus proceeding, counts whenever its options differ in what that person observes: whether an operation succeeds, or what data it returns or shows. Leave the reviewer's wording and code location to the numbered list above. Per item, the options are:
 
 - **Direct answer**: "Do X" — assign an Accept verdict with the user's clarified intent. Step 7 picks it up as an accepted finding.
 - **Ask the reviewer**: "Ask them Y" — queue a clarification question to be drafted in Step 11 (inline threads) or Step 12 (issue comments). Offer it only for an item one of those steps replies to.
