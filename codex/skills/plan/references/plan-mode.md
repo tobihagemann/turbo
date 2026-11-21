@@ -51,7 +51,7 @@ Then halt with this message:
 >
 > This is a good point to `/compact` before implementing. Then run `$turbo:implement-plan <slug>` to implement.
 
-When Phase 1 captured a gated plan, add a line to that message naming its path and the gate that must pass before running `$turbo:implement-plan` on it. When Phase 4 left files uncommitted, add a line naming them.
+When Phase 1 captured a gated plan, add a line to that message naming its path and the gate that must pass before running `$turbo:implement-plan` on it. When the plan named in the "Plan ready" line states in its own Context a gate that must pass before its work can start, add a line to that message naming that gate and saying to run `$turbo:implement-plan` only once it has passed. When Phase 4 left files uncommitted, add a line naming them.
 
 ## Rules
 

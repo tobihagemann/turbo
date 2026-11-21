@@ -45,7 +45,7 @@ Use the TaskList tool. When it shows pending tasks besides this phase, complete 
 
 Present a brief summary of the finished plan: the essence of what it builds and the key decisions behind it, short enough to read at a glance so the user does not have to open the full plan file. When the plan delivers value to a user, developer, or operator, also present a short list of stories capturing what that person gains, in the form "As a <persona>, I want <capability> so that <outcome>". Skip the stories only when no beneficiary or outcome can be named, such as a purely mechanical refactor. Fit both to the plan rather than a fixed template.
 
-Output "Plan ready at `<plan path>`." as text. When Phase 1 captured a gated plan, add a line naming its path and the gate that must pass before running `/turbo:implement-plan` on it. When Phase 4 left files uncommitted, add a line naming them.
+Output "Plan ready at `<plan path>`." as text. When Phase 1 captured a gated plan, add a line naming its path and the gate that must pass before running `/turbo:implement-plan` on it. When the plan named in the "Plan ready" line states in its own Context a gate that must pass before its work can start, add a line naming that gate and saying to run `/turbo:implement-plan` only once it has passed. When Phase 4 left files uncommitted, add a line naming them.
 
 Call the `mcp__turbo__open-items` tool with `action` set to `list`. For each open item whose edit and target file are already settled, with no decision or action left to the user, add that edit to the plan named in the "Plan ready" line as a final implementation step, naming the file it lands in, then `resolve` the item. Then use `AskUserQuestion` to ask how to implement the plan in a fresh conversation. Name each item carried into the plan, and the step it became, in the question. When the list still shows open items, name them in the question and say that clearing empties the list.
 
@@ -53,7 +53,7 @@ Call the `mcp__turbo__open-items` tool with `action` set to `list`. For each ope
 - **Implement in worktree** — clears this conversation, then runs `/turbo:implement-plan` on the plan in a git worktree of its own, leaving this checkout to other sessions. When Phase 4 left files uncommitted, add that the worktree starts without them.
 - **Stop here** — keeps this conversation; run `/clear`, then `/turbo:implement-plan <slug>` when ready
 
-Mark **Implement in worktree** recommended when an instruction addressed to this session says to implement the plan in a worktree of its own, and **Clear and implement** recommended otherwise.
+Mark **Stop here** recommended when the plan named in the "Plan ready" line waits on a gate. Otherwise, mark **Implement in worktree** recommended when an instruction addressed to this session says to implement the plan in a worktree of its own, and **Clear and implement** recommended otherwise.
 
 On either clear option, call the `mcp__turbo__clear-and-continue` tool with the slug of the plan named in the "Plan ready" line as `plan`, and `worktree` set to true for the worktree option. The fallback commands are `/clear`, then `/turbo:implement-plan <slug>`, with "in a worktree" added for the worktree option. When the tool confirms the clear is queued, tell the user that the session clears and starts implementing once this turn ends. Name the fallback commands for the case that it does not. When the tool refuses, tell the user to run the fallback commands themselves.
 
