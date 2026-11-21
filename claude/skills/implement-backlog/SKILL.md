@@ -135,7 +135,7 @@ Then check the active entries outside the recommended working set for **parallel
 
 Use `AskUserQuestion` to confirm. Combine into the same prompt:
 
-1. Confirm the recommended working set or pick one of the named alternatives — include only when active entries exist. When parallel sets exist, add an option that runs the recommended working set here and each parallel set in an extra session, naming how many extra sessions that takes, in place of the weakest alternative when the options would exceed four.
+1. Confirm the recommended working set or pick one of the named alternatives — include only when active entries exist. When parallel sets exist, add an option that runs the recommended working set here and each parallel set in an extra session, naming how many extra sessions that takes. List that option first and label it `(Recommended)`, with the plain recommended working set following it without that marker, and drop the weakest alternative when the options would exceed four.
 2. Whether to remove stale entries — include only when stale entries exist
 3. Resolution for unclear items — include only when unclear entries exist
 
