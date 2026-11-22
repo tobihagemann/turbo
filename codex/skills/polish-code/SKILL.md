@@ -33,7 +33,7 @@ At the start of every invocation, before `$stage` runs in Step 1, resolve the le
 
 Record `Loop ledger: <absolute ledger path>` in the workflow checkpoint. On recovery, honor the recorded verdicts and resume the interrupted step of the current iteration.
 
-On a Step 7 re-run or an explicit resumption from discovery, start the iteration after the last classified one. Continue from the recorded state, using the most recent `$review-code` diff command the ledger records, when it records one, in place of Step 3's default.
+When continuing a ledger, resume an unfinished iteration at its next action. If the last iteration records a stop, finish reporting it and close the ledger. If it calls for a re-run, start the next iteration. Use the most recent `$review-code` diff command the ledger records, when it records one, in place of Step 3's default.
 
 **Pending smoke-test baseline.** This entry means an iteration was interrupted between delegating the smoke test and verifying the tree. Reconcile it before Step 1 whenever a resumed or discarded ledger holds one, so Step 1 does not stage what the interrupted sub-agent left behind. The entry holds a state from `<this skill's directory>/scripts/checkout-snapshot.sh`:
 
@@ -129,6 +129,8 @@ If any test fails, or the sub-agent reports a defect in the staged changes outsi
 ## Step 7: Re-run `$polish-code` Skill if Changed
 
 Check whether any file was edited during Steps 5-6: `git diff --name-only <tree> --cached` lists them, where `<tree>` is the ledger's `Review tree`. Any edit counts.
+
+Classify every completed iteration under the rules below, including one with no edits. Reviewer follow-ups verify individual fixes within the current iteration. Even when all findings are resolved, record the rerun or stop decision and its reason in the ledger. On a rerun, start the full skill again. On a stop, tell the user which iteration stopped and why before deleting the ledger or continuing the enclosing workflow.
 
 Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on. The loop is not capped; it terminates on its own: when a run makes no changes, when a round makes only in-place edits, or when you judge a further re-run pointless.
 

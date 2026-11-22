@@ -56,7 +56,7 @@ Resolve the ledger:
 
 Record `Loop ledger: <absolute ledger path>` in the workflow checkpoint. On recovery, honor the recorded verdicts and resume the interrupted step of the current iteration.
 
-On a Step 5 re-run or an explicit resumption from discovery, start the iteration after the last classified one. Continue from the recorded state.
+When continuing a ledger, resume an unfinished iteration at its next action. If the last iteration records a stop, finish reporting it and close the ledger. If it calls for a re-run, start the next iteration.
 
 **During each iteration:** have the ledger path in context when Steps 2 and 3 run so recorded verdicts are honored. Append each applied, rejected, and escalated verdict with its reason to the ledger under the iteration number as Steps 3-4 reach it, along with the user's resolution of an escalated one. After Step 5's classification, append the classification.
 
@@ -79,6 +79,8 @@ Run the `$apply-findings` skill on the evaluated results.
 ## Step 5: Re-run `$refine-plan` Skill if Changed
 
 Check whether the plan file was edited during Step 4. Any edit counts.
+
+Classify every completed iteration under the rules below, including one with no edits. Reviewer follow-ups verify individual fixes within the current iteration. Even when all findings are resolved, record the rerun or stop decision and its reason in the ledger. On a rerun, start the full skill again. On a stop, tell the user which iteration stopped and why before deleting the ledger or continuing the enclosing workflow.
 
 Iteration 1 is the initial run; iteration 2 is the first auto-re-run; and so on. The loop is not capped; it terminates on its own: when a run makes no changes, when a round makes only prose-only edits, or when you judge a further re-run pointless.
 

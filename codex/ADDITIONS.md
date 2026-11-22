@@ -2,7 +2,8 @@
 
 ## Skill Loading
 
-- Reload child skills every time a parent workflow invokes them. A previous load is not a substitute for the current invocation.
+- Open another skill’s files only when the user or the instructions for the current step explicitly direct you to read or run that skill. Read its `SKILL.md` in full on each invocation. Open supporting files as the active step calls for them.
+- Leave skills named only in a checklist, a later step, or an unselected branch unopened. Defer that step’s preparation and user questions until execution reaches it, even while waiting for results.
 - Never skip a skill invocation, step, or parallel branch to save context, time, tokens, or iterations. The harness manages these budgets; the agent does not. Shortcutting a skill removes the value it provides and is always the wrong trade-off.
 - When invoking a child skill via `$skill-name`, the surrounding prose must not instruct the child to shortcut its own steps or loop (e.g., "skip the loop", "single-pass only", "just run the one command"). Such inline overrides are skipping through a different channel.
 - Never merge parallel branches. Collapsing N parallel `spawn_agent` or skill invocations into fewer calls that cover the same work sequentially destroys the context independence and parallelism the skill relies on, even when all criteria are preserved. The branch count a skill specifies is a floor, not a ceiling — "the diff is small" or "the agents would re-read the same files" are not valid reasons to merge.
