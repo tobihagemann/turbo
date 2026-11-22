@@ -35,10 +35,10 @@ def main():
         print(
             f"\nBefore continuing this workflow, read {json.dumps(str(checkpoint))}. "
             "Reopen its skill files, active references, governing plan and loop ledgers. "
-            "Resume the next unfinished action, honoring recorded verdicts and the user's latest reply."
+            "Follow the Workflow Recovery rules above to reconcile and mirror the full checklist before continuing."
         )
     else:
-        print(f"\nIf a Turbo skill opens a workflow checkpoint in this chat, use {json.dumps(str(checkpoint))}.")
+        print(f"\nFor a tracked checklist or workflow checkpoint in this chat, use {json.dumps(str(checkpoint))}.")
 
 
 if __name__ == "__main__":

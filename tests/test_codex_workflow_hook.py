@@ -32,7 +32,9 @@ class WorkflowHookTest(unittest.TestCase):
 
     def test_recovers_only_this_chat_on_compact_or_resume(self):
         for source in ("compact", "resume"):
-            self.assertIn(f"read {json.dumps(str(self.checkpoint))}", self.run_hook(source))
+            recovery = self.run_hook(source).partition("Before continuing this workflow")[2]
+            self.assertIn(f"read {json.dumps(str(self.checkpoint))}", recovery)
+            self.assertIn("mirror the full checklist", recovery)
         for source, thread in (("fork", "forked"), ("clear", self.thread),
                                ("startup", self.thread), ("compact", "other"), ("compact", "../test-chat")):
             with self.subTest(source=source, thread=thread):
