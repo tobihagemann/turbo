@@ -17,7 +17,7 @@ At the start of every invocation, including the re-run from Step 5, use `update_
 6. Offer the merge
 7. Clean up
 
-Fill in Step 5's label once Step 1 resolves the pull request. A workflow file that mirrors this plan carries the round and the pull request through a compaction.
+Fill in Step 5's label once Step 1 resolves the pull request. When a workflow checkpoint is active, record the round and the pull request there.
 
 ## Step 1: Identify the Pull Request
 

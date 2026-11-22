@@ -5,6 +5,8 @@ description: "Stage, format, lint, test, review, smoke test, and re-run until st
 
 # Polish Code
 
+Open or continue this chat’s [workflow checkpoint](../../ADDITIONS.md#workflow-recovery).
+
 ## Task Tracking
 
 At the start of every invocation (including re-runs from Step 7), use `update_plan` to track each step, restating any remaining steps of a parent workflow alongside them:
@@ -25,13 +27,13 @@ Loop state lives in a ledger at `.turbo/loops/polish-code-<label>-<tag>.md`. The
 
 At the start of every invocation, before `$stage` runs in Step 1, resolve the ledger:
 
-- **Carried path:** this invocation was handed a ledger path, by the re-run Step 7 starts, by the goal objective, or by a `Loop ledger:` line for this loop in the workflow file an inherited goal names. Continue that ledger. A carried path whose file no longer exists falls through to discovery.
+- **Carried path:** this invocation was handed a ledger path, by the re-run Step 7 starts, or by a `Loop ledger:` line for this loop and scope in the active checkpoint. Continue that ledger. A carried path whose file no longer exists falls through to discovery.
 - **Discovery:** with nothing carried, list the untracked ledgers in `.turbo/loops/` whose name starts with `polish-code-` and whose `Branch:` is the current branch. Also list every untracked `polish-code-` ledger there that holds a `Pending smoke-test baseline`, on any branch. Show each one's purpose, last classified iteration, and file modification time. For a pending baseline, add its differing paths, found by items 1-3 of the pending-baseline reconciliation. When any are listed, use `request_user_input` to offer resuming a ledger, discarding a ledger, or starting fresh, naming the ledger in each resume and discard option; when more ledgers are listed than options fit, first ask which ledger to act on, offering the most recently modified ones and leaving the rest to the free-text answer. Starting fresh mints a new path and deletes nothing. Delete a ledger named for discarding once any pending baseline in it is reconciled, then run discovery again. Reconciling a pending baseline right after discovery reuses the capture and differences discovery produced. When `request_user_input` cannot reach the user, start fresh and delete nothing; when a listed ledger holds a pending baseline, halt instead and report its differing paths, so Step 1 does not stage what the interrupted sub-agent left behind.
 - **Fresh:** mint a new path and write the ledger.
 
-When no unfinished goal exists, attempt `create_goal` with the objective, filling in the ledger path: "Run the `$polish-code` loop on <scope> until converged: a run with no changes, an in-place-only round, or remaining findings that do not justify another re-run. Loop state: <ledger path>; re-read it after any context compaction and do not re-adjudicate findings it records as rejected, escalated, or applied with a narrowed remedy. Mark this goal complete when the loop converges." When an unfinished goal already exists, an outer workflow owns it: when its objective names a workflow file, make sure that file holds a `Loop ledger: <ledger path>` line for this ledger. When `create_goal` fails, or the inherited objective names no workflow file, the path lives in context only, and discovery recovers it after a compaction.
+Record `Loop ledger: <absolute ledger path>` in the workflow checkpoint. On recovery, honor the recorded verdicts and resume the interrupted step of the current iteration.
 
-A continuing ledger makes this invocation the iteration after the last one the ledger classifies, whether a Step 7 re-run or a resumption after an interruption. Continue from the recorded state, using the most recent `$review-code` diff command the ledger records, when it records one, in place of Step 3's default.
+On a Step 7 re-run or an explicit resumption from discovery, start the iteration after the last classified one. Continue from the recorded state, using the most recent `$review-code` diff command the ledger records, when it records one, in place of Step 3's default.
 
 **Pending smoke-test baseline.** This entry means an iteration was interrupted between delegating the smoke test and verifying the tree. Reconcile it before Step 1 whenever a resumed or discarded ledger holds one, so Step 1 does not stage what the interrupted sub-agent left behind. The entry holds a state from `<this skill's directory>/scripts/checkout-snapshot.sh`:
 
@@ -43,7 +45,7 @@ A continuing ledger makes this invocation the iteration after the last one the l
 
 **During each iteration:** have the ledger path in context when Steps 3 and 4 run so recorded verdicts are honored. Append each applied, rejected, and escalated verdict with its reason to the ledger under the iteration number as Steps 4-6 reach it, along with the user's resolution of an escalated one. After Step 7's classification, append the classification and, when the run goes into another iteration, that iteration's `$review-code` diff command with the tree ID filled in. For an escalated verdict the user resolved, the reason attributes to the user only what they decided; the details you picked while implementing it stay open to review.
 
-**Convergence stop** (a run with no changes, an in-place-only round, or a further re-run judged pointless): delete the ledger and any `Loop ledger:` line for it in the workflow file, then, if this loop created the goal, mark it complete with `update_goal`. An inherited goal stays active for the outer workflow. A halt on an unresolved failure leaves the ledger and the goal untouched, so the next invocation resumes the recorded state.
+**Convergence stop** (a run with no changes, an in-place-only round, or a further re-run judged pointless): delete the ledger and its `Loop ledger:` entry in the checkpoint, preserving the parent checklist. Keep the ledger and checkpoint on an unresolved failure.
 
 ## Step 1: Run `$stage` Skill
 
@@ -112,7 +114,7 @@ When the ledger records a `Smoke-tested baseline`, compare its state against the
 
 Run the `$smoke-test` skill to produce the smoke test plan.
 
-Record the captured state in the ledger as `Pending smoke-test baseline`, replacing any entry already there.
+Before dispatch, record the captured state in the ledger as `Pending smoke-test baseline`. If compaction interrupted this step with a baseline already pending, use that original state. Check the recorded agent ID or the dispatched agents and collect the existing run before verifying the tree. If the run cannot be recovered, reconcile the pending baseline under Loop State before another dispatch.
 
 Spawn a Codex sub-agent with inherited model defaults to execute the test plan. Pass the plan and the diff command (`git diff --cached`) into the sub-agent's context, and instruct it to read and follow `$test-run-rules` from the installed skill directory before executing the plan. State in its context that the writes the plan's Setup contract authorizes are already approved, and that any write outside that enumeration leaves its scenario blocked.
 

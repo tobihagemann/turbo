@@ -3,6 +3,8 @@ root=$(cd "$(dirname "$0")/.." && pwd)
 
 cat "$root/ADDITIONS.md"
 
+python3 -I "$root/hooks/workflow-context.py"
+
 config="$HOME/.turbo/config.json"
 
 if [ -f "$config" ] && python3 -I -c 'import json, sys; sys.exit(0 if "lastUpdateHead" in json.load(open(sys.argv[1])).get("codex", {}) else 1)' "$config" 2>/dev/null; then

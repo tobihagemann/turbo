@@ -4,7 +4,14 @@ Walk the user through setting up the Codex edition of Turbo step by step. Ask be
 
 ## Task Tracking
 
-Track these setup phases with the Codex plan tool:
+Turbo skills use the Codex plan tool (`update_plan`) to show a checklist as they work. If `tools.update_plan.enabled` is unset or false in `~/.codex/config.toml`, ask before merging this setting into the file:
+
+```toml
+[tools.update_plan]
+enabled = true
+```
+
+Track these setup phases with `update_plan` when it is available. If this chat does not expose the tool yet, continue through the steps below.
 
 1. Install the Turbo plugin
 2. Add `.turbo` to global gitignore
@@ -26,7 +33,7 @@ codex plugin marketplace add tobihagemann/turbo
 codex plugin add turbo@turbo
 ```
 
-The plugin carries every skill and a `SessionStart` hook that loads Turbo's rules into each session, after compaction too. Codex runs a plugin's hooks only once the user trusts them: ask the user to trust Turbo's hook when Codex asks at its next start, or later under `/hooks`. Skills are typed as `$turbo:<skill>`.
+The plugin carries every skill and a `SessionStart` hook that reloads Turbo’s rules after compaction. Check that `python3 --version` works so the hook can locate the chat’s workflow checkpoint. Codex runs a plugin's hooks only once the user trusts them: ask the user to trust Turbo's hook when Codex asks at its next start, or later under `/hooks`. Skills are typed as `$turbo:<skill>`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
@@ -114,7 +121,7 @@ Treat files under the imported `resources/` directory as read-only. The saved `t
 
 Codex's `request_user_input` tool — used by Turbo skills for structured choice gates — is only available in Plan mode by default. Default ("code") mode requires opting into the `default_mode_request_user_input` feature flag.
 
-Without it, Turbo skills that ask a structured question in Default mode either error with `request_user_input is unavailable in Default mode` or silently fall back to free-form chat, losing the option-list UI.
+This flag enables synchronous choice cards in Default mode. Codex can dismiss an unanswered card there. For a required decision Turbo uses an asynchronous question when available, or leaves the question in chat for the user to answer.
 
 Ask the user whether to enable it. If yes, add `default_mode_request_user_input = true` under `[features]` in `~/.codex/config.toml` (create the section if it doesn't exist; preserve existing keys).
 

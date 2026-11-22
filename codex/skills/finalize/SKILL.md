@@ -7,6 +7,8 @@ description: "Run the post-implementation QA workflow: tests, code polishing, re
 
 Post-implementation QA workflow: tests, code polishing, commit, self-improvement, and landing the pull request.
 
+Open or continue this chat’s [workflow checkpoint](../../ADDITIONS.md#workflow-recovery).
+
 ## Task Tracking
 
 At the start, use `update_plan` to track each phase, restating any remaining steps of a parent workflow alongside them:
@@ -17,10 +19,6 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 4. Run `$self-improve` skill
 5. Ship It
 6. Run `$land-pr` skill
-
-Workflow state lives in a file under `.turbo/workflows/` that pairs one-to-one with the thread's goal. When no unfinished goal exists, mint its path once as `.turbo/workflows/<label>-<tag>.md`. The label is the governing plan's slug when one is in context, otherwise the current branch name with non-alphanumerics replaced by hyphens. The tag is the output of `head -c 4 /dev/urandom | xxd -p`. Only when this run's `create_goal` attempt succeeds, write the file with this invocation's `update_plan` list as a checkbox list. When an unfinished goal already exists, mint nothing and mirror into the workflow file its objective names; when it names none, continue without workflow state. Mirror every `update_plan` call into the file; it holds the pipeline's remaining steps and their statuses. When this run created the goal, run the terminal step in order: mark the final entry completed, mark the goal complete with `update_goal`, delete the workflow file, then emit any halt message.
-
-Then attempt `create_goal` with the objective, filling in the minted path: "Run `$finalize` post-implementation QA on the staged changes through Phase 6 (Run `$land-pr` skill). Workflow state: <workflow path>; mirror every `update_plan` call into it. Loop state lives under `.turbo/loops/`. After any context compaction, re-read the workflow file and every ledger it registers, and continue from the first unfinished entry. Mark this goal complete when Phase 6 finishes." If an unfinished goal already exists, an outer workflow owns it; continue without creating one.
 
 ## Phase 1: Run `$polish-code` Skill
 
@@ -77,7 +75,7 @@ When Phase 5 opened or pushed to several pull requests, present `$turbo:land-pr 
 
 Otherwise, run the `$land-pr` skill for that pull request.
 
-If this run created a goal, follow the closing `update_plan` call below by marking the goal complete with `update_goal`, then deleting the workflow file. Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
+Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 
 ## Rules
 

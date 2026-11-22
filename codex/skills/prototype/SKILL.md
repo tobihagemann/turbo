@@ -51,8 +51,6 @@ Then end the turn.
 
 ## Step 6: Act on the User's Reply
 
-A goal continuation turn that carries no reply from the user is not a verdict: end it without calling any tool and without advancing.
-
 - **Needs changes** — return to Step 3 with the changes the user describes and continue from there, so every later round is driven in Step 4 before it reaches the user. Make those changes to what the prototype already holds, adding to it only what the user asks for.
 - **Settled** — continue to Step 7.
 

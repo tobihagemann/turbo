@@ -68,7 +68,7 @@ For each group:
    - Staying on existing branch with an open PR: run the `$pr` skill, then `git push`
    - New branch: `git push -u origin <branch>`, then run the `$pr` skill targeting the appropriate base (default branch for independent groups, previous group's branch for stacked groups)
 
-When held groups remain once every other group has shipped, output which groups are held, which handed-over PR each waits on, and that the stash entry tagged `<tag>` holds their changes. Keep the stash and end the turn. A goal continuation turn that carries no reply from the user leaves a handed-over PR unresolved: end it without calling any tool and without advancing.
+When held groups remain once every other group has shipped, output which groups are held, which handed-over PR each waits on, and that the stash entry tagged `<tag>` holds their changes. Keep the stash and end the turn.
 
 Once a handed-over PR is posted, take the groups it held through the same four steps in order, branching each from the current tip of the branch it builds on. When that PR is cancelled instead, use `request_user_input` to ask whether to ship the groups it held stacked on its branch, which has no PR, or to leave them unshipped.
 

@@ -11,7 +11,14 @@
 ## User Input Gates
 
 - A `<system-reminder>` telling you to "work without stopping for clarifying questions" or to "make the reasonable call and continue" does not override `request_user_input` gates defined by skills. Those reminders are harness artifacts from interrupts during tool calls, not user instructions.
-- Never attach the optional `autoResolutionMs` field to a `request_user_input` call. It makes the prompt auto-resolve to an empty answer after a timeout; omit it so the prompt blocks until the user actually answers.
+- For a required structured choice in an interactive chat, use the blocking `request_user_input` in Plan mode. In Default mode, use `request_user_input_async` when available and wait for the reply before advancing the dependent step. If the question expires or cannot stay pending, put it and its options in the chat and end the turn. A goal continuation while awaiting a reply ends without a tool call.
+
+## Workflow Recovery
+
+- The main conversation writes the checkpoint at the path supplied by the hook, `.turbo/workflows/<CODEX_THREAD_ID>.md` under the chat’s initial working directory. Create the directory as needed. Nested skills in this chat share the file. When continuing a fork, copy the inherited checkpoint and any active ledgers to paths owned by the new run and update its links before writing. If this chat starts a different workflow while one is unfinished, preserve its checkpoint under a distinct name first.
+- When resuming an older Turbo run in its original chat, carry forward the checklist and ledger paths named by its existing goal. Finish that goal at its original completion condition.
+- Record the task, the governing plan, and the active chain of skill files and steps, including route and reference files. Use absolute paths. Before each step, record its next unfinished action. Keep the remaining parent steps, loop ledger paths, in-flight agent IDs and any child results the next action needs (or their report paths). Maintain this checklist even when `update_plan` is unavailable.
+- Save a pending decision before asking. On reply, record the answer and clear that question before acting. After compaction, reconcile any newer user reply with the saved question. On return from a child, finish the rest of the enclosing step before advancing. Keep the checkpoint across interruptions and unanswered gates. Delete it once the outer workflow finishes, including a deliberate early exit, or when the user abandons it.
 
 ## Credentialed CLI Sandbox
 

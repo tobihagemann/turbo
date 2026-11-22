@@ -97,7 +97,7 @@ Where sub-agents run such a tier, have the orchestrator direct each to redirect 
 
 ## Using request_user_input
 
-When a skill needs structured user input, reference the tool by name (`request_user_input`) instead of vague phrasing like "ask the user" or "wait for user confirmation." Naming the tool directly avoids ambiguity about how the question should be surfaced.
+When a skill needs structured user input, reference the tool by name (`request_user_input`) instead of vague phrasing like "ask the user" or "wait for user confirmation." For required choices, the User Input Gates in the edition’s `ADDITIONS.md` select the blocking, asynchronous, or chat form available in that mode. Keep explicit text handoffs for out-of-session work.
 
 - ✗ **Avoid**: "Ask the user which option they prefer."
 - ✓ **Good**: "Use `request_user_input` to determine which option the user prefers."
@@ -145,7 +145,7 @@ Reserve `request_user_input` for decisions that genuinely need the user. When th
 **If changes were made but you judge a re-run unnecessary**, output a summary of what changed and your reasoning for stopping, then stop instead of re-running.
 ```
 
-Self-looping skills terminate on their own convergence signal (a run that makes no changes, or a round of only cosmetic edits). Rely on that rather than an iteration cap. Judge the signal by the trend across rounds: once rounds stop surfacing defects and keep surfacing improvements of kinds earlier rounds already applied, the loop has converged even when the edits were structural. Give the loop a durable anchor: record iteration number and applied/rejected verdicts in a ledger under `.turbo/loops/`, at a path minted once when the loop starts and passed to every re-run. Name that path in the objective of the goal the loop creates, or register it in the outer workflow file when the goal is inherited, so compaction cannot erase the loop's memory of its own decisions. Delete the ledger when the loop converges. Keep it when the loop halts on an unresolved failure or stops so the user can repair something by hand.
+Self-looping skills terminate on their own convergence signal (a run that makes no changes, or a round of only cosmetic edits). Rely on that rather than an iteration cap. Judge the signal by the trend across rounds: once rounds stop surfacing defects and keep surfacing improvements of kinds earlier rounds already applied, the loop has converged even when the edits were structural. Give the loop a durable anchor: record iteration number and applied/rejected verdicts in a ledger under `.turbo/loops/`, at a path minted once when the loop starts and passed to every re-run. Register the ledger path in the chat’s workflow checkpoint so the compaction hook can lead the next model request back to the recorded verdicts. Delete the ledger when the loop converges. Keep it when the loop halts on an unresolved failure or stops so the user can repair something by hand.
 
 ### request_user_input Is Gated to Interactive Modes and the Main Conversation
 
