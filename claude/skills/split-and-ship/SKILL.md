@@ -7,19 +7,21 @@ description: "Ship an approved split plan as one branch and PR per change group,
 
 Ship an approved split plan so each change group becomes its own reviewable unit, either as a separate branch and PR or as a sequential commit on the current branch.
 
-## Context
-
-A split plan must exist in the conversation. The plan specifies an ordered list of groups, each with a name, file list, and any dependencies on earlier groups.
-
 ## Task Tracking
 
 At the start, use `TaskCreate` to create a task for each phase:
 
-1. Choose realization path
-2. Ship the groups
-3. Summarize
+1. Verify the groups and choose a shipping path
+2. Ship as separate branches and PRs (if chosen)
+3. Ship as commits on the current branch (if chosen)
 
-## Step 1: Choose Realization Path
+## Step 1: Verify the Groups and Choose a Shipping Path
+
+Use the approved, ordered groups and their dependencies from the conversation. Before either handoff below, use `TaskUpdate` to close all three tasks for this split invocation as handed off, preserving any parent tasks. The router owns the remaining shipping work.
+
+If the user invoked this skill directly without approved groups, hand off to the `/ship` skill with their split request and return its outcome. It owns grouping and calls this skill with the approved plan.
+
+Compare the full staged diff with the approved groups, hunk by hunk for shared files. If unrelated changes are staged, leave the index intact and resolve the mismatch with the user. If approved hunks still need staging, hand off to the `/ship` skill with the approved plan and return its outcome. Choose the shipping path only once the index matches.
 
 Detect the repository state:
 

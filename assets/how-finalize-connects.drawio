@@ -25,10 +25,10 @@
         <mxCell id="14" parent="8" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f3e8ff;strokeColor=#a855f7;fontColor=#581c87;fontSize=12;" value="/self-improve" vertex="1">
           <mxGeometry height="40" width="150" x="115" y="230" as="geometry" />
         </mxCell>
-        <mxCell id="272" parent="8" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Analyze split" vertex="1">
+        <mxCell id="272" parent="8" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/ship" vertex="1">
           <mxGeometry height="40" width="150" x="115" y="290" as="geometry" />
         </mxCell>
-        <mxCell id="273" parent="8" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/ship" vertex="1">
+        <mxCell id="273" parent="8" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/ship-together" vertex="1">
           <mxGeometry height="40" width="150" x="30" y="380" as="geometry" />
         </mxCell>
         <mxCell id="274" parent="8" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="/split-and-ship" vertex="1">
@@ -46,7 +46,7 @@
         <mxCell id="65" edge="1" parent="8" source="14" style="endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#64748b;" target="272">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="275" edge="1" parent="8" source="272" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="273" value="ship">
+        <mxCell id="275" edge="1" parent="8" source="272" style="dashed=1;dashPattern=8 4;endArrow=block;endFill=1;rounded=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#94a3b8;fontSize=11;fontColor=#64748b;" target="273" value="together">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="160" y="350" />
@@ -260,7 +260,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="277" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#fefce8;strokeColor=#eab308;fontColor=#713f12;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/ship" vertex="1">
+        <mxCell id="277" parent="1" style="swimlane;startSize=28;rounded=1;fillColor=#fefce8;strokeColor=#eab308;fontColor=#713f12;fontStyle=1;fontSize=13;collapsible=0;swimlaneLine=0;" value="/ship-together" vertex="1">
           <mxGeometry height="290" width="210" x="555" y="1600" as="geometry" />
         </mxCell>
         <mxCell id="278" parent="277" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef9c3;strokeColor=#eab308;fontColor=#713f12;fontSize=12;" value="Determine intent" vertex="1">
@@ -340,9 +340,7 @@
           <mxGeometry relative="1" x="-0.2" as="geometry">
             <Array as="points">
               <mxPoint x="1070" y="1450" />
-              <mxPoint x="1180" y="1450" />
-              <mxPoint x="1180" y="1560" />
-              <mxPoint x="1240" y="1560" />
+              <mxPoint x="1240" y="1450" />
             </Array>
           </mxGeometry>
         </mxCell>

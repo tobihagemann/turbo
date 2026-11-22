@@ -17,7 +17,7 @@ At the start, use `update_plan` to track each phase, restating any remaining ste
 2. Run `$simplify-docs` skill
 3. Run `$update-changelog` skill
 4. Run `$self-improve` skill
-5. Ship It
+5. Run `$ship` skill
 6. Run `$land-pr` skill
 
 ## Phase 1: Run `$polish-code` Skill
@@ -36,42 +36,13 @@ Run the `$update-changelog` skill. Stage any edits it makes before continuing.
 
 Run the `$self-improve` skill for the current session. Always run this phase even if the session seemed routine.
 
-## Phase 5: Ship It
+## Phase 5: Run `$ship` Skill
 
-### Step 1: Analyze Split
-
-Examine the staged changes and evaluate whether they form a single reviewable unit or several independently reviewable units. This step decides only whether to split; the chosen ship skill owns all repository-state detection and the commit, push, branch, and PR intent.
-
-Run `git diff --cached --stat` and `git diff --cached` to understand the scope. Categorize changes along three dimensions:
-
-- **Concern type**: refactoring, bug fix, new feature, cleanup, dependency update
-- **Layer/domain**: backend, frontend, database migrations, i18n, tests, configuration
-- **Logical unit**: files that form a coherent, independently reviewable change
-
-A split is warranted when the staged changes contain multiple reviewable units. Each unit should be independently understandable, testable, and revertable. When deciding group boundaries, consider whether a reviewer could evaluate each group without needing context from the others.
-
-### Step 2: Present Analysis and Choose Path
-
-Output the split analysis as text.
-
-If changes form a single cohesive unit, note this and run the `$ship` skill.
-
-If changes span multiple reviewable units, propose an ordered list of groups. For each group, specify:
-
-- Name and one-line description
-- File list (flag files with mixed-concern hunks)
-- Dependencies: which earlier groups, if any, this group builds on
-
-Use `request_user_input` to let the user choose whether to ship the changes together or split them up.
-
-- **Ship together** — ship all staged changes as one unit; run the `$ship` skill
-- **Split up** — ship each group as its own unit; run the `$split-and-ship` skill
+Run the `$ship` skill.
 
 ## Phase 6: Run `$land-pr` Skill
 
-Skip this phase when Phase 5 neither opened a pull request nor pushed to the branch of an open one. When Phase 5 left a pull request's body with the user instead of opening it, present `$turbo:land-pr` to run once it is posted, and skip the skill.
-
-When Phase 5 opened or pushed to several pull requests, present `$turbo:land-pr <number>` for each, to run from that pull request's checkout, and skip the skill.
+Count each PR Phase 5 opened, pushed to, or left with the user to post. For each unposted body, present `$turbo:land-pr` to run once posted. For a multi-PR result, present `$turbo:land-pr <number>` for each open PR from its checkout and skip the skill. Also skip it when there is no open PR to land.
 
 Otherwise, run the `$land-pr` skill for that pull request.
 

@@ -32,7 +32,7 @@ You judge a user-facing change firsthand. [`/preview`](../claude/skills/preview/
 
 ### Ship
 
-[`/ship`](../claude/skills/ship/SKILL.md) asks how the change should land and commits only once you choose. Then it pushes and creates or updates the pull request through [`/pr`](../claude/skills/pr/SKILL.md). When a changeset holds several unrelated changes, [`/split-and-ship`](../claude/skills/split-and-ship/SKILL.md) ships each group as its own branch and pull request, or as sequential commits.
+[`/ship`](../claude/skills/ship/SKILL.md) groups the changes for review. A cohesive change goes straight to [`/ship-together`](../claude/skills/ship-together/SKILL.md), which asks how it should land. If several changes can be reviewed independently, you can keep them together or approve an ordered split. [`/split-and-ship`](../claude/skills/split-and-ship/SKILL.md) can then ship the groups as separate pull requests or as sequential commits.
 
 Once a pull request is open, [`/land-pr`](../claude/skills/land-pr/SKILL.md) follows it to merge. When no human has reviewed it or been asked to, it first offers to request a review from GitHub's suggested reviewers or the people who reviewed the repository's recent pull requests. Then it waits for the checks and for AI reviewers such as CodeRabbit and Copilot. Whenever feedback or a failing check comes in, it runs [`/resolve-pr-feedback`](../claude/skills/resolve-pr-feedback/SKILL.md) and waits again after the pushed fix. After the third round of fixes, it asks whether another is worth it. In Claude Code, it also offers to hand off and compact when feedback awaits and the context runs low. Once the checks pass and nothing blocks the merge, it offers to merge, then deletes the branch. Claude Code also removes the worktree, and Codex lists the commands that remove it. A pull request still waiting on a human review comes back to you, with the branch and worktree kept for the changes it may bring.
 
@@ -71,7 +71,7 @@ Every sub-skill works standalone too. Run [`/turbo:draft-plan`](../claude/skills
 2. **Simplify Docs** — Strip unnecessary comments and documentation noise from the changed files
 3. **Update Changelog** — Add entries to the Unreleased section of CHANGELOG.md (skipped if no changelog exists)
 4. **Self-Improve** — Extract learnings, route to CLAUDE.md / AGENTS.md / memory / skills
-5. **Ship It** — Branch if needed, commit, update an existing PR, push, then create a PR if none exists and link the changelog entries written before it
+5. **Ship** — Run `/ship` to group the changes and carry out the selected shipping path
 6. **Land PR** — Follow the PR through AI review and checks, resolving feedback until it is green, then offer to merge and clean up
 
 [`/quick-finalize`](../claude/skills/quick-finalize/SKILL.md) is the sibling for changes that don't warrant the deep review loop. It stages, simplifies code and docs, runs the project's checks via [`/run-checks`](../claude/skills/run-checks/SKILL.md), smoke tests, updates the changelog, self-improves, ships, and lands the pull request. Same close-out, without the iterative bug hunt.

@@ -90,7 +90,7 @@ When deciding whether a sub-skill gets its own expansion swimlane or stays as a 
 When encoding routing decisions (one step branches to multiple paths):
 
 - **Use dashed labeled arrows, not label pills.** From the branching step, draw a dashed arrow to each target pill, with the branch label as the edge value (e.g., `direct`, `plan`, `ship`, `split`). Do NOT insert intermediate label pills — they add a box without a corresponding step.
-- Match the style from existing examples: `/finalize`'s Analyze → /ship / /split-and-ship pattern and `/plan`'s Analyze complexity → /discuss-change / /draft-plan pattern both use this convention.
+- Match the style from existing examples: `/ship`'s branches to `/ship-together` and `/split-and-ship` and `/plan`'s Analyze complexity → /discuss-change / /draft-plan pattern both use this convention.
 
 When an arrow crosses a container boundary to invoke another skill:
 

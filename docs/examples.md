@@ -29,7 +29,8 @@ These are prompts you can type directly into Claude Code or Codex (`/turbo:skill
 the error messages in this module are inconsistent, /turbo:backlog
 
 # Ship: committing, opening the PR, and seeing it through to merge
-/turbo:ship
+/turbo:ship  ← suggest a split when changes can land independently
+/turbo:ship-together  ← ship the changes as one reviewable unit
 /turbo:land-pr  ← wait for AI reviews and checks, resolve feedback, then merge
 
 # Investigating bugs
