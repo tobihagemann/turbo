@@ -47,6 +47,8 @@ Spawn a Codex sub-agent and instruct it to read and follow `$peer-review` from t
 
 The branch prompt must also state explicitly that the sub-agent's final message must contain the verbatim findings text `$peer-review` produced.
 
+When peer review was expected and the attempt yielded no complete review, read [Missing peer coverage](../peer-review/SKILL.md#missing-peer-coverage) and ask the user in the main conversation before combining results or advancing the workflow. Apply this even if the branch could not start or returned only an error. Keep the completed internal work.
+
 ## Step 3: Reconciliation
 
 Merge the two interpretations for each feedback item:
@@ -90,4 +92,4 @@ Then call `update_plan` to mark this step completed and continue with the next s
 
 ## Rules
 
-- If either interpretation agent is unavailable or returns malformed output, proceed with results from the remaining agent.
+- If the internal interpretation is unavailable or malformed, use the available peer results. Identify which items have only one interpretation.

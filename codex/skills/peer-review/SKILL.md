@@ -45,10 +45,16 @@ Run the `$claude-print` skill in read-only mode with the assembled prompt.
 Compare Claude's output against the reviewed material and the dimensions and structure requested in Step 2, then classify it into one of three branches:
 
 - **Claude returned the requested findings** — output them verbatim.
-- **Incomplete output** (any reason — partial fan-out with missing dimensions, mid-run truncation, sections cut off, sub-agent failure, single-dimension review that ends mid-finding, etc.) — output what came back verbatim, name what is missing relative to Step 2's request, then append: "**Action required:** Peer review returned partial output. Use `request_user_input` to ask the user whether to retry peer review now (transient Claude errors like usage limits often clear within minutes) or proceed with the partial findings. State what is missing so the user can decide."
-- **No output / Claude failed** — Claude returned nothing, errored, hit a usage limit, or returned off-topic output that addresses code, files, or topics outside the reviewed material instead of the requested findings. Do not emit off-topic content as findings. Output a single notice stating the cause, then append: "**Action required:** Peer review failed. Use `request_user_input` to ask the user whether to retry peer review now (transient Claude errors like usage limits often clear within minutes) or proceed without peer review."
+- **Incomplete output** — preserve the findings received verbatim and identify the missing dimensions, items, or truncated findings.
+- **No usable output** — report the cause, including a blocked launch, denied approval, or off-topic response. Omit off-topic content.
 
-Do not synthesize peer findings locally to fill a gap. Peer review's value is independence; locally written findings labeled "peer" mislead the consumer.
+### Missing peer coverage
+
+For either incomplete or missing output, a sub-agent returns the cause, any usable findings, and the outstanding decision. For a denied transfer, include the material requested, its destination, and the stated reason for denial.
+
+The main conversation owns this decision, including when running peer review directly. Use `request_user_input` to ask whether to retry the peer review or continue this review with the available findings. If approval blocked the review, name the material, its destination, and the stated reason. When policy permits a retry with explicit authorization, ask whether the user authorizes sending that material to that destination for this review. If no retry is available, offer to leave the review pending or continue without the missing peer input.
+
+While awaiting an answer, or if the user chooses to leave the review pending, stop here with the review step open. On an authorized retry, rerun the peer review and validate the new output here. On an explicit choice to continue, report the missing peer coverage alongside the available results. Only the peer can supply its findings and verdict. Complete the step only with a full peer review or the user’s explicit choice to proceed with missing coverage.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
 

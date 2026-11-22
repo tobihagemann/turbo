@@ -42,6 +42,8 @@ Run the review branches independently. Launch them with `spawn_agent` / `wait_ag
 - **Scope branch:** Same, with the scope reference file (`<this skill's directory>/references/plan-scope-review.md`) and findings tagged `internal (scope)`.
 - **Peer review branch (unless skipping):** Spawn a Codex sub-agent and instruct it to read and follow `$peer-review` from the installed skill directory, with a request describing: (a) the plan under review, passed as above; (b) the criteria live in `<this skill's directory>/references/plan-structure-review.md` and `<this skill's directory>/references/plan-scope-review.md` — the reviewer should read both files directly and cover every criterion in one single-pass review, applying each file's determination criteria and priority scale to the findings in that file's domain; (c) the Overall Verdict should use the `Readiness: <ready | needs revision>` label; (d) the already-adjudicated findings list when one was supplied, framed as described above. The branch prompt must also state explicitly that the sub-agent's final message must contain the verbatim findings text `$peer-review` produced.
 
+When peer review was expected and the attempt yielded no complete review, read [Missing peer coverage](../peer-review/SKILL.md#missing-peer-coverage) and ask the user in the main conversation before combining results or advancing the workflow. Apply this even if the branch could not start or returned only an error. Keep the completed internal work.
+
 Aggregate findings with attribution (reviewer: "internal" or "peer", each with its "structure" or "scope" dimension). Present them in the output format below.
 
 Then call `update_plan` to mark this step completed and continue with the next step of the active workflow.
@@ -59,7 +61,7 @@ Format each finding as:
 <one paragraph explaining the issue and its impact>
 ```
 
-After all findings, place the Overall Verdict block each internal branch returned for its dimension, then a single combined block for the peer review:
+Identify any peer coverage the user agreed to forgo. After all findings, place the Overall Verdict block each internal branch returned for its dimension, then the combined peer verdict if the peer supplied one:
 
 ```
 ## Overall Verdict: <Structure | Scope>
