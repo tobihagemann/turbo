@@ -20,6 +20,7 @@ The agent asks before changing user-level configuration. Setup touches:
 - The Turbo plugin, installed through your harness's plugin manager. Claude Code keeps it under `~/.claude/plugins/`, Codex under `~/.codex/plugins/`. It carries every skill and loads Turbo's rules into each session (see [Harness Instructions](customization.md#harness-instructions)); your own instruction files stay untouched
 - Your global gitignore: `.turbo/` added, so plans and reports stay out of your repos
 - Harness settings: the task tracking variable in `~/.claude/settings.json` (Claude Code), or opt-in feature flags and a raised subagent limit in `~/.codex/config.toml` (Codex)
+- Codex users who select **Approve for me** can authorize read-only Claude reviews across repositories where they use Turbo. Setup adds this rule to the user’s full auto-review policy. [Claude review authorization](../codex/SETUP.md#approve-for-me-optional)
 - `~/.turbo/config.json`, only for optional settings: the oracle, Codex's shared auto memory, and a Turbo checkout if you work on Turbo
 - Optional steps you can decline: the oracle's own Chrome profile and a ChatGPT sign-in, and for Codex, importing Claude Code auto memory
 

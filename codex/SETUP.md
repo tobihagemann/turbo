@@ -81,6 +81,16 @@ Authenticate Claude Code per its instructions, then verify: `claude --help` shou
 
 Smoke-test print mode in the current project: `claude -p "hello" < /dev/null` should return a response. If it fails because permissions are required, help the user configure Claude Code for read-only review in this trusted workspace. Do not enable broad write or bypass permissions for peer review — Claude only needs to read the repository and inspect diffs unless a specialized consultation explicitly asks for more.
 
+### Approve for me (optional)
+
+For users of Codex’s **Approve for me** mode, offer a standing authorization for Claude reviews across repositories where they use Turbo. Show the rule below and ask whether they want it. Declining skips this setting.
+
+> In any repository where the user uses Turbo, treat Anthropic via Claude Code as a trusted destination for a read-only review when the user requests a Claude review or invokes a Turbo workflow whose current step calls for one. That request authorizes sending the current repository's relevant diff and the source, skill, plan, test, or documentation files needed for that review. This authorization excludes secrets, credentials, session material, unrelated files, data from other repositories, and onward transfers. All other risk rules apply.
+
+If accepted, add the rule once to the data-sharing rules in `[auto_review].policy` in `~/.codex/config.toml`. A nonblank value replaces the **entire** default policy. Use the existing custom policy as the base, or obtain the complete bundled `codex-rs/prompts/templates/guardian/policy.md` from the OpenAI Codex release matching `codex --version` (tag `rust-v<version>`). If the matching policy is unavailable, leave the setting alone. A managed `guardian_policy_config` takes precedence and requires the administrator to make the change. [Codex auto-review configuration](https://learn.chatgpt.com/docs/sandboxing/auto-review#configuration)
+
+On reruns, keep an equivalent authorization already in place. After writing, parse the TOML and verify that removing the added rule recovers the complete base policy and that every other setting retains its value. Tell the user that their local copy needs to be compared with the new bundled policy after Codex upgrades.
+
 ### Shared Claude Code Auto Memory (Optional)
 
 Ask the user whether to let Turbo use Claude Code project memory as a shared source for Codex: `$route-lessons` writes approved lessons there, and `$self-improve` proposes a past-session cutoff from it. When rerunning setup, show the current `codex.sharedClaudeAutoMemory` value in `~/.turbo/config.json` and let the user keep or change it. Create the file when it does not exist, and preserve every other key whenever changing the preference.
