@@ -107,4 +107,4 @@ Then use the TaskList tool and proceed to any remaining task.
 ## Rules
 
 - Confine Steps 1 through 5 to reading, discussion, confirmation, any prototype those steps called for, and the backlog entries Step 5 notes.
-- If the work turns out to need writing down — unclear scope surfaces, the approach needs surveying first, or context risks being lost across sessions — stop and tell the user to run `/turbo:plan` for plan mode.
+- If an open decision turns out to need a pattern survey, research beyond a quick lookup, or a runtime probe before it can be made, or context risks being lost across sessions, stop and tell the user to run `/turbo:plan` for plan mode.

@@ -11,18 +11,18 @@ Categorize the user-supplied task along these dimensions using subjective judgme
 
 - **Scope**: single feature / single subsystem vs multi-feature / multi-subsystem
 - **Stakes**: one-off change vs long-lived project with architectural implications
-- **Unknowns**: clear approach vs needs exploration and product decisions
+- **Unknowns**: open decisions the user or a code read can answer now vs decisions that need exploration first
 
 Modes are named by what they produce: no plan, or a plan file.
 
 | Mode | Criteria | Route |
 |---|---|---|
-| **Direct** | Clear scope, with any remaining decisions small enough to settle in conversation rather than write down. Aligns on the shape, then implements. | Read [references/direct-mode.md](references/direct-mode.md) and follow its steps. |
-| **Plan** | The approach warrants writing down before implementing — to survey patterns, settle architectural decisions, or survive a fresh session. Produces a plan file, however large the work turns out to be. | Read [references/plan-mode.md](references/plan-mode.md) and follow its steps. |
+| **Direct** | Every open decision, scope included, is one the user or a code read can answer in conversation now, however many there are. Aligns on the shape, then implements. | Read [references/direct-mode.md](references/direct-mode.md) and follow its steps. |
+| **Plan** | A decision needs a pattern survey, research beyond a quick lookup, or a runtime probe before it can be made, or the work has to survive a fresh session. Produces a plan file, however large the work turns out to be. | Read [references/plan-mode.md](references/plan-mode.md) and follow its steps. |
 
 ## Recommend and Confirm the Route
 
-Form a recommended route from the dimensions and criteria above. Output the recommendation as text: the recommended mode and a line or two on why it fits over its neighbor.
+Form a recommended route from the criteria above, reading the dimensions as evidence for them: recommend Plan when any Plan criterion holds, and Direct otherwise. Output the recommendation as text: the recommended mode and a line or two on why it fits over its neighbor.
 
 Then use `AskUserQuestion` to have the user set the final route. Offer the recommended mode first, marked "(Recommended)", alongside the other mode; the auto-appended "Other" lets the user describe a different path.
 
