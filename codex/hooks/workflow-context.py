@@ -31,6 +31,15 @@ def main():
     if not isinstance(thread, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", thread):
         return
     checkpoint = initial_directory(event) / ".turbo" / "workflows" / f"{thread}.md"
+    if event.get("hook_event_name") == "UserPromptSubmit":
+        if checkpoint.is_file():
+            print(
+                f"Read this chat's workflow checkpoint at {json.dumps(str(checkpoint))} "
+                "and reconcile the user's message with the active step. Honor a pause, cancellation, "
+                "or change of direction. If the reply resolves the current step, record the verdict "
+                "and take the next authorized action in this turn."
+            )
+        return
     if event.get("source") in ("compact", "resume") and checkpoint.is_file():
         print(
             f"\nBefore continuing this workflow, read {json.dumps(str(checkpoint))}. "

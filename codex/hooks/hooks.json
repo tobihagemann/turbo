@@ -11,6 +11,16 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"${PLUGIN_ROOT}/hooks/workflow-context.py\""
+          }
+        ]
+      }
     ]
   }
 }

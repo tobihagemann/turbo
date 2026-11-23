@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -18,15 +19,25 @@ class WorkflowHookTest(unittest.TestCase):
         self.checkpoint.parent.mkdir(parents=True)
         self.checkpoint.write_text("private workflow contents")
 
-    def run_hook(self, source, thread=None, cwd=None, transcript=None):
-        event = {"session_id": thread or self.thread, "source": source}
+    def run_hook(self, source=None, thread=None, cwd=None, transcript=None, prompt=None):
+        name = "SessionStart" if prompt is None else "UserPromptSubmit"
+        event = {"session_id": thread or self.thread, "hook_event_name": name}
+        if prompt is None:
+            event["source"] = source
+        else:
+            event["prompt"] = prompt
         if transcript:
             event["transcript_path"] = str(transcript)
+        manifest = json.loads((PLUGIN / "hooks/hooks.json").read_text())
+        command = manifest["hooks"][name][0]["hooks"][0]["command"]
         output = subprocess.check_output(
-            ["sh", PLUGIN / "hooks/session-start.sh"],
-            cwd=cwd or self.cwd, input=json.dumps(event), text=True,
+            ["sh", "-c", command], cwd=cwd or self.cwd, input=json.dumps(event),
+            env={**os.environ, "PLUGIN_ROOT": str(PLUGIN)}, text=True,
         )
-        self.assertIn("# Turbo Rules", output)
+        if prompt is None:
+            self.assertIn("# Turbo Rules", output)
+        else:
+            self.assertNotIn("# Turbo Rules", output)
         self.assertNotIn("private workflow contents", output)
         return output
 
@@ -50,6 +61,17 @@ class WorkflowHookTest(unittest.TestCase):
         self.assertIn(f"read {json.dumps(str(self.checkpoint))}", output)
         fork = self.run_hook("resume", "forked", cwd=other, transcript=transcript)
         self.assertNotIn(str(self.checkpoint), fork)
+
+    def test_prompt_recovers_only_the_current_workflow(self):
+        output = self.run_hook(prompt="looks good")
+        self.assertIn(json.dumps(str(self.checkpoint)), output)
+        self.assertIn("next authorized action in this turn", output)
+        self.assertIn("Honor a pause", output)
+        self.assertEqual(self.run_hook(prompt="looks good, but stop here"), output)
+        for thread in ("other", "../test-chat"):
+            self.assertEqual(self.run_hook(thread=thread, prompt="looks good"), "")
+        self.checkpoint.unlink()
+        self.assertEqual(self.run_hook(prompt="looks good"), "")
 
 
 if __name__ == "__main__":

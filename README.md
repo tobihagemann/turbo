@@ -59,7 +59,7 @@ See [requirements](docs/requirements.md) for what setup changes on your machine 
 /plugin install turbo@turbo
 ```
 
-**Codex:** install the plugin, then trust Turbo's hook when Codex asks at its next start.
+**Codex:** install the plugin, then trust Turbo's hooks when Codex asks at its next start.
 
 ```bash
 codex plugin marketplace add tobihagemann/turbo

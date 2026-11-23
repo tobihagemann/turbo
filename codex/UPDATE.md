@@ -41,7 +41,7 @@ codex plugin marketplace add tobihagemann/turbo
 codex plugin add turbo@turbo
 ```
 
-Codex runs a plugin's hooks only once the user trusts them, so ask them as well to trust Turbo's `SessionStart` hook, which loads the Turbo rules into every session, when Codex asks at its next start (or under `/hooks`), and repeat that in the report. Use `request_user_input` to wait until they report the plugin installed, with stopping the migration as the other option, and stop when the question cannot reach the user: no copy has been touched yet.
+Codex runs a plugin's hooks only once the user trusts them, so ask them as well to trust Turbo's `SessionStart` and `UserPromptSubmit` hooks when Codex asks at its next start (or under `/hooks`), and repeat that in the report. Use `request_user_input` to wait until they report the plugin installed, with stopping the migration as the other option, and stop when the question cannot reach the user: no copy has been touched yet.
 
 ## Step 3: Remove the Copied Skills
 

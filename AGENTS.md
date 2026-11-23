@@ -16,7 +16,7 @@ codex/                    # Codex edition and plugin root (canonical Codex tree)
 │   ├── scripts/          # Optional supporting scripts
 │   ├── references/       # Optional reference documentation
 │   └── assets/           # Optional templates or boilerplate
-├── hooks/                # SessionStart hook that loads ADDITIONS.md into every session
+├── hooks/                # Session rules and per-chat workflow recovery hooks
 ├── SETUP.md
 ├── UPDATE.md             # One-time migration from a copy install to the plugin
 ├── ADDITIONS.md          # Turbo rules the hook injects

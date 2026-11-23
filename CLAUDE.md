@@ -23,7 +23,7 @@ claude/                   # Claude Code edition and plugin root (canonical Claud
 ├── UPDATE.md             # One-time migration from a copy install to the plugin
 ├── ADDITIONS.md          # Turbo rules the mod injects into every session
 └── SKILL-CONVENTIONS.md
-codex/                    # Codex edition and plugin root (parallel tree; hooks/ holds the SessionStart hook)
+codex/                    # Codex edition and plugin root (parallel tree; hooks/ holds the session and prompt hooks)
 tests/                    # Tests for scripts both editions ship, outside both plugin roots
 ```
 

@@ -33,7 +33,7 @@ codex plugin marketplace add tobihagemann/turbo
 codex plugin add turbo@turbo
 ```
 
-The plugin carries every skill and a `SessionStart` hook that reloads Turbo’s rules after compaction. Check that `python3 --version` works so the hook can locate the chat’s workflow checkpoint. Codex runs a plugin's hooks only once the user trusts them: ask the user to trust Turbo's hook when Codex asks at its next start, or later under `/hooks`. Skills are typed as `$turbo:<skill>`.
+The plugin carries every skill. Its `SessionStart` hook loads Turbo’s rules, and its `UserPromptSubmit` hook points Codex to the current chat’s workflow checkpoint when one exists. Check that `python3 --version` works. Ask the user to trust both hooks when Codex asks at its next start, or later under `/hooks`. Skills are typed as `$turbo:<skill>`.
 
 ## Step 2: Add `.turbo` to Global Gitignore
 
