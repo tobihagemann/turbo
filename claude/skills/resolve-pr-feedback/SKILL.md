@@ -177,7 +177,7 @@ Test both in the loop's condition. The loop ends once every such reviewer is fin
 
 Wait for checks when Step 7 fixed a check finding: use the Monitor tool with an until-loop that runs `${CLAUDE_SKILL_DIR}/scripts/fetch-pr-data.sh` and ends once `meta.headRefOid` is the pushed commit, every check whose finding was fixed appears in `checks`, and no check has the `state` `pending`, or after 15 minutes.
 
-In every until-loop or repeated check of this step that reads JSON, pipe the JSON into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the wait reporting the error when `jq` cannot parse its input or a fetch fails on three polls in a row.
+In every until-loop or repeated check of this step that reads JSON, pipe the JSON into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the wait reporting the error when `jq` cannot parse its input or a fetch fails on three polls in a row. Have every until-loop of this step that polls the PR print nothing per poll: one line when it ends, saying whether it ended ready, timed out, or on the error, and naming what the step's next instruction needs from it. For the re-review loop, that is each reviewer still unfinished and each that finished by a check without a review on the pushed head; for the repeated check, each reviewer found re-reviewing.
 
 When no reviewer was found re-reviewing and the wait for checks did not run, skip the rest of this step.
 

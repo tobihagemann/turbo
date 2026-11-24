@@ -69,7 +69,7 @@ Use `AskUserQuestion` to offer up to the first three candidates, each requesting
 
 ## Step 3: Wait for Reviewers and Checks
 
-Use the Monitor tool with an until-loop that runs the status script every 30 seconds and ends once no check has the `state` `pending` and no review request of `type` `Bot` is pending, or after 20 minutes. When this session pushed the head commit less than 3 minutes before the loop starts, start its first run 3 minutes after that push. Pipe the script's output into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the loop reporting the error when `jq` cannot parse the output or the script fails on three runs in a row.
+Use the Monitor tool with an until-loop that runs the status script every 30 seconds and ends once no check has the `state` `pending` and no review request of `type` `Bot` is pending, or after 20 minutes. When this session pushed the head commit less than 3 minutes before the loop starts, start its first run 3 minutes after that push. Pipe the script's output into `jq` directly or through `printf '%s'`, never `echo`. Treat only a false result as not ready, and end the loop reporting the error when `jq` cannot parse the output or the script fails on three runs in a row. Have the loop print nothing per poll: one line when it ends, saying whether it ended ready, timed out, or on the error.
 
 Then run the script once more and list as text the feedback to resolve:
 
@@ -107,7 +107,7 @@ Read the head commit with `gh pr view <number> --json headRefOid`. When Step 5 w
 
 ## Step 7: Offer the Merge
 
-Run the status script again. When `mergeable` or `mergeStateStatus` is `UNKNOWN`, use the Monitor tool with an until-loop that runs `gh pr view <number> --json mergeable,mergeStateStatus` every 10 seconds and ends once neither is `UNKNOWN`, or after 1 minute.
+Run the status script again. When `mergeable` or `mergeStateStatus` is `UNKNOWN`, use the Monitor tool with an until-loop that runs `gh pr view <number> --json mergeable,mergeStateStatus` every 10 seconds and ends once neither is `UNKNOWN`, or after 1 minute. Have it print nothing per poll: one line when it ends, carrying the final `mergeable` and `mergeStateStatus`, or saying it timed out.
 
 Hand the pull request back without merging when any of these holds:
 
@@ -144,10 +144,10 @@ Then take the case that matches where Step 1 found this session:
 
 - **On another branch** — leave the checkout as it is.
 - **In a linked worktree on the head branch** — leave with the ExitWorktree tool (`action: "keep"`). When it reports that no worktree session is active, present the worktree's path and the commands that finish the cleanup from the main checkout: fast-forward the main checkout's local `<baseRefName>` to `origin/<baseRefName>`, run `git worktree remove <path>`, and run `git branch -D <headRefName>` when the local branch's tip is `headRefOid`. Skip the local branch deletion below. Otherwise:
-  1. Fast-forward the main checkout's local `<baseRefName>` branch to `origin/<baseRefName>` without switching the branch the main checkout has checked out. When the fast-forward fails, report it and leave that branch as it is.
+  1. Fast-forward the main checkout's local `<baseRefName>` branch to `origin/<baseRefName>` without switching the branch the main checkout has checked out. Read the fast-forward's full output and exit status, unfiltered. When the main checkout has that branch checked out, note its `git status --porcelain --untracked-files=all` first and compare after a failed fast-forward: one that fails partway through writing the working tree leaves HEAD and the index where they were and keeps the files it already wrote. Return each path the comparison adds that matches the target commit's copy or is absent there, with `git checkout -- <paths>` for tracked ones and by deleting new untracked ones. Leave any path that does not match, and report the failure, its cause, the restore, and each path left. When a sandbox denial caused the failure, re-run the fast-forward with the sandbox disabled. When the fast-forward still fails, report it and leave that branch as it is.
   2. Remove the worktree with `git worktree remove <path>`. When git refuses over files this session copied in from the main checkout, delete those copies and remove it again. Otherwise keep the worktree, without `--force`.
   3. Run the `/backlog` skill for each entry `/backlog` could not persist from the worktree.
-- **In the main checkout on the head branch** — when `git status --porcelain --untracked-files=no` lists changes, report them, keep the branch checked out, and skip the local branch deletion below. Otherwise run `git switch <baseRefName>` and `git merge --ff-only origin/<baseRefName>`.
+- **In the main checkout on the head branch** — when `git status --porcelain --untracked-files=no` lists changes, report them, keep the branch checked out, and skip the local branch deletion below. Otherwise note `git status --porcelain --untracked-files=all`, run `git switch <baseRefName>`, note the status again, and run `git merge --ff-only origin/<baseRefName>`. Handle a failed switch or merge the way step 1 of the bullet above handles a failed fast-forward, comparing against the status noted before it.
 
 When the local branch exists and its tip is the pull request's `headRefOid`, delete it with `git branch -D <headRefName>`, keeping it when git refuses. When its tip differs, keep it and report the commits it holds beyond the merged head (`git log --oneline <headRefOid>..<headRefName>`).
 
