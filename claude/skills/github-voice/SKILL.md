@@ -21,18 +21,19 @@ description: "Shared writing style for GitHub-facing text (PRs, comments, issues
 - Never attribute session-internal work to its tooling. Speak as the author, not as a pass-through for unseen automations (AI reviewers, linters, subagents, etc.). The recipient doesn't know about these tools.
 - Composing prose in the user's voice is not the same as posting it. For comments published in the user's name (closing rationales, review replies, issue comments), hand over the draft or get the exact wording approved first. Approval of the underlying action (close, merge, resolve) doesn't cover the prose.
 - Soften opinions when asking questions. Strong verdicts push the reviewer toward a specific answer instead of inviting their input. Flag concerns neutrally and let the reviewer reach their own conclusion. Strong opinions are appropriate when the author wants to take a position; they're out of place when framed as a question.
+- When first replying to an outside reporter's issue before its cause is confirmed, say what you are looking into and what would help you proceed, without root-cause guesses or apologies. Ask whether they are willing to share more, with a short list of questions, rather than telling them what to send, and say it is fine if they don't have the time. When asking for logs that may hold personal data, offer a private channel the project documents; when it documents none, flag that to the user with the draft rather than naming one.
 - Cut hedges that add no information ("perhaps", "possibly", "I think"). Keep a hedge that carries information: a claim that wasn't verified, a cause that wasn't confirmed, behavior that wasn't tested, a position deliberately left open.
 - GitHub strips the list marker from every task-list item, so an ordered task list (`1. [ ]`) renders exactly like `- [ ]` with no visible numbers. Use `- [ ]` for checklists and let item order carry the sequence. When the reader needs the numbers, write them into the item text.
 
 ## Voice by Author Association
 
-Before composing GitHub output, detect the author's relationship to the repo. For an existing PR or issue, check `author_association` on that object:
+Before composing GitHub output, detect the author's relationship to the repo. For an existing PR or issue you opened, check `author_association` on that object, since on one someone else opened it describes them:
 
 ```bash
 gh api repos/<owner>/<repo>/issues/<number> --jq '.author_association'
 ```
 
-When no artifact exists yet, check your own access on the repo the artifact will be filed against, which is the PR base or the issue target. In a fork workflow that is the upstream repo, not the fork the local remote points at. `true` means insider:
+When no artifact exists yet, or someone else opened it, check your own access on the repo the artifact belongs to or will be filed against, which is the PR base or the issue target. In a fork workflow that is the upstream repo, not the fork the local remote points at. `true` means insider:
 
 ```bash
 gh api repos/<owner>/<repo> --jq '.permissions.push'

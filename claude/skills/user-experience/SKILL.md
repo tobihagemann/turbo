@@ -35,5 +35,5 @@ Trace the path the user takes from end to end.
 
 - Follow the full journey: how the user arrives, the change itself, and what happens after.
 - Walk the unhappy paths in the running software when it can be run: empty states, seeded defaults, errors, interruptions, first-time versus returning use. Flag any of these judged from source alone.
-- Confirm the user always knows what just happened and what to do next.
+- Confirm the user always knows what just happened and what to do next. Check that a warning or other notice the change adds that needs the user to act names the action that resolves it, such as a button or a command. When nothing in the software can resolve it, check that it names who can.
 - Surface friction: redundant steps, dead ends, and points where the user must hold state in their head.
