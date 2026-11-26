@@ -11,9 +11,25 @@ Use `TaskCreate` to create a task for each phase:
 
 ## Phase 1: Get the Extra Sessions
 
-Output how many extra sessions the split needs, and ask the user to open that many Claude Code sessions in this directory. Then use `AskUserQuestion` to confirm, with two options: the sessions are open, or run the recommended working set alone.
+### Inside tmux
 
-When the user chose to run the recommended working set alone, the parallel sets stay in the backlog. Mark Phase 2 completed, then use the TaskList tool and proceed to any remaining task.
+When `$TMUX` is set, open the extra sessions yourself in panes beside this one. Run each tmux command via the Bash tool (`dangerouslyDisableSandbox: true`), with `<root>` the repo root SKILL.md Step 1 resolved. Open the first session beside this pane:
+
+```bash
+tmux split-window -h -d -t "$TMUX_PANE" -c "<root>" -P -F '#{pane_id}' claude
+```
+
+Open each further one below the pane opened before it, with `-v` in place of `-h` and that pane's id in place of `"$TMUX_PANE"`. When tmux refuses a split for lack of space, open that session in a window of its own with `tmux new-window -d -c "<root>" -P -F '#{pane_id}' claude`. When `$CLAUDE_CONFIG_DIR` is set, add `-e "CLAUDE_CONFIG_DIR=$CLAUDE_CONFIG_DIR"` to each of these commands. Note each pane id they print.
+
+Then use the ListAgents tool. The extra sessions are the ones whose tmux location ends in a noted pane id. While a noted pane id appears in no session's location, read what that pane displays with `tmux capture-pane -p -t <pane id>`, then list again, up to five listings in all.
+
+When a tmux command fails or is refused, or a noted pane id still appears in no session's location after the fifth listing, report what each such pane displays and follow Outside tmux for the sessions still missing. Otherwise, continue with Phase 2.
+
+### Outside tmux
+
+Output how many extra sessions the split still needs, and ask the user to open that many Claude Code sessions in this directory. Then use `AskUserQuestion` to confirm, with two options: the sessions are open, or run without the missing sessions.
+
+When the user chose to run without the missing sessions and no extra session was found, the parallel sets stay in the backlog. Mark Phase 2 completed, then use the TaskList tool and proceed to any remaining task.
 
 Otherwise, use the ListAgents tool. The extra sessions are the local sessions in this directory that the SKILL.md Step 3 listing did not show. When fewer appeared than the split needs, hand out the parallel sets in the order Step 3 named them and leave the rest in the backlog. When more appeared, use `AskUserQuestion` to ask which ones to brief.
 
