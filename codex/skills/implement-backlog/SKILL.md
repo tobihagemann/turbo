@@ -114,7 +114,7 @@ When no entry is Active, skip the recommendation: a Deferred entry is not a cand
 
 Pick one specific working set tailored to the active entries. Read the entries again before recommending and weigh:
 
-- **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix.
+- **Cohesion** — Entries that share files, modules, or themes are stronger when batched. A cluster of related testing or reliability entries usually beats a scattered mix. Shared files alone don't make a cleanup that leaves behavior unchanged cohere with an entry that changes behavior: keep it out of that entry's working set.
 - **Decisiveness** — One investigation that unblocks several deferred entries can outweigh a larger direct batch.
 - **Supersession** — When an active entry's work, or the pending next step of an entry that lays out several, would rewrite, replace, or make moot the code other active entries target, that work can outweigh a direct batch on that code. When another working set is recommended or offered as an alternative and still includes entries it supersedes, mark those entries as likely discarded by that work.
 - **Impact vs effort** — A reliability or correctness entry whose problem was observed in use often outweighs lower-stakes cleanups even when it's a single entry. One derived from reading code or a review earns no such weight, less still when its fix adds machinery or public interface; count an entry whose Why records no observation as derived. Say in the recommendation when the recommended working set includes one.
